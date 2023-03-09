@@ -1,0 +1,920 @@
+# SDWAN-as-code YAML schema
+sdwan:
+  vmanage: include("vmanage", required=False)
+  cedge_feature_templates: include("cedge_feature_templates", required=False)
+  localized_policies: include("localized_policies", required=False)
+  cedge_device_templates: include("cedge_device_templates", required=False)
+  sites: include("sites", required=False)
+---
+# vManage API settings
+vmanage:
+  vmanage_ip: ip()
+  vmanage_user: str()
+  vmanage_password: str()
+---
+# cEdge Feature Yemplate schema
+cedge_feature_templates:
+  cedge_aaa: list(include("cedge_aaa_template"), required=False)
+  cedge_global: list(include("cedge_global_template"), required=False)
+  cisco_banner: list(include("cisco_banner_template"), required=False)
+  cisco_bfd: list(include("cisco_bfd_template"), required=False)
+  cisco_bgp: list(include("cisco_bgp_template"), required=False)
+  cisco_dhcp_server: list(include("cisco_dhcp_server_template"), required=False)
+  cisco_logging: list(include("cisco_logging_template"), required=False)
+  cisco_ntp: list(include("cisco_ntp_template"), required=False)
+  cisco_omp: list(include("cisco_omp_template"), required=False)
+  cisco_security: list(include("cisco_security_template"), required=False)
+  cisco_sig_credentials: list(include("cisco_sig_credentials_template"), required=False)
+  cisco_snmp: list(include("cisco_snmp_template"), required=False)
+  cisco_system: list(include("cisco_system_template"), required=False)
+  cisco_vpn: list(include("cisco_vpn_template"), required=False)
+  cisco_vpn_interface: list(include("cisco_vpn_interface_template"), required=False)
+  cli-template: list(include("cli_template"), required=False)
+---
+# cEdge AAA feature template
+# Supported: local users, RADIUS groups, TACACS groups
+# Missing: Radius COA, Radius Trustsec, Acconting, dot1x auth
+cedge_aaa_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    server-auth-order: str(matches='^[A-Za-z0-9-_,]+$') # "local" or server group names, comma-separated
+    user: list(include("cft_aaa_local_user")) # At least the local user "admin" must be defined
+    tacacs: list(include("cft_aaa_tacacs_group"), required=False)
+    radius: list(include("cft_aaa_radius_group"), required=False)
+cft_aaa_local_user:
+  name: str(max=64)
+  password: str(starts_with="$6$") # Must be a SHA512 hash
+  secret: str(starts_with="$9$") # Must be a Cisco Type 9 scrypt hash
+  privilege: enum("1", "15")
+  optional: bool(required=False)
+cft_aaa_tacacs_group:
+  group-name: str(min=1, max=32)
+  server: list(include("cft_aaa_tacacs_server"), min=1, max=8)
+  source-interface: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+  vpn: int(min=0, max=512, required=False) # default=0
+cft_aaa_tacacs_server:
+  address: ip(version=4)
+  key: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128) # vManage-encrypted string
+  key-enum: int(equals=6, required=False)
+  key-type: str(equals="key", required=False)
+  secret-key: regex('^[0-9a-z]{,150}$') # Type-7 encrypted secret
+  port: int(min=1, max=65535, required=False) # default=49
+  timeout: int(min=1, max=1000, required=False) # default=5
+cft_aaa_radius_group:
+  group-name: str(min=1, max=32)
+  server: list(include("cft_aaa_radius_server"), min=1, max=8)
+  source-interface: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+  vpn: int(min=0, max=512, required=False) # default=0
+cft_aaa_radius_server:
+  address: ip(version=4)
+  key: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128) # vManage-encrypted string
+  key-enum: int(equals=6, required=False)
+  key-type: str(equlas="key", required=False)
+  secret-key: regex('^[0-9a-z]{,150}$') # Type-7 encrypted secret
+  auth-port: int(min=1, max=65535, required=False) # default=1812
+  acct-port: int(min=1, max=65535, required=False) # default=1813
+  timeout: int(min=1, max=1000, required=False) # default=5
+  retransmit: int(min=1, max=100, required=False) # default=3
+---
+# cEdge Global Settings feature template
+cedge_global_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    http-global: include("cft_global_http", required=False)
+    nat64-global: include("cft_global_nat64", required=False)
+    services-global: include("cft_global_services", required=False)
+    ssh: include("cft_global_ssh", required=False)
+cft_global_http:
+  http-authentication: enum("local", "aaa", required=False)
+cft_global_nat64:
+  nat64-timeout:
+    udp-timeout: int(min=1, max=536870, required=False)
+    tcp-timeout: int(min=1, max=536870, required=False)
+cft_global_services:
+  services-ip: include("cft_global_services_ip", required=False)
+  services-other: include("cft_global_services_other", required=False)
+cft_global_services_ip:
+  arp-proxy: enum("true", "false", required=False)
+  cdp: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  domain-lookup: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  ftp-passive: enum("true", "false", required=False)
+  http-server: enum("true", "false", required=False)
+  https-server: enum("true", "false", required=False)
+  line-vty: enum("true", "false", required=False)
+  lldp: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  rcmd: enum("true", "false", required=False)
+  source-intrf: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+cft_global_services_other:
+  bootp: enum("true", "false", required=False)
+  console-logging: enum("true", "false", required=False)
+  snmp-ifindex-persist: enum("true", "false", required=False)
+  source-route: enum("true", "false", required=False)
+  tcp-keepalives-in: enum("true", "false", required=False)
+  tcp-keepalives-out: enum("true", "false", required=False)
+  tcp-small-servers: enum("true", "false", required=False)
+  udp-small-servers: enum("true", "false", required=False)
+  vty-logging: enum("true", "false", required=False)
+cft_global_ssh:
+  version: enum(1, 2, required=False)
+---
+# Cisco banner feature template
+cisco_banner_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    login: str(min=1, max=2048, required=False)
+    motd: str(min=1, max=2048, required=False)
+---
+# Cisco BFD feature template
+cisco_bfd_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    app-route: include("cft_bfd_approute", required=False)
+    default-dscp: int(min=0, max=63, required=False)
+    color: list(include("cft_bfd_color"), required=False)
+cft_bfd_approute:
+  multiplier: int(min=1, max=6, required=False)
+  poll-interval: int(min=1, max=4294967295, required=False)
+cft_bfd_color:
+  color: enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6")
+  hello-interval: int(min=100, max=300000, required=False)
+  multiplier: int(min=1, max=60, required=False)
+  pmtu-discovery: enum("true", "false", required=False)
+  dscp: int(min=0, max=63, required=False)
+---
+# Cisco BGP feature template
+cisco_bgp_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    bgp: include("cft_bgp")
+cft_bgp:
+  address-family: list(include("cft_bgp_address_family", required=False))
+  as-num: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=4294967295))
+  best-path: include("cft_bgp_best_path", required=False)
+  distance: include("cft_bgp_distance", required=False)
+  neighbor: list(include("cft_bgp_neighbor"), max=8, required=False)
+  propagate-aspath: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  propagate-community: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  shutdown: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  timers: include("cft_bgp_timers", required=False)
+cft_bgp_address_family:
+  aggregate-address: list(include("cft_bgp_af_aggregate_address"), min=1, required=False)
+  default-information: include("cft_bgp_af_default_information", required=False)
+  family-type: enum("ipv4-unicast")
+  maximum-paths: include("cft_bgp_af_maximum_paths", required=False)
+  redistribute: list(include("cft_bgp_redistribute_protocol"), required=False)
+cft_bgp_af_aggregate_address:
+  prefix: ip(version=4)
+cft_bgp_af_default_information:
+  originate: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+cft_bgp_af_maximum_paths:
+  paths: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=32), required=False)
+cft_bgp_redistribute_protocol:
+  protocol: enum("connected", "eigrp", "nat", "omp", "ospf", "ospfv3", "static")
+  route_policy: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+  optional: bool(required=False)
+cft_bgp_best_path:
+  as-path: include("cft_bgp_bp_aspath", required=False)
+  compare-router-id: enum("true", "false", required=False)
+  med: include("cft_bgp_bp_med", required=False)
+cft_bgp_bp_aspath:
+  multipath-relax: enum("true", "false")
+cft_bgp_bp_med:
+  always-compare: enum("true", "false")
+  deterministic: enum("true", "false")
+  missing-as-worst: enum("true", "false")
+cft_bgp_distance:
+  internal: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255), required=False)
+  external: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255), required=False)
+  local: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255), required=False)
+cft_bgp_neighbor:
+  address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  address-family: list(include("cft_bgp_neighbor_address_family"), required=False)
+  ebgp-multihop: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255), required=False)
+  next-hop-self: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  password: any(str(starts_with="DEVICE_VARIABLE;"), str(starts_with="$CRYPT_CLUSTER$", min=1, max=128), required=False)
+  remote-as: any(str(starts_with="DEVICE_VARIABLE;"),  int(min=1, max=4294967295))
+  shutdown: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  send-community: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  send-ext-community: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  timers: include("cft_bgp_timers", required=False)
+  optional: bool(required=False)
+cft_bgp_neighbor_address_family:
+  family-type: enum("ipv4-unicast")
+  maximum-prefixes: include("cft_bgp_neighbor_af_maximum_prefixes", required=False)
+  route-policy: list(include("cft_bgp_neighbor_af_route_policy"), required=False)
+cft_bgp_neighbor_af_maximum_prefixes:
+  prefix-num: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=4294967295), required=False)
+cft_bgp_neighbor_af_route_policy:
+  direction: enum("in", "out")
+  pol-name: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+cft_bgp_timers:
+  keepalive: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=65535), required=False)
+  holdtime: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=65535), required=False)
+---
+cisco_dhcp_server_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    address-pool: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4)) # CIDR prefix
+    exclude: any(str(starts_with="DEVICE_VARIABLE;"), str()) # comma-separated IP address ranges, ex: 10.59.160.1,10.59.162.1-10.59.163.254
+    lease-time: any(str(starts_with="DEVICE_VARIABLE;"), int(min=10, max=31536000))
+    options: include("cft_dhcpserver_options")
+    static-lease: list(include("cft_dhcpserver_static_lease"), min=1, required=False)
+cft_dhcpserver_options:
+  default-gateway: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  dns-servers: any(str(starts_with="DEVICE_VARIABLE;"), str()) # comma-separated list of IP addresses
+cft_dhcpserver_static_lease:
+  ip: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  mac-address: any(str(starts_with="DEVICE_VARIABLE;"), str())
+  optional: bool(required=False)
+---
+# Cisco logging feature template
+# Missing: TLS profiles for logging servers
+cisco_logging_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    disk: include("cft_logging_disk", required=False)
+    server: list(include("cft_logging_server"), required=False)
+cft_logging_disk:
+  enable: enum("true", "false")
+  file: include("cft_logging_disk_file", required=False)
+cft_logging_disk_file:
+  rotate: int(min=1, max=10)
+  size: int(min=1, max=20)
+cft_logging_server:
+  name: any(str(matches='^[a-z0-9.-]+$', max=255), ip(version=4))
+  vpn: int(min=0, max=512)
+  tls: include("cft_logging_server_tls", required=False)
+  source-interface: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+  priority: enum("alert", "critical", "debugging", "emergency", "errors", "information", "notice", "warn")
+  version: enum(4, required=False)
+cft_logging_server_tls:
+  enable-tls: enum("true", "false")
+---
+# Cisco NTP feature template
+# Missing: authentication keys; ntp master
+cisco_ntp_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    server: list(include("cft_ntp_server"), required=False)
+cft_ntp_server:
+  name: any(str(starts_with="DEVICE_VARIABLE;"), str(matches='^[a-z0-9.-]+$', max=255), ip(version=4))
+  version: int(min=1, max=4, required=False)
+  vpn: int(min=0, max=512, required=False)
+  optional: bool(required=False)
+  prefer: enum("true", "false", required=False)
+  source-interface: any(str(), str(starts_with="DEVICE_VARIABLE;"), required=False)
+---
+cisco_omp_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    graceful-restart: enum("true", "false", required=False)
+    overlay-as: int(min=1, max=4294967295, required=False)
+    send-path-limit: int(min=1, max=16, required=False)
+    ecmp-limit: int(min=1, max=16, required=False)
+    shutdown: enum("true", "false", required=False)
+    omp-admin-distance-ipv4: int(min=1, max=255, required=False)
+    omp-admin-distance-ipv6: int(min=1, max=255, required=False)
+    timers: include("cft_omp_timers", required=False)
+    advertise: list(include("cft_omp_advertise_protocol"), required=False)
+cft_omp_timers:
+  graceful-restart-timer: int(min=1, max=604800, required=False)
+  advertisement-interval: int(min=1, max=65535, required=False)
+  holdtime: int(min=3, max=65535, required=False)
+  eor-timer: int(min=1, max=604800, required=False)
+cft_omp_advertise_protocol:
+  protocol: enum("bgp", "ospf", "ospfv3", "connected", "static", "eigrp", "lisp", "isis")
+---
+# Cisco security feature template
+# Missing: pairwise IPSec keys; keyrings
+cisco_security_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    ipsec: include("cft_security_ipsec", required=False)
+cft_security_ipsec:
+  authentication-type: list(include("cft_security_authentication_type"), required=False)
+  extended-ar-window: int(min=10, max=2048, required=False)
+  integrity-type: list(include("cft_security_integrity_type"), required=False)
+  rekey: int(min=1, max=1209600, required=False)
+  replay-window: enum("64", "128", "256", "512", "1024", "2048", "4096", "8192", required=False)
+cft_security_authentication_type: enum("none", "sha1-hmac", "ah-sha1-hmac", "ah-no-id")
+cft_security_integrity_type: enum("none", "esp", "ip-udp-esp", "ip-udp-esp-no-id")
+---
+# Cisco SIG Credentials template
+# Supported: Umbrella
+# Missing: Zscaler
+cisco_sig_credentials_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    umbrella: include("cft_umbrella_parameters", required=False)
+    zscaler: include("cft_zscaler_parameters", required=False)
+cft_umbrella_parameters:
+  api-key: regex('^[0-9a-z]{,32}$') # 32 alphanumeric characters
+  api-secret: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128, required=False) # vManage-encrypted string
+  org-id: regex('^[0-9]{,7}$') # 7-digit org id
+cft_zscaler_parameters:
+  api-key: regex('^[0-9a-z]{,12}$') # 12 alphanumeric characters
+  username: str()
+  password: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128, required=False) # vManage-encrypted string
+  partner-base-url: str()
+  organization: str()
+---
+# Cisco SNMP feature template
+# Missing: SNMPv2
+cisco_snmp_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    community: list(include("cft_snmp_community"), required=False)
+    contact: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+    group: list(include("cft_snmp_group"), required=False)
+    location: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+    shutdown: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+    trap: include("cft_snmp_trap", required=False)
+    user: list(include("cft_snmp_user"), required=False)
+    view: list(include("cft_snmp_view"), required=False)
+cft_snmp_community:
+  authorization: enum("read-only")
+  name: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128, required=False) ## vManage-encrypted string
+  view: str(min=1, max=32)
+cft_snmp_group:
+  name: str(min=1, max=32)
+  view: str(min=1, max=32)
+  security-level: enum("no-auth-no-priv", "auth-no-priv", "auth-priv")
+cft_snmp_trap:
+  target: list(include("cft_snmp_trap_target"), required=False)
+cft_snmp_trap_target:
+  community-name: str(starts_with="$CRYPT_CLUSTER$", required=False)
+  ip: ip(version=4)
+  vpn-id: int(min=0, max=512)
+  port: int(min=1, max=65535)
+  user: str(min=1, max=32, required=False)
+  source-interface: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+cft_snmp_user:
+  name: str(min=1, max=32)
+  group: str(min=1, max=32)
+  auth: enum("md5", "sha", required=False)
+  auth-password: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128, required=False) ## vManage-encrypted string
+  priv: enum("aes-cfb-128", "aes-256-cfb-128", required=False)
+  priv-password: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128, required=False) ## vManage-encrypted string
+cft_snmp_view:
+  name: str(min=1, max=32)
+  oid: list(include("cft_snmp_oid"))
+  viewMode: enum("edit", required=False)
+cft_snmp_oid:
+  id: regex('^[0-9.]+$') ## Allow only digits and dots
+  exclude: enum("true", "false", required=False)
+---
+# Cisco system feature template
+# Missing: device groups, controller groups, geo-fencing, trackers, track-interface
+cisco_system_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    site-id: str(starts_with="DEVICE_VARIABLE;") # per-device variable
+    system-ip: str(starts_with="DEVICE_VARIABLE;") # per-device variable
+    overlay-id: int(min=1, max=4294967295, required=False)
+    clock: include("cft_system_clock", required=False)
+    host-name: str(starts_with="DEVICE_VARIABLE;") # per-device variable
+    location: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False) # per-device variable
+    description: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False) # per-device variable
+    console-baud-rate: any(str(starts_with="DEVICE_VARIABLE;"), enum("1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200"), required=False)
+    max-omp-sessions: int(min=1, max=100, required=False)
+    gps-location:
+      latitude: str(starts_with="DEVICE_VARIABLE;") # per-device variable
+      longitude: str(starts_with="DEVICE_VARIABLE;") # per-device variable
+    control-session-pps: int(min=1, max=4294967295, required=False)
+    port-hop: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+    port-offset: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=19), required=False)
+    track-transport: enum("true", "false", required=False)
+    track-default-gateway: enum("true", "false", required=False)
+    admin-tech-on-failure: enum("true", "false", required=False)
+    idle-timeout: int(min=0, max=300, required=False)
+    on-demand: include("cft_system_ondemand_tunnel", required=False)
+cft_system_clock:
+  timezone: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False) # convert into enum for valid TZ values
+cft_system_ondemand_tunnel:
+  enable: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"))
+  idle-timeout: any(str(starts_with="DEVICE_VARIABLE;"), int(min=10, max=65535))
+---
+# Cisco VPN feature template
+# Missing: DNS host entries; service routes; GRE routes; IPSec routes;
+# NAT; route export/import; IPv6
+cisco_vpn_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    vpn-id: int(min=0, max=512)
+    name: str(min=1, max=32, required=False)
+    ecmp-hash-key: include("cft_vpn_ecmp_layer4", required=False)
+    dns: list(include("cft_vpn_dns"), max=2, required=False)
+    ip: include("cft_vpn_ip", required=False)
+    omp: include("cft_vpn_omp", required=False)
+    omp-admin-distance-ipv4: int(min=1, max=254, required=False)
+    omp-admin-distance-ipv6: int(min=1, max=254, required=False)
+cft_vpn_ecmp_layer4:
+  layer4: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"))
+cft_vpn_dns:
+  dns-addr: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  role: enum("primary", "secondary")
+cft_vpn_ip:
+  route: list(include("cft_vpn_ip_route"), required=False)
+cft_vpn_ip_route:
+  optional: bool()
+  prefix: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  next-hop: list(include("cft_vpn_ipv4_route_nexthop"), min=1)
+cft_vpn_ipv4_route_nexthop:
+  address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  distance: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255))
+cft_vpn_omp:
+  advertise: list(include("cft_omp_advertise"), required=False)
+cft_omp_advertise:
+  protocol: enum("bgp", "ospf", "ospfv3", "connected", "static", "eigrp", "lisp", "isis")
+---
+# Cisco VPN interface feature template
+# Missing: ACL, arp, manual duplex/speed;  dhcp helper; IPv6; VRRP
+# qos-map; rewrite rule; tloc-extension; tracker; trustsec
+cisco_vpn_interface_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    description: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+    if-name: any(str(starts_with="DEVICE_VARIABLE;"), str())
+    ip: include("cft_vpn_interface_ip", required=False)
+    mtu: any(str(starts_with="DEVICE_VARIABLE;"), int(min=576, max=9216), required=False)
+    nat: include("cft_vpn_interface_nat", required=False)
+    shaping-rate: any(str(starts_with="DEVICE_VARIABLE;"), int(), required=False)
+    shutdown: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"))
+    tloc-extension: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+    tunnel-interface: include("cft_vpn_interface_tunnel", required=False)
+    vrrp: list(include("cft_vpn_interface_vrrp"), required=False)
+cft_vpn_interface_ip:
+  address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4), required=False)
+  dhcp-client: enum("true", "false", required=False)
+  dhcp-distance: int(min=1, max=254, required=False)
+cft_vpn_interface_nat:
+  nat-choice: enum("interface", "pool", "loopback", required=False)
+cft_vpn_interface_tunnel:
+  allow-service: include("cft_vpn_interface_tunnel_allow", required=False)
+  clear-dont-fragment: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  color: include("cft_vpn_interface_tunnel_color")
+  encapsulation: list(include("cft_vpn_interface_tunnel_encap"), min=1, max=1, required=False)
+  group: any(str(starts_with="DEVICE_VARIABLE;"), list(int(min=1, max=4294967295)), required=False)
+  hello-interval: int(min=100, max=600000, required=False)
+  hello-tolerance: int(min=12, max=6000, required=False)
+  vmanage-connection-preference: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=8), required=False)
+cft_vpn_interface_tunnel_allow:
+  all: enum("true", "false", required=False)
+  bgp: enum("true", "false", required=False)
+  dhcp: enum("true", "false", required=False)
+  dns: enum("true", "false", required=False)
+  https: enum("true", "false", required=False)
+  icmp: enum("true", "false", required=False)
+  netconf: enum("true", "false", required=False)
+  ntp: enum("true", "false", required=False)
+  ospf: enum("true", "false", required=False)
+  sshd: enum("true", "false", required=False)
+  snmp: enum("true", "false", required=False)
+  stun: enum("true", "false", required=False)
+cft_vpn_interface_tunnel_color:
+  restrict: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  value: any(str(starts_with="DEVICE_VARIABLE;"), enum("3g", "biz-internet", "blue", "bronze", "custom1", "custom2", "custom3", "default", "gold", "green", "lte", "metro-ethernet", "mpls", "public-internet", "private1", "private2", "private3", "private4", "private5", "private6", "red", "silver"))
+cft_vpn_interface_tunnel_encap:
+  encap: enum("ipsec")
+  preference: any(str(starts_with="DEVICE_VARIABLE;"),int(min=0, max=4294967295), required=False)
+  weight: any(str(starts_with="DEVICE_VARIABLE;"),int(min=1, max=255), required=False)
+cft_vpn_interface_vrrp:
+  grp-id: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255))
+  ipv4:
+    address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  priority: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=254))
+  timer: any(str(starts_with="DEVICE_VARIABLE;"), int(min=100, max=40950), required=False)
+  tloc-change-pref: enum("true", "false", required=False)
+  track-omp: enum("true", "false", required=False)
+---
+# cEdge CLI feature template
+cli_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    config: str()
+---
+# Localized Policy schema
+localized_policies:
+  lists: include("localized_policy_lists", required=False)
+  definitions: include("localized_policy_definitions", required=False)
+  policies: include("localized_policy_templates", required=False)
+---
+# Localized Policy Lists
+# Supported list types: asPath, class, community, expandedCommunity, extCommunity, dataPrefix, prefix, vpn
+# Missing: mirror, policer
+localized_policy_lists:
+  asPath: list(include("policy_list_aspath"), required=False)
+  class: list(include("policy_list_class"), required=False)
+  community: list(include("policy_list_community"), required=False)
+  dataPrefix: list(include("policy_list_dataprefix"), required=False)
+  expandedCommunity: list(include("policy_list_expanded_community"), required=False)
+  extCommunity: list(include("policy_list_extended_community"), required=False)
+  localApp: list(include("policy_list_localapp"), required=False)
+  prefix: list(include("policy_list_prefix"), required=False)
+  vpn: list(include("policy_list_vpn"), required=False)
+policy_list_aspath:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  entries: list(include("policy_list_aspath_entries"))
+policy_list_aspath_entries:
+  asPath: str()
+policy_list_class:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  entries: list(include("policy_list_class_entries"))
+policy_list_class_entries:
+  queue: regex('^[0-7]{,1}$')
+policy_list_community:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  entries: list(include("policy_list_community_entries"))
+policy_list_community_entries:
+  community: regex('^[0-9]{,5}(:)[0-9]{,5}$')
+policy_list_localapp:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  entries: list(include("policy_list_localapp_entries"))
+policy_list_localapp_entries:
+  app: str(matches='^[A-Za-z0-9-_]+$', max=255)
+policy_list_dataprefix:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  entries: list(include("policy_list_dataprefix_entries"))
+policy_list_dataprefix_entries:
+  ipPrefix: ip(version=4)
+policy_list_expanded_community:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  entries: list(include("policy_list_expandedcommunity_entries"))
+policy_list_expandedcommunity_entries:
+  community: regex('^[0-9]{,5}(:)[0-9]{,5}$')
+policy_list_extended_community:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  entries: list(include("policy_list_extcommunity_entries"))
+policy_list_extcommunity_entries:
+  community: any(regex('^soo.*$'), regex('^rt.*$'))
+policy_list_prefix:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  entries: list(include("policy_list_prefix_entries"))
+policy_list_prefix_entries:
+  ipPrefix: ip(version=4)
+policy_list_vpn:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  entries: list(include("policy_list_vpn_entries"))
+policy_list_vpn_entries:
+  vpn: any(regex('^[0-9]{,3}$'), regex('^[0-9]{,3}(-)[0-9]{,3}$'))
+---
+# Localized Policy Definitions
+# Supported definition types: acl, deviceAccessPolicy, qosMap, rewriteRule, vedgeRoute
+# Missing: support for per-device variables in data prefix or community list entries
+localized_policy_definitions:
+  acl: list(include("policy_definition_acl"), required=False)
+  deviceAccessPolicy: list(include("policy_definition_deviceaccesspolicy"), required=False)
+  qosMap: list(include("policy_definition_qosMap"), required=False)
+  rewriteRule: list(include("policy_definition_rewriteRule"), required=False)
+  vedgeRoute: list(include("policy_definition_vedgeRoute"), required=False)
+# ACL Policy definition
+policy_definition_acl:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    defaultAction:
+      type: enum("accept", "drop")
+    sequences: list(include("policy_definition_acl_sequence"), required=False)
+policy_definition_acl_sequence:
+  actions: list(include("policy_definition_acl_action_class"), include("policy_definition_acl_action_count"), include("policy_definition_acl_action_dscp"), include("policy_definition_acl_action_log"), include("policy_definition_acl_action_mirror"), include("policy_definition_acl_action_nexthop"), include("policy_definition_acl_action_policer"), required=False)
+  baseAction: enum("accept", "drop")
+  match: include("policy_definition_acl_match_entries", required=False)
+  sequenceId: int(min=1, max=65534)
+  sequenceIpType: enum("ipv4", "ipv6")
+  sequenceName: str(equals="Access Control List", required=False)
+  sequenceType: str(equals="acl", required=False)
+policy_definition_acl_action_class:
+  type: enum("class")
+  parameter:
+    ref: str()
+policy_definition_acl_action_count:
+  type: enum("count")
+  parameter: str()
+policy_definition_acl_action_dscp:
+  type: enum("dscp")
+  parameter: regex('^[0-9]{,2}$')
+policy_definition_acl_action_log:
+  type: enum("log")
+  parameter: null()
+policy_definition_acl_action_mirror:
+  type: enum("mirror")
+  parameter:
+    ref: str()
+policy_definition_acl_action_nexthop:
+  type: enum("nextHop")
+  parameter: ip(version=4)
+policy_definition_acl_action_policer:
+  type: enum("policer")
+  parameter:
+    ref: str()
+policy_definition_acl_match_entries:
+  entries: list(include("policy_definition_acl_match_class"), include("policy_definition_acl_match_dscp"), include("policy_definition_acl_match_ipaddress"), include("policy_definition_acl_match_packetlength"), include("policy_definition_acl_match_plp"), include("policy_definition_acl_match_port"), include("policy_definition_acl_match_prefix"), include("policy_definition_acl_match_protocol"), include("policy_definition_acl_match_tcp"), required=False)
+policy_definition_acl_match_class:
+  field: enum("class")
+  value:
+    ref: str()
+policy_definition_acl_match_dscp:
+  field: enum("dscp")
+  value: regex('^[0-9]{,2}$')
+policy_definition_acl_match_ipaddress:
+  field: enum("destinationIp", "sourceIp")
+  value: ip(version=4)
+policy_definition_acl_match_packetlength:
+  field: enum("packetLength")
+  value: int(min=0, max=65535)
+policy_definition_acl_match_plp:
+  field: enum("plp")
+  value: enum("high", "low")
+policy_definition_acl_match_port:
+  field: enum("destinationPort", "sourcePort")
+  value: regex('^[0-9]{,5}$')
+policy_definition_acl_match_prefix:
+  field: enum("destinationDataPrefixList", "sourceDataPrefixList")
+  value:
+    ref: str()
+policy_definition_acl_match_protocol:
+  field: enum("protocol")
+  value: str()
+policy_definition_acl_match_tcp:
+  field: enum("tcp")
+  value: enum("syn")
+# Device Access Policy definition
+policy_definition_deviceaccesspolicy:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    defaultAction:
+      type: enum("accept", "drop")
+    sequences: list(include("policy_definition_deviceaccesspolicy_sequence"), required=False)
+policy_definition_deviceaccesspolicy_sequence:
+  actions: list(include("policy_definition_acl_action_count"), required=False)
+  baseAction: enum("accept", "drop")
+  match: include("policy_definition_dap_match_entries", required=False)
+  sequenceId: int(min=1, max=65534)
+  sequenceIpType: enum("ipv4", "ipv6")
+  sequenceName: str(equals="Device Access Control List", required=False)
+  sequenceType: str(equals="deviceaccesspolicy", required=False)
+policy_definition_dap_match_entries:
+  entries: list(include("policy_definition_acl_match_prefix"), include("policy_definition_acl_match_ipaddress"), include("policy_definition_dap_match_port"), required=False)
+policy_definition_dap_match_port:
+  field: enum("destinationPort", "sourcePort")
+  value: enum("22", "161")
+# QoS Map Policy definition
+policy_definition_qosMap:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    definition:
+      qosSchedulers: list(include("policy_definition_qos_scheduler"))
+policy_definition_qos_scheduler:
+  bandwidthPercent: regex('^[0-9]{,2}$')
+  bufferPercent: regex('^[0-9]{,2}$')
+  burst: regex('^[0-9]{,8}$', required=False) # burst min=5000, max=10000000
+  classMapRef: regex('^[^<>!&$@\/"() ]{,128}$')
+  drops: enum("tail-drop", "red-drop")
+  queue: regex('^[0-7]{,1}$')
+  scheduling: enum("llq", "wrr")
+  tempKeyValues: str(required=False)
+# Rewrite Rule Policy definition
+policy_definition_rewriteRule:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    definition:
+      rules: list(include("policy_definition_rewrite_rule"))
+policy_definition_rewrite_rule:
+  class: regex('^[^<>!&$@\/"() ]{,128}$')
+  dscp: regex('^[0-9]{,2}$')
+  layer2cos: int(min=0, max=7, required=False)
+  plp: enum("high", "low")
+# Route Policy definition
+policy_definition_vedgeRoute:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    defaultAction:
+      type: enum("accept", "reject")
+    sequences: list(include("policy_definition_vedgeRoute_sequence"), required=False)
+policy_definition_vedgeRoute_sequence:
+  actions: list(include("policy_definition_vedgeRoute_actions"), required=False)
+  baseAction: enum("accept", "reject")
+  match: include("policy_definition_vedgeRoute_match_entries", required=False)
+  sequenceId: int(min=1, max=65534)
+  sequenceIpType: enum("ipv4", "ipv6")
+  sequenceName: str(equals="Route", required=False)
+  sequenceType: str(equals="vedgeRoute", required=False)
+policy_definition_vedgeRoute_actions:
+  parameter: list(include("policy_definition_vedgeroute_action_aggregator"), include("policy_definition_vedgeroute_action_aspath"), include("policy_definition_vedgeroute_action_atomicaggregate"), include("policy_definition_vedgeroute_action_community"), include("policy_definition_vedgeroute_action_community_additive"), include("policy_definition_vedgeroute_action_metric"), include("policy_definition_vedgeroute_action_metrictype"), include("policy_definition_vedgeroute_action_nexthop"), include("policy_definition_vedgeroute_action_tag"), include("policy_definition_vedgeroute_action_origin"), include("policy_definition_vedgeroute_action_originator"), required=False)
+  type: str(equals="set")
+policy_definition_vedgeroute_action_aggregator:
+  field: enum("aggregator")
+  value:
+    aggregator: int(min=0, max=4294967295)
+    ipaddress: ip(version=4)
+policy_definition_vedgeroute_action_aspath:
+  field: enum("asPath")
+  value:
+    prepend: list(int(min=0, max=65535))
+    exclude: list(int(min=0, max=65535))
+policy_definition_vedgeroute_action_atomicaggregate:
+  field: enum("atomicAggregate")
+  value: enum("true")
+policy_definition_vedgeroute_action_community:
+  field: enum("community")
+  vipVariableName: str(required=False)
+  value: any(str(), enum("internet", "local-AS"), required=False)
+policy_definition_vedgeroute_action_community_additive:
+  field: enum("communityAdditive")
+  value: enum("true", "false")
+policy_definition_vedgeroute_action_metric:
+  field: enum("localPreference", "metric", "weight")
+  value: regex('^[0-9]{,10}$')
+policy_definition_vedgeroute_action_metrictype:
+  field: enum("metrictype")
+  value: enum("type1", "type2")
+policy_definition_vedgeroute_action_nexthop:
+  field: enum("nextHop")
+  value: ip(version=4)
+policy_definition_vedgeroute_action_tag:
+  field: enum("ompTag", "ospfTag")
+  value: regex('^[0-9]{,10}$')
+policy_definition_vedgeroute_action_origin:
+  field: enum("origin")
+  value: enum("igp", "egp", "incomplete")
+policy_definition_vedgeroute_action_originator:
+  field: enum("originator")
+  value: ip(version=4)
+policy_definition_vedgeRoute_match_entries:
+  entries: list(include("policy_definition_vedgeroute_match_address"), include("policy_definition_vedgeroute_match_aspath"), include("policy_definition_vedgeroute_match_community"), include("policy_definition_vedgeroute_match_expandedcommunity"), include("policy_definition_vedgeroute_match_extendedcommunity"), include("policy_definition_vedgeroute_match_metric"), include("policy_definition_vedgeroute_match_nexthop"), include("policy_definition_vedgeroute_match_origin"), include("policy_definition_vedgeroute_match_peer"), include("policy_definition_vedgeroute_match_tag"), required=False)
+policy_definition_vedgeroute_match_address:
+  field: enum("address")
+  ref: str() # name of prefix list
+policy_definition_vedgeroute_match_aspath:
+  field: enum("asPath")
+  ref: str() # name of asPath list
+policy_definition_vedgeroute_match_community:
+  field: enum("community") # "advancedCommunity" used in the definition payload when mutliple standard community are combined (with multiple standard community lists only "or" match flag can be used)
+  ref: str() # list of standard community list names
+  matchFlag: enum("and", "or", "exact") # For "and" and "exact" flags, a single community list can be provided
+policy_definition_vedgeroute_match_expandedcommunity:
+  field: enum("expandedCommunity")
+  ref: str() # name of expanded community list
+policy_definition_vedgeroute_match_extendedcommunity:
+  field: enum("extCommunity")
+  ref: str() # name of extended community list
+policy_definition_vedgeroute_match_metric:
+  field: enum("localPreference", "metric")
+  value: int(min=0, max=4294967295)
+policy_definition_vedgeroute_match_nexthop:
+  field: enum("nextHop")
+  ref: str() # name of prefix list
+policy_definition_vedgeroute_match_origin:
+  field: enum("origin")
+  value: enum("igp", "egp", "incomplete")
+policy_definition_vedgeroute_match_peer:
+  field: enum("peer")
+  value: ip(version=4)
+policy_definition_vedgeroute_match_tag:
+  field: enum("ompTag", "ospfTag")
+  value: regex('^[0-9]{,10}$')
+---
+# Localized Policy template schema
+localized_policy_templates:
+  feature: list(include("localized_policy_template_feature"))
+localized_policy_template_feature:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    assembly: list(include("localized_policy_template_assembly"), required=False)
+    settings: include("localized_policy_template_settings", required=False)
+localized_policy_template_assembly:
+  type: enum("acl", "deviceAccessPolicy", "qosMap", "vedgeRoute", "rewriteRule")
+  definitionName: regex('^[^<>!&$@\/"() ]{,128}$')
+localized_policy_template_settings:
+  appVisibility: bool(required=False)
+  appVisibilityIPv6: bool(required=False)
+  flowVisibility: bool(required=False)
+  flowVisibilityIPv6: bool(required=False)
+  implicitAclLogging: bool(required=False)
+  ipVisibilityCacheEntries: int(min=16, max=2000000, required=False)
+  ipV6VisibilityCacheEntries: int(min=16, max=2000000, required=False)
+  logFrequency: int(min=1, max=2147483647, required=False) # should be a power of 2
+---
+# Device template schema
+cedge_device_templates:
+  device_template: list(include("cedge_device_template"))
+---
+cedge_device_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  description: str()
+  parameters:
+    device_model: enum("C8000V", "C8300-1N1S-4T2X", "C8300-1N1S-6T", "C8300-2N2S-6T", "C8300-2N2S-4T2X", "C8500-12X4QC", "C8500-12X", "C8500-20X6C", "C8500L-8S4X", "C8200-1N-4T", "C8200L-1N-4T")
+    localized_policy: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+    feature_templates: list(include("dt_feature_template_ref"))
+dt_feature_template_ref:
+  templateName: regex('^[^<>!&$@\/"() ]{,128}$')
+  templateType: enum("cedge_aaa", "cedge_global", "cisco_banner", "cisco_bfd", "cisco_omp", "cisco_security", "cisco_snmp", "cisco_system", "cisco_vpn", "cli-template")
+  subTemplates: list(include("dt_feature_subtemplates_level1"), required=False)
+dt_feature_subtemplates_level1:
+  templateName: regex('^[^<>!&$@\/"() ]{,128}$')
+  templateType: enum("cisco_bgp", "cisco_ospf", "cisco_vpn_interface", "cisco_logging", "cisco_ntp")
+  subTemplates: list(include("dt_feature_subtemplates_level2"), required=False)
+dt_feature_subtemplates_level2:
+  templateName: regex('^[^<>!&$@\/"() ]{,128}$')
+  templateType: enum("cisco_dhcp_server")
+dt_feature_template_old:
+  cedge_aaa: list(include("dt_feature_template_name_old"), max=1)
+  cedge_global: list(include("dt_feature_template_name_old"), max=1)
+  cisco_banner: list(include("dt_feature_template_name_old"), required=False, max=1)
+  cisco_bfd: list(include("dt_feature_template_name_old"), max=1)
+  cisco_logging: list(include("dt_feature_template_name_old"), max=1)
+  cisco_ntp: list(include("dt_feature_template_name_old"), required=False, max=1)
+  cisco_omp: list(include("dt_feature_template_name_old"), max=1)
+  cisco_security: list(include("dt_feature_template_name_old"), max=1)
+  cisco_snmp: list(include("dt_feature_template_name_old"), required=False, max=1)
+  cisco_system: list(include("dt_feature_template_name_old"), max=1)
+  cisco_vpn: list(include("dt_feature_template_subtemplates_old"), min=2, max=64)
+  cli_template: list(include("dt_feature_template_name"), required=False, max=1)
+dt_feature_template_name_old:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+dt_feature_template_subtemplates_old:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  subtemplates: include("dt_feature_subtemplates_level1_old", required=False)
+dt_feature_subtemplates_level1_old:
+  cisco_vpn_interface: list(include("dt_feature_subtemplate_level1_old"), required=False)
+  cisco_bgp: list(include("dt_feature_subtemplate_level1_old"), required=False, max=1)
+  cisco_ospf: list(include("dt_feature_subtemplate_level1_old"), required=False, max=1)
+dt_feature_subtemplate_level1_old:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  subtemplates: include("dt_feature_subtemplates_level2_old", required=False)
+dt_feature_subtemplates_level2_old:
+  cisco_dhcp_server: list(include("dt_feature_template_name_old"))
+---
+# SD-WAN Site schema - per-device variables
+sites: list(include("sdwan_site"))
+sdwan_site:
+  id: int(min=1, max=4294967295)
+  routers: list(include("cedge_router"))
+---
+cedge_router:
+  chassis_id: str()
+  model: enum("C8000V", "C8300-1N1S-4T2X", "C8300-1N1S-6T", "C8300-2N2S-6T", "C8300-2N2S-4T2X", "C8500-12X4QC", "C8500-12X", "C8500-20X6C", "C8500L-8S4X", "C8200-1N-4T", "C8200L-1N-4T")
+  device_template: regex('^[^<>!&$@\/"() ]{,128}$')
+  device_variables: map(key=str(), required=False)
