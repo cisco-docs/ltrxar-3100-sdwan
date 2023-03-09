@@ -1,17 +1,17 @@
 # SDWAN-as-code YAML schema
+sdwan: include('sdwan', required=False)
+---
 sdwan:
   vmanage: include("vmanage", required=False)
   cedge_feature_templates: include("cedge_feature_templates", required=False)
   localized_policies: include("localized_policies", required=False)
   cedge_device_templates: include("cedge_device_templates", required=False)
-  sites: include("sites", required=False)
----
+  sites: list(include("sites"), required=False)
 # vManage API settings
 vmanage:
   vmanage_ip: ip()
   vmanage_user: str()
   vmanage_password: str()
----
 # cEdge Feature Yemplate schema
 cedge_feature_templates:
   cedge_aaa: list(include("cedge_aaa_template"), required=False)
@@ -30,7 +30,6 @@ cedge_feature_templates:
   cisco_vpn: list(include("cisco_vpn_template"), required=False)
   cisco_vpn_interface: list(include("cisco_vpn_interface_template"), required=False)
   cli-template: list(include("cli_template"), required=False)
----
 # cEdge AAA feature template
 # Supported: local users, RADIUS groups, TACACS groups
 # Missing: Radius COA, Radius Trustsec, Acconting, dot1x auth
@@ -38,11 +37,12 @@ cedge_aaa_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    server-auth-order: str(matches='^[A-Za-z0-9-_,]+$') # "local" or server group names, comma-separated
-    user: list(include("cft_aaa_local_user")) # At least the local user "admin" must be defined
-    tacacs: list(include("cft_aaa_tacacs_group"), required=False)
-    radius: list(include("cft_aaa_radius_group"), required=False)
+  parameters: include("cft_aaa_parameters", required=False)
+cft_aaa_parameters:
+  server-auth-order: str(matches='^[A-Za-z0-9-_,]+$') # "local" or server group names, comma-separated
+  user: list(include("cft_aaa_local_user")) # At least the local user "admin" must be defined
+  tacacs: list(include("cft_aaa_tacacs_group"), required=False)
+  radius: list(include("cft_aaa_radius_group"), required=False)
 cft_aaa_local_user:
   name: str(max=64)
   password: str(starts_with="$6$") # Must be a SHA512 hash
@@ -77,23 +77,24 @@ cft_aaa_radius_server:
   acct-port: int(min=1, max=65535, required=False) # default=1813
   timeout: int(min=1, max=1000, required=False) # default=5
   retransmit: int(min=1, max=100, required=False) # default=3
----
 # cEdge Global Settings feature template
 cedge_global_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    http-global: include("cft_global_http", required=False)
-    nat64-global: include("cft_global_nat64", required=False)
-    services-global: include("cft_global_services", required=False)
-    ssh: include("cft_global_ssh", required=False)
+  parameters: include("cft_global_parameters", required=False)
+cft_global_parameters:
+  http-global: include("cft_global_http", required=False)
+  nat64-global: include("cft_global_nat64", required=False)
+  services-global: include("cft_global_services", required=False)
+  ssh: include("cft_global_ssh", required=False)
 cft_global_http:
   http-authentication: enum("local", "aaa", required=False)
 cft_global_nat64:
-  nat64-timeout:
-    udp-timeout: int(min=1, max=536870, required=False)
-    tcp-timeout: int(min=1, max=536870, required=False)
+  nat64-timeout: include("cft_global_nat64_timeout", required=False)
+cft_global_nat64_timeout:
+  udp-timeout: int(min=1, max=536870, required=False)
+  tcp-timeout: int(min=1, max=536870, required=False)
 cft_global_services:
   services-ip: include("cft_global_services_ip", required=False)
   services-other: include("cft_global_services_other", required=False)
@@ -120,25 +121,25 @@ cft_global_services_other:
   vty-logging: enum("true", "false", required=False)
 cft_global_ssh:
   version: enum(1, 2, required=False)
----
 # Cisco banner feature template
 cisco_banner_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    login: str(min=1, max=2048, required=False)
-    motd: str(min=1, max=2048, required=False)
----
+  parameters: include("cft_banner_parameters", required=False)
+cft_banner_parameters:
+  login: str(min=1, max=2048, required=False)
+  motd: str(min=1, max=2048, required=False)
 # Cisco BFD feature template
 cisco_bfd_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    app-route: include("cft_bfd_approute", required=False)
-    default-dscp: int(min=0, max=63, required=False)
-    color: list(include("cft_bfd_color"), required=False)
+  parameters: include("cft_bfd_parameters", required=False)
+cft_bfd_parameters:
+  app-route: include("cft_bfd_approute", required=False)
+  default-dscp: int(min=0, max=63, required=False)
+  color: list(include("cft_bfd_color"), required=False)
 cft_bfd_approute:
   multiplier: int(min=1, max=6, required=False)
   poll-interval: int(min=1, max=4294967295, required=False)
@@ -148,14 +149,14 @@ cft_bfd_color:
   multiplier: int(min=1, max=60, required=False)
   pmtu-discovery: enum("true", "false", required=False)
   dscp: int(min=0, max=63, required=False)
----
 # Cisco BGP feature template
 cisco_bgp_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    bgp: include("cft_bgp")
+  parameters: include("cft_bgp_parameters", required=False)
+cft_bgp_parameters:
+  bgp: include("cft_bgp")
 cft_bgp:
   address-family: list(include("cft_bgp_address_family", required=False))
   as-num: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=4294967295))
@@ -220,17 +221,18 @@ cft_bgp_neighbor_af_route_policy:
 cft_bgp_timers:
   keepalive: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=65535), required=False)
   holdtime: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=65535), required=False)
----
+# Cisco DHCP server feature template
 cisco_dhcp_server_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    address-pool: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4)) # CIDR prefix
-    exclude: any(str(starts_with="DEVICE_VARIABLE;"), str()) # comma-separated IP address ranges, ex: 10.59.160.1,10.59.162.1-10.59.163.254
-    lease-time: any(str(starts_with="DEVICE_VARIABLE;"), int(min=10, max=31536000))
-    options: include("cft_dhcpserver_options")
-    static-lease: list(include("cft_dhcpserver_static_lease"), min=1, required=False)
+  parameters: include("cft_dhcp_server_parameters", required=False)
+cft_dhcp_server_parameters:
+  address-pool: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4)) # CIDR prefix
+  exclude: any(str(starts_with="DEVICE_VARIABLE;"), str()) # comma-separated IP address ranges, ex: 10.59.160.1,10.59.162.1-10.59.163.254
+  lease-time: any(str(starts_with="DEVICE_VARIABLE;"), int(min=10, max=31536000))
+  options: include("cft_dhcpserver_options")
+  static-lease: list(include("cft_dhcpserver_static_lease"), min=1, required=False)
 cft_dhcpserver_options:
   default-gateway: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
   dns-servers: any(str(starts_with="DEVICE_VARIABLE;"), str()) # comma-separated list of IP addresses
@@ -238,16 +240,16 @@ cft_dhcpserver_static_lease:
   ip: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
   mac-address: any(str(starts_with="DEVICE_VARIABLE;"), str())
   optional: bool(required=False)
----
 # Cisco logging feature template
 # Missing: TLS profiles for logging servers
 cisco_logging_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    disk: include("cft_logging_disk", required=False)
-    server: list(include("cft_logging_server"), required=False)
+  parameters: include("cft_logging_parameters", required=False)
+cft_logging_parameters:
+  disk: include("cft_logging_disk", required=False)
+  server: list(include("cft_logging_server"), required=False)
 cft_logging_disk:
   enable: enum("true", "false")
   file: include("cft_logging_disk_file", required=False)
@@ -263,15 +265,15 @@ cft_logging_server:
   version: enum(4, required=False)
 cft_logging_server_tls:
   enable-tls: enum("true", "false")
----
 # Cisco NTP feature template
 # Missing: authentication keys; ntp master
 cisco_ntp_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    server: list(include("cft_ntp_server"), required=False)
+  parameters: include("cft_ntp_parameters", required=False)
+cft_ntp_parameters:
+  server: list(include("cft_ntp_server"), required=False)
 cft_ntp_server:
   name: any(str(starts_with="DEVICE_VARIABLE;"), str(matches='^[a-z0-9.-]+$', max=255), ip(version=4))
   version: int(min=1, max=4, required=False)
@@ -279,21 +281,22 @@ cft_ntp_server:
   optional: bool(required=False)
   prefer: enum("true", "false", required=False)
   source-interface: any(str(), str(starts_with="DEVICE_VARIABLE;"), required=False)
----
+# Cisco OMP feature template
 cisco_omp_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    graceful-restart: enum("true", "false", required=False)
-    overlay-as: int(min=1, max=4294967295, required=False)
-    send-path-limit: int(min=1, max=16, required=False)
-    ecmp-limit: int(min=1, max=16, required=False)
-    shutdown: enum("true", "false", required=False)
-    omp-admin-distance-ipv4: int(min=1, max=255, required=False)
-    omp-admin-distance-ipv6: int(min=1, max=255, required=False)
-    timers: include("cft_omp_timers", required=False)
-    advertise: list(include("cft_omp_advertise_protocol"), required=False)
+  parameters: include("cft_omp_parameters", required=False)
+cft_omp_parameters:
+  graceful-restart: enum("true", "false", required=False)
+  overlay-as: int(min=1, max=4294967295, required=False)
+  send-path-limit: int(min=1, max=16, required=False)
+  ecmp-limit: int(min=1, max=16, required=False)
+  shutdown: enum("true", "false", required=False)
+  omp-admin-distance-ipv4: int(min=1, max=255, required=False)
+  omp-admin-distance-ipv6: int(min=1, max=255, required=False)
+  timers: include("cft_omp_timers", required=False)
+  advertise: list(include("cft_omp_advertise_protocol"), required=False)
 cft_omp_timers:
   graceful-restart-timer: int(min=1, max=604800, required=False)
   advertisement-interval: int(min=1, max=65535, required=False)
@@ -301,24 +304,21 @@ cft_omp_timers:
   eor-timer: int(min=1, max=604800, required=False)
 cft_omp_advertise_protocol:
   protocol: enum("bgp", "ospf", "ospfv3", "connected", "static", "eigrp", "lisp", "isis")
----
 # Cisco security feature template
 # Missing: pairwise IPSec keys; keyrings
 cisco_security_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    ipsec: include("cft_security_ipsec", required=False)
+  parameters: include("cft_security_parameters", required=False)
+cft_security_parameters:
+  ipsec: include("cft_security_ipsec", required=False)
 cft_security_ipsec:
-  authentication-type: list(include("cft_security_authentication_type"), required=False)
+  authentication-type: list(enum("none", "sha1-hmac", "ah-sha1-hmac", "ah-no-id"), required=False)
   extended-ar-window: int(min=10, max=2048, required=False)
-  integrity-type: list(include("cft_security_integrity_type"), required=False)
+  integrity-type: list(enum("none", "esp", "ip-udp-esp", "ip-udp-esp-no-id"), required=False)
   rekey: int(min=1, max=1209600, required=False)
   replay-window: enum("64", "128", "256", "512", "1024", "2048", "4096", "8192", required=False)
-cft_security_authentication_type: enum("none", "sha1-hmac", "ah-sha1-hmac", "ah-no-id")
-cft_security_integrity_type: enum("none", "esp", "ip-udp-esp", "ip-udp-esp-no-id")
----
 # Cisco SIG Credentials template
 # Supported: Umbrella
 # Missing: Zscaler
@@ -326,9 +326,10 @@ cisco_sig_credentials_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    umbrella: include("cft_umbrella_parameters", required=False)
-    zscaler: include("cft_zscaler_parameters", required=False)
+  parameters: include("cft_sig_credentials_parameters", required=False)
+cft_sig_credentials_parameters:
+  umbrella: include("cft_umbrella_parameters", required=False)
+  zscaler: include("cft_zscaler_parameters", required=False)
 cft_umbrella_parameters:
   api-key: regex('^[0-9a-z]{,32}$') # 32 alphanumeric characters
   api-secret: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128, required=False) # vManage-encrypted string
@@ -339,22 +340,22 @@ cft_zscaler_parameters:
   password: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128, required=False) # vManage-encrypted string
   partner-base-url: str()
   organization: str()
----
 # Cisco SNMP feature template
 # Missing: SNMPv2
 cisco_snmp_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    community: list(include("cft_snmp_community"), required=False)
-    contact: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
-    group: list(include("cft_snmp_group"), required=False)
-    location: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
-    shutdown: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
-    trap: include("cft_snmp_trap", required=False)
-    user: list(include("cft_snmp_user"), required=False)
-    view: list(include("cft_snmp_view"), required=False)
+  parameters: include("cft_snmp_parameters", required=False)
+cft_snmp_parameters:
+  community: list(include("cft_snmp_community"), required=False)
+  contact: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+  group: list(include("cft_snmp_group"), required=False)
+  location: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+  shutdown: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  trap: include("cft_snmp_trap", required=False)
+  user: list(include("cft_snmp_user"), required=False)
+  view: list(include("cft_snmp_view"), required=False)
 cft_snmp_community:
   authorization: enum("read-only")
   name: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128, required=False) ## vManage-encrypted string
@@ -386,40 +387,40 @@ cft_snmp_view:
 cft_snmp_oid:
   id: regex('^[0-9.]+$') ## Allow only digits and dots
   exclude: enum("true", "false", required=False)
----
 # Cisco system feature template
 # Missing: device groups, controller groups, geo-fencing, trackers, track-interface
 cisco_system_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    site-id: str(starts_with="DEVICE_VARIABLE;") # per-device variable
-    system-ip: str(starts_with="DEVICE_VARIABLE;") # per-device variable
-    overlay-id: int(min=1, max=4294967295, required=False)
-    clock: include("cft_system_clock", required=False)
-    host-name: str(starts_with="DEVICE_VARIABLE;") # per-device variable
-    location: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False) # per-device variable
-    description: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False) # per-device variable
-    console-baud-rate: any(str(starts_with="DEVICE_VARIABLE;"), enum("1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200"), required=False)
-    max-omp-sessions: int(min=1, max=100, required=False)
-    gps-location:
-      latitude: str(starts_with="DEVICE_VARIABLE;") # per-device variable
-      longitude: str(starts_with="DEVICE_VARIABLE;") # per-device variable
-    control-session-pps: int(min=1, max=4294967295, required=False)
-    port-hop: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
-    port-offset: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=19), required=False)
-    track-transport: enum("true", "false", required=False)
-    track-default-gateway: enum("true", "false", required=False)
-    admin-tech-on-failure: enum("true", "false", required=False)
-    idle-timeout: int(min=0, max=300, required=False)
-    on-demand: include("cft_system_ondemand_tunnel", required=False)
+  parameters: include("cft_system_parameters", required=False)
+cft_system_parameters:
+  site-id: str(starts_with="DEVICE_VARIABLE;") # per-device variable
+  system-ip: str(starts_with="DEVICE_VARIABLE;") # per-device variable
+  overlay-id: int(min=1, max=4294967295, required=False)
+  clock: include("cft_system_clock", required=False)
+  host-name: str(starts_with="DEVICE_VARIABLE;") # per-device variable
+  location: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False) # per-device variable
+  description: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False) # per-device variable
+  console-baud-rate: any(str(starts_with="DEVICE_VARIABLE;"), enum("1200", "2400", "4800", "9600", "19200", "38400", "57600", "115200"), required=False)
+  max-omp-sessions: int(min=1, max=100, required=False)
+  gps-location: include("cft_system_gps_location", required=False)
+  control-session-pps: int(min=1, max=4294967295, required=False)
+  port-hop: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  port-offset: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=19), required=False)
+  track-transport: enum("true", "false", required=False)
+  track-default-gateway: enum("true", "false", required=False)
+  admin-tech-on-failure: enum("true", "false", required=False)
+  idle-timeout: int(min=0, max=300, required=False)
+  on-demand: include("cft_system_ondemand_tunnel", required=False)
+cft_system_gps_location:
+  latitude: str(starts_with="DEVICE_VARIABLE;") # per-device variable
+  longitude: str(starts_with="DEVICE_VARIABLE;") # per-device variable
 cft_system_clock:
   timezone: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False) # convert into enum for valid TZ values
 cft_system_ondemand_tunnel:
   enable: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"))
   idle-timeout: any(str(starts_with="DEVICE_VARIABLE;"), int(min=10, max=65535))
----
 # Cisco VPN feature template
 # Missing: DNS host entries; service routes; GRE routes; IPSec routes;
 # NAT; route export/import; IPv6
@@ -427,15 +428,16 @@ cisco_vpn_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    vpn-id: int(min=0, max=512)
-    name: str(min=1, max=32, required=False)
-    ecmp-hash-key: include("cft_vpn_ecmp_layer4", required=False)
-    dns: list(include("cft_vpn_dns"), max=2, required=False)
-    ip: include("cft_vpn_ip", required=False)
-    omp: include("cft_vpn_omp", required=False)
-    omp-admin-distance-ipv4: int(min=1, max=254, required=False)
-    omp-admin-distance-ipv6: int(min=1, max=254, required=False)
+  parameters: include("cft_vpn_parameters", required=False)
+cft_vpn_parameters:
+  vpn-id: int(min=0, max=512)
+  name: str(min=1, max=32, required=False)
+  ecmp-hash-key: include("cft_vpn_ecmp_layer4", required=False)
+  dns: list(include("cft_vpn_dns"), max=2, required=False)
+  ip: include("cft_vpn_ip", required=False)
+  omp: include("cft_vpn_omp", required=False)
+  omp-admin-distance-ipv4: int(min=1, max=254, required=False)
+  omp-admin-distance-ipv6: int(min=1, max=254, required=False)
 cft_vpn_ecmp_layer4:
   layer4: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"))
 cft_vpn_dns:
@@ -454,7 +456,6 @@ cft_vpn_omp:
   advertise: list(include("cft_omp_advertise"), required=False)
 cft_omp_advertise:
   protocol: enum("bgp", "ospf", "ospfv3", "connected", "static", "eigrp", "lisp", "isis")
----
 # Cisco VPN interface feature template
 # Missing: ACL, arp, manual duplex/speed;  dhcp helper; IPv6; VRRP
 # qos-map; rewrite rule; tloc-extension; tracker; trustsec
@@ -462,17 +463,18 @@ cisco_vpn_interface_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    description: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
-    if-name: any(str(starts_with="DEVICE_VARIABLE;"), str())
-    ip: include("cft_vpn_interface_ip", required=False)
-    mtu: any(str(starts_with="DEVICE_VARIABLE;"), int(min=576, max=9216), required=False)
-    nat: include("cft_vpn_interface_nat", required=False)
-    shaping-rate: any(str(starts_with="DEVICE_VARIABLE;"), int(), required=False)
-    shutdown: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"))
-    tloc-extension: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
-    tunnel-interface: include("cft_vpn_interface_tunnel", required=False)
-    vrrp: list(include("cft_vpn_interface_vrrp"), required=False)
+  parameters: include("cft_vpn_interface_parameters", required=False)
+cft_vpn_interface_parameters:
+  description: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+  if-name: any(str(starts_with="DEVICE_VARIABLE;"), str())
+  ip: include("cft_vpn_interface_ip", required=False)
+  mtu: any(str(starts_with="DEVICE_VARIABLE;"), int(min=576, max=9216), required=False)
+  nat: include("cft_vpn_interface_nat", required=False)
+  shaping-rate: any(str(starts_with="DEVICE_VARIABLE;"), int(), required=False)
+  shutdown: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"))
+  tloc-extension: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+  tunnel-interface: include("cft_vpn_interface_tunnel", required=False)
+  vrrp: list(include("cft_vpn_interface_vrrp"), required=False)
 cft_vpn_interface_ip:
   address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4), required=False)
   dhcp-client: enum("true", "false", required=False)
@@ -510,27 +512,26 @@ cft_vpn_interface_tunnel_encap:
   weight: any(str(starts_with="DEVICE_VARIABLE;"),int(min=1, max=255), required=False)
 cft_vpn_interface_vrrp:
   grp-id: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255))
-  ipv4:
-    address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  ipv4: include("cft_vpn_interface_vrrp_ipv4", required=False)
   priority: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=254))
   timer: any(str(starts_with="DEVICE_VARIABLE;"), int(min=100, max=40950), required=False)
   tloc-change-pref: enum("true", "false", required=False)
   track-omp: enum("true", "false", required=False)
----
+cft_vpn_interface_vrrp_ipv4:
+  address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
 # cEdge CLI feature template
 cli_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    config: str()
----
+  parameters: include("cft_cli_template_parameters", required=False)
+cft_cli_template_parameters:
+  config: str()
 # Localized Policy schema
 localized_policies:
   lists: include("localized_policy_lists", required=False)
   definitions: include("localized_policy_definitions", required=False)
   policies: include("localized_policy_templates", required=False)
----
 # Localized Policy Lists
 # Supported list types: asPath, class, community, expandedCommunity, extCommunity, dataPrefix, prefix, vpn
 # Missing: mirror, policer
@@ -607,7 +608,6 @@ policy_list_vpn:
   entries: list(include("policy_list_vpn_entries"))
 policy_list_vpn_entries:
   vpn: any(regex('^[0-9]{,3}$'), regex('^[0-9]{,3}(-)[0-9]{,3}$'))
----
 # Localized Policy Definitions
 # Supported definition types: acl, deviceAccessPolicy, qosMap, rewriteRule, vedgeRoute
 # Missing: support for per-device variables in data prefix or community list entries
@@ -622,10 +622,12 @@ policy_definition_acl:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    defaultAction:
-      type: enum("accept", "drop")
-    sequences: list(include("policy_definition_acl_sequence"), required=False)
+  parameters: include("policy_definition_acl_parameters", required=False)
+policy_definition_acl_parameters:
+  defaultAction: include("policy_definition_acl_parameters_type", required=False)
+  sequences: list(include("policy_definition_acl_sequence"), required=False)
+policy_definition_acl_parameters_type:
+  type: enum("accept", "drop")
 policy_definition_acl_sequence:
   actions: list(include("policy_definition_acl_action_class"), include("policy_definition_acl_action_count"), include("policy_definition_acl_action_dscp"), include("policy_definition_acl_action_log"), include("policy_definition_acl_action_mirror"), include("policy_definition_acl_action_nexthop"), include("policy_definition_acl_action_policer"), required=False)
   baseAction: enum("accept", "drop")
@@ -636,8 +638,9 @@ policy_definition_acl_sequence:
   sequenceType: str(equals="acl", required=False)
 policy_definition_acl_action_class:
   type: enum("class")
-  parameter:
-    ref: str()
+  parameter: include("policy_definition_acl_action_class_parameters", required=False)
+policy_definition_acl_action_class_parameters:
+  ref: str()
 policy_definition_acl_action_count:
   type: enum("count")
   parameter: str()
@@ -649,21 +652,24 @@ policy_definition_acl_action_log:
   parameter: null()
 policy_definition_acl_action_mirror:
   type: enum("mirror")
-  parameter:
-    ref: str()
+  parameter: include("policy_definition_acl_action_mirror_parameters", required=False)
+policy_definition_acl_action_mirror_parameters:
+  ref: str()
 policy_definition_acl_action_nexthop:
   type: enum("nextHop")
   parameter: ip(version=4)
 policy_definition_acl_action_policer:
   type: enum("policer")
-  parameter:
-    ref: str()
+  parameter: include("policy_definition_acl_action_policer_parameters", required=False)
+policy_definition_acl_action_policer_parameters:
+  ref: str()
 policy_definition_acl_match_entries:
   entries: list(include("policy_definition_acl_match_class"), include("policy_definition_acl_match_dscp"), include("policy_definition_acl_match_ipaddress"), include("policy_definition_acl_match_packetlength"), include("policy_definition_acl_match_plp"), include("policy_definition_acl_match_port"), include("policy_definition_acl_match_prefix"), include("policy_definition_acl_match_protocol"), include("policy_definition_acl_match_tcp"), required=False)
 policy_definition_acl_match_class:
   field: enum("class")
-  value:
-    ref: str()
+  value: include("policy_definition_acl_match_class_value", required=False)
+policy_definition_acl_match_class_value:
+  ref: str()
 policy_definition_acl_match_dscp:
   field: enum("dscp")
   value: regex('^[0-9]{,2}$')
@@ -681,8 +687,9 @@ policy_definition_acl_match_port:
   value: regex('^[0-9]{,5}$')
 policy_definition_acl_match_prefix:
   field: enum("destinationDataPrefixList", "sourceDataPrefixList")
-  value:
-    ref: str()
+  value: include("policy_definition_acl_match_prefix_value", required=False)
+policy_definition_acl_match_prefix_value:
+  ref: str()
 policy_definition_acl_match_protocol:
   field: enum("protocol")
   value: str()
@@ -694,10 +701,12 @@ policy_definition_deviceaccesspolicy:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    defaultAction:
-      type: enum("accept", "drop")
-    sequences: list(include("policy_definition_deviceaccesspolicy_sequence"), required=False)
+  parameters: include("policy_definition_deviceaccesspolicy_parameters", required=False)
+policy_definition_deviceaccesspolicy_parameters:
+  defaultAction: include("policy_definition_deviceaccesspolicy_parameters_type", required=False)
+  sequences: list(include("policy_definition_deviceaccesspolicy_sequence"), required=False)
+policy_definition_deviceaccesspolicy_parameters_type:
+  type: enum("accept", "drop")
 policy_definition_deviceaccesspolicy_sequence:
   actions: list(include("policy_definition_acl_action_count"), required=False)
   baseAction: enum("accept", "drop")
@@ -716,9 +725,11 @@ policy_definition_qosMap:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    definition:
-      qosSchedulers: list(include("policy_definition_qos_scheduler"))
+  parameters: include("policy_definition_qosMap_parameters", required=False)
+policy_definition_qosMap_parameters:
+  definition: include("policy_definition_qosMap_parameters_definition", required=False)
+policy_definition_qosMap_parameters_definition:
+  qosSchedulers: list(include("policy_definition_qos_scheduler"))
 policy_definition_qos_scheduler:
   bandwidthPercent: regex('^[0-9]{,2}$')
   bufferPercent: regex('^[0-9]{,2}$')
@@ -733,9 +744,11 @@ policy_definition_rewriteRule:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    definition:
-      rules: list(include("policy_definition_rewrite_rule"))
+  parameters: include("policy_definition_rewriteRule_parameters", required=False)
+policy_definition_rewriteRule_parameters:
+  definition: include("policy_definition_rewriteRule_parameters_definition", required=False)
+policy_definition_rewriteRule_parameters_definition:
+  rules: list(include("policy_definition_rewrite_rule"))
 policy_definition_rewrite_rule:
   class: regex('^[^<>!&$@\/"() ]{,128}$')
   dscp: regex('^[0-9]{,2}$')
@@ -746,10 +759,12 @@ policy_definition_vedgeRoute:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    defaultAction:
-      type: enum("accept", "reject")
-    sequences: list(include("policy_definition_vedgeRoute_sequence"), required=False)
+  parameters: include("policy_definition_vedgeRoute_parameters", required=False)
+policy_definition_vedgeRoute_parameters:
+  defaultAction: include("policy_definition_vedgeRoute_parameters_defaultAction", required=False)
+  sequences: list(include("policy_definition_vedgeRoute_sequence"), required=False)
+policy_definition_vedgeRoute_parameters_defaultAction:
+  type: enum("accept", "reject")
 policy_definition_vedgeRoute_sequence:
   actions: list(include("policy_definition_vedgeRoute_actions"), required=False)
   baseAction: enum("accept", "reject")
@@ -763,14 +778,16 @@ policy_definition_vedgeRoute_actions:
   type: str(equals="set")
 policy_definition_vedgeroute_action_aggregator:
   field: enum("aggregator")
-  value:
-    aggregator: int(min=0, max=4294967295)
-    ipaddress: ip(version=4)
+  value: include("policy_definition_vedgeroute_action_aggregator_value", required=False)
+policy_definition_vedgeroute_action_aggregator_value:
+  aggregator: int(min=0, max=4294967295)
+  ipaddress: ip(version=4)
 policy_definition_vedgeroute_action_aspath:
   field: enum("asPath")
-  value:
-    prepend: list(int(min=0, max=65535))
-    exclude: list(int(min=0, max=65535))
+  value: include("policy_definition_vedgeroute_action_aspath_value", required=False)
+policy_definition_vedgeroute_action_aspath_value:
+  prepend: list(int(min=0, max=65535))
+  exclude: list(int(min=0, max=65535))
 policy_definition_vedgeroute_action_atomicaggregate:
   field: enum("atomicAggregate")
   value: enum("true")
@@ -832,7 +849,6 @@ policy_definition_vedgeroute_match_peer:
 policy_definition_vedgeroute_match_tag:
   field: enum("ompTag", "ospfTag")
   value: regex('^[0-9]{,10}$')
----
 # Localized Policy template schema
 localized_policy_templates:
   feature: list(include("localized_policy_template_feature"))
@@ -840,9 +856,10 @@ localized_policy_template_feature:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    assembly: list(include("localized_policy_template_assembly"), required=False)
-    settings: include("localized_policy_template_settings", required=False)
+  parameters: include("localized_policy_template_feature_parameters", required=False)
+localized_policy_template_feature_parameters:
+  assembly: list(include("localized_policy_template_assembly"), required=False)
+  settings: include("localized_policy_template_settings", required=False)
 localized_policy_template_assembly:
   type: enum("acl", "deviceAccessPolicy", "qosMap", "vedgeRoute", "rewriteRule")
   definitionName: regex('^[^<>!&$@\/"() ]{,128}$')
@@ -855,19 +872,18 @@ localized_policy_template_settings:
   ipVisibilityCacheEntries: int(min=16, max=2000000, required=False)
   ipV6VisibilityCacheEntries: int(min=16, max=2000000, required=False)
   logFrequency: int(min=1, max=2147483647, required=False) # should be a power of 2
----
 # Device template schema
 cedge_device_templates:
   device_template: list(include("cedge_device_template"))
----
 cedge_device_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
-  parameters:
-    device_model: enum("C8000V", "C8300-1N1S-4T2X", "C8300-1N1S-6T", "C8300-2N2S-6T", "C8300-2N2S-4T2X", "C8500-12X4QC", "C8500-12X", "C8500-20X6C", "C8500L-8S4X", "C8200-1N-4T", "C8200L-1N-4T")
-    localized_policy: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
-    feature_templates: list(include("dt_feature_template_ref"))
+  parameters: include("cedge_device_template_parameters", required=False)
+cedge_device_template_parameters:
+  device_model: enum("C8000V", "C8300-1N1S-4T2X", "C8300-1N1S-6T", "C8300-2N2S-6T", "C8300-2N2S-4T2X", "C8500-12X4QC", "C8500-12X", "C8500-20X6C", "C8500L-8S4X", "C8200-1N-4T", "C8200L-1N-4T")
+  localized_policy: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  feature_templates: list(include("dt_feature_template_ref"))
 dt_feature_template_ref:
   templateName: regex('^[^<>!&$@\/"() ]{,128}$')
   templateType: enum("cedge_aaa", "cedge_global", "cisco_banner", "cisco_bfd", "cisco_omp", "cisco_security", "cisco_snmp", "cisco_system", "cisco_vpn", "cli-template")
@@ -906,13 +922,10 @@ dt_feature_subtemplate_level1_old:
   subtemplates: include("dt_feature_subtemplates_level2_old", required=False)
 dt_feature_subtemplates_level2_old:
   cisco_dhcp_server: list(include("dt_feature_template_name_old"))
----
 # SD-WAN Site schema - per-device variables
-sites: list(include("sdwan_site"))
-sdwan_site:
+sites:
   id: int(min=1, max=4294967295)
   routers: list(include("cedge_router"))
----
 cedge_router:
   chassis_id: str()
   model: enum("C8000V", "C8300-1N1S-4T2X", "C8300-1N1S-6T", "C8300-2N2S-6T", "C8300-2N2S-4T2X", "C8500-12X4QC", "C8500-12X", "C8500-20X6C", "C8500L-8S4X", "C8200-1N-4T", "C8200L-1N-4T")

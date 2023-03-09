@@ -1,0 +1,130 @@
+---
+objects:
+  - name: cEdge AAA
+    template: cedge_aaa
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cedge_aaa]
+  - name: cEdge Global
+    template: cedge_global
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cedge_global]
+  - name: Cisco Banner
+    template: cisco_banner
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_banner]
+  - name: Cisco BFD
+    template: cisco_bfd
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_bfd]
+  - name: Cisco BGP
+    template: cisco_bgp
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_bgp]
+  - name: Cisco DHCP Server
+    template: cisco_dhcp_server
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_dhcp_server]
+  - name: Cisco Logging
+    template: cisco_logging
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_logging]
+  - name: Cisco NTP
+    template: cisco_ntp
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_ntp]
+  - name: Cisco OMP
+    template: cisco_omp
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_omp]
+  - name: Cisco Security
+    template: cisco_security
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_security]
+  - name: Cisco SIG Credentials
+    template: cisco_sig_credentials
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_sig_credentials]
+  - name: Cisco SNMP
+    template: cisco_snmp
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_snmp]
+  - name: Cisco System
+    template: cisco_system
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_system]
+  - name: Cisco VPN
+    template: cisco_vpn
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_vpn]
+  - name: Cisco VPN Interface
+    template: cisco_vpn_interface
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_vpn_interface]
+  - name: CLI Template
+    template: cli_template
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cli-template]
+  - name: Device Template
+    template: device_template
+    folder: device_templates
+    paths: [sdwan.cedge_device_templates.device_template]
+  - name: AS Path List
+    template: aspath
+    folder: policy_objects
+    paths: [sdwan.localized_policies.lists.asPath]
+  - name: Class
+    template: class
+    folder: policy_objects
+    paths: [sdwan.localized_policies.lists.class]
+  - name: Community List
+    template: community
+    folder: policy_objects
+    paths: [sdwan.localized_policies.lists.community]
+  - name: Data Prefix List
+    template: data_prefix
+    folder: policy_objects
+    paths: [sdwan.localized_policies.lists.dataPrefix]
+  - name: Expanded Community List
+    template: expanded_community
+    folder: policy_objects
+    paths: [sdwan.localized_policies.lists.expandedCommunity]
+  - name: Extended Community List
+    template: extended_community
+    folder: policy_objects
+    paths: [sdwan.localized_policies.lists.extCommunity]
+  - name: Prefix List
+    template: prefix
+    folder: policy_objects
+    paths: [sdwan.localized_policies.lists.prefix]
+  - name: VPN List
+    template: vpn
+    folder: policy_objects
+    paths: [sdwan.localized_policies.lists.vpn]
+  - name: ACL Definition
+    template: acl_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.acl]
+  - name: Device Access Policy Definition
+    template: device_access_policy_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.deviceAccessPolicy]
+  - name: QoS Map Definition
+    template: qos_map_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.qosMap]
+  - name: Rewrite Rule Definition
+    template: rewrite_rule_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.rewriteRule]
+  - name: vEdge Route Definition
+    template: vedge_route_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.vedgeRoute]
+  - name: Feature Policy
+    template: feature_policy
+    folder: localized_policies
+    paths: [sdwan.localized_policies.policies.feature]
+  - name: Site
+    template: site
+    folder: sites
+    paths: [sdwan.sites]

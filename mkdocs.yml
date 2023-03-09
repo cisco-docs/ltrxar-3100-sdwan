@@ -1,0 +1,110 @@
+---
+site_name: SD-WAN as Code
+site_description: Manage SD-WAN following Infrastructure as Code principles. Codify vManage into declarative configuration files.
+repo_name: nac-sdwan
+repo_url: https://wwwin-github.cisco.com/netascode/nac-sdwan
+site_author: Daniel Schmidt
+copyright: Copyright &copy; 2018 - 2023 Daniel Schmidt
+theme:
+  name: material
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.indexes
+    - navigation.instant
+    - navigation.top
+    - search.suggest
+  custom_dir: docs/overrides
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+      primary: blue
+      accent: light blue
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+      primary: blue
+      accent: light blue
+extra_css:
+  - stylesheets/extra.css
+plugins:
+  - search
+extra_javascript:
+  - extra/refresh_on_toggle_dark_light.js
+markdown_extensions:
+  - md_in_html
+  - abbr
+  - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - meta
+  - tables
+  - pymdownx.details
+  - pymdownx.emoji:
+      emoji_index: !!python/name:materialx.emoji.twemoji
+      emoji_generator: !!python/name:materialx.emoji.to_svg
+  - pymdownx.highlight
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+nav:
+  - Home: index.md
+  - Data Model:
+      - Overview: data_model/overview.md
+      - Support Matrix: data_model/sdwan_support_matrix.md
+      - Feature Templates:
+          - cEdge AAA: data_model/sdwan/feature_templates/cedge_aaa.md
+          - cEdge Global: data_model/sdwan/feature_templates/cedge_global.md
+          - Cisco Banner: data_model/sdwan/feature_templates/cisco_banner.md
+          - Cisco BFD: data_model/sdwan/feature_templates/cisco_bfd.md
+          - Cisco BGP: data_model/sdwan/feature_templates/cisco_bgp.md
+          - Cisco DHCP Server: data_model/sdwan/feature_templates/cisco_dhcp_server.md
+          - Cisco Logging: data_model/sdwan/feature_templates/cisco_logging.md
+          - Cisco NTP: data_model/sdwan/feature_templates/cisco_ntp.md
+          - Cisco OMP: data_model/sdwan/feature_templates/cisco_omp.md
+          - Cisco Security: data_model/sdwan/feature_templates/cisco_security.md
+          - Cisco SIG Credentials: data_model/sdwan/feature_templates/cisco_sig_credentials.md
+          - Cisco SNMP: data_model/sdwan/feature_templates/cisco_snmp.md
+          - Cisco System: data_model/sdwan/feature_templates/cisco_system.md
+          - Cisco VPN: data_model/sdwan/feature_templates/cisco_vpn.md
+          - Cisco VPN Interface: data_model/sdwan/feature_templates/cisco_vpn_interface.md
+          - CLI Template: data_model/sdwan/feature_templates/cli_template.md
+      - Device Templates:
+          - Device Template: data_model/sdwan/device_templates/device_template.md
+      - Policy Objects:
+          - AS Path List: data_model/sdwan/policy_objects/aspath.md
+          - Class: data_model/sdwan/policy_objects/class.md
+          - Community List: data_model/sdwan/policy_objects/community.md
+          - Data Prefix List: data_model/sdwan/policy_objects/data_prefix.md
+          - Expanded Community List: data_model/sdwan/policy_objects/expanded_community.md
+          - Extended Community List: data_model/sdwan/policy_objects/extended_community.md
+          - Prefix List: data_model/sdwan/policy_objects/prefix.md
+          - VPN List: data_model/sdwan/policy_objects/vpn.md
+      - Localized Policies:
+          - ACL Definition: data_model/sdwan/localized_policies/acl_definition.md
+          - Device Access Policy Definition: data_model/sdwan/localized_policies/device_access_policy_definition.md
+          - QoS Map Definition: data_model/sdwan/localized_policies/qos_map_definition.md
+          - Rewrite Rule Definition: data_model/sdwan/localized_policies/rewrite_rule_definition.md
+          - vEdge Route Definition: data_model/sdwan/localized_policies/vedge_route_definition.md
+          - Feature Policy: data_model/sdwan/localized_policies/feature_policy.md
+      - Sites:
+          - Site: data_model/sdwan/sites/site.md
+  - Python:
+      - Quick Start: python/quick_start.md
+  - Terraform:
+      - Overview: terraform/overview.md
+      - Quick Start: terraform/quick_start.md
+  - Labs:
+      - Quick Start: labs/quick_start.md
+  - About:
+      - Changelog: about/changelog.md
+      - Support: about/support.md
+      - Contributors: about/contributors.md
