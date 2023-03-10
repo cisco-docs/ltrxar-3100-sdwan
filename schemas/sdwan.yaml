@@ -23,19 +23,20 @@ cedge_feature_templates:
   cisco_logging: list(include("cisco_logging_template"), required=False)
   cisco_ntp: list(include("cisco_ntp_template"), required=False)
   cisco_omp: list(include("cisco_omp_template"), required=False)
+  cisco_secure_internet_gateway: list(include("cisco_sig_template"), required=False)
   cisco_security: list(include("cisco_security_template"), required=False)
   cisco_sig_credentials: list(include("cisco_sig_credentials_template"), required=False)
   cisco_snmp: list(include("cisco_snmp_template"), required=False)
   cisco_system: list(include("cisco_system_template"), required=False)
   cisco_vpn: list(include("cisco_vpn_template"), required=False)
   cisco_vpn_interface: list(include("cisco_vpn_interface_template"), required=False)
+  cisco_vpn_interface_ipsec: list(include("cisco_vpn_interface_ipsec_template"), required=False)
   cli-template: list(include("cli_template"), required=False)
 # cEdge AAA feature template
 # Supported: local users, RADIUS groups, TACACS groups
 # Missing: Radius COA, Radius Trustsec, Acconting, dot1x auth
 cedge_aaa_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_aaa_parameters", required=False)
 cft_aaa_parameters:
@@ -80,7 +81,6 @@ cft_aaa_radius_server:
 # cEdge Global Settings feature template
 cedge_global_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_global_parameters", required=False)
 cft_global_parameters:
@@ -124,7 +124,6 @@ cft_global_ssh:
 # Cisco banner feature template
 cisco_banner_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_banner_parameters", required=False)
 cft_banner_parameters:
@@ -133,7 +132,6 @@ cft_banner_parameters:
 # Cisco BFD feature template
 cisco_bfd_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_bfd_parameters", required=False)
 cft_bfd_parameters:
@@ -152,7 +150,6 @@ cft_bfd_color:
 # Cisco BGP feature template
 cisco_bgp_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_bgp_parameters", required=False)
 cft_bgp_parameters:
@@ -224,7 +221,6 @@ cft_bgp_timers:
 # Cisco DHCP server feature template
 cisco_dhcp_server_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_dhcp_server_parameters", required=False)
 cft_dhcp_server_parameters:
@@ -244,7 +240,6 @@ cft_dhcpserver_static_lease:
 # Missing: TLS profiles for logging servers
 cisco_logging_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_logging_parameters", required=False)
 cft_logging_parameters:
@@ -269,7 +264,6 @@ cft_logging_server_tls:
 # Missing: authentication keys; ntp master
 cisco_ntp_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_ntp_parameters", required=False)
 cft_ntp_parameters:
@@ -284,7 +278,6 @@ cft_ntp_server:
 # Cisco OMP feature template
 cisco_omp_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_omp_parameters", required=False)
 cft_omp_parameters:
@@ -304,11 +297,64 @@ cft_omp_timers:
   eor-timer: int(min=1, max=604800, required=False)
 cft_omp_advertise_protocol:
   protocol: enum("bgp", "ospf", "ospfv3", "connected", "static", "eigrp", "lisp", "isis")
+# Cisco SIG feature template
+cisco_sig_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  parameters: include("cft_sig_parameters", required=False)
+cft_sig_parameters:
+  interface: list(include("cft_sig_interface"), min=2)
+  service: list(include("cft_sig_service"), min=1)
+  tracker-src-ip: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  vpn-id: enum(0)
+cft_sig_interface:
+  application: enum("sig", required=False)
+  auto: enum("true", "false", required=False)
+  dead-peer-detection: include("cft_sig_interface_dpd", required=False)
+  if-name: any(str(starts_with="DEVICE_VARIABLE;"),regex('^ipsec[0-9]{,3}$'))
+  ike: include("cft_sig_interface_ike", required=False)
+  ip: include("cft_sig_interface_ip", required=False)
+  ipsec: include("cft_sig_interface_ipsec", required=False)
+  mtu: any(str(starts_with="DEVICE_VARIABLE;"), int(min=576, max=2000), required=False)
+  shutdown: enum("true", "false", required=False)
+  tcp-mss-adjust: any(str(starts_with="DEVICE_VARIABLE;"), int(min=500, max=1460), required=False)
+  track-enable: enum("true", "false", required=False)
+  tunnel-dc-preference: enum("primary-dc", "secondary-dc")
+  tunnel-destination: enum("dynamic", required=False)
+  tunnel-set: enum("secure-internet-gateway-umbrella", "secure-internet-gateway-zscaler", "secure-internet-gateway-other")
+  tunnel-source-interface: any(str(starts_with="DEVICE_VARIABLE;"), str())
+cft_sig_interface_dpd:
+  dpd-interval: any(str(starts_with="DEVICE_VARIABLE;"), int(min=10, max=65535), required=False)
+  dpd-retries: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=255), required=False)
+cft_sig_interface_ike:
+  authentication-type: include("cft_sig_interface_ike_psk", required=False)
+  ike-ciphersuite: any(str(starts_with="DEVICE_VARIABLE;"), enum("aes256-cbc-sha1", "aes256-cbc-sha2", "aes128-cbc-sha1", "aes128-cbc-sha2"), required=False)
+  ike-group: any(str(starts_with="DEVICE_VARIABLE;"), enum("2", "14", "15", "16"), required=False)
+  ike-rekey-interval: any(str(starts_with="DEVICE_VARIABLE;"), int(min=300, max=1209600), required=False)
+  ike-version: enum(2, required=False)
+cft_sig_interface_ike_psk:
+  pre-shared-key-dynamic: enum("true")
+cft_sig_interface_ip:
+  unnumbered: enum("true", "false")
+cft_sig_interface_ipsec:
+  ipsec-ciphersuite: any(str(starts_with="DEVICE_VARIABLE;"), enum("aes256-cbc-sha1", "aes256-cbc-sha384", "aes256-cbc-sha256", "aes256-cbc-sha512", "aes256-gcm", "null-sha1", "null-sha384", "null-sha256", "null-sha512"), required=False)
+  ipsec-rekey-interval: any(str(starts_with="DEVICE_VARIABLE;"), int(min=300, max=1209600), required=False)
+  ipsec-replay-window: any(str(starts_with="DEVICE_VARIABLE;"), int(min=64, max=4096), required=False)
+  perfect-forward-secrecy: any(str(starts_with="DEVICE_VARIABLE;"), enum("group-2", "group-14", "group-15", "group-16", "none"), required=False)
+cft_sig_service:
+  ha-pairs: include("cft_sig_service_hapairs")
+  svc-type: enum("sig", required=False)
+cft_sig_service_hapairs:
+  interface-pair: list(include("cft_sig_service_interface_pair"))
+cft_sig_service_interface_pair:
+  active-interface: regex('^ipsec[0-9]{,3}$')
+  active-interface-weight: int(min=1, max=255)
+  backup-interface: regex('^ipsec[0-9]{,3}$')
+  backup-interface-weight: int(min=1, max=255)
 # Cisco security feature template
 # Missing: pairwise IPSec keys; keyrings
 cisco_security_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_security_parameters", required=False)
 cft_security_parameters:
@@ -324,7 +370,6 @@ cft_security_ipsec:
 # Missing: Zscaler
 cisco_sig_credentials_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_sig_credentials_parameters", required=False)
 cft_sig_credentials_parameters:
@@ -344,7 +389,6 @@ cft_zscaler_parameters:
 # Missing: SNMPv2
 cisco_snmp_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_snmp_parameters", required=False)
 cft_snmp_parameters:
@@ -391,7 +435,6 @@ cft_snmp_oid:
 # Missing: device groups, controller groups, geo-fencing, trackers, track-interface
 cisco_system_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_system_parameters", required=False)
 cft_system_parameters:
@@ -413,20 +456,50 @@ cft_system_parameters:
   admin-tech-on-failure: enum("true", "false", required=False)
   idle-timeout: int(min=0, max=300, required=False)
   on-demand: include("cft_system_ondemand_tunnel", required=False)
+  tracker: list(include("cft_system_tracker_dns"), include("cft_system_tracker_url"), include("cft_system_tracker_ip"), include("cft_system_tracker_group"), required=False)
+cft_system_clock:
+  timezone: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False) # convert into enum for valid TZ values
 cft_system_gps_location:
   latitude: str(starts_with="DEVICE_VARIABLE;") # per-device variable
   longitude: str(starts_with="DEVICE_VARIABLE;") # per-device variable
-cft_system_clock:
-  timezone: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False) # convert into enum for valid TZ values
 cft_system_ondemand_tunnel:
   enable: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"))
   idle-timeout: any(str(starts_with="DEVICE_VARIABLE;"), int(min=10, max=65535))
+cft_system_tracker_dns:
+  endpoint-dns-name: regex('^[a-z0-9.]+$') # Allow only characters and dots
+  interval: int(min=20, max=600, required=False)
+  multiplier: int(min=1, max=10, required=False)
+  name: str(min=1, max=128)
+  optional: bool(required=False)
+  threshold: int(min=100, max=1000, required=False)
+  type: enum("interface", "static-route", required=False)
+cft_system_tracker_url:
+  endpoint-api-url: str(min=1, max=512) # API url of endpoint
+  interval: int(min=20, max=600, required=False)
+  multiplier: int(min=1, max=10, required=False)
+  name: str(min=1, max=128)
+  optional: bool(required=False)
+  threshold: int(min=100, max=1000, required=False)
+  type: enum("interface", "static-route", required=False)
+cft_system_tracker_ip:
+  endpoint-ip: ip(version=4)
+  interval: int(min=20, max=600, required=False)
+  multiplier: int(min=1, max=10, required=False)
+  name: str(min=1, max=128)
+  optional: bool(required=False)
+  threshold: int(min=100, max=1000, required=False)
+  type: enum("interface", "static-route", required=False)
+cft_system_tracker_group:
+  boolean: enum("and", "or", required=False)
+  elements: list(str())
+  name: str(min=1, max=128)
+  optional: bool(required=False)
+  type: enum("tracker-group", requierd=False)
 # Cisco VPN feature template
 # Missing: DNS host entries; service routes; GRE routes; IPSec routes;
 # NAT; route export/import; IPv6
 cisco_vpn_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_vpn_parameters", required=False)
 cft_vpn_parameters:
@@ -444,43 +517,88 @@ cft_vpn_dns:
   dns-addr: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
   role: enum("primary", "secondary")
 cft_vpn_ip:
-  route: list(include("cft_vpn_ip_route"), required=False)
-cft_vpn_ip_route:
-  optional: bool()
+  ipsec-route: list(include("cft_vpn_ip_ipsec_route"), required=False)
+  route: list(include("cft_vpn_ip_route_nexthop"), include("cft_vpn_ip_route_dia"), include("cft_vpn_ip_route_null0"), required=False)
+  service-route: list(include("cft_vpn_ip_service_route"), required=False)
+cft_vpn_ip_ipsec_route:
+  interface: list(regex('^ipsec[0-9]{,3}$'), min=1, max=2) # ipsec interface ids
   prefix: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  vpn: int(min=0, max=0)
+cft_vpn_ip_route_nexthop:
   next-hop: list(include("cft_vpn_ipv4_route_nexthop"), min=1)
+  optional: bool(required=False)
+  prefix: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+cft_vpn_ip_route_dia:
+  optional: bool(required=False)
+  prefix: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  vpn: int(min=0, max=0) # DIA route to VPN 0
+cft_vpn_ip_route_null0:
+  distance: int(min=1, max=255, required=False)
+  null0: enum("true")
+  optional: bool(required=False)
+  prefix: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
 cft_vpn_ipv4_route_nexthop:
   address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
-  distance: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255))
+  distance: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255), required=False)
+cft_vpn_ip_service_route:
+  service: enum("sig", required=False)
+  prefix: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  vpn: int(min=0, max=0)
 cft_vpn_omp:
   advertise: list(include("cft_omp_advertise"), required=False)
 cft_omp_advertise:
   protocol: enum("bgp", "ospf", "ospfv3", "connected", "static", "eigrp", "lisp", "isis")
+  route-policy: str(required=False)
 # Cisco VPN interface feature template
 # Missing: ACL, arp, manual duplex/speed;  dhcp helper; IPv6; VRRP
 # qos-map; rewrite rule; tloc-extension; tracker; trustsec
 cisco_vpn_interface_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_vpn_interface_parameters", required=False)
 cft_vpn_interface_parameters:
+  access-list: list(include("cft_vpn_interface_acl"), max=2, required=False)
+  arp-timeout: int(min=0, max=2147483, required=False)
+  autonegotiate: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
   description: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+  duplex: any(str(starts_with="DEVICE_VARIABLE;"), enum("half", "full", "auto"), required=False)
   if-name: any(str(starts_with="DEVICE_VARIABLE;"), str())
   ip: include("cft_vpn_interface_ip", required=False)
   mtu: any(str(starts_with="DEVICE_VARIABLE;"), int(min=576, max=9216), required=False)
+  qos-map: str(required=False)
   nat: include("cft_vpn_interface_nat", required=False)
   shaping-rate: any(str(starts_with="DEVICE_VARIABLE;"), int(), required=False)
-  shutdown: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"))
+  shutdown: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  speed: any(str(starts_with="DEVICE_VARIABLE;"), enum("10", "100", "1000", "2500", "10000"), required=False)
   tloc-extension: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+  tracker: any(str(starts_with="DEVICE_VARIABLE;"), list(str(min=1, max=128)), required=False)
+  trustsec:  include("cft_vpn_interface_trustsec", required=False)
   tunnel-interface: include("cft_vpn_interface_tunnel", required=False)
   vrrp: list(include("cft_vpn_interface_vrrp"), required=False)
+cft_vpn_interface_acl:
+  acl-name: regex('^[^<>!&$@\/"() ]{,128}$')
+  direction: enum("in", "out")
 cft_vpn_interface_ip:
   address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4), required=False)
   dhcp-client: enum("true", "false", required=False)
   dhcp-distance: int(min=1, max=254, required=False)
 cft_vpn_interface_nat:
   nat-choice: enum("interface", "pool", "loopback", required=False)
+  natpool: include("cft_vpn_interface_natpool", required=False)
+  overload: enum("true", "false", required=False)
+  tcp-timeout: int(min=1, max=8947, required=False)
+  udp-timeout: int(min=1, max=8947, required=False)
+cft_vpn_interface_natpool:
+  prefix-length: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=30))
+  range-end: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  range-start: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+cft_vpn_interface_trustsec:
+  enable: enum("true", "false")
+  propagate:
+    sgt: enum("true", "false")
+  static:
+    sgt: int(min=2, max=65519)
+    trusted: enum("true", "false")
 cft_vpn_interface_tunnel:
   allow-service: include("cft_vpn_interface_tunnel_allow", required=False)
   clear-dont-fragment: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
@@ -489,6 +607,7 @@ cft_vpn_interface_tunnel:
   group: any(str(starts_with="DEVICE_VARIABLE;"), list(int(min=1, max=4294967295)), required=False)
   hello-interval: int(min=100, max=600000, required=False)
   hello-tolerance: int(min=12, max=6000, required=False)
+  propagate-sgt: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
   vmanage-connection-preference: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=8), required=False)
 cft_vpn_interface_tunnel_allow:
   all: enum("true", "false", required=False)
@@ -513,16 +632,57 @@ cft_vpn_interface_tunnel_encap:
 cft_vpn_interface_vrrp:
   grp-id: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255))
   ipv4: include("cft_vpn_interface_vrrp_ipv4", required=False)
+  optional: bool(required=False)
   priority: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=254))
   timer: any(str(starts_with="DEVICE_VARIABLE;"), int(min=100, max=40950), required=False)
   tloc-change-pref: enum("true", "false", required=False)
   track-omp: enum("true", "false", required=False)
 cft_vpn_interface_vrrp_ipv4:
   address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+# Cisco VPN interface IPSec feature template
+# IKE version 2
+# Either tunnel-source or tunnel-source-interface must be provided
+cisco_vpn_interface_ipsec_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  parameters: include("cft_vpn_interface_ipsec_parameters", required=False)
+cft_vpn_interface_ipsec_parameters:
+  dead-peer-detection: include("cft_vpn_interface_ipsec_dpd", required=False)
+  description: any(str(starts_with="DEVICE_VARIABLE;"), str(max=240), required=False)
+  if-name: any(str(starts_with="DEVICE_VARIABLE;"), regex('^ipsec[0-9]{,3}$'))
+  ike: include("cft_vpn_interface_ipsec_ike", required=False)
+  ip: include("cft_vpn_interface_ipsec_ip", required=False)
+  ipsec: include("cft_vpn_interface_ipsec_ipsec", required=False)
+  mtu: any(str(starts_with="DEVICE_VARIABLE;"), int(min=68, max=9216), required=False)
+  shutdown: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  tcp-mss-adjust: any(str(starts_with="DEVICE_VARIABLE;"), int(min=500, max=1460), required=False)
+  tunnel-destination: any(str(starts_with="DEVICE_VARIABLE;"), str())
+  tunnel-source: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4), required=False)
+  tunnel-source-interface: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
+cft_vpn_interface_ipsec_dpd:
+  dpd-interval: any(str(starts_with="DEVICE_VARIABLE;"), int(min=10, max=3600), required=False)
+  dpd-retries: any(str(starts_with="DEVICE_VARIABLE;"), int(min=2, max=60), required=False)
+cft_vpn_interface_ipsec_ike:
+  authentication-type: include("cft_vpn_interface_ipsec_ike_psk", required=False)
+  ike-ciphersuite: enum("aes256-cbc-sha1", "aes256-cbc-sha2", "aes128-cbc-sha1", "aes128-cbc-sha2", required=False)
+  ike-group: enum("2", "14", "15", "16", "19", "20", "21", "24", required=False)
+  ike-rekey-interval: any(str(starts_with="DEVICE_VARIABLE;"), int(min=60, max=86400), required=False)
+  ike-version: enum(2)
+cft_vpn_interface_ipsec_ike_psk:
+  pre-shared-key: 
+    ike-local-id: any(str(starts_with="DEVICE_VARIABLE;"), str(max=63), required=False)
+    ike-remote-id: any(str(starts_with="DEVICE_VARIABLE;"), str(max=63), required=False)
+    pre-shared-secret: any(str(starts_with="DEVICE_VARIABLE;"), str(max=127), required=False)
+cft_vpn_interface_ipsec_ip:
+  address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4), required=False)
+cft_vpn_interface_ipsec_ipsec:
+  ipsec-ciphersuite: any(str(starts_with="DEVICE_VARIABLE;"), enum("aes256-cbc-sha1", "aes256-cbc-sha384", "aes256-cbc-sha256", "aes256-cbc-sha512", "aes256-gcm", "null-sha1", "null-sha384", "null-sha256", "null-sha512"), required=False)
+  ipsec-rekey-interval:  any(str(starts_with="DEVICE_VARIABLE;"), int(min=120, max=2592000), required=False)
+  ipsec-replay-window: any(str(starts_with="DEVICE_VARIABLE;"), int(min=64, max=4096), required=False)
+  perfect-forward-secrecy: any(str(starts_with="DEVICE_VARIABLE;"), enum("group-1", "group-2", "group-5", "group-14", "group-15", "group-16", "group-19", "group-20", "group-21", "group-24", "none"), required=False)
 # cEdge CLI feature template
 cli_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cft_cli_template_parameters", required=False)
 cft_cli_template_parameters:
@@ -547,63 +707,54 @@ localized_policy_lists:
   vpn: list(include("policy_list_vpn"), required=False)
 policy_list_aspath:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   entries: list(include("policy_list_aspath_entries"))
 policy_list_aspath_entries:
   asPath: str()
 policy_list_class:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   entries: list(include("policy_list_class_entries"))
 policy_list_class_entries:
   queue: regex('^[0-7]{,1}$')
 policy_list_community:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   entries: list(include("policy_list_community_entries"))
 policy_list_community_entries:
   community: regex('^[0-9]{,5}(:)[0-9]{,5}$')
 policy_list_localapp:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   entries: list(include("policy_list_localapp_entries"))
 policy_list_localapp_entries:
   app: str(matches='^[A-Za-z0-9-_]+$', max=255)
 policy_list_dataprefix:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   entries: list(include("policy_list_dataprefix_entries"))
 policy_list_dataprefix_entries:
   ipPrefix: ip(version=4)
 policy_list_expanded_community:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   entries: list(include("policy_list_expandedcommunity_entries"))
 policy_list_expandedcommunity_entries:
   community: regex('^[0-9]{,5}(:)[0-9]{,5}$')
 policy_list_extended_community:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   entries: list(include("policy_list_extcommunity_entries"))
 policy_list_extcommunity_entries:
   community: any(regex('^soo.*$'), regex('^rt.*$'))
 policy_list_prefix:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   entries: list(include("policy_list_prefix_entries"))
 policy_list_prefix_entries:
   ipPrefix: ip(version=4)
 policy_list_vpn:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   entries: list(include("policy_list_vpn_entries"))
 policy_list_vpn_entries:
@@ -620,7 +771,6 @@ localized_policy_definitions:
 # ACL Policy definition
 policy_definition_acl:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("policy_definition_acl_parameters", required=False)
 policy_definition_acl_parameters:
@@ -699,7 +849,6 @@ policy_definition_acl_match_tcp:
 # Device Access Policy definition
 policy_definition_deviceaccesspolicy:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("policy_definition_deviceaccesspolicy_parameters", required=False)
 policy_definition_deviceaccesspolicy_parameters:
@@ -723,7 +872,6 @@ policy_definition_dap_match_port:
 # QoS Map Policy definition
 policy_definition_qosMap:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("policy_definition_qosMap_parameters", required=False)
 policy_definition_qosMap_parameters:
@@ -742,7 +890,6 @@ policy_definition_qos_scheduler:
 # Rewrite Rule Policy definition
 policy_definition_rewriteRule:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("policy_definition_rewriteRule_parameters", required=False)
 policy_definition_rewriteRule_parameters:
@@ -757,7 +904,6 @@ policy_definition_rewrite_rule:
 # Route Policy definition
 policy_definition_vedgeRoute:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("policy_definition_vedgeRoute_parameters", required=False)
 policy_definition_vedgeRoute_parameters:
@@ -854,7 +1000,6 @@ localized_policy_templates:
   feature: list(include("localized_policy_template_feature"))
 localized_policy_template_feature:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("localized_policy_template_feature_parameters", required=False)
 localized_policy_template_feature_parameters:
@@ -877,7 +1022,6 @@ cedge_device_templates:
   device_template: list(include("cedge_device_template"))
 cedge_device_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
-  template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   description: str()
   parameters: include("cedge_device_template_parameters", required=False)
 cedge_device_template_parameters:

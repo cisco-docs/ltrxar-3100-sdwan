@@ -5,6 +5,16 @@ defaults:
       cedge_aaa:
         parameters:
           server-auth-order: local
+          radius:
+            server:
+              acct-port: 1813
+              auth-port: 1812
+              retransmit: 3
+              timeout: 5
+          tacacs:
+            server:
+              port: 49
+              timeout: 5
       cedge_global:
         parameters:
           http-global:
@@ -118,6 +128,37 @@ defaults:
             eor-timer: 300
             graceful-restart-timer: 43200
             holdtime: 60
+      cisco_secure_internet_gateway:
+        parameters:
+          interface:
+            application: sig
+            auto: "true"
+            dead-peer-detection:
+              dpd-interval: 10
+              dpd-retries: 3
+            ike:
+              authentication-type:
+                pre-shared-key-dynamic: "true"
+              ike-ciphersuite: aes256-cbc-sha1
+              ike-group: "14"
+              ike-rekey-interval: 14400
+              ike-version: 2
+            ip:
+              unnumbered: "true"
+            ipsec:
+              ipsec-ciphersuite: aes256-cbc-sha1
+              ipsec-rekey-interval: 28800
+              ipsec-replay-window: 512
+              perfect-forward-secrecy: none
+            mtu: 1400
+            shutdown: "false"
+            tcp-mss-adjust: 1360
+            track-enable: "true"
+            tunnel-destination: dynamic
+            tunnel-set: secure-internet-gateway-umbrella
+          service:
+            svc-type: sig
+          vpn-id: 0
       cisco_security:
         parameters:
           ipsec:
@@ -147,8 +188,23 @@ defaults:
           track-transport: "true"
       cisco_vpn:
         parameters:
+          ecmp-hash-key:
+            layer4: "false"
+          ip:
+            route:
+              next-hop:
+                distance: 1
+              distance: 1
       cisco_vpn_interface:
         parameters:
+          arp-timeout: 1200
+          ip:
+            dhcp-distance: 1
+          mtu: 1500
+          nat:
+            tcp-timeout: 60
+            udp-timeout: 1
+          shutdown: "false"
           tunnel-interface:
             allow-service:
               all: "false"
@@ -164,9 +220,27 @@ defaults:
               sshd: "false"
               stun: "false"
             clear-dont-fragment: "false"
-            hello-interval: 1000
-            hello-tolerance: 12
             encapsulation:
               encap: ipsec
+            hello-interval: 1000
+            hello-tolerance: 12
+            vmanage-connection-preference: 5
+      cisco_vpn_interface_ipsec:
+        parameters:
+          dead-peer-detection:
+            dpd-interval: 10
+            dpd-retries: 3
+          ike:
+            ike-ciphersuite: aes256-cbc-sha1
+            ike-group: "16"
+            ike-rekey-interval: 14400
+            ike-version: 2
+          ipsec:
+            ipsec-ciphersuite: aes256-gcm
+            ipsec-rekey-interval: 3600
+            ipsec-replay-window: 512
+            perfect-forward-secrecy: none
+          mtu: 1400
+          shutdown: "false"
       cli-template:
         parameters:
