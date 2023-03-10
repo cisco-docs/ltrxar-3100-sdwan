@@ -8,7 +8,7 @@ This table provides an overview of which object is supported in combination with
 
 ### Feature Templates
 
-Description | Python | Terraform | Reverse
+<span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse
 ---|---|---|---
 [cEdge AAA](./sdwan/feature_templates/cedge_aaa.md) | :material-check: | :material-check: | :material-check:
 [cEdge Global](./sdwan/feature_templates/cedge_global.md) | :material-check: | :material-check: | :material-check:
@@ -29,13 +29,13 @@ Description | Python | Terraform | Reverse
 
 ### Device Templates
 
-Description | Python | Terraform | Reverse
+<span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse
 ---|---|---|---
 [Device Template](./sdwan/device_templates/device_template.md) | :material-check: | :material-check: | :material-check:
 
 ### Policy Objects
 
-Description | Python | Terraform | Reverse
+<span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse
 ---|---|---|---
 [AS Path List](./sdwan/policy_objects/aspath.md) | :material-check: | :material-check: | :material-check:
 [Class](./sdwan/policy_objects/class.md) | :material-check: | :material-check: | :material-check:
@@ -48,7 +48,7 @@ Description | Python | Terraform | Reverse
 
 ### Localized Policies
 
-Description | Python | Terraform | Reverse
+<span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse
 ---|---|---|---
 [ACL Definition](./sdwan/localized_policies/acl_definition.md) | :material-check: | | :material-check:
 [Device Access Policy Definition](./sdwan/localized_policies/device_access_policy_definition.md) | :material-check: | | :material-check:
@@ -59,6 +59,6 @@ Description | Python | Terraform | Reverse
 
 ### Sites
 
-Description | Python | Terraform | Reverse
+<span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse
 ---|---|---|---
 [Site](./sdwan/sites/site.md) | :material-check: | :material-check: | :material-check:
