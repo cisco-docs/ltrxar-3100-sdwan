@@ -837,8 +837,6 @@ policy_definition_acl_match_port:
   value: regex('^[0-9]{,5}$')
 policy_definition_acl_match_prefix:
   field: enum("destinationDataPrefixList", "sourceDataPrefixList")
-  value: include("policy_definition_acl_match_prefix_value", required=False)
-policy_definition_acl_match_prefix_value:
   ref: str()
 policy_definition_acl_match_protocol:
   field: enum("protocol")
@@ -862,7 +860,7 @@ policy_definition_deviceaccesspolicy_sequence:
   match: include("policy_definition_dap_match_entries", required=False)
   sequenceId: int(min=1, max=65534)
   sequenceIpType: enum("ipv4", "ipv6")
-  sequenceName: str(equals="Device Access Control List", required=False)
+  sequenceName: str(required=False)
   sequenceType: str(equals="deviceaccesspolicy", required=False)
 policy_definition_dap_match_entries:
   entries: list(include("policy_definition_acl_match_prefix"), include("policy_definition_acl_match_ipaddress"), include("policy_definition_dap_match_port"), required=False)
@@ -930,10 +928,10 @@ policy_definition_vedgeroute_action_aggregator_value:
   ipaddress: ip(version=4)
 policy_definition_vedgeroute_action_aspath:
   field: enum("asPath")
-  value: include("policy_definition_vedgeroute_action_aspath_value", required=False)
+  value: include("policy_definition_vedgeroute_action_aspath_value")
 policy_definition_vedgeroute_action_aspath_value:
-  prepend: list(int(min=0, max=65535))
-  exclude: list(int(min=0, max=65535))
+  prepend: regex('^[0-9]{,5}$')
+  exclude: regex('^[0-9]{,5}$', required=False)
 policy_definition_vedgeroute_action_atomicaggregate:
   field: enum("atomicAggregate")
   value: enum("true")
@@ -1030,42 +1028,15 @@ cedge_device_template_parameters:
   feature_templates: list(include("dt_feature_template_ref"))
 dt_feature_template_ref:
   templateName: regex('^[^<>!&$@\/"() ]{,128}$')
-  templateType: enum("cedge_aaa", "cedge_global", "cisco_banner", "cisco_bfd", "cisco_omp", "cisco_security", "cisco_snmp", "cisco_system", "cisco_vpn", "cli-template")
+  templateType: enum("cedge_aaa", "cedge_global", "cisco_banner", "cisco_bfd", "cisco_omp", "cisco_security", "cisco_sig_credentials", "cisco_snmp", "cisco_system", "cisco_thousandeyes", "cisco_vpn", "cli-template", "virtual-application-utd")
   subTemplates: list(include("dt_feature_subtemplates_level1"), required=False)
 dt_feature_subtemplates_level1:
   templateName: regex('^[^<>!&$@\/"() ]{,128}$')
-  templateType: enum("cisco_bgp", "cisco_ospf", "cisco_vpn_interface", "cisco_logging", "cisco_ntp")
+  templateType: enum("cisco_bgp", "cisco_ospf", "cisco_vpn_interface", "cisco_logging", "cisco_ntp", "cisco_secure_internet_gateway", "cisco_vpn_interface_ipsec")
   subTemplates: list(include("dt_feature_subtemplates_level2"), required=False)
 dt_feature_subtemplates_level2:
   templateName: regex('^[^<>!&$@\/"() ]{,128}$')
   templateType: enum("cisco_dhcp_server")
-dt_feature_template_old:
-  cedge_aaa: list(include("dt_feature_template_name_old"), max=1)
-  cedge_global: list(include("dt_feature_template_name_old"), max=1)
-  cisco_banner: list(include("dt_feature_template_name_old"), required=False, max=1)
-  cisco_bfd: list(include("dt_feature_template_name_old"), max=1)
-  cisco_logging: list(include("dt_feature_template_name_old"), max=1)
-  cisco_ntp: list(include("dt_feature_template_name_old"), required=False, max=1)
-  cisco_omp: list(include("dt_feature_template_name_old"), max=1)
-  cisco_security: list(include("dt_feature_template_name_old"), max=1)
-  cisco_snmp: list(include("dt_feature_template_name_old"), required=False, max=1)
-  cisco_system: list(include("dt_feature_template_name_old"), max=1)
-  cisco_vpn: list(include("dt_feature_template_subtemplates_old"), min=2, max=64)
-  cli_template: list(include("dt_feature_template_name"), required=False, max=1)
-dt_feature_template_name_old:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-dt_feature_template_subtemplates_old:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  subtemplates: include("dt_feature_subtemplates_level1_old", required=False)
-dt_feature_subtemplates_level1_old:
-  cisco_vpn_interface: list(include("dt_feature_subtemplate_level1_old"), required=False)
-  cisco_bgp: list(include("dt_feature_subtemplate_level1_old"), required=False, max=1)
-  cisco_ospf: list(include("dt_feature_subtemplate_level1_old"), required=False, max=1)
-dt_feature_subtemplate_level1_old:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  subtemplates: include("dt_feature_subtemplates_level2_old", required=False)
-dt_feature_subtemplates_level2_old:
-  cisco_dhcp_server: list(include("dt_feature_template_name_old"))
 # SD-WAN Site schema - per-device variables
 sites:
   id: int(min=1, max=4294967295)

@@ -70,12 +70,14 @@ nav:
           - Cisco Logging: data_model/sdwan/feature_templates/cisco_logging.md
           - Cisco NTP: data_model/sdwan/feature_templates/cisco_ntp.md
           - Cisco OMP: data_model/sdwan/feature_templates/cisco_omp.md
+          - Cisco Secure Internet Gateway: data_model/sdwan/feature_templates/cisco_secure_internet_gateway.md
           - Cisco Security: data_model/sdwan/feature_templates/cisco_security.md
           - Cisco SIG Credentials: data_model/sdwan/feature_templates/cisco_sig_credentials.md
           - Cisco SNMP: data_model/sdwan/feature_templates/cisco_snmp.md
           - Cisco System: data_model/sdwan/feature_templates/cisco_system.md
           - Cisco VPN: data_model/sdwan/feature_templates/cisco_vpn.md
           - Cisco VPN Interface: data_model/sdwan/feature_templates/cisco_vpn_interface.md
+          - Cisco VPN Interface IPSec: data_model/sdwan/feature_templates/cisco_vpn_interface_ipsec.md
           - CLI Template: data_model/sdwan/feature_templates/cli_template.md
       - Device Templates:
           - Device Template: data_model/sdwan/device_templates/device_template.md

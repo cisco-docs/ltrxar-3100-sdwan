@@ -36,6 +36,10 @@ objects:
     template: cisco_omp
     folder: feature_templates
     paths: [sdwan.cedge_feature_templates.cisco_omp]
+  - name: Cisco Secure Internet Gateway
+    template: cisco_secure_internet_gateway
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_secure_internet_gateway]
   - name: Cisco Security
     template: cisco_security
     folder: feature_templates
@@ -60,6 +64,10 @@ objects:
     template: cisco_vpn_interface
     folder: feature_templates
     paths: [sdwan.cedge_feature_templates.cisco_vpn_interface]
+  - name: Cisco VPN Interface IPSec
+    template: cisco_vpn_interface_ipsec
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_vpn_interface_ipsec]
   - name: CLI Template
     template: cli_template
     folder: feature_templates
