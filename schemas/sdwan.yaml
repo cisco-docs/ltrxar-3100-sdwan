@@ -572,7 +572,7 @@ cft_vpn_interface_parameters:
   speed: any(str(starts_with="DEVICE_VARIABLE;"), enum("10", "100", "1000", "2500", "10000"), required=False)
   tloc-extension: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
   tracker: any(str(starts_with="DEVICE_VARIABLE;"), list(str(min=1, max=128)), required=False)
-  trustsec:  include("cft_vpn_interface_trustsec", required=False)
+  trustsec: include("cft_vpn_interface_trustsec", required=False)
   tunnel-interface: include("cft_vpn_interface_tunnel", required=False)
   vrrp: list(include("cft_vpn_interface_vrrp"), required=False)
 cft_vpn_interface_acl:
@@ -594,11 +594,13 @@ cft_vpn_interface_natpool:
   range-start: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
 cft_vpn_interface_trustsec:
   enable: enum("true", "false")
-  propagate:
-    sgt: enum("true", "false")
-  static:
-    sgt: int(min=2, max=65519)
-    trusted: enum("true", "false")
+  propagate: include("cft_vpn_interface_trustsec_propagate", required=False)
+  static: include("cft_vpn_interface_trustsec_static", required=False)
+cft_vpn_interface_trustsec_propagate:
+  sgt: enum("true", "false")
+cft_vpn_interface_trustsec_static:
+  sgt: int(min=2, max=65519)
+  trusted: enum("true", "false")
 cft_vpn_interface_tunnel:
   allow-service: include("cft_vpn_interface_tunnel_allow", required=False)
   clear-dont-fragment: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
@@ -669,15 +671,16 @@ cft_vpn_interface_ipsec_ike:
   ike-rekey-interval: any(str(starts_with="DEVICE_VARIABLE;"), int(min=60, max=86400), required=False)
   ike-version: enum(2)
 cft_vpn_interface_ipsec_ike_psk:
-  pre-shared-key: 
-    ike-local-id: any(str(starts_with="DEVICE_VARIABLE;"), str(max=63), required=False)
-    ike-remote-id: any(str(starts_with="DEVICE_VARIABLE;"), str(max=63), required=False)
-    pre-shared-secret: any(str(starts_with="DEVICE_VARIABLE;"), str(max=127), required=False)
+  pre-shared-key: include("cft_vpn_interface_ipsec_ike_psk_psk", required=False)
+cft_vpn_interface_ipsec_ike_psk_psk:
+  ike-local-id: any(str(starts_with="DEVICE_VARIABLE;"), str(max=63), required=False)
+  ike-remote-id: any(str(starts_with="DEVICE_VARIABLE;"), str(max=63), required=False)
+  pre-shared-secret: any(str(starts_with="DEVICE_VARIABLE;"), str(max=127), required=False)
 cft_vpn_interface_ipsec_ip:
   address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4), required=False)
 cft_vpn_interface_ipsec_ipsec:
   ipsec-ciphersuite: any(str(starts_with="DEVICE_VARIABLE;"), enum("aes256-cbc-sha1", "aes256-cbc-sha384", "aes256-cbc-sha256", "aes256-cbc-sha512", "aes256-gcm", "null-sha1", "null-sha384", "null-sha256", "null-sha512"), required=False)
-  ipsec-rekey-interval:  any(str(starts_with="DEVICE_VARIABLE;"), int(min=120, max=2592000), required=False)
+  ipsec-rekey-interval: any(str(starts_with="DEVICE_VARIABLE;"), int(min=120, max=2592000), required=False)
   ipsec-replay-window: any(str(starts_with="DEVICE_VARIABLE;"), int(min=64, max=4096), required=False)
   perfect-forward-secrecy: any(str(starts_with="DEVICE_VARIABLE;"), enum("group-1", "group-2", "group-5", "group-14", "group-15", "group-16", "group-19", "group-20", "group-21", "group-24", "none"), required=False)
 # cEdge CLI feature template
