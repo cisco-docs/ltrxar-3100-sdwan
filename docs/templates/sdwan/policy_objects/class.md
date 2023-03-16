@@ -8,7 +8,7 @@ Configure QoS class maps.
 
 ```yaml
 sdwan:
-  localized_policies:
+  policy_objects:
     lists:
       class:
         - name: CLASS-REALTIME

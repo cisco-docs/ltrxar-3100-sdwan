@@ -8,7 +8,7 @@ Configure prefix lists.
 
 ```yaml
 sdwan:
-  localized_policies:
+  policy_objects:
     lists:
       prefix:
         - name: PLV4-PRIVATE-RANGES

@@ -6,7 +6,7 @@ class Rule:
     paths = []
     # Verify Feature Template Names referenced in the Device Templates
     feature_template_types = [
-        "cedge_aaa", "cedge_global", "cisco_banner", "cisco_bfd",  "cisco_omp", "cisco_security", "cisco_snmp", "cisco_system", "cisco_vpn", "cli-template"
+        "cedge_aaa", "cedge_global", "cisco_banner", "cisco_bfd",  "cisco_omp", "cisco_security", "cisco_sig_credentials", "cisco_snmp", "cisco_system", "cisco_thousandeyes", "cisco_vpn", "cli-template", "virtual-application-utd"
     ]
     for type in feature_template_types:
         paths.append({
@@ -16,7 +16,7 @@ class Rule:
             ]
         })
     feature_subtemplate_types = [
-        "cisco_vpn_interface", "cisco_bgp", "cisco_ospf", "cisco_logging", "cisco_ntp"
+        "cisco_vpn_interface", "cisco_bgp", "cisco_ospf", "cisco_logging", "cisco_ntp", "cisco_secure_internet_gateway", "cisco_vpn_interface_ipsec"
     ]
     for type in feature_subtemplate_types:
         paths.append({

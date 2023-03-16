@@ -19,14 +19,14 @@ This table provides an overview of which object is supported in combination with
 [Cisco Logging](./sdwan/feature_templates/cisco_logging.md) | :material-check: | :material-check: | :material-check:
 [Cisco NTP](./sdwan/feature_templates/cisco_ntp.md) | :material-check: | :material-check: | :material-check:
 [Cisco OMP](./sdwan/feature_templates/cisco_omp.md) | :material-check: | :material-check: | :material-check:
-[Cisco Secure Internet Gateway](./sdwan/feature_templates/cisco_secure_internet_gateway.md) | :material-check: | :material-check: | :material-check:
+[Cisco Secure Internet Gateway](./sdwan/feature_templates/cisco_secure_internet_gateway.md) | :material-check: | | :material-check:
 [Cisco Security](./sdwan/feature_templates/cisco_security.md) | :material-check: | :material-check: | :material-check:
 [Cisco SIG Credentials](./sdwan/feature_templates/cisco_sig_credentials.md) | :material-check: | :material-check: | :material-check:
 [Cisco SNMP](./sdwan/feature_templates/cisco_snmp.md) | :material-check: | :material-check: | :material-check:
 [Cisco System](./sdwan/feature_templates/cisco_system.md) | :material-check: | :material-check: | :material-check:
 [Cisco VPN](./sdwan/feature_templates/cisco_vpn.md) | :material-check: | :material-check: | :material-check:
 [Cisco VPN Interface](./sdwan/feature_templates/cisco_vpn_interface.md) | :material-check: | :material-check: | :material-check:
-[Cisco VPN Interface IPSec](./sdwan/feature_templates/cisco_vpn_interface_ipsec.md) | :material-check: | :material-check: | :material-check:
+[Cisco VPN Interface IPSec](./sdwan/feature_templates/cisco_vpn_interface_ipsec.md) | :material-check: | | :material-check:
 [CLI Template](./sdwan/feature_templates/cli_template.md) | :material-check: | :material-check: | :material-check:
 
 ### Device Templates
@@ -39,13 +39,19 @@ This table provides an overview of which object is supported in combination with
 
 <span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse
 ---|---|---|---
+[Application List](./sdwan/policy_objects/app.md) | :material-check: | | :material-check:
 [AS Path List](./sdwan/policy_objects/aspath.md) | :material-check: | :material-check: | :material-check:
 [Class](./sdwan/policy_objects/class.md) | :material-check: | :material-check: | :material-check:
+[Color List](./sdwan/policy_objects/color.md) | :material-check: | | :material-check:
 [Community List](./sdwan/policy_objects/community.md) | :material-check: | :material-check: | :material-check:
 [Data Prefix List](./sdwan/policy_objects/data_prefix.md) | :material-check: | :material-check: | :material-check:
 [Expanded Community List](./sdwan/policy_objects/expanded_community.md) | :material-check: | :material-check: | :material-check:
 [Extended Community List](./sdwan/policy_objects/extended_community.md) | :material-check: | :material-check: | :material-check:
+[Policer List](./sdwan/policy_objects/policer.md) | :material-check: | | :material-check:
 [Prefix List](./sdwan/policy_objects/prefix.md) | :material-check: | :material-check: | :material-check:
+[Site List](./sdwan/policy_objects/site.md) | :material-check: | | :material-check:
+[SLA Class List](./sdwan/policy_objects/sla.md) | :material-check: | | :material-check:
+[TLOC List](./sdwan/policy_objects/tloc.md) | :material-check: | | :material-check:
 [VPN List](./sdwan/policy_objects/vpn.md) | :material-check: | :material-check: | :material-check:
 
 ### Localized Policies

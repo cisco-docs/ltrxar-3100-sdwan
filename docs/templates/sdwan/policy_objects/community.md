@@ -8,7 +8,7 @@ A community list is used to create groups of communities to use in a match claus
 
 ```yaml
 sdwan:
-  localized_policies:
+  policy_objects:
     lists:
       community:
         - name: COMMUNITY-REGION1

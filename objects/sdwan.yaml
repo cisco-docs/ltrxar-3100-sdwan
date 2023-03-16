@@ -76,38 +76,62 @@ objects:
     template: device_template
     folder: device_templates
     paths: [sdwan.cedge_device_templates.device_template]
+  - name: Application List
+    template: app
+    folder: policy_objects
+    paths: [sdwan.policy_objects.lists.app]
   - name: AS Path List
     template: aspath
     folder: policy_objects
-    paths: [sdwan.localized_policies.lists.asPath]
+    paths: [sdwan.policy_objects.lists.asPath]
   - name: Class
     template: class
     folder: policy_objects
-    paths: [sdwan.localized_policies.lists.class]
+    paths: [sdwan.policy_objects.lists.class]
+  - name: Color List
+    template: color
+    folder: policy_objects
+    paths: [sdwan.policy_objects.lists.color]
   - name: Community List
     template: community
     folder: policy_objects
-    paths: [sdwan.localized_policies.lists.community]
+    paths: [sdwan.policy_objects.lists.community]
   - name: Data Prefix List
     template: data_prefix
     folder: policy_objects
-    paths: [sdwan.localized_policies.lists.dataPrefix]
+    paths: [sdwan.policy_objects.lists.dataPrefix]
   - name: Expanded Community List
     template: expanded_community
     folder: policy_objects
-    paths: [sdwan.localized_policies.lists.expandedCommunity]
+    paths: [sdwan.policy_objects.lists.expandedCommunity]
   - name: Extended Community List
     template: extended_community
     folder: policy_objects
-    paths: [sdwan.localized_policies.lists.extCommunity]
+    paths: [sdwan.policy_objects.lists.extCommunity]
+  - name: Policer List
+    template: policer
+    folder: policy_objects
+    paths: [sdwan.policy_objects.lists.policer]
   - name: Prefix List
     template: prefix
     folder: policy_objects
-    paths: [sdwan.localized_policies.lists.prefix]
+    paths: [sdwan.policy_objects.lists.prefix]
+  - name: Site List
+    template: site
+    folder: policy_objects
+    paths: [sdwan.policy_objects.lists.site]
+  - name: SLA Class List
+    template: sla
+    folder: policy_objects
+    paths: [sdwan.policy_objects.lists.sla]
+  - name: TLOC List
+    template: tloc
+    folder: policy_objects
+    paths: [sdwan.policy_objects.lists.tloc]
   - name: VPN List
     template: vpn
     folder: policy_objects
-    paths: [sdwan.localized_policies.lists.vpn]
+    paths: [sdwan.policy_objects.lists.vpn]
   - name: ACL Definition
     template: acl_definition
     folder: localized_policies

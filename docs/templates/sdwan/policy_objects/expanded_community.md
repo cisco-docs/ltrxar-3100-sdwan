@@ -8,13 +8,13 @@ Configure expanded BGP community lists.
 
 ```yaml
 sdwan:
-  localized_policies:
+  policy_objects:
     lists:
       expandedCommunity:
         - name: COMMUNITY-LEGACY-WAN
           description: "Legacy WAN community list"
           entries:
-          - community: 65148:926
-          - community: 65149:926
-          - community: '65146:10'
+          - community: 65001:101
+          - community: 65002:102
+          - community: 65003:103
 ```

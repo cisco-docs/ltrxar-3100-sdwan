@@ -8,12 +8,12 @@ A data prefix list specifies one or more IP prefixes. You can specify both unica
 
 ```yaml
 sdwan:
-  localized_policies:
+  policy_objects:
     lists:
       dataPrefix:
-        - name: DPL-DEFAULT
-          description: "Default IPv4 prefix"
+        - name: DPL-PRIVATE
+          description: "Private IPv4 prefix"
           entries:
-          - ipPrefix: 0.0.0.0/0
-          - ipPrefix: 1.1.1.1/32
+          - ipPrefix: 10.0.0.0/8
+          - ipPrefix: 172.16.0.0/12
 ```

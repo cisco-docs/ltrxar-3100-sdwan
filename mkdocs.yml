@@ -82,13 +82,19 @@ nav:
       - Device Templates:
           - Device Template: data_model/sdwan/device_templates/device_template.md
       - Policy Objects:
+          - Application List: data_model/sdwan/policy_objects/app.md
           - AS Path List: data_model/sdwan/policy_objects/aspath.md
           - Class: data_model/sdwan/policy_objects/class.md
+          - Color List: data_model/sdwan/policy_objects/color.md
           - Community List: data_model/sdwan/policy_objects/community.md
           - Data Prefix List: data_model/sdwan/policy_objects/data_prefix.md
           - Expanded Community List: data_model/sdwan/policy_objects/expanded_community.md
           - Extended Community List: data_model/sdwan/policy_objects/extended_community.md
+          - Policer List: data_model/sdwan/policy_objects/policer.md
           - Prefix List: data_model/sdwan/policy_objects/prefix.md
+          - Site List: data_model/sdwan/policy_objects/site.md
+          - SLA Class List: data_model/sdwan/policy_objects/sla.md
+          - TLOC List: data_model/sdwan/policy_objects/tloc.md
           - VPN List: data_model/sdwan/policy_objects/vpn.md
       - Localized Policies:
           - ACL Definition: data_model/sdwan/localized_policies/acl_definition.md

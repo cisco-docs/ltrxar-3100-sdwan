@@ -4,6 +4,7 @@ sdwan: include('sdwan', required=False)
 sdwan:
   vmanage: include("vmanage", required=False)
   cedge_feature_templates: include("cedge_feature_templates", required=False)
+  policy_objects: include("policy_objects", required=False)
   localized_policies: include("localized_policies", required=False)
   cedge_device_templates: include("cedge_device_templates", required=False)
   sites: list(include("sites"), required=False)
@@ -690,24 +691,33 @@ cli_template:
   parameters: include("cft_cli_template_parameters", required=False)
 cft_cli_template_parameters:
   config: str()
-# Localized Policy schema
-localized_policies:
-  lists: include("localized_policy_lists", required=False)
-  definitions: include("localized_policy_definitions", required=False)
-  policies: include("localized_policy_templates", required=False)
-# Localized Policy Lists
-# Supported list types: asPath, class, community, expandedCommunity, extCommunity, dataPrefix, prefix, vpn
-# Missing: mirror, policer
-localized_policy_lists:
+# Policy List schema
+policy_objects:
+  lists: include("policy_lists", required=False)
+# Policy Lists
+# Missing types: mirror, appprobeclass, preferredcolorgroup, region
+policy_lists:
+  app: list(include("policy_list_app"), required=False)
   asPath: list(include("policy_list_aspath"), required=False)
   class: list(include("policy_list_class"), required=False)
+  color: list(include("policy_list_color"), required=False)
   community: list(include("policy_list_community"), required=False)
   dataPrefix: list(include("policy_list_dataprefix"), required=False)
   expandedCommunity: list(include("policy_list_expanded_community"), required=False)
   extCommunity: list(include("policy_list_extended_community"), required=False)
   localApp: list(include("policy_list_localapp"), required=False)
+  policer: list(include("policy_list_policer"), required=False)
   prefix: list(include("policy_list_prefix"), required=False)
+  site: list(include("policy_list_site"), required=False)
+  sla: list(include("policy_list_sla"), required=False)
+  tloc: list(include("policy_list_tloc"), required=False)
   vpn: list(include("policy_list_vpn"), required=False)
+policy_list_app:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  entries: list(include("policy_list_app_entries"))
+policy_list_app_entries:
+  app: str()
 policy_list_aspath:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
@@ -717,9 +727,15 @@ policy_list_aspath_entries:
 policy_list_class:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
-  entries: list(include("policy_list_class_entries"))
+  entries: list(include("policy_list_class_entries"), max=1)
 policy_list_class_entries:
   queue: regex('^[0-7]{,1}$')
+policy_list_color:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  entries: list(include("policy_list_color_entries"))
+policy_list_color_entries:
+  color: enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6")
 policy_list_community:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
@@ -750,18 +766,52 @@ policy_list_extended_community:
   entries: list(include("policy_list_extcommunity_entries"))
 policy_list_extcommunity_entries:
   community: any(regex('^soo.*$'), regex('^rt.*$'))
+policy_list_policer:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  entries: list(include("policy_list_policer_entries"))
+policy_list_policer_entries:
+  burst: regex('^[0-9]{,8}$')
+  exceed: enum("drop", "remark")
+  rate: regex('^[0-9]{,12}$')
 policy_list_prefix:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
   entries: list(include("policy_list_prefix_entries"))
 policy_list_prefix_entries:
   ipPrefix: ip(version=4)
+policy_list_site:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  entries: list(include("policy_list_site_entries"))
+policy_list_site_entries:
+  siteId: any(regex('^[0-9]{,10}$'), regex('^[0-9]{,10}(-)[0-9]{,10}$'))
+policy_list_sla:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  entries: list(include("policy_list_sla_entries"), max=1)
+policy_list_sla_entries:
+  jitter: regex('^[0-9]{,4}$')
+  latency: regex('^[0-9]{,4}$')
+  loss: regex('^[0-9]{,3}$')
+policy_list_tloc:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  entries: list(include("policy_list_tloc_entries"))
+policy_list_tloc_entries:
+  color: enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6")
+  encap: enum("ipsec", "gre")
+  tloc: ip(version=4)
 policy_list_vpn:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
   entries: list(include("policy_list_vpn_entries"))
 policy_list_vpn_entries:
   vpn: any(regex('^[0-9]{,3}$'), regex('^[0-9]{,3}(-)[0-9]{,3}$'))
+# Localized Policy schema
+localized_policies:
+  definitions: include("localized_policy_definitions", required=False)
+  policies: include("localized_policy_templates", required=False)
 # Localized Policy Definitions
 # Supported definition types: acl, deviceAccessPolicy, qosMap, rewriteRule, vedgeRoute
 # Missing: support for per-device variables in data prefix or community list entries

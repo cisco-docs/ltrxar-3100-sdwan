@@ -8,7 +8,7 @@ AS Path list specifies one or more BGP AS paths.
 
 ```yaml
 sdwan:
-  localized_policies:
+  policy_objects:
     lists:
       asPath:
         - name: ASPATH-PRIVATE

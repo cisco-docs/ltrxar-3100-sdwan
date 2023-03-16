@@ -8,7 +8,7 @@ Configure VPN lists.
 
 ```yaml
 sdwan:
-  localized_policies:
+  policy_objects:
     lists:
       vpn:
         - name: VPN-MGMT
