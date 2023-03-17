@@ -29,6 +29,7 @@ cedge_feature_templates:
   cisco_sig_credentials: list(include("cisco_sig_credentials_template"), required=False)
   cisco_snmp: list(include("cisco_snmp_template"), required=False)
   cisco_system: list(include("cisco_system_template"), required=False)
+  cisco_thousandeyes: list(include("cisco_thousandeyes_template"), required=False)
   cisco_vpn: list(include("cisco_vpn_template"), required=False)
   cisco_vpn_interface: list(include("cisco_vpn_interface_template"), required=False)
   cisco_vpn_interface_ipsec: list(include("cisco_vpn_interface_ipsec_template"), required=False)
@@ -496,6 +497,32 @@ cft_system_tracker_group:
   name: str(min=1, max=128)
   optional: bool(required=False)
   type: enum("tracker-group", requierd=False)
+# Cisco ThousandEyes template
+cisco_thousandeyes_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  parameters: include("cft_thousandeyes_parameters", required=False)
+cft_thousandeyes_parameters:
+  virtual-application: list(include('cft_thousandeyes_virtual_application'))
+cft_thousandeyes_virtual_application:
+  application-type: enum("te", required=False)
+  instance-id: regex('^[0-9a-z]{,8}-[0-9a-z]{,4}-[0-9a-z]{,4}-[0-9a-z]{,4}-[0-9a-z]{,12}$') # UUID generated on vManage UI client
+  te: include("cft_thousandeyes_virtual_application_te")
+cft_thousandeyes_virtual_application_te:
+  hostname: any(str(starts_with="DEVICE_VARIABLE;"), regex('^[0-9a-z.]{,235}$'), required=False)
+  name-server: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4), required=False)
+  proxy_pac: include("cft_thousandeyes_virtual_application_te_proxy_pac", required=False)
+  proxy_static: include("cft_thousandeyes_virtual_application_te_proxy_static", required=False)
+  proxy_type: any(str(starts_with="DEVICE_VARIABLE;"), enum("pac", "static"), required=False)
+  te-mgmt-ip: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4), required=False)
+  te-vpg-ip: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4), required=False)
+  token: any(str(starts_with="DEVICE_VARIABLE;"), regex('^[0-9a-z]{,32}$'))
+  vpn: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=65535), required=False)
+cft_thousandeyes_virtual_application_te_proxy_pac:
+  pac_url: any(str(starts_with="DEVICE_VARIABLE;"),str(min=1, max=183))
+cft_thousandeyes_virtual_application_te_proxy_static:
+  proxy_host: any(str(starts_with="DEVICE_VARIABLE;"),str(min=1, max=174))
+  proxy_port: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=65535))
 # Cisco VPN feature template
 # Missing: DNS host entries; service routes; GRE routes; IPSec routes;
 # NAT; route export/import; IPv6
@@ -715,9 +742,11 @@ policy_lists:
 policy_list_app:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
-  entries: list(include("policy_list_app_entries"))
+  entries: any(list(include("policy_list_app_entries")), list(include("policy_list_appfamily_entries")))
 policy_list_app_entries:
   app: str()
+policy_list_appfamily_entries:
+  appFamily: enum("application-service", "audio-video", "authentication", "behavioral", "database", "encrypted", "erp", "file-server", "file-transfer", "forum", "game", "instant-messaging", "mail", "microsoft-office", "middleware", "network-management", "network-service", "peer-to-peer", "printer", "routing", "security-service", "terminal", "thin-client", "tunneling", "web", "webmail")
 policy_list_aspath:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
