@@ -24,6 +24,7 @@ This table provides an overview of which object is supported in combination with
 [Cisco SIG Credentials](./sdwan/feature_templates/cisco_sig_credentials.md) | :material-check: | :material-check: | :material-check:
 [Cisco SNMP](./sdwan/feature_templates/cisco_snmp.md) | :material-check: | :material-check: | :material-check:
 [Cisco System](./sdwan/feature_templates/cisco_system.md) | :material-check: | :material-check: | :material-check:
+[Cisco ThousandEyes Agent](./sdwan/feature_templates/cisco_thousandeyes.md) | :material-check: | | :material-check:
 [Cisco VPN](./sdwan/feature_templates/cisco_vpn.md) | :material-check: | :material-check: | :material-check:
 [Cisco VPN Interface](./sdwan/feature_templates/cisco_vpn_interface.md) | :material-check: | :material-check: | :material-check:
 [Cisco VPN Interface IPSec](./sdwan/feature_templates/cisco_vpn_interface_ipsec.md) | :material-check: | | :material-check:

@@ -75,6 +75,7 @@ nav:
           - Cisco SIG Credentials: data_model/sdwan/feature_templates/cisco_sig_credentials.md
           - Cisco SNMP: data_model/sdwan/feature_templates/cisco_snmp.md
           - Cisco System: data_model/sdwan/feature_templates/cisco_system.md
+          - Cisco ThousandEyes: data_model/sdwan/feature_templates/cisco_thousandeyes.md
           - Cisco VPN: data_model/sdwan/feature_templates/cisco_vpn.md
           - Cisco VPN Interface: data_model/sdwan/feature_templates/cisco_vpn_interface.md
           - Cisco VPN Interface IPSec: data_model/sdwan/feature_templates/cisco_vpn_interface_ipsec.md

@@ -56,6 +56,10 @@ objects:
     template: cisco_system
     folder: feature_templates
     paths: [sdwan.cedge_feature_templates.cisco_system]
+  - name: Cisco ThousandEyes
+    template: cisco_thousandeyes
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_thousandeyes]
   - name: Cisco VPN
     template: cisco_vpn
     folder: feature_templates
