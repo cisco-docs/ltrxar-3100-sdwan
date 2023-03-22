@@ -509,7 +509,7 @@ cft_thousandeyes_virtual_application:
   instance-id: regex('^[0-9a-z]{,8}-[0-9a-z]{,4}-[0-9a-z]{,4}-[0-9a-z]{,4}-[0-9a-z]{,12}$') # UUID generated on vManage UI client
   te: include("cft_thousandeyes_virtual_application_te")
 cft_thousandeyes_virtual_application_te:
-  hostname: any(str(starts_with="DEVICE_VARIABLE;"), regex('^[0-9a-z.]{,235}$'), required=False)
+  hostname: any(str(starts_with="DEVICE_VARIABLE;"), regex('^[0-9A-z-_.]{,235}$'), required=False)
   name-server: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4), required=False)
   proxy_pac: include("cft_thousandeyes_virtual_application_te_proxy_pac", required=False)
   proxy_static: include("cft_thousandeyes_virtual_application_te_proxy_static", required=False)
@@ -593,8 +593,9 @@ cft_vpn_interface_parameters:
   if-name: any(str(starts_with="DEVICE_VARIABLE;"), str())
   ip: include("cft_vpn_interface_ip", required=False)
   mtu: any(str(starts_with="DEVICE_VARIABLE;"), int(min=576, max=9216), required=False)
-  qos-map: str(required=False)
   nat: include("cft_vpn_interface_nat", required=False)
+  qos-map: any(str(starts_with="DEVICE_VARIABLE;"), str(max=128), required=False)
+  rewrite-rule: include("cft_vpn_interface_rewrite_rule", required=False)
   shaping-rate: any(str(starts_with="DEVICE_VARIABLE;"), int(), required=False)
   shutdown: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
   speed: any(str(starts_with="DEVICE_VARIABLE;"), enum("10", "100", "1000", "2500", "10000"), required=False)
@@ -620,6 +621,8 @@ cft_vpn_interface_natpool:
   prefix-length: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=30))
   range-end: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
   range-start: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+cft_vpn_interface_rewrite_rule:
+  rule-name: any(str(starts_with="DEVICE_VARIABLE;"), str(max=128))
 cft_vpn_interface_trustsec:
   enable: enum("true", "false")
   propagate: include("cft_vpn_interface_trustsec_propagate", required=False)
@@ -899,8 +902,6 @@ policy_definition_acl_match_entries:
   entries: list(include("policy_definition_acl_match_class"), include("policy_definition_acl_match_dscp"), include("policy_definition_acl_match_ipaddress"), include("policy_definition_acl_match_packetlength"), include("policy_definition_acl_match_plp"), include("policy_definition_acl_match_port"), include("policy_definition_acl_match_prefix"), include("policy_definition_acl_match_protocol"), include("policy_definition_acl_match_tcp"), required=False)
 policy_definition_acl_match_class:
   field: enum("class")
-  value: include("policy_definition_acl_match_class_value", required=False)
-policy_definition_acl_match_class_value:
   ref: str()
 policy_definition_acl_match_dscp:
   field: enum("dscp")

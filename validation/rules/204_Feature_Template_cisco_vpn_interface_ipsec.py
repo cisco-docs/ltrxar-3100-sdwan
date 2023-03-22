@@ -1,5 +1,5 @@
 class Rule:
-    id = "203"
+    id = "204"
     description = "Validate cisco_vpn_interface_ipsec feature templates"
     severity = "HIGH"
 
