@@ -864,7 +864,7 @@ policy_definition_acl_parameters:
 policy_definition_acl_parameters_type:
   type: enum("accept", "drop")
 policy_definition_acl_sequence:
-  actions: list(include("policy_definition_acl_action_class"), include("policy_definition_acl_action_count"), include("policy_definition_acl_action_dscp"), include("policy_definition_acl_action_log"), include("policy_definition_acl_action_mirror"), include("policy_definition_acl_action_nexthop"), include("policy_definition_acl_action_policer"), required=False)
+  actions: list(include("policy_definition_acl_action_class"), include("policy_definition_acl_action_count"), include("policy_definition_acl_action_log"), include("policy_definition_acl_action_mirror"), include("policy_definition_acl_action_set"), include("policy_definition_acl_action_policer"), required=False)
   baseAction: enum("accept", "drop")
   match: include("policy_definition_acl_match_entries", required=False)
   sequenceId: int(min=1, max=65534)
@@ -879,17 +879,23 @@ policy_definition_acl_action_class_parameters:
 policy_definition_acl_action_count:
   type: enum("count")
   parameter: str()
-policy_definition_acl_action_dscp:
-  type: enum("dscp")
-  parameter: regex('^[0-9]{,2}$')
 policy_definition_acl_action_log:
   type: enum("log")
-  parameter: null()
+  parameter: any(str(), null(), required=False)
 policy_definition_acl_action_mirror:
   type: enum("mirror")
   parameter: include("policy_definition_acl_action_mirror_parameters", required=False)
 policy_definition_acl_action_mirror_parameters:
   ref: str()
+policy_definition_acl_action_set:
+  type: enum("set")
+  parameter: list(include("policy_definition_acl_action_set_nexthop"), include("policy_definition_acl_action_set_dscp"))
+policy_definition_acl_action_set_dscp:
+  field: enum("dscp")
+  value: regex('^[0-9]{,2}$')
+policy_definition_acl_action_set_nexthop:
+  field: enum("nextHop")
+  value: ip(version=4)
 policy_definition_acl_action_nexthop:
   type: enum("nextHop")
   parameter: ip(version=4)
