@@ -40,31 +40,31 @@ This table provides an overview of which object is supported in combination with
 
 <span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse
 ---|---|---|---
-[Application List](./sdwan/policy_objects/app.md) | :material-check: | | :material-check:
+[Application List](./sdwan/policy_objects/app.md) | :material-check: | :material-check: | :material-check:
 [AS Path List](./sdwan/policy_objects/aspath.md) | :material-check: | :material-check: | :material-check:
 [Class](./sdwan/policy_objects/class.md) | :material-check: | :material-check: | :material-check:
-[Color List](./sdwan/policy_objects/color.md) | :material-check: | | :material-check:
+[Color List](./sdwan/policy_objects/color.md) | :material-check: | :material-check: | :material-check:
 [Community List](./sdwan/policy_objects/community.md) | :material-check: | :material-check: | :material-check:
 [Data Prefix List](./sdwan/policy_objects/data_prefix.md) | :material-check: | :material-check: | :material-check:
 [Expanded Community List](./sdwan/policy_objects/expanded_community.md) | :material-check: | :material-check: | :material-check:
 [Extended Community List](./sdwan/policy_objects/extended_community.md) | :material-check: | :material-check: | :material-check:
-[Policer List](./sdwan/policy_objects/policer.md) | :material-check: | | :material-check:
+[Policer List](./sdwan/policy_objects/policer.md) | :material-check: | :material-check: | :material-check:
 [Prefix List](./sdwan/policy_objects/prefix.md) | :material-check: | :material-check: | :material-check:
-[Site List](./sdwan/policy_objects/site.md) | :material-check: | | :material-check:
-[SLA Class List](./sdwan/policy_objects/sla.md) | :material-check: | | :material-check:
-[TLOC List](./sdwan/policy_objects/tloc.md) | :material-check: | | :material-check:
+[Site List](./sdwan/policy_objects/site.md) | :material-check: | :material-check: | :material-check:
+[SLA Class List](./sdwan/policy_objects/sla.md) | :material-check: | :material-check: | :material-check:
+[TLOC List](./sdwan/policy_objects/tloc.md) | :material-check: | :material-check: | :material-check:
 [VPN List](./sdwan/policy_objects/vpn.md) | :material-check: | :material-check: | :material-check:
 
 ### Localized Policies
 
 <span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse
 ---|---|---|---
-[ACL Definition](./sdwan/localized_policies/acl_definition.md) | :material-check: | | :material-check:
-[Device Access Policy Definition](./sdwan/localized_policies/device_access_policy_definition.md) | :material-check: | | :material-check:
-[QoS Map Definition](./sdwan/localized_policies/qos_map_definition.md) | :material-check: | | :material-check:
-[Rewrite Rule Definition](./sdwan/localized_policies/rewrite_rule_definition.md) | :material-check: | | :material-check:
-[vEdge Route Definition](./sdwan/localized_policies/vedge_route_definition.md) | :material-check: | | :material-check:
-[Feature Policy](./sdwan/localized_policies/feature_policy.md) | :material-check: | | :material-check:
+[ACL Definition](./sdwan/localized_policies/acl_definition.md) | :material-check: | :material-check: | :material-check:
+[Device Access Policy Definition](./sdwan/localized_policies/device_access_policy_definition.md) | :material-check: | :material-check: | :material-check:
+[QoS Map Definition](./sdwan/localized_policies/qos_map_definition.md) | :material-check: | :material-check: | :material-check:
+[Rewrite Rule Definition](./sdwan/localized_policies/rewrite_rule_definition.md) | :material-check: | :material-check: | :material-check:
+[vEdge Route Definition](./sdwan/localized_policies/vedge_route_definition.md) | :material-check: | :material-check: | :material-check:
+[Feature Policy](./sdwan/localized_policies/feature_policy.md) | :material-check: | :material-check: | :material-check:
 
 ### Sites
 
