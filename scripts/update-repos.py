@@ -20,11 +20,11 @@ REPOS = [
         "files": [
             {
                 "src": "../schemas/sdwan.yaml",
-                "dst": "./schema/sdwan.yml",
+                "dst": "./schemas/sdwan.yaml",
             },
             {
                 "src": "../defaults/sdwan.yaml",
-                "dst": "./defaults/cedge_feature_templates.yml",
+                "dst": "./defaults/sdwan.yaml",
             },
         ],
     },
@@ -50,7 +50,7 @@ REPOS = [
         "files": [
             {
                 "src": "../defaults/sdwan.yaml",
-                "dst": "./defaults/defaults.yaml",
+                "dst": "./defaults/sdwan.yaml",
             },
         ],
     },
