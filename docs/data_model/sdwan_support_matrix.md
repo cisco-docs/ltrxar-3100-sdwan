@@ -15,7 +15,7 @@ This table provides an overview of which object is supported in combination with
 [Cisco Banner](./sdwan/feature_templates/cisco_banner.md) | :material-check: | :material-check: | :material-check:
 [Cisco BFD](./sdwan/feature_templates/cisco_bfd.md) | :material-check: | :material-check: | :material-check:
 [Cisco BGP](./sdwan/feature_templates/cisco_bgp.md) | :material-check: | :material-check: | :material-check:
-[Cisco DHCP Server](./sdwan/feature_templates/cisco_dhcp_server.md) | :material-check: | | :material-check:
+[Cisco DHCP Server](./sdwan/feature_templates/cisco_dhcp_server.md) | :material-check: | :material-check: | :material-check:
 [Cisco Logging](./sdwan/feature_templates/cisco_logging.md) | :material-check: | :material-check: | :material-check:
 [Cisco NTP](./sdwan/feature_templates/cisco_ntp.md) | :material-check: | :material-check: | :material-check:
 [Cisco OMP](./sdwan/feature_templates/cisco_omp.md) | :material-check: | :material-check: | :material-check:
@@ -24,7 +24,7 @@ This table provides an overview of which object is supported in combination with
 [Cisco SIG Credentials](./sdwan/feature_templates/cisco_sig_credentials.md) | :material-check: | :material-check: | :material-check:
 [Cisco SNMP](./sdwan/feature_templates/cisco_snmp.md) | :material-check: | :material-check: | :material-check:
 [Cisco System](./sdwan/feature_templates/cisco_system.md) | :material-check: | :material-check: | :material-check:
-[Cisco ThousandEyes Agent](./sdwan/feature_templates/cisco_thousandeyes.md) | :material-check: | | :material-check:
+[Cisco ThousandEyes Agent](./sdwan/feature_templates/cisco_thousandeyes.md) | :material-check: | :material-check: | :material-check:
 [Cisco VPN](./sdwan/feature_templates/cisco_vpn.md) | :material-check: | :material-check: | :material-check:
 [Cisco VPN Interface](./sdwan/feature_templates/cisco_vpn_interface.md) | :material-check: | :material-check: | :material-check:
 [Cisco VPN Interface IPSec](./sdwan/feature_templates/cisco_vpn_interface_ipsec.md) | :material-check: | | :material-check:
