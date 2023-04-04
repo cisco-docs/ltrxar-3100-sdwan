@@ -70,6 +70,7 @@ nav:
           - Cisco Logging: data_model/sdwan/feature_templates/cisco_logging.md
           - Cisco NTP: data_model/sdwan/feature_templates/cisco_ntp.md
           - Cisco OMP: data_model/sdwan/feature_templates/cisco_omp.md
+          - Cisco OSPF: data_model/sdwan/feature_templates/cisco_ospf.md
           - Cisco Secure Internet Gateway: data_model/sdwan/feature_templates/cisco_secure_internet_gateway.md
           - Cisco Security: data_model/sdwan/feature_templates/cisco_security.md
           - Cisco SIG Credentials: data_model/sdwan/feature_templates/cisco_sig_credentials.md

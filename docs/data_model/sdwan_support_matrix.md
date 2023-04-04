@@ -19,6 +19,7 @@ This table provides an overview of which object is supported in combination with
 [Cisco Logging](./sdwan/feature_templates/cisco_logging.md) | :material-check: | :material-check: | :material-check:
 [Cisco NTP](./sdwan/feature_templates/cisco_ntp.md) | :material-check: | :material-check: | :material-check:
 [Cisco OMP](./sdwan/feature_templates/cisco_omp.md) | :material-check: | :material-check: | :material-check:
+[Cisco OSPF](./sdwan/feature_templates/cisco_ospf.md) | :material-check: |  | :material-check:
 [Cisco Secure Internet Gateway](./sdwan/feature_templates/cisco_secure_internet_gateway.md) | :material-check: | | :material-check:
 [Cisco Security](./sdwan/feature_templates/cisco_security.md) | :material-check: | :material-check: | :material-check:
 [Cisco SIG Credentials](./sdwan/feature_templates/cisco_sig_credentials.md) | :material-check: | :material-check: | :material-check:

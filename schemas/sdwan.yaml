@@ -24,6 +24,7 @@ cedge_feature_templates:
   cisco_logging: list(include("cisco_logging_template"), required=False)
   cisco_ntp: list(include("cisco_ntp_template"), required=False)
   cisco_omp: list(include("cisco_omp_template"), required=False)
+  cisco_ospf: list(include("cisco_ospf_template"), required=False)
   cisco_secure_internet_gateway: list(include("cisco_sig_template"), required=False)
   cisco_security: list(include("cisco_security_template"), required=False)
   cisco_sig_credentials: list(include("cisco_sig_credentials_template"), required=False)
@@ -299,6 +300,71 @@ cft_omp_timers:
   eor-timer: int(min=1, max=604800, required=False)
 cft_omp_advertise_protocol:
   protocol: enum("bgp", "ospf", "ospfv3", "connected", "static", "eigrp", "lisp", "isis")
+# Cisco OSPF feature template
+cisco_ospf_template:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  parameters: include("cft_ospf_parameters", required=False)
+cft_ospf_parameters:
+  ospf: include("cft_ospf", required=False)
+cft_ospf:
+  area: list(include("cft_ospf_area"), required=False)
+  auto-cost: include("cft_ospf_auto_cost", required=False)
+  compatible: include("cft_ospf_auto_compatible", required=False)
+  default-information: include("cft_ospf_default_information", required=False)
+  distance: include("cft_ospf_distance", required=False)
+  redistribute: list(include("cft_ospf_redistribute"), required=False)
+  router-id: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4), required=False)
+  timers: include("cft_ospf_timers", required=False)
+cft_ospf_area:
+  a-num: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=4294967295))
+  interface: list(include("cft_ospf_area_interface"), required=False)
+  optional: bool(required=False)
+  range: list(include("cft_ospf_area_range"), required=False)
+cft_ospf_area_interface:
+  authentication: include("cft_ospf_area_interface_authentication", required=False)
+  cost: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=65535), required=False)
+  dead-interval: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=65535), required=False)
+  hello-interval: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=65535), required=False)
+  name: any(str(starts_with="DEVICE_VARIABLE;"), str())
+  network: any(str(starts_with="DEVICE_VARIABLE;"), enum("broadcast", "point-to-point", "non-broadcast", "point-to-multipoint"), required=False) # Network type
+  passive-interface: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  priority: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=255), required=False)
+  retransmit-interval: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=65535), required=False)
+cft_ospf_area_interface_authentication:
+  message-digest: include("cft_ospf_area_interface_authentication_md", required=False)
+  type: any(str(starts_with="DEVICE_VARIABLE;"), enum("message-digest", "null"), required=False)
+cft_ospf_area_interface_authentication_md:
+  md5: any(str(starts_with="DEVICE_VARIABLE;"), str(min=1, max=31), required=False)
+  message-digest-key: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255), required=False)
+cft_ospf_area_range:
+  address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  cost: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=16777214), required=False)
+  no-advertise: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+cft_ospf_auto_cost:
+  reference-bandwidth: any(str(starts_with="DEVICE_VARIABLE;"), str(min=1, max=4294967))
+cft_ospf_auto_compatible:
+  rfc1583: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+cft_ospf_default_information:
+  originate: any(enum("false"), include("cft_ospf_default_information_originate"))
+cft_ospf_default_information_originate:
+  always: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  metric: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=16777214))
+  metric-type: any(str(starts_with="DEVICE_VARIABLE;"), enum("type1", "type2"), required=False)
+cft_ospf_distance:
+  external: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255), required=False)
+  inter-area: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255), required=False)
+  intra-area: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255), required=False)
+cft_ospf_redistribute:
+  optional: bool(required=False)
+  protocol: any(str(starts_with="DEVICE_VARIABLE;"), enum("bgp", "connected", "eigrp", "nat", "omp", "static"))
+  route-policy: str(required=False)
+cft_ospf_timers:
+  spf: include("cft_ospf_timers_spf")
+cft_ospf_timers_spf:
+  delay: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=600000), required=False)
+  initial-hold: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=600000), required=False)
+  max-hold: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=600000), required=False)
 # Cisco SIG feature template
 cisco_sig_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
@@ -313,7 +379,7 @@ cft_sig_interface:
   application: enum("sig", required=False)
   auto: enum("true", "false", required=False)
   dead-peer-detection: include("cft_sig_interface_dpd", required=False)
-  if-name: any(str(starts_with="DEVICE_VARIABLE;"),regex('^ipsec[0-9]{,3}$'))
+  if-name: any(str(starts_with="DEVICE_VARIABLE;"), regex('^ipsec[0-9]{,3}$'))
   ike: include("cft_sig_interface_ike", required=False)
   ip: include("cft_sig_interface_ip", required=False)
   ipsec: include("cft_sig_interface_ipsec", required=False)
@@ -378,9 +444,9 @@ cft_sig_credentials_parameters:
   umbrella: include("cft_umbrella_parameters", required=False)
   zscaler: include("cft_zscaler_parameters", required=False)
 cft_umbrella_parameters:
-  api-key: regex('^[0-9a-z]{,32}$') # 32 alphanumeric characters
-  api-secret: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128, required=False) # vManage-encrypted string
-  org-id: regex('^[0-9]{,7}$') # 7-digit org id
+  api-key: any(str(starts_with="DEVICE_VARIABLE;"), regex('^[0-9a-z]{,32}$')) # 32 alphanumeric characters
+  api-secret: any(str(starts_with="DEVICE_VARIABLE;"), str(starts_with="$CRYPT_CLUSTER$", min=1, max=128)) # vManage-encrypted string
+  org-id: any(str(starts_with="DEVICE_VARIABLE;"), regex('^[0-9]{,7}$')) # 7-digit org id
 cft_zscaler_parameters:
   api-key: regex('^[0-9a-z]{,12}$') # 12 alphanumeric characters
   username: str()

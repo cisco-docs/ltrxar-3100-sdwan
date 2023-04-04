@@ -128,6 +128,26 @@ defaults:
             eor-timer: 300
             graceful-restart-timer: 43200
             holdtime: 60
+      cisco_ospf:
+        parameters:
+          ospf:
+            area:
+              interface:
+                dead-interval: 40
+                hello-interval: 10
+                priority: 1
+                retransmit-interval: 5
+            auto-cost:
+              reference-bandwidth: 100
+            distance:
+              external: 110
+              inter-area: 110
+              intra-area: 110
+            timers:
+              spf:
+                delay: 200
+                initial-hold: 1000
+                max-hold: 10000
       cisco_secure_internet_gateway:
         parameters:
           interface:

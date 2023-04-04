@@ -36,6 +36,10 @@ objects:
     template: cisco_omp
     folder: feature_templates
     paths: [sdwan.cedge_feature_templates.cisco_omp]
+  - name: Cisco OSPF
+    template: cisco_ospf
+    folder: feature_templates
+    paths: [sdwan.cedge_feature_templates.cisco_ospf]
   - name: Cisco Secure Internet Gateway
     template: cisco_secure_internet_gateway
     folder: feature_templates
