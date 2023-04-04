@@ -29,4 +29,5 @@ sdwan:
             redistribute:
               - protocol: omp
                 route-policy: DEVICE_VARIABLE;ospf_redistribute_omp_route_policy
-            router-id: DEVICE_VARIABLE;ospf_router_id```
+            router-id: DEVICE_VARIABLE;ospf_router_id
+```
