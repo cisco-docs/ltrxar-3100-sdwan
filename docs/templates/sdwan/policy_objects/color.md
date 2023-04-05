@@ -16,4 +16,4 @@ sdwan:
           entries:
             - color: custom1
             - color: custom2
- ```
+```
