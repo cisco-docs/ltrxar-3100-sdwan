@@ -8,6 +8,7 @@ sdwan:
   localized_policies: include("localized_policies", required=False)
   cedge_device_templates: include("cedge_device_templates", required=False)
   sites: list(include("sites"), required=False)
+  multi_region_fabric: include("multi_region_fabric", required=False)
 # vManage API settings
 vmanage:
   vmanage_ip: ip()
@@ -349,7 +350,7 @@ cft_ospf_default_information:
   originate: any(enum("false"), include("cft_ospf_default_information_originate"))
 cft_ospf_default_information_originate:
   always: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
-  metric: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=16777214))
+  metric: any(str(starts_with="DEVICE_VARIABLE;"), regex('[0-9]{,3}$'))
   metric-type: any(str(starts_with="DEVICE_VARIABLE;"), enum("type1", "type2"), required=False)
 cft_ospf_distance:
   external: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255), required=False)
@@ -519,6 +520,10 @@ cft_system_parameters:
   control-session-pps: int(min=1, max=4294967295, required=False)
   port-hop: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
   port-offset: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=19), required=False)
+  region-id: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=63), required=False)
+  role: any(str(starts_with="DEVICE_VARIABLE;"), enum("border-router", "edge-router"), required=False)
+  secondary-region: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=63), required=False)
+  transport-gateway: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
   track-transport: enum("true", "false", required=False)
   track-default-gateway: enum("true", "false", required=False)
   admin-tech-on-failure: enum("true", "false", required=False)
@@ -701,12 +706,15 @@ cft_vpn_interface_trustsec_static:
 cft_vpn_interface_tunnel:
   allow-service: include("cft_vpn_interface_tunnel_allow", required=False)
   clear-dont-fragment: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
-  color: include("cft_vpn_interface_tunnel_color")
+  color: include("cft_vpn_interface_tunnel_color", required=False)
+  core-region: any(str(starts_with="DEVICE_VARIABLE;"), enum("core", "core-shared"), required=False)
+  enable-core-region: enum("true", "false", required=False)
   encapsulation: list(include("cft_vpn_interface_tunnel_encap"), min=1, max=1, required=False)
   group: any(str(starts_with="DEVICE_VARIABLE;"), list(int(min=1, max=4294967295)), required=False)
   hello-interval: int(min=100, max=600000, required=False)
   hello-tolerance: int(min=12, max=6000, required=False)
   propagate-sgt: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  secondary-region: any(str(starts_with="DEVICE_VARIABLE;"), enum("off", "secondary-only", "secondary-shared"), required=False)
   vmanage-connection-preference: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=8), required=False)
 cft_vpn_interface_tunnel_allow:
   all: enum("true", "false", required=False)
@@ -736,6 +744,7 @@ cft_vpn_interface_vrrp:
   timer: any(str(starts_with="DEVICE_VARIABLE;"), int(min=100, max=40950), required=False)
   tloc-change-pref: enum("true", "false", required=False)
   track-omp: enum("true", "false", required=False)
+  track-prefix-list: regex('^[a-zA-Z0-9-_]{,32}$', required=False)
 cft_vpn_interface_vrrp_ipv4:
   address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
 # Cisco VPN interface IPSec feature template
@@ -1201,3 +1210,6 @@ cedge_router:
   model: enum("C8000V", "C8300-1N1S-4T2X", "C8300-1N1S-6T", "C8300-2N2S-6T", "C8300-2N2S-4T2X", "C8500-12X4QC", "C8500-12X", "C8500-20X6C", "C8500L-8S4X", "C8200-1N-4T", "C8200L-1N-4T")
   device_template: regex('^[^<>!&$@\/"() ]{,128}$')
   device_variables: map(key=str(), required=False)
+# SD-WAN Multi-Region Fabric
+multi_region_fabric:
+  enabled: bool()
