@@ -44,10 +44,30 @@ cedge_aaa_template:
   description: str()
   parameters: include("cft_aaa_parameters", required=False)
 cft_aaa_parameters:
-  server-auth-order: str(matches='^[A-Za-z0-9-_,]+$') # "local" or server group names, comma-separated
-  user: list(include("cft_aaa_local_user")) # At least the local user "admin" must be defined
-  tacacs: list(include("cft_aaa_tacacs_group"), required=False)
+  accounting: include("cft_aaa_accounting", required=False)
+  authorization: include("cft_aaa_authorization", required=False)
   radius: list(include("cft_aaa_radius_group"), required=False)
+  server-auth-order: str(matches='^[A-Za-z0-9-_,]+$') # "local" or server group names, comma-separated
+  tacacs: list(include("cft_aaa_tacacs_group"), required=False)
+  user: list(include("cft_aaa_local_user")) # At least the local user "admin" must be defined
+cft_aaa_accounting:
+  accounting-rule: list(include("cft_aaa_accounting_rule"), min=1)
+cft_aaa_accounting_rule:
+  group: str(matches='^[A-Za-z0-9-_,]+$') # "local" or server group names, comma-separated
+  level: enum("1", "15", required=False)
+  method: enum("commands", "exec", "network", "system")
+  rule-id: regex('^[0-9]{,32}$')
+  start-stop: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"))
+cft_aaa_authorization:
+  authorization-config-commands: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  authorization-console: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  authorization-rule: list(include("cft_aaa_authorization_rule"), min=1)
+cft_aaa_authorization_rule:
+  group: str(matches='^[A-Za-z0-9-_,]+$') # "local" or server group names, comma-separated
+  if-authenticated: enum("true", "false")
+  level: enum("1", "15")
+  method: enum("commands")
+  rule-id: regex('^[0-9]{,32}$')
 cft_aaa_local_user:
   name: str(max=64)
   password: str(starts_with="$6$") # Must be a SHA512 hash
@@ -166,6 +186,7 @@ cft_bgp:
   neighbor: list(include("cft_bgp_neighbor"), max=8, required=False)
   propagate-aspath: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
   propagate-community: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  router-id: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4), required=False)
   shutdown: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
   timers: include("cft_bgp_timers", required=False)
 cft_bgp_address_family:
@@ -256,11 +277,11 @@ cft_logging_disk_file:
   rotate: int(min=1, max=10)
   size: int(min=1, max=20)
 cft_logging_server:
-  name: any(str(matches='^[a-z0-9.-]+$', max=255), ip(version=4))
+  name: any(str(starts_with="DEVICE_VARIABLE;"), str(matches='^[a-z0-9.-]+$', max=255), ip(version=4))
   vpn: int(min=0, max=512)
   tls: include("cft_logging_server_tls", required=False)
   source-interface: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
-  priority: enum("alert", "critical", "debugging", "emergency", "errors", "information", "notice", "warn")
+  priority: enum("alert", "critical", "debugging", "emergency", "errors", "information", "notice", "warn", required=False)
   version: enum(4, required=False)
 cft_logging_server_tls:
   enable-tls: enum("true", "false")
@@ -471,7 +492,7 @@ cft_snmp_parameters:
   view: list(include("cft_snmp_view"), required=False)
 cft_snmp_community:
   authorization: enum("read-only")
-  name: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128, required=False) ## vManage-encrypted string
+  name: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128) ## vManage-encrypted string
   view: str(min=1, max=32)
 cft_snmp_group:
   name: str(min=1, max=32)
@@ -481,7 +502,7 @@ cft_snmp_trap:
   target: list(include("cft_snmp_trap_target"), required=False)
 cft_snmp_trap_target:
   community-name: str(starts_with="$CRYPT_CLUSTER$", required=False)
-  ip: ip(version=4)
+  ip: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
   vpn-id: int(min=0, max=512)
   port: int(min=1, max=65535)
   user: str(min=1, max=32, required=False)
@@ -617,7 +638,7 @@ cft_vpn_dns:
   role: enum("primary", "secondary")
 cft_vpn_ip:
   ipsec-route: list(include("cft_vpn_ip_ipsec_route"), required=False)
-  route: list(include("cft_vpn_ip_route_nexthop"), include("cft_vpn_ip_route_dia"), include("cft_vpn_ip_route_null0"), required=False)
+  route: list(include("cft_vpn_ip_route_nexthop"), include("cft_vpn_ip_route_dia"), include("cft_vpn_ip_route_null0"), include("cft_vpn_ip_route_nexthop_tracker"), required=False)
   service-route: list(include("cft_vpn_ip_service_route"), required=False)
 cft_vpn_ip_ipsec_route:
   interface: list(regex('^ipsec[0-9]{,3}$'), min=1, max=2) # ipsec interface ids
@@ -627,6 +648,9 @@ cft_vpn_ip_route_nexthop:
   next-hop: list(include("cft_vpn_ipv4_route_nexthop"), min=1)
   optional: bool(required=False)
   prefix: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+cft_vpn_ipv4_route_nexthop:
+  address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+  distance: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255), required=False)
 cft_vpn_ip_route_dia:
   optional: bool(required=False)
   prefix: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
@@ -636,9 +660,14 @@ cft_vpn_ip_route_null0:
   null0: enum("true")
   optional: bool(required=False)
   prefix: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
-cft_vpn_ipv4_route_nexthop:
+cft_vpn_ip_route_nexthop_tracker:
+  next-hop-with-track: list(include("cft_vpn_ipv4_route_nexthop_with_track"), min=1)
+  optional: bool(required=False)
+  prefix: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
+cft_vpn_ipv4_route_nexthop_with_track:
   address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
   distance: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255), required=False)
+  tracker: any(str(starts_with="DEVICE_VARIABLE;"), str(min=1, max=128))
 cft_vpn_ip_service_route:
   service: enum("sig", required=False)
   prefix: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
@@ -649,8 +678,7 @@ cft_omp_advertise:
   protocol: enum("bgp", "ospf", "ospfv3", "connected", "static", "eigrp", "lisp", "isis")
   route-policy: str(required=False)
 # Cisco VPN interface feature template
-# Missing: ACL, arp, manual duplex/speed;  dhcp helper; IPv6; VRRP
-# qos-map; rewrite rule; tloc-extension; tracker; trustsec
+# Missing: arp  dhcp helper, IPv6, trustsec
 cisco_vpn_interface_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
@@ -713,8 +741,10 @@ cft_vpn_interface_tunnel:
   group: any(str(starts_with="DEVICE_VARIABLE;"), list(int(min=1, max=4294967295)), required=False)
   hello-interval: int(min=100, max=600000, required=False)
   hello-tolerance: int(min=12, max=6000, required=False)
+  max-control-connections: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=100), required=False)
   propagate-sgt: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
   secondary-region: any(str(starts_with="DEVICE_VARIABLE;"), enum("off", "secondary-only", "secondary-shared"), required=False)
+  tunnel-qos: include("cft_vpn_interface_tunnel_qos", required=False)
   vmanage-connection-preference: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=8), required=False)
 cft_vpn_interface_tunnel_allow:
   all: enum("true", "false", required=False)
@@ -736,6 +766,8 @@ cft_vpn_interface_tunnel_encap:
   encap: enum("ipsec")
   preference: any(str(starts_with="DEVICE_VARIABLE;"),int(min=0, max=4294967295), required=False)
   weight: any(str(starts_with="DEVICE_VARIABLE;"),int(min=1, max=255), required=False)
+cft_vpn_interface_tunnel_qos:
+  mode: enum("hub", "spoke")
 cft_vpn_interface_vrrp:
   grp-id: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255))
   ipv4: include("cft_vpn_interface_vrrp_ipv4", required=False)
@@ -745,6 +777,7 @@ cft_vpn_interface_vrrp:
   tloc-change-pref: enum("true", "false", required=False)
   track-omp: enum("true", "false", required=False)
   track-prefix-list: regex('^[a-zA-Z0-9-_]{,32}$', required=False)
+  value: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=4294967295), required=False)
 cft_vpn_interface_vrrp_ipv4:
   address: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
 # Cisco VPN interface IPSec feature template
@@ -823,6 +856,7 @@ policy_list_app:
   entries: any(list(include("policy_list_app_entries")), list(include("policy_list_appfamily_entries")))
 policy_list_app_entries:
   app: str()
+  appRef: str(required=False)
 policy_list_appfamily_entries:
   appFamily: enum("application-service", "audio-video", "authentication", "behavioral", "database", "encrypted", "erp", "file-server", "file-transfer", "forum", "game", "instant-messaging", "mail", "microsoft-office", "middleware", "network-management", "network-service", "peer-to-peer", "printer", "routing", "security-service", "terminal", "thin-client", "tunneling", "web", "webmail")
 policy_list_aspath:
@@ -898,9 +932,9 @@ policy_list_sla:
   description: str()
   entries: list(include("policy_list_sla_entries"), max=1)
 policy_list_sla_entries:
-  jitter: regex('^[0-9]{,4}$')
-  latency: regex('^[0-9]{,4}$')
-  loss: regex('^[0-9]{,3}$')
+  jitter: regex('^[0-9]{,4}$', required=False)
+  latency: regex('^[0-9]{,4}$', required=False)
+  loss: regex('^[0-9]{,3}$', required=False)
 policy_list_tloc:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
@@ -1061,7 +1095,7 @@ policy_definition_rewriteRule_parameters_definition:
 policy_definition_rewrite_rule:
   class: regex('^[^<>!&$@\/"() ]{,128}$')
   dscp: regex('^[0-9]{,2}$')
-  layer2cos: int(min=0, max=7, required=False)
+  layer2Cos: regex('^[0-7]{,1}$', required=False)
   plp: enum("high", "low")
 # Route Policy definition
 policy_definition_vedgeRoute:
@@ -1110,7 +1144,7 @@ policy_definition_vedgeroute_action_metric:
   field: enum("localPreference", "metric", "weight")
   value: regex('^[0-9]{,10}$')
 policy_definition_vedgeroute_action_metrictype:
-  field: enum("metrictype")
+  field: enum("metricType")
   value: enum("type1", "type2")
 policy_definition_vedgeroute_action_nexthop:
   field: enum("nextHop")
