@@ -1,3 +1,5 @@
+import re
+
 class Rule:
     id = "301"
     description = "Verify Device Variables"
@@ -22,6 +24,12 @@ class Rule:
             if object.startswith("DEVICE_VARIABLE;"):
                 if not object.split(";")[1] in results:
                     results.append(object.split(";")[1])
+            # Find vars in CLI templates
+            elif "{{" in object:
+                vars = re.findall(r'{{.*?}}', object)
+                for var in vars:
+                    var_name = re.sub("{{|}}|\s", "", var)
+                    results.append(var_name)
         return(results)
 
     @classmethod
@@ -64,6 +72,8 @@ class Rule:
                 if feature_template in feature_template_var_dict:
                     for var in feature_template_var_dict[feature_template]:
                         device_template_vars.append(var)
+                else:
+                    print("Feature template not found: " + feature_template)
             device_template_var_dict[deviceTemplate['name']] = device_template_vars
         # Verify the presence of the required device variables in each site and router
         for site in inventory['sdwan']['sites']:

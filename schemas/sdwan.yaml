@@ -560,7 +560,7 @@ cft_system_ondemand_tunnel:
   enable: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"))
   idle-timeout: any(str(starts_with="DEVICE_VARIABLE;"), int(min=10, max=65535))
 cft_system_tracker_dns:
-  endpoint-dns-name: regex('^[a-z0-9.]+$') # Allow only characters and dots
+  endpoint-dns-name: any(str(starts_with="DEVICE_VARIABLE;"), regex('^[a-z0-9.]+$')) # Allow only characters and dots
   interval: int(min=20, max=600, required=False)
   multiplier: int(min=1, max=10, required=False)
   name: str(min=1, max=128)
@@ -568,7 +568,7 @@ cft_system_tracker_dns:
   threshold: int(min=100, max=1000, required=False)
   type: enum("interface", "static-route", required=False)
 cft_system_tracker_url:
-  endpoint-api-url: str(min=1, max=512) # API url of endpoint
+  endpoint-api-url: any(str(starts_with="DEVICE_VARIABLE;"), str(min=1, max=512)) # API url of endpoint
   interval: int(min=20, max=600, required=False)
   multiplier: int(min=1, max=10, required=False)
   name: str(min=1, max=128)
@@ -576,7 +576,7 @@ cft_system_tracker_url:
   threshold: int(min=100, max=1000, required=False)
   type: enum("interface", "static-route", required=False)
 cft_system_tracker_ip:
-  endpoint-ip: ip(version=4)
+  endpoint-ip: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4))
   interval: int(min=20, max=600, required=False)
   multiplier: int(min=1, max=10, required=False)
   name: str(min=1, max=128)
@@ -676,6 +676,7 @@ cft_vpn_omp:
   advertise: list(include("cft_omp_advertise"), required=False)
 cft_omp_advertise:
   protocol: enum("bgp", "ospf", "ospfv3", "connected", "static", "eigrp", "lisp", "isis")
+  protocol-sub-type: enum("external", required=False)
   route-policy: str(required=False)
 # Cisco VPN interface feature template
 # Missing: arp  dhcp helper, IPv6, trustsec
@@ -687,6 +688,8 @@ cft_vpn_interface_parameters:
   access-list: list(include("cft_vpn_interface_acl"), max=2, required=False)
   arp-timeout: int(min=0, max=2147483, required=False)
   autonegotiate: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
+  bandwidth-downstream: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=2147483647), required=False)
+  bandwidth-upstream: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=2147483647), required=False)
   description: any(str(starts_with="DEVICE_VARIABLE;"), str(), required=False)
   duplex: any(str(starts_with="DEVICE_VARIABLE;"), enum("half", "full", "auto"), required=False)
   if-name: any(str(starts_with="DEVICE_VARIABLE;"), str())
@@ -742,6 +745,7 @@ cft_vpn_interface_tunnel:
   hello-interval: int(min=100, max=600000, required=False)
   hello-tolerance: int(min=12, max=6000, required=False)
   max-control-connections: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=100), required=False)
+  port-hop: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
   propagate-sgt: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
   secondary-region: any(str(starts_with="DEVICE_VARIABLE;"), enum("off", "secondary-only", "secondary-shared"), required=False)
   tunnel-qos: include("cft_vpn_interface_tunnel_qos", required=False)

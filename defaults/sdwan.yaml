@@ -75,7 +75,7 @@ defaults:
                 multipath-relax: "false"
               compare-router-id: "false"
               med:
-                always-compare: "true"
+                always-compare: "false"
                 deterministic: "false"
                 missing-as-worst: "false"
             distance:
@@ -194,7 +194,7 @@ defaults:
         parameters:
           admin-tech-on-failure: "true"
           clock:
-            timezone: DEVICE_VARIABLE;timezone
+            timezone: UTC
           console-baud-rate: "9600"
           control-session-pps: 300
           idle-timeout: 300
@@ -234,7 +234,7 @@ defaults:
               https: "false"
               icmp: "true"
               netconf: "false"
-              ntp: "true"
+              ntp: "false"
               ospf: "false"
               snmp: "false"
               sshd: "false"
