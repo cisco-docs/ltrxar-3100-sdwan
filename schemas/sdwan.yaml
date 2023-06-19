@@ -376,11 +376,11 @@ cft_ospf_area_range:
   cost: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=16777214), required=False)
   no-advertise: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
 cft_ospf_auto_cost:
-  reference-bandwidth: any(str(starts_with="DEVICE_VARIABLE;"), str(min=1, max=4294967))
+  reference-bandwidth: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=4294967))
 cft_ospf_auto_compatible:
   rfc1583: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
 cft_ospf_default_information:
-  originate: any(enum("false"), include("cft_ospf_default_information_originate"))
+  originate: any(enum("true", "false"), include("cft_ospf_default_information_originate"))
 cft_ospf_default_information_originate:
   always: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
   metric: any(str(starts_with="DEVICE_VARIABLE;"), regex('[0-9]{,3}$'))
