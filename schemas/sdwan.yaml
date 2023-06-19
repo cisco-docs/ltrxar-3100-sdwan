@@ -36,12 +36,15 @@ cedge_feature_templates:
   cisco_vpn_interface: list(include("cisco_vpn_interface_template"), required=False)
   cisco_vpn_interface_ipsec: list(include("cisco_vpn_interface_ipsec_template"), required=False)
   cli-template: list(include("cli_template"), required=False)
+# cEdge device types
+cedge_device_types: enum("C8000V", "C8200-1N-4T", "C8200L-1N-4T", "C8300-1N1S-4T2X", "C8300-1N1S-6T", "C8300-2N2S-6T", "C8300-2N2S-4T2X", "C8500-12X4QC", "C8500-12X", "C8500-20X6C", "C8500L-8S4X", "ISR-4321", "ISR-4331", "ISR-4351", "ISR-4431", "ISR-4451-X", "ASR-1001-X", "ASR-1001-HX", "ASR-1002-HX", "ASR-1002-X")
 # cEdge AAA feature template
 # Supported: local users, RADIUS groups, TACACS groups
-# Missing: Radius COA, Radius Trustsec, Acconting, dot1x auth
+# Missing: Radius COA, Radius Trustsec, dot1x auth
 cedge_aaa_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_aaa_parameters", required=False)
 cft_aaa_parameters:
   accounting: include("cft_aaa_accounting", required=False)
@@ -106,6 +109,7 @@ cft_aaa_radius_server:
 cedge_global_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_global_parameters", required=False)
 cft_global_parameters:
   http-global: include("cft_global_http", required=False)
@@ -149,6 +153,7 @@ cft_global_ssh:
 cisco_banner_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_banner_parameters", required=False)
 cft_banner_parameters:
   login: str(min=1, max=2048, required=False)
@@ -157,6 +162,7 @@ cft_banner_parameters:
 cisco_bfd_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_bfd_parameters", required=False)
 cft_bfd_parameters:
   app-route: include("cft_bfd_approute", required=False)
@@ -175,6 +181,7 @@ cft_bfd_color:
 cisco_bgp_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_bgp_parameters", required=False)
 cft_bgp_parameters:
   bgp: include("cft_bgp")
@@ -247,6 +254,7 @@ cft_bgp_timers:
 cisco_dhcp_server_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_dhcp_server_parameters", required=False)
 cft_dhcp_server_parameters:
   address-pool: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4)) # CIDR prefix
@@ -266,6 +274,7 @@ cft_dhcpserver_static_lease:
 cisco_logging_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_logging_parameters", required=False)
 cft_logging_parameters:
   disk: include("cft_logging_disk", required=False)
@@ -290,6 +299,7 @@ cft_logging_server_tls:
 cisco_ntp_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_ntp_parameters", required=False)
 cft_ntp_parameters:
   server: list(include("cft_ntp_server"), required=False)
@@ -304,6 +314,7 @@ cft_ntp_server:
 cisco_omp_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_omp_parameters", required=False)
 cft_omp_parameters:
   graceful-restart: enum("true", "false", required=False)
@@ -326,6 +337,7 @@ cft_omp_advertise_protocol:
 cisco_ospf_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_ospf_parameters", required=False)
 cft_ospf_parameters:
   ospf: include("cft_ospf", required=False)
@@ -391,6 +403,7 @@ cft_ospf_timers_spf:
 cisco_sig_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_sig_parameters", required=False)
 cft_sig_parameters:
   interface: list(include("cft_sig_interface"), min=2)
@@ -446,6 +459,7 @@ cft_sig_service_interface_pair:
 cisco_security_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_security_parameters", required=False)
 cft_security_parameters:
   ipsec: include("cft_security_ipsec", required=False)
@@ -461,6 +475,7 @@ cft_security_ipsec:
 cisco_sig_credentials_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_sig_credentials_parameters", required=False)
 cft_sig_credentials_parameters:
   umbrella: include("cft_umbrella_parameters", required=False)
@@ -480,6 +495,7 @@ cft_zscaler_parameters:
 cisco_snmp_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_snmp_parameters", required=False)
 cft_snmp_parameters:
   community: list(include("cft_snmp_community"), required=False)
@@ -526,6 +542,7 @@ cft_snmp_oid:
 cisco_system_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_system_parameters", required=False)
 cft_system_parameters:
   site-id: str(starts_with="DEVICE_VARIABLE;") # per-device variable
@@ -593,6 +610,7 @@ cft_system_tracker_group:
 cisco_thousandeyes_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_thousandeyes_parameters", required=False)
 cft_thousandeyes_parameters:
   virtual-application: list(include('cft_thousandeyes_virtual_application'))
@@ -621,6 +639,7 @@ cft_thousandeyes_virtual_application_te_proxy_static:
 cisco_vpn_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_vpn_parameters", required=False)
 cft_vpn_parameters:
   vpn-id: int(min=0, max=512)
@@ -679,10 +698,11 @@ cft_omp_advertise:
   protocol-sub-type: enum("external", required=False)
   route-policy: str(required=False)
 # Cisco VPN interface feature template
-# Missing: arp  dhcp helper, IPv6, trustsec
+# Missing: arp, dhcp helper, IPv6
 cisco_vpn_interface_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_vpn_interface_parameters", required=False)
 cft_vpn_interface_parameters:
   access-list: list(include("cft_vpn_interface_acl"), max=2, required=False)
@@ -790,6 +810,7 @@ cft_vpn_interface_vrrp_ipv4:
 cisco_vpn_interface_ipsec_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_vpn_interface_ipsec_parameters", required=False)
 cft_vpn_interface_ipsec_parameters:
   dead-peer-detection: include("cft_vpn_interface_ipsec_dpd", required=False)
@@ -830,9 +851,10 @@ cft_vpn_interface_ipsec_ipsec:
 cli_template:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
+  deviceType: list(include("cedge_device_types"), min=1, required=False)
   parameters: include("cft_cli_template_parameters", required=False)
 cft_cli_template_parameters:
-  config: str()
+  config: str() # Add jinja raw controls if using variables in the CLI template
 # Policy List schema
 policy_objects:
   lists: include("policy_lists", required=False)
@@ -1225,7 +1247,7 @@ cedge_device_template:
   description: str()
   parameters: include("cedge_device_template_parameters", required=False)
 cedge_device_template_parameters:
-  device_model: enum("C8000V", "C8300-1N1S-4T2X", "C8300-1N1S-6T", "C8300-2N2S-6T", "C8300-2N2S-4T2X", "C8500-12X4QC", "C8500-12X", "C8500-20X6C", "C8500L-8S4X", "C8200-1N-4T", "C8200L-1N-4T")
+  device_model: include("cedge_device_types")
   localized_policy: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   feature_templates: list(include("dt_feature_template_ref"))
 dt_feature_template_ref:
@@ -1245,7 +1267,7 @@ sites:
   routers: list(include("cedge_router"))
 cedge_router:
   chassis_id: str()
-  model: enum("C8000V", "C8300-1N1S-4T2X", "C8300-1N1S-6T", "C8300-2N2S-6T", "C8300-2N2S-4T2X", "C8500-12X4QC", "C8500-12X", "C8500-20X6C", "C8500L-8S4X", "C8200-1N-4T", "C8200L-1N-4T")
+  model: include("cedge_device_types")
   device_template: regex('^[^<>!&$@\/"() ]{,128}$')
   device_variables: map(key=str(), required=False)
 # SD-WAN Multi-Region Fabric
