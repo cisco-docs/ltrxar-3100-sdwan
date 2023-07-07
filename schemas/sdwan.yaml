@@ -349,6 +349,7 @@ cft_ospf:
   distance: include("cft_ospf_distance", required=False)
   redistribute: list(include("cft_ospf_redistribute"), required=False)
   router-id: any(str(starts_with="DEVICE_VARIABLE;"), ip(version=4), required=False)
+  route-policy: list(include("cft_ospf_route_policy"), required=False)
   timers: include("cft_ospf_timers", required=False)
 cft_ospf_area:
   a-num: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=4294967295))
@@ -393,6 +394,9 @@ cft_ospf_redistribute:
   optional: bool(required=False)
   protocol: any(str(starts_with="DEVICE_VARIABLE;"), enum("bgp", "connected", "eigrp", "nat", "omp", "static"))
   route-policy: str(required=False)
+cft_ospf_route_policy:
+  direction: any(str(starts_with="DEVICE_VARIABLE;"), enum("in"))
+  pol-name: any(str(starts_with="DEVICE_VARIABLE;"), str())
 cft_ospf_timers:
   spf: include("cft_ospf_timers_spf")
 cft_ospf_timers_spf:

@@ -51,16 +51,16 @@ defaults:
             services-ip:
               arp-proxy: "false"
               cdp: "true"
-              domain-lookup: "true"
+              domain-lookup: "false"
               ftp-passive: "false"
               http-server: "false"
               https-server: "false"
               line-vty: "false"
-              lldp: "false"
+              lldp: "true"
               rcmd: "false"
             services-other:
               bootp: "true"
-              console-logging: "false"
+              console-logging: "true"
               snmp-ifindex-persist: "true"
               source-route: "false"
               tcp-keepalives-in: "true"
@@ -84,8 +84,6 @@ defaults:
           - C8200-1N-4T
           - C8200L-1N-4T
         parameters:
-          login: "default login banner\n"
-          motd: "default motd banner\n"
       cisco_bfd:
         deviceType:
           - C8000V
