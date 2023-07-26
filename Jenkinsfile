@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'danischm/aac:0.5.3'
-            label 'emear-sio-slv04 || emear-sio-slv05'
+            label 'digidev'
             args '-u root'
         }
     }
