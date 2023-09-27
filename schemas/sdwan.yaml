@@ -384,7 +384,7 @@ cft_ospf_default_information:
   originate: any(enum("true", "false"), include("cft_ospf_default_information_originate"))
 cft_ospf_default_information_originate:
   always: any(str(starts_with="DEVICE_VARIABLE;"), enum("true", "false"), required=False)
-  metric: any(str(starts_with="DEVICE_VARIABLE;"), regex('[0-9]{,3}$'))
+  metric: any(str(starts_with="DEVICE_VARIABLE;"), int(min=0, max=16777214))
   metric-type: any(str(starts_with="DEVICE_VARIABLE;"), enum("type1", "type2"), required=False)
 cft_ospf_distance:
   external: any(str(starts_with="DEVICE_VARIABLE;"), int(min=1, max=255), required=False)
