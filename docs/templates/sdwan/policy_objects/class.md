@@ -2,7 +2,7 @@
 
 Configure QoS class maps.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

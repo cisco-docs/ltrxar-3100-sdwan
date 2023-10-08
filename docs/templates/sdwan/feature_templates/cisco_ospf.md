@@ -2,7 +2,7 @@
 
 Configure the OSPF Routing parameters for a IOS-XE WAN Edge. This feature tempalte is referenced under a VPN feature template in the cEdge Device Template.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

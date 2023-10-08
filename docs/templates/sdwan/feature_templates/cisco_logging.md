@@ -2,7 +2,7 @@
 
 Configure logging to disk and/or to a remote logging server.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

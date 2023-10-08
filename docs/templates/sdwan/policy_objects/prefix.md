@@ -2,7 +2,7 @@
 
 Configure prefix lists.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

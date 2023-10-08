@@ -4,7 +4,7 @@ The control plane of Cisco vEdge devices process the data traffic for local serv
 
 Access policies define the rules that traffic must meet to pass through an interface.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

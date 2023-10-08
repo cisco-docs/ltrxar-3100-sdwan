@@ -442,7 +442,7 @@ def render_doc(system, schema_path, objects_path, defaults_path):
             with open(template_path, "r") as file:
                 filedata = file.read()
 
-            filedata = filedata.replace("{{ sdwan_doc }}", output)
+            filedata = filedata.replace("{{ doc_gen }}", output)
 
             cleaned_data = filedata
 

@@ -2,7 +2,7 @@
 
 A community list is used to create groups of communities to use in a match clause of a route map. A community list can be used to control which routes are accepted, preferred, distributed, or advertised.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

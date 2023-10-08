@@ -2,7 +2,7 @@
 
 Configure SNMP parameters, including SNMP device name and location, SNMP version, views, and communities, and trap groups.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

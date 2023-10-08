@@ -2,7 +2,7 @@
 
 Configure global settings like SSH version, services, etc.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

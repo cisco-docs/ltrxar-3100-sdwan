@@ -2,7 +2,7 @@
 
 Specify the authentication method and order and configure Radius, TACACs, or local authentication, including local user groups with different read/write permissions.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

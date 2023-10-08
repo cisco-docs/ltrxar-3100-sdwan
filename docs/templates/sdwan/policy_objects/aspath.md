@@ -2,7 +2,7 @@
 
 AS Path list specifies one or more BGP AS paths.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

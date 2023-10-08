@@ -2,7 +2,7 @@
 
 Configure the AS number, router ID, distance, maximum paths, neighbors, redistribution of protocols into BGP, hold time, and keepalive timers.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

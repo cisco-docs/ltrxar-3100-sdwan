@@ -2,7 +2,7 @@
 
 Configure NTP servers and authentication if required.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

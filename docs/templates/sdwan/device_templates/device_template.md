@@ -2,7 +2,7 @@
 
 Device templates define a device's complete operational configuration. A device template consists of a number of feature templates.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

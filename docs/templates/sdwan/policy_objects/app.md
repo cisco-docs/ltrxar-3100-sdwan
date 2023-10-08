@@ -2,7 +2,7 @@
 
 Application list specifies one or more NBAR applications.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

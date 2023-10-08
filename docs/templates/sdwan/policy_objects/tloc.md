@@ -2,7 +2,7 @@
 
 A TLOC list contains a list of SD-WAN TLOCs, where each TLOC is identified by the color, encapsulation, and system-ip address.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

@@ -2,7 +2,7 @@
 
 Configure policy settings.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

@@ -2,7 +2,7 @@
 
 A Site list contains site-ids and/or ranges of site-ids.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

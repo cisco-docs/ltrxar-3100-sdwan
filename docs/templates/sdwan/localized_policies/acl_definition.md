@@ -2,7 +2,7 @@
 
 Access lists configured through localized data policy are called explicit ACLs. Explicit ACLs can be applied to any interface in any VPN on the device.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

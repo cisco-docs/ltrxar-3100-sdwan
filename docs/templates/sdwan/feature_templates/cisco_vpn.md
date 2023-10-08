@@ -2,7 +2,7 @@
 
 Change the ECMP hash, add DNS servers, advertise protocols (BGP, static, connected, OSPF external) from the VPN into OMP, and add IPv4 or v6 static routes, service routes, and GRE routes.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

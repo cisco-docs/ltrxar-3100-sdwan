@@ -2,7 +2,7 @@
 
 Configure route policies.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

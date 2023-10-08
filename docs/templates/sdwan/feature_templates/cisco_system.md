@@ -2,7 +2,7 @@
 
 Configure basic system information, such as site ID, system IP, time zone, hostname, device groups, GPS coordinates, port hopping, and port offset.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

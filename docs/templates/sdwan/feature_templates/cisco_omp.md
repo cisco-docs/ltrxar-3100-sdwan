@@ -2,7 +2,7 @@
 
 Change the graceful restart timers and advertisement timers and hold timers; change the number of paths advertised; configure an AS overlay number; choose which local protocols will be advertised into OMP; and change the number of equal-cost paths installed in the WAN Edge router.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

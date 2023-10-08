@@ -4,7 +4,7 @@ For hardware, each interface has eight queues, numbered from 0 through 7. Queue 
 
 For Cisco vEdge devices, each interface has eight queues, numbered from 0 through 7. Queue 0 is reserved for control traffic, and queues 1, 2, 3, 4, 5, 6 and 7 are available for data traffic. The scheduling method for all eight queues is WRR. LLQ is not supported.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

@@ -2,7 +2,7 @@
 
 Change the rekey time, anti-replay window, and authentication types for IPsec.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

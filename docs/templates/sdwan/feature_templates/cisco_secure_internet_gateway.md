@@ -2,7 +2,7 @@
 
 Configure an Umbrella SIG service with pairs of active/standby tunnel interfaces. Per tunnel interface, configure the interface name, the admin status, the IKEv2 parameters, the IPSec parameters, the tunnel source interface, the tunnel destination, the IP maximum transmission unit (MTU), the Transmission Control Protocol maximum segment size (TCP MSS), and more.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

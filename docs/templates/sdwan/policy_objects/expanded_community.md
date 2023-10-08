@@ -2,7 +2,7 @@
 
 Configure expanded BGP community lists.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

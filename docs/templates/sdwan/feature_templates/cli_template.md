@@ -2,7 +2,7 @@
 
 Configure devices using CLI templates.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

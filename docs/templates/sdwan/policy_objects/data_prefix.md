@@ -2,7 +2,7 @@
 
 A data prefix list specifies one or more IP prefixes. You can specify both unicast and multicast addresses.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

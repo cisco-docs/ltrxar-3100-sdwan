@@ -2,7 +2,7 @@
 
 Configure policy rewrite rules for the QoS mapping.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

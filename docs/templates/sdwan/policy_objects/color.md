@@ -2,7 +2,7 @@
 
 Color list specifies one or more SD-WAN TLOC colors.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

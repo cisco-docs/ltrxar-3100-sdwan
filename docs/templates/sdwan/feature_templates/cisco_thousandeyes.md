@@ -2,7 +2,7 @@
 
 Configure the Cisco Thousandeyes Agent parameters to deploy on WAN Edge routers.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

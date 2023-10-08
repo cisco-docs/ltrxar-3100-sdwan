@@ -2,7 +2,7 @@
 
 Configure policers to control the maximum rate of traffic sent or received on an interface, and to partition a network into multiple priority levels.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

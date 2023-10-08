@@ -2,7 +2,7 @@
 
 This includes site and device specific configuration including device variables.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

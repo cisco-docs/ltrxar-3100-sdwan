@@ -2,7 +2,7 @@
 
 Specify the BFD app-route multiplier and poll interval and specify the hello and BFD multiplier for each transport.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

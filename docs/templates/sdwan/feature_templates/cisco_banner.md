@@ -2,7 +2,7 @@
 
 Configure the login banner or message-of-the-day banner.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

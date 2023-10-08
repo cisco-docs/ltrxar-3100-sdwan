@@ -2,7 +2,7 @@
 
 Configure DHCP server characteristics, such as address pool, lease time, static leases, domain name, default gateway, DNS servers, and TFTP servers.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

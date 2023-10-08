@@ -2,7 +2,7 @@
 
 Configure Cisco Security Internet Gateway (SIG) credentials feature templates to automate tunnel provisioning.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 
