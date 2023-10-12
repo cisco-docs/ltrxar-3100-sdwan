@@ -105,6 +105,12 @@ nav:
           - Rewrite Rule Definition: data_model/sdwan/localized_policies/rewrite_rule_definition.md
           - vEdge Route Definition: data_model/sdwan/localized_policies/vedge_route_definition.md
           - Feature Policy: data_model/sdwan/localized_policies/feature_policy.md
+      - Centralized Policies:
+          - Hub and Spoke Topology Definition: data_model/sdwan/centralized_policies/hubandspoke_definition.md
+          - Mesh Topology Definition: data_model/sdwan/centralized_policies/mesh_definition.md
+          - Custom Control Topology Definition: data_model/sdwan/centralized_policies/custom_control_definition.md
+          - Feature Policy: data_model/sdwan/centralized_policies/policy.md
+          - Activation: data_model/sdwan/centralized_policies/activation.md
       - Sites:
           - Site: data_model/sdwan/sites/site.md
   - Python:

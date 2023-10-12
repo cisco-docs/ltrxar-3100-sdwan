@@ -9,6 +9,7 @@ sdwan:
   cedge_device_templates: include("cedge_device_templates", required=False)
   sites: list(include("sites"), required=False)
   multi_region_fabric: include("multi_region_fabric", required=False)
+  centralized_policies: include("centralized_policies", required=False) # new tree for centralized policy.
 # vManage API settings
 vmanage:
   vmanage_ip: ip()
@@ -1277,3 +1278,179 @@ cedge_router:
 # SD-WAN Multi-Region Fabric
 multi_region_fabric:
   enabled: bool()
+#Centralized Policy Tree
+centralized_policies:
+  definitions: include("centralized_policy_definitions", required=False)
+  policies: list(include("centralized_policy_policies"), required=False)
+  activated_policy: str(required=False)
+centralized_policy_definitions:
+  control_policy: include("centralized_policy_control")
+centralized_policy_policies:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  hub_and_spoke_topology: list(include("centralized_policy_policies_hubandspoke_entries"), required=False)
+  mesh_topology: list(include("centralized_policy_policies_mesh_entries"), required=False)
+  custom_control_topology: list(include("centralized_policy_policies_customcontrol_entries"), required=False)
+centralized_policy_policies_hubandspoke_entries:
+  policy_definition: str()
+centralized_policy_policies_mesh_entries:
+  policy_definition: str()
+centralized_policy_policies_customcontrol_entries:
+  policy_definition: str()
+  site_region_list: any(include("centralized_policy_policies_customcontrol_site_list"), include("centralized_policy_policies_customcontrol_region_list"), include("centralized_policy_policies_customcontrol_region"))
+centralized_policy_policies_customcontrol_site_list:
+  site_lists_in: list(str())
+  site_lists_out: list(str())
+centralized_policy_policies_customcontrol_region_list:
+  region_lists_in: list(str())
+  region_lists_out: list(str())
+centralized_policy_policies_customcontrol_region:
+  region_in: int(min=0, max=63)
+  region_out: int(min=0, max=63)
+#Centralized Policy - Control Policy
+centralized_policy_control:
+  hub_and_spoke_topology: list(include("centralized_policy_control_topology_hubandspoke"), required=False)
+  mesh_topology: list(include("centralized_policy_control_topology_mesh"), required=False)
+  custom_control_topology: list(include("centralized_policy_control_topology_customcontrol"), required=False)
+#Centralized Policy - Control Policy - definitions - Hub and Spoke
+centralized_policy_control_topology_hubandspoke:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  vpn_list: str() # name of VPN list
+  hub_and_spoke_sites: list(include("centralized_policy_control_topology_hubandspoke_sites"))
+centralized_policy_control_topology_hubandspoke_sites:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  equal_preference: bool()
+  advertise_tloc: bool()
+  tloc_list: str() # name of TLOC list
+  spokes: list(include("centralized_policy_control_topology_hubandspoke_spoke_sites"))
+centralized_policy_control_topology_hubandspoke_spoke_sites:
+  site_list: str() # name of Site list
+  hubs: list(include("centralized_policy_control_topology_hubandspoke_hub_sites"))
+centralized_policy_control_topology_hubandspoke_hub_sites:
+  site_list: str() # name of Site list
+  ipv4_prefix_lists: list(str(), required=False) # name of IPV4 prefixList
+  ipv6_prefix_lists: list(str(), required=False) # name of IPV6 prefixList
+#Centralized Policy - Control Policy - definitions - Mesh
+centralized_policy_control_topology_mesh:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  vpn_list: str() # name of VPN list
+  mesh_groups: list(include("centralized_policy_control_topology_mesh_meshgroups"))
+centralized_policy_control_topology_mesh_meshgroups:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  site_lists: list(str())
+#Centralized Policy - Control Policy - definitions - Control
+centralized_policy_control_topology_customcontrol:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  default_action_type: enum("accept", "reject")
+  sequences: list(include("centralized_policy_control_topology_customcontrol_tloc"), include("centralized_policy_control_topology_customcontrol_route"))
+centralized_policy_control_topology_customcontrol_tloc:
+  base_action: enum("accept", "reject")
+  id: int(min=1, max=65534)
+  name: str()
+  ip_type: enum("ipv4", "ipv6", "all")
+  type: str(equals="tloc")
+  match_criterias: list(include("centralized_policy_control_topology_customcontrol_tloc_match_carrier"), include("centralized_policy_control_topology_customcontrol_tloc_match_colorlist"), include("centralized_policy_control_topology_customcontrol_tloc_match_domainid"), include("centralized_policy_control_topology_customcontrol_tloc_match_groupid"), include("centralized_policy_control_topology_customcontrol_tloc_match_omptag"), include("centralized_policy_control_topology_customcontrol_tloc_match_originator"), include("centralized_policy_control_topology_customcontrol_tloc_match_preference"), include("centralized_policy_control_topology_customcontrol_tloc_match_sitelist"), include("centralized_policy_control_topology_customcontrol_tloc_match_tloclist"))
+  actions: list(include("centralized_policy_control_topology_customcontrol_tloc_action_set_parameters"))
+centralized_policy_control_topology_customcontrol_tloc_match_carrier:
+  carrier: enum("default", "carrier1", "carrier2", "carrier3", "carrier4", "carrier5", "carrier6", "carrier7", "carrier8")
+centralized_policy_control_topology_customcontrol_tloc_match_colorlist:
+  color_list: str() # name of color list
+centralized_policy_control_topology_customcontrol_tloc_match_domainid:
+  domain_id: int(min=1, max=4294967295)
+centralized_policy_control_topology_customcontrol_tloc_match_groupid:
+  group_id: int(min=0, max=4294967295)
+centralized_policy_control_topology_customcontrol_tloc_match_omptag:
+  omp_tag: int(min=0, max=4294967295)
+centralized_policy_control_topology_customcontrol_tloc_match_originator:
+  originator: ip(version=4)
+centralized_policy_control_topology_customcontrol_tloc_match_preference:
+  preference: int(min=0, max=4294967295)
+centralized_policy_control_topology_customcontrol_tloc_match_sitelist:
+  site_list: str() # name of site list
+centralized_policy_control_topology_customcontrol_tloc_match_tloclist:
+  tloc_list: str() # name of TLOC list
+centralized_policy_control_topology_customcontrol_tloc_action_set_parameters:
+  set_parameters: list(include("centralized_policy_control_topology_customcontrol_tloc_action_set_omptag"), include("centralized_policy_control_topology_customcontrol_tloc_action_set_preference"))
+centralized_policy_control_topology_customcontrol_tloc_action_set_omptag:
+  omp_tag: int(min=0, max=4294967295)
+centralized_policy_control_topology_customcontrol_tloc_action_set_preference:
+  preference: int(min=0, max=4294967295)
+centralized_policy_control_topology_customcontrol_route:
+  base_action: enum("accept", "reject")
+  id: int(min=1, max=65534)
+  name: str()
+  ip_type: enum("ipv4", "ipv6", "all")
+  type: str(equals="route")
+  match_criterias: list(include("centralized_policy_control_topology_customcontrol_route_match_colorlist"), include("centralized_policy_control_topology_customcontrol_route_match_community"), include("centralized_policy_control_topology_customcontrol_route_match_expandedcommunity"), include("centralized_policy_control_topology_customcontrol_route_match_omptag"), include("centralized_policy_control_topology_customcontrol_route_match_origin"), include("centralized_policy_control_topology_customcontrol_route_match_originator"), include("centralized_policy_control_topology_customcontrol_route_match_preference"), include("centralized_policy_control_topology_customcontrol_route_match_sitelist"), include("centralized_policy_control_topology_customcontrol_route_match_siteid"), include("centralized_policy_control_topology_customcontrol_route_match_pathtype"), include("centralized_policy_control_topology_customcontrol_route_match_tloclist"), include("centralized_policy_control_topology_customcontrol_route_match_tloc"), include("centralized_policy_control_topology_customcontrol_route_match_vpnlist"),include("centralized_policy_control_topology_customcontrol_route_match_vpn"), include("centralized_policy_control_topology_customcontrol_route_match_ipv4_prefixlist"))
+  actions: list(include("centralized_policy_control_topology_customcontrol_route_action_set_parameters"), include("centralized_policy_control_topology_customcontrol_route_action_export_to_parameter"))
+centralized_policy_control_topology_customcontrol_route_match_colorlist:
+  color_list: str() # name of color list
+centralized_policy_control_topology_customcontrol_route_match_community:
+  community: str() # name of Community list
+centralized_policy_control_topology_customcontrol_route_match_expandedcommunity:
+  expanded_community: str() # name of Expanded Community list
+centralized_policy_control_topology_customcontrol_route_match_omptag:
+  omp_tag: int(min=0, max=4294967295)
+centralized_policy_control_topology_customcontrol_route_match_origin:
+  origin: enum("aggregrate","bgp","bgp-external","bgp-internal","connected","eigrp","ospf","ospf-inter-area","ospf-intra-area","ospf-external1","ospf-external2","rip","static","eigrp-summary","eigrp-internal","eigrp-external","lisp","nat-dia","natpool","isis","isis-level1","isis-level2")
+centralized_policy_control_topology_customcontrol_route_match_originator:
+  originator: ip(version=4)
+centralized_policy_control_topology_customcontrol_route_match_preference:
+  preference: int(min=0, max=4294967295)
+centralized_policy_control_topology_customcontrol_route_match_sitelist:
+  site_list: str() # name of site list
+centralized_policy_control_topology_customcontrol_route_match_siteid:
+  site_id: int(min=0, max=4294967295)
+centralized_policy_control_topology_customcontrol_route_match_pathtype:
+  path_type: enum("hierarchical-path", "direct-path", "transport-gateway-path")
+centralized_policy_control_topology_customcontrol_route_match_tloclist:
+  tloc_list: str() # name of site list
+centralized_policy_control_topology_customcontrol_route_match_tloc:
+  tloc: include("centralized_policy_control_topology_customcontrol_route_match_tloc_value")
+centralized_policy_control_topology_customcontrol_route_match_tloc_value:
+  ip: ip(version=4)
+  color: str() # Name of the color
+  encap: enum("ipsec", "gre")
+centralized_policy_control_topology_customcontrol_route_match_vpnlist:
+  vpn_list: str() # name of VPN list
+centralized_policy_control_topology_customcontrol_route_match_vpn:
+  vpn: int(min=0, max=65536)
+centralized_policy_control_topology_customcontrol_route_match_ipv4_prefixlist:
+  ipv4_prefix_list: str() # name of IPV4 Prefix list
+centralized_policy_control_topology_customcontrol_route_action_set_parameters:
+  set_parameters: list(include("centralized_policy_control_topology_customcontrol_route_action_set_community"),include("centralized_policy_control_topology_customcontrol_route_action_set_communityadditive"),include("centralized_policy_control_topology_customcontrol_route_action_set_omptag"),include("centralized_policy_control_topology_customcontrol_route_action_set_preference"),include("centralized_policy_control_topology_customcontrol_route_action_set_tlocaction"),include("centralized_policy_control_topology_customcontrol_route_action_set_service"),include("centralized_policy_control_topology_customcontrol_route_action_set_tloc"),include("centralized_policy_control_topology_customcontrol_route_action_set_tloclist"))
+centralized_policy_control_topology_customcontrol_route_action_set_community:
+  community: str()
+centralized_policy_control_topology_customcontrol_route_action_set_communityadditive:
+  community_additive: bool()
+centralized_policy_control_topology_customcontrol_route_action_set_omptag:
+  omp_tag: int(min=0, max=4294967295)
+centralized_policy_control_topology_customcontrol_route_action_set_preference:
+  preference: int(min=0, max=4294967295)
+centralized_policy_control_topology_customcontrol_route_action_set_tloc:
+  tloc: include("centralized_policy_control_topology_customcontrol_route_action_set_tloc_value")
+centralized_policy_control_topology_customcontrol_route_action_set_tloc_value:
+  ip: ip(version=4)
+  color: str() # Name of the color
+  encap: enum("ipsec", "gre")
+centralized_policy_control_topology_customcontrol_route_action_set_tloclist:
+  tloc_list: str() # name of site list
+centralized_policy_control_topology_customcontrol_route_action_set_tlocaction:
+  tloc_action: enum("strict", "primary", "backup", "ecmp")
+centralized_policy_control_topology_customcontrol_route_action_set_service:
+  service: any(include("centralized_policy_control_topology_customcontrol_route_action_set_service_and_tloc"), include("centralized_policy_control_topology_customcontrol_route_action_set_service_and_tloclist"))
+centralized_policy_control_topology_customcontrol_route_action_set_service_and_tloc:
+  type: enum("IDP", "IDS", "FW", "netsvc1", "netsvc2", "netsvc3", "netsvc4", "netsvc5", "appqoe")
+  vpn: int(min=0, max=65530)
+  tloc: include("centralized_policy_control_topology_customcontrol_route_action_set_tloc_value")
+centralized_policy_control_topology_customcontrol_route_action_set_service_and_tloclist:
+  type: enum("IDP", "IDS", "FW", "netsvc1", "netsvc2", "netsvc3", "netsvc4", "netsvc5")
+  vpn: int(min=0, max=65530)
+  tloc_list: str() # name of TLOC list
+centralized_policy_control_topology_customcontrol_route_action_export_to_parameter:
+  export_to_parameter: include("centralized_policy_control_topology_customcontrol_route_action_exportto_vpnlist")
+centralized_policy_control_topology_customcontrol_route_action_exportto_vpnlist:
+  vpn_list: str() # name of VPN list
