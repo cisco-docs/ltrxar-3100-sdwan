@@ -1,10 +1,10 @@
 # Hub and Spoke Topology Definition
 
-hub-and-spoke is one type of topology in which one of the devices acts as a hub site that receives the data traffic from all the spoke, or branch, devices and then redirects the traffic to the proper destination. 
+hub-and-spoke is one type of topology in which one of the devices acts as a hub site that receives the data traffic from all the spoke, or branch, devices and then redirects the traffic to the proper destination.
 
 Hub and Spoke Topology Definition define the hub and spoke sites that should create the connections between them.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

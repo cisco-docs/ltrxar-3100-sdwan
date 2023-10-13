@@ -1291,6 +1291,7 @@ centralized_policy_policies:
   hub_and_spoke_topology: list(include("centralized_policy_policies_hubandspoke_entries"), required=False)
   mesh_topology: list(include("centralized_policy_policies_mesh_entries"), required=False)
   custom_control_topology: list(include("centralized_policy_policies_customcontrol_entries"), required=False)
+  vpn_membership: list(include("centralized_policy_policies_vpn_membership_entries"), required=False)
 centralized_policy_policies_hubandspoke_entries:
   policy_definition: str()
 centralized_policy_policies_mesh_entries:
@@ -1307,11 +1308,14 @@ centralized_policy_policies_customcontrol_region_list:
 centralized_policy_policies_customcontrol_region:
   region_in: int(min=0, max=63)
   region_out: int(min=0, max=63)
+centralized_policy_policies_vpn_membership_entries:
+  policy_definition: str()
 #Centralized Policy - Control Policy
 centralized_policy_control:
   hub_and_spoke_topology: list(include("centralized_policy_control_topology_hubandspoke"), required=False)
   mesh_topology: list(include("centralized_policy_control_topology_mesh"), required=False)
   custom_control_topology: list(include("centralized_policy_control_topology_customcontrol"), required=False)
+  vpn_membership: list(include("centralized_policy_control_vpn_membership"), required=False)
 #Centralized Policy - Control Policy - definitions - Hub and Spoke
 centralized_policy_control_topology_hubandspoke:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
@@ -1454,3 +1458,11 @@ centralized_policy_control_topology_customcontrol_route_action_export_to_paramet
   export_to_parameter: include("centralized_policy_control_topology_customcontrol_route_action_exportto_vpnlist")
 centralized_policy_control_topology_customcontrol_route_action_exportto_vpnlist:
   vpn_list: str() # name of VPN list
+#Centralized Policy - Control Policy - definitions - VPN Membership
+centralized_policy_control_vpn_membership:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  groups: list(include("centralized_policy_control_vpn_membership_groups"))
+centralized_policy_control_vpn_membership_groups:
+  site_list: str() # name of site list
+  vpn_lists: list(str()) # list of vpn lists

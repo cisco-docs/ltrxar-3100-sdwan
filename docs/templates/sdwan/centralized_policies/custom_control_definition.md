@@ -2,7 +2,7 @@
 
 Custom Control Policy Definition define the matching conditions and Actions for Route and TLOC type filters
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

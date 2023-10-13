@@ -4,7 +4,7 @@ Mesh is one type of topology in which each of the device is allowed to send and 
 
 Mesh Topology Definition define the mesh sites that should create the mesh connections between them.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 

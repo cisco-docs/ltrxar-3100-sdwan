@@ -109,6 +109,7 @@ nav:
           - Hub and Spoke Topology Definition: data_model/sdwan/centralized_policies/hubandspoke_definition.md
           - Mesh Topology Definition: data_model/sdwan/centralized_policies/mesh_definition.md
           - Custom Control Topology Definition: data_model/sdwan/centralized_policies/custom_control_definition.md
+          - VPN Membership Definition: data_model/sdwan/centralized_policies/vpn_membership_definition.md
           - Feature Policy: data_model/sdwan/centralized_policies/policy.md
           - Activation: data_model/sdwan/centralized_policies/activation.md
       - Sites:

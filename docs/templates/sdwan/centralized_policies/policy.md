@@ -2,7 +2,7 @@
 
 Policy combines one or more Centralized policy definitions to create a Policy. These policies can then be activated to be applied to the SD-WAN deployment.
 
-{{ sdwan_doc }}
+{{ doc_gen }}
 
 ### Examples
 
@@ -24,6 +24,8 @@ sdwan:
                 - sitebgl
               region_lists_out:
                 - siteshanghai
+        vpn_membership:
+          - policy_definition: Test_vpn_mem_number1
       - name: CP2
         description: CPI2 policy
         custom_control_topology:
