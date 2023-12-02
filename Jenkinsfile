@@ -1,7 +1,7 @@
 pipeline {
     agent {
         docker {
-            image 'danischm/aac:0.5.3'
+            image 'danischm/aac:0.8.0'
             label 'digidev'
             args '-u root'
         }
@@ -27,16 +27,6 @@ pipeline {
             }
             steps {
                 build job: "/netascode/netascode/master", wait: false
-                sh 'pip install --upgrade mkdocs mkdocs-material'
-                sh 'python3 docs/sdwan-doc.py'
-                sh 'mkdocs build'
-                sshagent(credentials: ['VIELAB_HOST_SSH']) {
-                    sh '''
-                        [ -d ~/.ssh ] || mkdir ~/.ssh && chmod 0700 ~/.ssh
-                        ssh-keyscan -t rsa,dsa digitize-delivery.cisco.com >> ~/.ssh/known_hosts
-                        scp -r site/ danischm@digitize-delivery.cisco.com:/www/sdwan/
-                    '''
-                }
             }
         }
     }
