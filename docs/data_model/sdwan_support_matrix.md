@@ -75,7 +75,11 @@ This table provides an overview of which object is supported in combination with
 [Mesh Topology Definition](./sdwan/centralized_policies/mesh_definition.md) | :material-check: | :material-check: | :material-check:
 [Custom Control Topology Definition](./sdwan/centralized_policies/custom_control_definition.md) | :material-check: | :material-check: | :material-check:
 [VPN Membership Definition](./sdwan/centralized_policies/vpn_membership_definition.md) | :material-check: | :material-check: | :material-check:
-[Feature Policy](./sdwan/centralized_policies/policy.md) | :material-check: | :material-check: | :material-check:
+[Traffic Data Service Chaining Definition](./sdwan/centralized_policies/traffic_data_service_chaining.md) | :material-check: | :material-check: | :material-check:
+[Traffic Data QOS Definition](./sdwan/centralized_policies/traffic_data_qos.md) | :material-check: | :material-check: | :material-check:
+[Cflowd Definition](./sdwan/centralized_policies/cflowd_policy.md) | :material-check: | :material-check: | :material-check:
+[Feature Policy](./sdwan/centralized_policies/feature_policy.md) | :material-check: | :material-check: | :material-check:
+[CLI Policy](./sdwan/centralized_policies/cli_policy.md) | :material-check: | :material-check: | :material-check:
 [Activation](./sdwan/centralized_policies/activation.md) | :material-check: | :material-check: | :material-check:
 
 ### Sites

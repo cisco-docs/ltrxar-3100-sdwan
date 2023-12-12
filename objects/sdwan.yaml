@@ -184,10 +184,26 @@ objects:
     template: vpn_membership_definition
     folder: centralized_policies
     paths: [sdwan.centralized_policies.definitions.control_policy.vpn_membership]
-  - name: Feature Policy
-    template: policy
+  - name: Traffic Data Service Chaining Definition
+    template: traffic_data_service_chaining
     folder: centralized_policies
-    paths: [sdwan.centralized_policies.policies]
+    paths: [sdwan.centralized_policies.definitions.data_policy.traffic_data]
+  - name: Traffic Data QOS Definition
+    template: traffic_data_qos
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.data_policy.traffic_data]
+  - name: Cflowd Definition
+    template: cflowd
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.data_policy.cflowd]
+  - name: Feature Policy
+    template: feature_policy
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.feature_policies]
+  - name: CLI Policy
+    template: cli_policy
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.cli_policies]
   - name: Activation
     template: activation
     folder: centralized_policies

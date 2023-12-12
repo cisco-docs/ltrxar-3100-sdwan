@@ -9,7 +9,7 @@ Policy combines one or more Centralized policy definitions to create a Policy. T
 ```yaml
 sdwan:
   centralized_policies:
-    policies:
+    feature_policies:
       - name: CP1
         description: CPI1 policy
         hub_and_spoke_topology:
@@ -32,5 +32,5 @@ sdwan:
           - policy_definition: newpolicyemea
             site_region_list:
               region_in: 4
-              region_out: 5   
+              region_out: 5
 ```                   

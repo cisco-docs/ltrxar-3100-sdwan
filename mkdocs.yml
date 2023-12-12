@@ -110,7 +110,11 @@ nav:
           - Mesh Topology Definition: data_model/sdwan/centralized_policies/mesh_definition.md
           - Custom Control Topology Definition: data_model/sdwan/centralized_policies/custom_control_definition.md
           - VPN Membership Definition: data_model/sdwan/centralized_policies/vpn_membership_definition.md
-          - Feature Policy: data_model/sdwan/centralized_policies/policy.md
+          - Traffic Data Service Chaining Definition: data_model/sdwan/centralized_policies/traffic_data_service_chaining.md
+          - Traffic Data QOS Definition: data_model/sdwan/centralized_policies/traffic_data_qos.md
+          - Cflowd Definition: data_model/sdwan/centralized_policies/cflowd.md
+          - Feature Policy: data_model/sdwan/centralized_policies/feature_policy.md
+          - CLI Policy: data_model/sdwan/centralized_policies/cli_policy.md
           - Activation: data_model/sdwan/centralized_policies/activation.md
       - Sites:
           - Site: data_model/sdwan/sites/site.md

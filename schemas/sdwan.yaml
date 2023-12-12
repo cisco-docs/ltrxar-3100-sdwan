@@ -1281,10 +1281,16 @@ multi_region_fabric:
 #Centralized Policy Tree
 centralized_policies:
   definitions: include("centralized_policy_definitions", required=False)
-  policies: list(include("centralized_policy_policies"), required=False)
+  feature_policies: list(include("centralized_policy_policies"), required=False)
+  cli_policies: list(include("centralized_policy_cli_policies"), required=False)
   activated_policy: str(required=False)
+centralized_policy_cli_policies:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  policy_definition: str()
 centralized_policy_definitions:
-  control_policy: include("centralized_policy_control")
+  control_policy: include("centralized_policy_control", required=False)
+  data_policy: include("centralized_policy_data", required=False)
 centralized_policy_policies:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
@@ -1292,6 +1298,8 @@ centralized_policy_policies:
   mesh_topology: list(include("centralized_policy_policies_mesh_entries"), required=False)
   custom_control_topology: list(include("centralized_policy_policies_customcontrol_entries"), required=False)
   vpn_membership: list(include("centralized_policy_policies_vpn_membership_entries"), required=False)
+  traffic_data: list(include("centralized_policy_policies_traffic_data_entries"), required=False)
+  cflowd: list(include("centralized_policy_policies_cflowd_entries"), required=False)
 centralized_policy_policies_hubandspoke_entries:
   policy_definition: str()
 centralized_policy_policies_mesh_entries:
@@ -1310,6 +1318,24 @@ centralized_policy_policies_customcontrol_region:
   region_out: int(min=0, max=63)
 centralized_policy_policies_vpn_membership_entries:
   policy_definition: str()
+centralized_policy_policies_traffic_data_entries:
+  policy_definition: str()
+  site_region_vpn: any(include("centralized_policy_policies_traffic_data_site_list_vpn_list"), include("centralized_policy_policies_traffic_data_region_list_vpn_list"), include("centralized_policy_policies_traffic_data_region_vpn_list"))
+centralized_policy_policies_traffic_data_site_list_vpn_list:
+  direction: enum("service", "tunnel", "all")
+  site_lists: list(str())
+  vpn_lists: list(str())
+centralized_policy_policies_traffic_data_region_list_vpn_list:
+  direction: enum("service", "tunnel", "all")
+  region_list: str()
+  vpn_lists: list(str())
+centralized_policy_policies_traffic_data_region_vpn_list:
+  direction: enum("service", "tunnel", "all")
+  region: int()
+  vpn_lists: list(str())
+centralized_policy_policies_cflowd_entries:
+  policy_definition: str()
+  site_lists: list(str())
 #Centralized Policy - Control Policy
 centralized_policy_control:
   hub_and_spoke_topology: list(include("centralized_policy_control_topology_hubandspoke"), required=False)
@@ -1354,9 +1380,9 @@ centralized_policy_control_topology_customcontrol_tloc:
   base_action: enum("accept", "reject")
   id: int(min=1, max=65534)
   name: str()
-  ip_type: enum("ipv4", "ipv6", "all")
+  ip_type: enum("ipv4")
   type: str(equals="tloc")
-  match_criterias: list(include("centralized_policy_control_topology_customcontrol_tloc_match_carrier"), include("centralized_policy_control_topology_customcontrol_tloc_match_colorlist"), include("centralized_policy_control_topology_customcontrol_tloc_match_domainid"), include("centralized_policy_control_topology_customcontrol_tloc_match_groupid"), include("centralized_policy_control_topology_customcontrol_tloc_match_omptag"), include("centralized_policy_control_topology_customcontrol_tloc_match_originator"), include("centralized_policy_control_topology_customcontrol_tloc_match_preference"), include("centralized_policy_control_topology_customcontrol_tloc_match_sitelist"), include("centralized_policy_control_topology_customcontrol_tloc_match_tloclist"))
+  match_criterias: list(include("centralized_policy_control_topology_customcontrol_tloc_match_carrier"), include("centralized_policy_control_topology_customcontrol_tloc_match_colorlist"), include("centralized_policy_control_topology_customcontrol_tloc_match_domainid"), include("centralized_policy_control_topology_customcontrol_tloc_match_groupid"), include("centralized_policy_control_topology_customcontrol_tloc_match_omptag"), include("centralized_policy_control_topology_customcontrol_tloc_match_originator"), include("centralized_policy_control_topology_customcontrol_tloc_match_preference"), include("centralized_policy_control_topology_customcontrol_tloc_match_sitelist"), include("centralized_policy_control_topology_customcontrol_tloc_match_siteid"), include("centralized_policy_control_topology_customcontrol_tloc_match_tloc"), include("centralized_policy_control_topology_customcontrol_tloc_match_tloclist"))
   actions: list(include("centralized_policy_control_topology_customcontrol_tloc_action_set_parameters"))
 centralized_policy_control_topology_customcontrol_tloc_match_carrier:
   carrier: enum("default", "carrier1", "carrier2", "carrier3", "carrier4", "carrier5", "carrier6", "carrier7", "carrier8")
@@ -1374,6 +1400,14 @@ centralized_policy_control_topology_customcontrol_tloc_match_preference:
   preference: int(min=0, max=4294967295)
 centralized_policy_control_topology_customcontrol_tloc_match_sitelist:
   site_list: str() # name of site list
+centralized_policy_control_topology_customcontrol_tloc_match_siteid:
+  site_id: int(min=0, max=4294967295)
+centralized_policy_control_topology_customcontrol_tloc_match_tloc:
+  tloc: include("centralized_policy_control_topology_customcontrol_tloc_match_tloc_value")
+centralized_policy_control_topology_customcontrol_tloc_match_tloc_value:
+  ip: ip(version=4)
+  color: str() # Name of the color
+  encap: enum("ipsec", "gre")
 centralized_policy_control_topology_customcontrol_tloc_match_tloclist:
   tloc_list: str() # name of TLOC list
 centralized_policy_control_topology_customcontrol_tloc_action_set_parameters:
@@ -1466,3 +1500,137 @@ centralized_policy_control_vpn_membership:
 centralized_policy_control_vpn_membership_groups:
   site_list: str() # name of site list
   vpn_lists: list(str()) # list of vpn lists
+#Centralized Policy - Data Policy
+centralized_policy_data:
+  traffic_data: list(include("centralized_policy_data_traffic_data"), required=False)
+  cflowd: list(include("centralized_policy_data_cflowd"), required=False)
+#Centralized Policy - Data Policy - definitions - traffic data
+centralized_policy_data_traffic_data:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  default_action_type: enum("accept", "reject")
+  sequences: list(include("centralized_policy_data_traffic_data_service_chaining"), include("centralized_policy_data_traffic_data_qos"), required=False)
+#Centralized Policy - Data Policy - Definitions - service chaining
+centralized_policy_data_traffic_data_service_chaining:
+  base_action: enum("accept", "drop")
+  id: int(min=1, max=65534)
+  name: str()
+  ip_type: enum("ipv4")
+  type: str(equals="service_chaining")
+  match_criterias: list(include("centralized_policy_data_traffic_data_service_chaining_match_application_list"),include("centralized_policy_data_traffic_data_service_chaining_match_dscp"),include("centralized_policy_data_traffic_data_service_chaining_match_packet_length"),include("centralized_policy_data_traffic_data_service_chaining_match_plp"),include("centralized_policy_data_traffic_data_service_chaining_match_protocols"),include("centralized_policy_data_traffic_data_service_chaining_match_source_data_prefix_list"),include("centralized_policy_data_traffic_data_service_chaining_match_source_data_prefix"),include("centralized_policy_data_traffic_data_service_chaining_match_source_ports"),include("centralized_policy_data_traffic_data_service_chaining_match_destination_data_prefix_list"),include("centralized_policy_data_traffic_data_service_chaining_match_destination_data_prefix"),include("centralized_policy_data_traffic_data_service_chaining_match_destination_ports"),include("centralized_policy_data_traffic_data_service_chaining_match_tcp"), required=False)
+  actions: list(include("centralized_policy_data_traffic_data_service_chaining_action_set_counter"), include("centralized_policy_data_traffic_data_service_chaining_action_set_log"), include("centralized_policy_data_traffic_data_service_chaining_action_set_parameters"), required=False)
+centralized_policy_data_traffic_data_service_chaining_match_application_list:
+  application_list: str()
+centralized_policy_data_traffic_data_service_chaining_match_dscp:
+  dscp: int(min=0, max=63)
+centralized_policy_data_traffic_data_service_chaining_match_packet_length:
+  packet_length: int(min=0, max=65535)
+centralized_policy_data_traffic_data_service_chaining_match_plp:
+  plp: enum("low", "high")
+centralized_policy_data_traffic_data_service_chaining_match_protocols:
+  protocols: list(int(min=0, max=255))
+centralized_policy_data_traffic_data_service_chaining_match_source_data_prefix_list:
+  source_data_prefix_list: str()
+centralized_policy_data_traffic_data_service_chaining_match_source_data_prefix:
+  source_data_prefix: str()
+centralized_policy_data_traffic_data_service_chaining_match_source_ports:
+  source_ports: list(int(min=0, max=65535))
+centralized_policy_data_traffic_data_service_chaining_match_destination_data_prefix_list:
+  destination_data_prefix_list: str()
+centralized_policy_data_traffic_data_service_chaining_match_destination_data_prefix:
+  destination_data_prefix: str()
+centralized_policy_data_traffic_data_service_chaining_match_destination_ports:
+  destination_ports: list(int(min=0, max=65535))
+centralized_policy_data_traffic_data_service_chaining_match_tcp:
+  tcp: enum("syn")
+centralized_policy_data_traffic_data_service_chaining_action_set_counter:
+  counter_name: str(min=1, max=20)
+centralized_policy_data_traffic_data_service_chaining_action_set_log:
+  log: enum('enabled')
+centralized_policy_data_traffic_data_service_chaining_action_set_parameters:
+  set_parameters: list(include("centralized_policy_data_traffic_data_service_chaining_action_set_service"),include("centralized_policy_data_traffic_data_service_chaining_action_set_tloc"),include("centralized_policy_data_traffic_data_service_chaining_action_set_vpn"), required=False)
+centralized_policy_data_traffic_data_service_chaining_action_set_service:
+  service: include("centralized_policy_data_traffic_data_service_chaining_action_set_service_parameters")
+centralized_policy_data_traffic_data_service_chaining_action_set_service_parameters:
+  type: enum("appqoe", "FW", "IDP", "IDS", "netsvc1", "netsvc2", "netsvc3", "netsvc4", "netsvc5")
+  vpn: int(min=0, max=65530, required=False)
+  tloc: any(include("centralized_policy_data_traffic_data_service_chaining_action_set_service_tloc_value"),include("centralized_policy_data_traffic_data_service_chaining_action_set_service_tloc_list"),required=False)
+  local: enum('enabled', required=False)
+  restrict: enum('enabled', required=False)
+centralized_policy_data_traffic_data_service_chaining_action_set_service_tloc_value:
+  ip: ip(version=4)
+  color: str() # Name of the color
+  encap: enum("ipsec", "gre")
+centralized_policy_data_traffic_data_service_chaining_action_set_service_tloc_list:
+  tloc_list: str() # name of site list
+centralized_policy_data_traffic_data_service_chaining_action_set_tloc:
+  tloc: any(include("centralized_policy_data_traffic_data_service_chaining_action_set_service_tloc_value"),include("centralized_policy_data_traffic_data_service_chaining_action_set_service_tloc_list"),required=False)
+centralized_policy_data_traffic_data_service_chaining_action_set_vpn:
+  vpn: int(min=0, max=65530, required=False)
+#Centralized Policy - Data Policy - Definitions - qos
+centralized_policy_data_traffic_data_qos:
+  base_action: enum("accept", "drop")
+  id: int(min=1, max=65534)
+  name: str()
+  ip_type: enum("ipv4", "ipv6", "both")
+  type: str(equals="qos")
+  match_criterias: list(include("centralized_policy_data_traffic_data_qos_match_application_list"),include("centralized_policy_data_traffic_data_qos_match_dscp"),include("centralized_policy_data_traffic_data_qos_match_packet_length"),include("centralized_policy_data_traffic_data_qos_match_plp"),include("centralized_policy_data_traffic_data_qos_match_protocols"),include("centralized_policy_data_traffic_data_qos_match_source_data_prefix_list"),include("centralized_policy_data_traffic_data_qos_match_source_data_prefix"),include("centralized_policy_data_traffic_data_qos_match_source_ports"),include("centralized_policy_data_traffic_data_qos_match_destination_data_prefix_list"),include("centralized_policy_data_traffic_data_qos_match_destination_data_prefix"),include("centralized_policy_data_traffic_data_qos_match_destination_ports"),include("centralized_policy_data_traffic_data_qos_match_tcp"), required=False)
+  actions: list(include("centralized_policy_data_traffic_data_qos_action_set_counter"), include("centralized_policy_data_traffic_data_qos_action_set_log"), include("centralized_policy_data_traffic_data_qos_action_set_loss_correction"),include("centralized_policy_data_traffic_data_qos_action_set_parameters"), required=False)
+centralized_policy_data_traffic_data_qos_match_application_list:
+  application_list: str()
+centralized_policy_data_traffic_data_qos_match_dscp:
+  dscp: int(min=0, max=63)
+centralized_policy_data_traffic_data_qos_match_packet_length:
+  packet_length: int(min=0, max=65535)
+centralized_policy_data_traffic_data_qos_match_plp:
+  plp: enum("low", "high")
+centralized_policy_data_traffic_data_qos_match_protocols:
+  protocols: list(int(min=0, max=255))
+centralized_policy_data_traffic_data_qos_match_source_data_prefix_list:
+  source_data_prefix_list: str()
+centralized_policy_data_traffic_data_qos_match_source_data_prefix:
+  source_data_prefix: str()
+centralized_policy_data_traffic_data_qos_match_source_ports:
+  source_ports: list(int(min=0, max=65535))
+centralized_policy_data_traffic_data_qos_match_destination_data_prefix_list:
+  destination_data_prefix_list: str()
+centralized_policy_data_traffic_data_qos_match_destination_data_prefix:
+  destination_data_prefix: str()
+centralized_policy_data_traffic_data_qos_match_destination_ports:
+  destination_ports: list(int(min=0, max=65535))
+centralized_policy_data_traffic_data_qos_match_tcp:
+  tcp: enum("syn")
+centralized_policy_data_traffic_data_qos_action_set_counter:
+  counter_name: str(min=1, max=20)
+centralized_policy_data_traffic_data_qos_action_set_log:
+  log: enum('enabled')
+centralized_policy_data_traffic_data_qos_action_set_loss_correction:
+  loss_correction: enum('fecAdaptive','fecAlways','packetDuplication')
+  loss_threshold_percentage: int(min=1, max=5, required=False)
+centralized_policy_data_traffic_data_qos_action_set_parameters:
+  set_parameters: list(include("centralized_policy_data_traffic_data_qos_action_set_dscp"),include("centralized_policy_data_traffic_data_qos_action_set_forwarding_class"),include("centralized_policy_data_traffic_data_qos_action_set_policer_list"), required=False)
+centralized_policy_data_traffic_data_qos_action_set_dscp:
+  dscp: int(min=0, max=63)
+centralized_policy_data_traffic_data_qos_action_set_forwarding_class:
+  forwarding_class: str(min=1, max=32)
+centralized_policy_data_traffic_data_qos_action_set_policer_list:
+  policer_list: str()
+#Centralized Policy - Data Policy - Definitions - Cflowd
+centralized_policy_data_cflowd:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  description: str()
+  active_flow_timeout: int(min=30, max=3600)
+  inactive_flow_timeout: int(min=1, max=3600)
+  sampling_interval: int(min=1, max=65536)
+  flow_refresh: int(min=60, max=86400)
+  protocol: enum("ipv4","ipv6","both")
+  tos: bool()
+  remarked_dscp: bool()
+  collectors: list(include("centralized_policy_data_cflowd_collectors", required=False))
+centralized_policy_data_cflowd_collectors:
+  vpn: int(min=0, max=65527) # 512 should be excluded, not supported on cEdge
+  ip_address: ip(version=4)
+  port: int(min=1024, max=65535)
+  transport: enum("transport_tcp","transport_udp")
+  source_interface: str()
+  export_spreading: enum("enable","disable")
