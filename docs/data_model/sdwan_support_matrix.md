@@ -67,6 +67,17 @@ This table provides an overview of which object is supported in combination with
 [vEdge Route Definition](./sdwan/localized_policies/vedge_route_definition.md) | :material-check: | :material-check: | :material-check:
 [Feature Policy](./sdwan/localized_policies/feature_policy.md) | :material-check: | :material-check: | :material-check:
 
+### Centralized Policies
+
+<span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse
+---|---|---|---
+[Hub and Spoke Topology Definition](./sdwan/centralized_policies/hubandspoke_definition.md) | :material-check: | :material-check: | :material-check:
+[Mesh Topology Definition](./sdwan/centralized_policies/mesh_definition.md) | :material-check: | :material-check: | :material-check:
+[Custom Control Topology Definition](./sdwan/centralized_policies/custom_control_definition.md) | :material-check: | :material-check: | :material-check:
+[VPN Membership Definition](./sdwan/centralized_policies/vpn_membership_definition.md) | :material-check: | :material-check: | :material-check:
+[Feature Policy](./sdwan/centralized_policies/policy.md) | :material-check: | :material-check: | :material-check:
+[Activation](./sdwan/centralized_policies/activation.md) | :material-check: | :material-check: | :material-check:
+
 ### Sites
 
 <span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse

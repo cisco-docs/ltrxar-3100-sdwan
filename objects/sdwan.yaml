@@ -168,3 +168,27 @@ objects:
     template: site
     folder: sites
     paths: [sdwan.sites]
+  - name: Hub and Spoke Topology Definition
+    template: hubandspoke_definition
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.control_policy.hub_and_spoke_topology]
+  - name: Mesh Topology Definition
+    template: mesh_definition
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.control_policy.mesh_topology]
+  - name: Custom Control Topology Definition
+    template: custom_control_definition
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.control_policy.custom_control_topology]
+  - name: VPN Membership Definition
+    template: vpn_membership_definition
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.control_policy.vpn_membership]
+  - name: Feature Policy
+    template: policy
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.policies]
+  - name: Activation
+    template: activation
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.activation]
