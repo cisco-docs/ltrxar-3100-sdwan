@@ -192,6 +192,18 @@ objects:
     template: traffic_data_qos
     folder: centralized_policies
     paths: [sdwan.centralized_policies.definitions.data_policy.traffic_data]
+  - name: Traffic Data Application Firewall Definition
+    template: traffic_data_application_firewall
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.data_policy.traffic_data]
+  - name: Traffic Data Traffic Engineering Definition
+    template: traffic_data_traffic_engineering
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.data_policy.traffic_data]
+  - name: Traffic Data Custom Definition
+    template: traffic_data_custom
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.data_policy.traffic_data]
   - name: Cflowd Definition
     template: cflowd
     folder: centralized_policies

@@ -75,8 +75,12 @@ This table provides an overview of which object is supported in combination with
 [Mesh Topology Definition](./sdwan/centralized_policies/mesh_definition.md) | :material-check: | :material-check: | :material-check:
 [Custom Control Topology Definition](./sdwan/centralized_policies/custom_control_definition.md) | :material-check: | :material-check: | :material-check:
 [VPN Membership Definition](./sdwan/centralized_policies/vpn_membership_definition.md) | :material-check: | :material-check: | :material-check:
+[Application Aware Routing Definition](./sdwan/centralized_policies/application_aware_routing.md) | :material-check: | :material-check: | :material-check:
 [Traffic Data Service Chaining Definition](./sdwan/centralized_policies/traffic_data_service_chaining.md) | :material-check: | :material-check: | :material-check:
 [Traffic Data QOS Definition](./sdwan/centralized_policies/traffic_data_qos.md) | :material-check: | :material-check: | :material-check:
+[Traffic Data Application Firewall Definition](./sdwan/centralized_policies/traffic_data_application_firewall.md) | :material-check: | :material-check: | :material-check:
+[Traffic Data Traffic Engineering Definition](./sdwan/centralized_policies/traffic_data_traffic_engineering.md) | :material-check: | :material-check: | :material-check:
+[Traffic Data Custom Definition](./sdwan/centralized_policies/traffic_data_custom.md) | :material-check: | :material-check: | :material-check:
 [Cflowd Definition](./sdwan/centralized_policies/cflowd_policy.md) | :material-check: | :material-check: | :material-check:
 [Feature Policy](./sdwan/centralized_policies/feature_policy.md) | :material-check: | :material-check: | :material-check:
 [CLI Policy](./sdwan/centralized_policies/cli_policy.md) | :material-check: | :material-check: | :material-check:
