@@ -219,4 +219,4 @@ objects:
   - name: Activation
     template: activation
     folder: centralized_policies
-    paths: [sdwan.centralized_policies.activation]
+    paths: [sdwan.centralized_policies.activated_policy]
