@@ -1,6 +1,6 @@
-# Traffic Data - Application FIrewall Definition
+# Traffic Data - Application Firewall Definition
 
-Application FIrewall Definition define the matching conditions and Actions to configure Application FIrewall
+Application Firewall Definition define the matching conditions and Actions to configure Application Firewall
 
 {{ doc_gen }}
 

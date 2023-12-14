@@ -220,3 +220,7 @@ objects:
     template: activation
     folder: centralized_policies
     paths: [sdwan.centralized_policies.activated_policy]
+  - name: Application Aware Routing
+    template: application_aware_routing
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.data_policy.application_aware_routing]
