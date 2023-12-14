@@ -223,4 +223,4 @@ objects:
   - name: Application Aware Routing
     template: application_aware_routing
     folder: centralized_policies
-    paths: [sdwan.centralized_policies.data_policy.application_aware_routing]
+    paths: [sdwan.centralized_policies.definitions.data_policy.application_aware_routing]
