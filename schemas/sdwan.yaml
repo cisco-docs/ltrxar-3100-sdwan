@@ -860,126 +860,133 @@ cli_template:
   parameters: include("cft_cli_template_parameters", required=False)
 cft_cli_template_parameters:
   config: str() # Add jinja raw controls if using variables in the CLI template
-# Policy List schema
+# Policy Objects Schema
 policy_objects:
-  lists: include("policy_lists", required=False)
-# Policy Lists
-# Missing types: mirror, appprobeclass, preferredcolorgroup, region
-policy_lists:
-  app: list(include("policy_list_app"), required=False)
-  asPath: list(include("policy_list_aspath"), required=False)
-  class: list(include("policy_list_class"), required=False)
-  color: list(include("policy_list_color"), required=False)
-  community: list(include("policy_list_community"), required=False)
-  dataPrefix: list(include("policy_list_dataprefix"), required=False)
-  expandedCommunity: list(include("policy_list_expanded_community"), required=False)
-  extCommunity: list(include("policy_list_extended_community"), required=False)
-  localApp: list(include("policy_list_localapp"), required=False)
-  policer: list(include("policy_list_policer"), required=False)
-  prefix: list(include("policy_list_prefix"), required=False)
-  site: list(include("policy_list_site"), required=False)
-  sla: list(include("policy_list_sla"), required=False)
-  tloc: list(include("policy_list_tloc"), required=False)
-  vpn: list(include("policy_list_vpn"), required=False)
-policy_list_app:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: any(list(include("policy_list_app_entries")), list(include("policy_list_appfamily_entries")))
-policy_list_app_entries:
-  app: str()
-  appRef: str(required=False)
-policy_list_appfamily_entries:
-  appFamily: enum("application-service", "audio-video", "authentication", "behavioral", "database", "encrypted", "erp", "file-server", "file-transfer", "forum", "game", "instant-messaging", "mail", "microsoft-office", "middleware", "network-management", "network-service", "peer-to-peer", "printer", "routing", "security-service", "terminal", "thin-client", "tunneling", "web", "webmail")
-policy_list_aspath:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_aspath_entries"))
-policy_list_aspath_entries:
-  asPath: str()
-policy_list_class:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_class_entries"), max=1)
-policy_list_class_entries:
-  queue: regex('^[0-7]{,1}$')
-policy_list_color:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_color_entries"))
-policy_list_color_entries:
+  app_probe_classes: list(include("policy_objects_app_probe_class"), required=False)
+  application_lists: list(include("policy_objects_application_list"), required=False)
+  as_path_lists: list(include("policy_objects_as_path_list"), required=False)
+  class_maps: list(include("policy_objects_class_map"), required=False)
+  color_lists: list(include("policy_objects_color_list"), required=False)
+  expanded_community_lists: list(include("policy_objects_expanded_community_list"), required=False)
+  extended_community_lists: list(include("policy_objects_extended_community_list"), required=False)
+  ipv4_data_prefix_lists: list(include("policy_objects_ipv4_data_prefix_list"), required=False)
+  ipv4_prefix_lists: list(include("policy_objects_ipv4_prefix_list"), required=False)
+  ipv6_data_prefix_lists: list(include("policy_objects_ipv6_data_prefix_list"), required=False)
+  ipv6_prefix_lists: list(include("policy_objects_ipv6_prefix_list"), required=False)
+  mirror_lists: list(include("policy_objects_mirror_list"), required=False)
+  policers: list(include("policy_objects_policer"), required=False)
+  preferred_color_groups: list(include("policy_objects_preferred_color_group"), required=False)
+  region_lists: list(include("policy_objects_region_list"), required=False)
+  site_lists: list(include("policy_objects_site_list"), required=False)
+  sla_classes: list(include("policy_objects_sla_class"), required=False)
+  standard_community_lists: list(include("policy_objects_standard_community_list"), required=False)
+  tloc_lists: list(include("policy_objects_tloc_list"), required=False)
+  vpn_lists: list(include("policy_objects_vpn_list"), required=False)
+policy_objects_app_probe_class:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  forwarding_class: regex('^[^<>!&$@\/"() ]{,128}$')
+  mappings: list(include("policy_objects_app_probe_class_mapping"))
+policy_objects_app_probe_class_mapping:
   color: enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6")
-policy_list_community:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_community_entries"))
-policy_list_community_entries:
-  community: regex('^[0-9]{,5}(:)[0-9]{,5}$')
-policy_list_localapp:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_localapp_entries"))
-policy_list_localapp_entries:
-  app: str(matches='^[A-Za-z0-9-_]+$', max=255)
-policy_list_dataprefix:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_dataprefix_entries"))
-policy_list_dataprefix_entries:
-  ipPrefix: ip(version=4)
-policy_list_expanded_community:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_expandedcommunity_entries"))
-policy_list_expandedcommunity_entries:
-  community: regex('^[0-9]{,5}(:)[0-9]{,5}$')
-policy_list_extended_community:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_extcommunity_entries"))
-policy_list_extcommunity_entries:
-  community: any(regex('^soo.*$'), regex('^rt.*$'))
-policy_list_policer:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_policer_entries"))
-policy_list_policer_entries:
-  burst: regex('^[0-9]{,8}$')
-  exceed: enum("drop", "remark")
-  rate: regex('^[0-9]{,12}$')
-policy_list_prefix:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_prefix_entries"))
-policy_list_prefix_entries:
-  ipPrefix: ip(version=4)
-policy_list_site:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_site_entries"))
-policy_list_site_entries:
-  siteId: any(regex('^[0-9]{,10}$'), regex('^[0-9]{,10}(-)[0-9]{,10}$'))
-policy_list_sla:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_sla_entries"), max=1)
-policy_list_sla_entries:
-  jitter: regex('^[0-9]{,4}$', required=False)
-  latency: regex('^[0-9]{,4}$', required=False)
-  loss: regex('^[0-9]{,3}$', required=False)
-policy_list_tloc:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_tloc_entries"))
-policy_list_tloc_entries:
+  dscp: int(min=0, max=63)
+policy_objects_application_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  applications: list(str(), required=False)
+  application_families: list(enum("application-service", "audio-video", "authentication", "behavioral", "database", "encrypted", "erp", "file-server", "file-transfer", "forum", "game", "instant-messaging", "mail", "microsoft-office", "middleware", "network-management", "network-service", "peer-to-peer", "printer", "routing", "security-service", "terminal", "thin-client", "tunneling", "web", "webmail"), required=False)
+policy_objects_as_path_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  as_paths: list(str())
+policy_objects_class_map:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  queue: int(min=0, max=7)
+policy_objects_color_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  colors: list(enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6"))
+policy_objects_expanded_community_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  expanded_communities: list(regex('^[0-9]{,5}(:)[0-9]{,5}$'))
+policy_objects_extended_community_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  extended_communities: list(regex('(soo|rt).*$'))
+policy_objects_ipv4_data_prefix_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  prefixes: list(ip(version=4))
+policy_objects_ipv4_prefix_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  entries: list(include("policy_objects_ipv4_prefix_list_entry"))
+policy_objects_ipv4_prefix_list_entry:
+  prefix: ip(version=4)
+  le: int(min=0, max=32, required=False)
+  ge: int(min=0, max=32, required=False)
+policy_objects_ipv6_data_prefix_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  prefixes: list(ip(version=6))
+policy_objects_ipv6_prefix_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  entries: list(include("policy_objects_ipv6_prefix_list_entry"))
+policy_objects_ipv6_prefix_list_entry:
+  prefix: ip(version=6)
+  le: int(min=0, max=128, required=False)
+  ge: int(min=0, max=128, required=False)
+policy_objects_mirror_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  remote_destination_ip: ip(version=4)
+  source_ip: ip(version=4)
+policy_objects_policer:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  burst_bytes: int(min=15000, max=10000000)
+  exceed_action: enum("drop", "remark")
+  rate_bps: int(min=8, max=100000000000)
+policy_objects_preferred_color_group:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  primary_colors: list(enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6"))
+  primary_path: enum("direct-path", "multi-hop-path", "all-paths", required=False)
+  secondary_colors: list(enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6"), required=False)
+  secondary_path: enum("direct-path", "multi-hop-path", "all-paths", required=False)
+  tertiary_colors: list(enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6"), required=False)
+  tertiary_path: enum("direct-path", "multi-hop-path", "all-paths", required=False)
+policy_objects_region_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  region_ids: list(int(min=0, max=63), required=False)
+  region_id_ranges: list(include('policy_objects_region_list_region_id_range'), required=False)
+policy_objects_region_list_region_id_range:
+  from: int(min=0, max=63)
+  to: int(min=0, max=63)
+policy_objects_site_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  site_ids: list(int(min=1, max=4294967295), required=False)
+  site_id_ranges: list(include('policy_objects_site_list_site_id_range'), required=False)
+policy_objects_site_list_site_id_range:
+  from: int(min=1, max=4294967295)
+  to: int(min=1, max=4294967295)
+policy_objects_sla_class:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  jitter_ms: int(min=1, max=1000, required=False)
+  latency_ms: int(min=1, max=1000, required=False)
+  loss_percentage: int(min=1, max=100, required=False)
+  app_probe_class: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  fallback_best_tunnel_criteria: enum("loss", "latency", "jitter", "loss-latency", "loss-jitter", "latency-loss", "latency-jitter", "jitter-latency", "jitter-loss", "loss-latency-jitter", "loss-jitter-latency", "latency-loss-jitter", "latency-jitter-loss", "jitter-latency-loss", "jitter-loss-latency", required=False)
+  fallback_best_tunnel_jitter: int(min=1, max=1000, required=False)
+  fallback_best_tunnel_latency: int(min=1, max=1000, required=False)
+  fallback_best_tunnel_loss: int(min=1, max=100, required=False)
+policy_objects_standard_community_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  standard_communities: list(regex('^[0-9]{,5}(:)[0-9]{,5}$'))
+policy_objects_tloc_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  tlocs: list(include("policy_list_tloc_list_tloc"))
+policy_list_tloc_list_tloc:
   color: enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6")
-  encap: enum("ipsec", "gre")
-  tloc: ip(version=4)
-policy_list_vpn:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
-  description: str()
-  entries: list(include("policy_list_vpn_entries"))
-policy_list_vpn_entries:
-  vpn: any(regex('^[0-9]{,3}$'), regex('^[0-9]{,3}(-)[0-9]{,3}$'))
+  encapsulation: enum("ipsec", "gre")
+  tloc_ip: ip(version=4)
+  preference: int(min=0, max=4294967295, required=False)
+policy_objects_vpn_list:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  vpn_ids: list(int(min=0, max=65530), required=False)
+  vpn_id_ranges: list(include('policy_objects_vpn_list_vpn_id_range'), required=False)
+policy_objects_vpn_list_vpn_id_range:
+  from: int(min=0, max=65530)
+  to: int(min=0, max=65530)
 # Localized Policy schema
 localized_policies:
   definitions: include("localized_policy_definitions", required=False)

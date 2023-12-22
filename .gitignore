@@ -415,3 +415,6 @@ site/
 # Pabot
 .pabotsuitenames
 
+# Prettier
+.prettierignore
+

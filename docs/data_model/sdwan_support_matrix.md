@@ -41,20 +41,26 @@ This table provides an overview of which object is supported in combination with
 
 <span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse
 ---|---|---|---
-[Application List](./sdwan/policy_objects/app.md) | :material-check: | :material-check: | :material-check:
-[AS Path List](./sdwan/policy_objects/aspath.md) | :material-check: | :material-check: | :material-check:
-[Class](./sdwan/policy_objects/class.md) | :material-check: | :material-check: | :material-check:
-[Color List](./sdwan/policy_objects/color.md) | :material-check: | :material-check: | :material-check:
-[Community List](./sdwan/policy_objects/community.md) | :material-check: | :material-check: | :material-check:
-[Data Prefix List](./sdwan/policy_objects/data_prefix.md) | :material-check: | :material-check: | :material-check:
-[Expanded Community List](./sdwan/policy_objects/expanded_community.md) | :material-check: | :material-check: | :material-check:
-[Extended Community List](./sdwan/policy_objects/extended_community.md) | :material-check: | :material-check: | :material-check:
-[Policer List](./sdwan/policy_objects/policer.md) | :material-check: | :material-check: | :material-check:
-[Prefix List](./sdwan/policy_objects/prefix.md) | :material-check: | :material-check: | :material-check:
-[Site List](./sdwan/policy_objects/site.md) | :material-check: | :material-check: | :material-check:
-[SLA Class List](./sdwan/policy_objects/sla.md) | :material-check: | :material-check: | :material-check:
-[TLOC List](./sdwan/policy_objects/tloc.md) | :material-check: | :material-check: | :material-check:
-[VPN List](./sdwan/policy_objects/vpn.md) | :material-check: | :material-check: | :material-check:
+[App Probe Class](./sdwan/policy_objects/app_probe_class.md) | | |
+[Application List](./sdwan/policy_objects/application_list.md) | | |
+[AS Path List](./sdwan/policy_objects/as_path_list.md) | | |
+[Class Map](./sdwan/policy_objects/class_map.md) | | |
+[Color List](./sdwan/policy_objects/color_list.md) | | |
+[Expanded Community List](./sdwan/policy_objects/expanded_community_list.md) | | |
+[Extended Community List](./sdwan/policy_objects/extended_community_list.md) | | |
+[IPv4 Data Prefix List](./sdwan/policy_objects/ipv4_data_prefix_list.md) | | |
+[IPv4 Prefix List](./sdwan/policy_objects/ipv4_prefix_list.md) | | |
+[IPv6 Data Prefix List](./sdwan/policy_objects/ipv6_data_prefix_list.md) | | |
+[IPv6 Prefix List](./sdwan/policy_objects/ipv6_prefix_list.md) | | |
+[Mirror List](./sdwan/policy_objects/mirror_list.md) | | |
+[Policer](./sdwan/policy_objects/policer.md) | | |
+[Preferred Color Group](./sdwan/policy_objects/preferred_color_group.md) | | |
+[Region List](./sdwan/policy_objects/region_list.md) | | |
+[Site List](./sdwan/policy_objects/site_list.md) | | |
+[SLA Class](./sdwan/policy_objects/sla_class.md) | | |
+[Standard Community List](./sdwan/policy_objects/standard_community_list.md) | | |
+[TLOC List](./sdwan/policy_objects/tloc_list.md) | | |
+[VPN List](./sdwan/policy_objects/vpn_list.md) | | |
 
 ### Localized Policies
 

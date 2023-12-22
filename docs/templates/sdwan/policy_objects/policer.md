@@ -9,12 +9,9 @@ Configure policers to control the maximum rate of traffic sent or received on an
 ```yaml
 sdwan:
   policy_objects:
-    lists:
-      policer:
-        - name: POLICER-BRANCH
-          description: Policer for branch sites
-          entries:
-            - burst: '2000000'
-              exceed: remark
-              rate: '250000000'
+    policers:
+      - name: POLICER-BRANCH
+        burst_bytes: 2000000
+        exceed_action: remark
+        rate_bps: 250000000
 ```

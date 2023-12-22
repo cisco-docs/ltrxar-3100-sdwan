@@ -9,15 +9,14 @@ A TLOC list contains a list of SD-WAN TLOCs, where each TLOC is identified by th
 ```yaml
 sdwan:
   policy_objects:
-    lists:
-      tloc:
-        - name: TLOC-EMEA-HUB
-          description: EMEA HUB TLOCs
-          entries:
+    tloc_lists:
+      - name: TLOC-EMEA-HUB
+        tlocs:
           - color: custom1
-            encap: ipsec
-            tloc: 10.0.2.101
+            encapsulation: ipsec
+            tloc_ip: 10.0.2.101
+            preference: 100
           - color: custom2
-            encap: ipsec
-            tloc: 10.0.2.101
+            encapsulation: ipsec
+            tloc_ip: 10.0.2.101
 ```
