@@ -54,7 +54,7 @@ def full_sdwan_terraform_test(terraform_path, sdwan_url):
     [
         (
             "tests/integration/fixtures/sdwan/terraform_209",
-            "https://10.50.221.215",
+            "https://10.50.221.225",
         ),
     ],
 )
