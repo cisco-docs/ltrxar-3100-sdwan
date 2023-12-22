@@ -109,7 +109,7 @@ objects:
     folder: policy_objects
     paths: [sdwan.policy_objects.expanded_community_lists]
   - name: Extended Community List
-    template: extended_community
+    template: extended_community_list
     folder: policy_objects
     paths: [sdwan.policy_objects.extended_community_lists]
   - name: IPv4 Data Prefix List

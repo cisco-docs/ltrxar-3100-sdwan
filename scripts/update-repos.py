@@ -45,7 +45,7 @@ REPOS = [
         ],
     },
     {
-        "url": "https://wwwin-github.cisco.com/netascode/terraform-sdwan-nac-sdwan.git",
+        "url": "https://github.com/netascode/terraform-sdwan-nac-sdwan.git",
         "commit_message": "Nac sdwan updates",
         "files": [
             {
