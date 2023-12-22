@@ -1,0 +1,267 @@
+---
+# SD-WAN Sites Demo
+sdwan:
+  sites:
+    - id: 2101
+      routers:
+        - chassis_id: C8K-CC678D1C-8EDF-3966-4F51-ABFAB64F5ABE
+          model: C8000V
+          device_template: DT-C8000V-TEST
+          device_variables:
+            site_id: 2101
+            system_ip: 10.0.2.101
+            system_hostname: SITE2101-C8KV-01
+            logging_server_source_interface: Loopback511
+            ntp_server_source_interface: Loopback511
+            global_cdp_enable: true
+            global_lldp_enable: false
+            global_ip_domain_lookup_enable: true
+            snmp_shutdown: false
+            snmp_trap_source_interface: Loopback511
+            snmp_contact: contact@acme.com
+            snmp_location: Location 2101
+            system_location: Site2101
+            system_description: Site 2101 C8KV01
+            timezone: UTC
+            system_latitude: 38.1
+            system_longitude: -1.9
+            ondemand_tunnel_enable: false
+            ondemand_tunnel_idle_timeout: 10
+            vpn0_layer4_ecmp_enable: true
+            vpn0_tloc01_if_name: GigabitEthernet1
+            vpn0_tloc01_if_description: INET-1
+            vpn0_tloc01_if_shutdown: false
+            vpn0_tloc01_shaping_rate: 1000000
+            vpn0_tloc01_tunnel_ipsec_preference: 1
+            vpn0_tloc01_tunnel_weight: 1
+            vpn0_tloc01_tunnel_color: custom1
+            vpn0_tloc01_tunnel_group: 100
+            vpn0_tloc01_tunnel_restrict: false
+            vpn0_tloc01_tunnel_vmanage_connection_preference: 5
+            vpn0_tloc02_if_name: GigabitEthernet2
+            vpn0_tloc02_if_description: MPLS-1
+            vpn0_tloc02_if_shutdown: false
+            vpn0_tloc02_shaping_rate: 1000000
+            vpn0_tloc02_tunnel_ipsec_preference: 1
+            vpn0_tloc02_tunnel_weight: 1
+            vpn0_tloc02_tunnel_color: private1
+            vpn0_tloc02_tunnel_group: 200
+            vpn0_tloc02_tunnel_restrict: false
+            vpn0_tloc02_tunnel_vmanage_connection_preference: 5
+            vpn0_int1_if_name: GigabitEthernet5
+            vpn0_int1_if_description: LAN Physical interface
+            vpn0_int1_if_shutdown: true
+            vpn1_int1_if_name: GigabitEthernet6
+            vpn1_int1_if_description: VPN1 LAN1
+            vpn1_int1_if_shutdown: false
+            vpn1_int1_if_ipv4_address: 10.0.111.1/24
+            vpn1_int2_if_name: GigabitEthernet7
+            vpn1_int2_if_description: VPN1 LAN2
+            vpn1_int2_if_shutdown: false
+            vpn1_int2_if_ipv4_address: 10.0.112.1/24
+            vpn1_ipv4_route1_prefix: 10.1.1.1/32
+            vpn1_ipv4_route1_nexthop1_ip: 10.0.111.7
+            vpn1_ipv4_route1_nexthop1_distance: 1
+            vpn1_ipv4_route2_prefix: 10.1.1.2/32
+            vpn1_ipv4_route2_nexthop1_ip: 10.0.112.12
+            vpn1_ipv4_route2_nexthop1_distance: 1
+            vpn1_ipv4_route3_prefix: TEMPLATE_IGNORE
+            vpn1_ipv4_route3_nexthop1_ip: TEMPLATE_IGNORE
+            vpn1_ipv4_route3_nexthop1_distance: TEMPLATE_IGNORE
+            vpn1_ipv4_route4_prefix: TEMPLATE_IGNORE
+            vpn1_ipv4_route4_nexthop1_ip: TEMPLATE_IGNORE
+            vpn1_ipv4_route4_nexthop1_distance: TEMPLATE_IGNORE
+            vpn1_bgp_as_number: 65001
+            vpn1_bgp_shutdown: false
+            vpn1_bgp_ipv4_maximum_paths: 2
+            vpn1_bgp_ipv4_neighbor1_address: 10.0.111.7
+            vpn1_bgp_ipv4_neighbor1_shutdown: false
+            vpn1_bgp_ipv4_neighbor1_remote_as: 65100
+            vpn1_bgp_ipv4_neighbor1_password: cisco123
+            vpn1_bgp_ipv4_neighbor2_address: TEMPLATE_IGNORE
+            vpn1_bgp_ipv4_neighbor2_shutdown: TEMPLATE_IGNORE
+            vpn1_bgp_ipv4_neighbor2_remote_as: TEMPLATE_IGNORE
+            vpn1_bgp_ipv4_neighbor2_password: TEMPLATE_IGNORE
+            vpn511_int1_if_name: Loopback511
+            vpn511_int1_if_description: Inband-mgmt
+            vpn511_int1_if_shutdown: false
+            vpn511_int1_if_ipv4_address: 10.255.254.101/32
+            vpn512_int1_if_name: GigabitEthernet3
+            vpn512_int1_if_description: OOB-mgmt
+            vpn512_int1_if_shutdown: false
+    - id: 2102
+      routers:
+        - chassis_id: C8K-BBD7E2E1-08B4-4AE3-7961-D5BB97896CB8
+          model: C8000V
+          device_template: DT-C8000V-DUALCPE-SITE
+          device_variables:
+            site_id: 2102
+            system_ip: 10.0.2.102
+            system_hostname: SITE2102-C8KV-01
+            logging_server_source_interface: Loopback511
+            ntp_server_source_interface: Loopback511
+            global_cdp_enable: true
+            global_lldp_enable: false
+            global_ip_domain_lookup_enable: true
+            snmp_shutdown: false
+            snmp_trap_source_interface: Loopback511
+            snmp_contact: contact@acme.com
+            snmp_location: Location 2102
+            system_location: Site2102
+            system_description: Site 2102 C8KV01
+            timezone: UTC
+            system_latitude: 50
+            system_longitude: 3
+            ondemand_tunnel_enable: false
+            ondemand_tunnel_idle_timeout: 10
+            vpn0_layer4_ecmp_enable: true
+            vpn0_ipv4_route1_prefix: 0.0.0.0/0
+            vpn0_ipv4_route1_nexthop1_ip: 192.168.251.23
+            vpn0_ipv4_route1_nexthop1_distance: 1
+            vpn0_ipv4_route2_prefix: TEMPLATE_IGNORE
+            vpn0_ipv4_route2_nexthop1_ip: TEMPLATE_IGNORE
+            vpn0_ipv4_route2_nexthop1_distance: TEMPLATE_IGNORE
+            vpn0_tloc01_if_name: GigabitEthernet1
+            vpn0_tloc01_if_description: INET-1
+            vpn0_tloc01_if_shutdown: false
+            vpn0_tloc01_shaping_rate: 1000000
+            vpn0_tloc01_tunnel_ipsec_preference: 1
+            vpn0_tloc01_tunnel_weight: 1
+            vpn0_tloc01_tunnel_color: custom1
+            vpn0_tloc01_tunnel_group: 100
+            vpn0_tloc01_tunnel_restrict: false
+            vpn0_tloc01_tunnel_vmanage_connection_preference: 5
+            vpn0_tloc02_if_name: GigabitEthernet4
+            vpn0_tloc02_if_description: INET-via-TLOCEXT
+            vpn0_tloc02_if_shutdown: false
+            vpn0_tloc02_shaping_rate: 1000000
+            vpn0_tloc02_tunnel_ipsec_preference: 1
+            vpn0_tloc02_tunnel_weight: 1
+            vpn0_tloc02_tunnel_color: custom2
+            vpn0_tloc02_tunnel_group: 100
+            vpn0_tloc02_tunnel_restrict: false
+            vpn0_tloc02_tunnel_vmanage_connection_preference: 5
+            vpn0_tloc02_if_ipv4_address: 192.168.251.22/24
+            vpn0_tlocext1_if_name: GigabitEthernet5
+            vpn0_tlocext1_if_description: TLOC-EXT for INET-1
+            vpn0_tlocext1_if_shutdown: false
+            vpn0_tlocext1_if_tloc_extension: GigabitEthernet1
+            vpn0_tlocext1_if_ipv4_address: 192.168.252.22/24
+            vpn1_int1_if_name: GigabitEthernet6
+            vpn1_int1_if_description: VPN1 LAN1
+            vpn1_int1_if_shutdown: false
+            vpn1_int1_if_ipv4_address: 10.0.121.2/24
+            vpn1_int1_vrrp_group_id: 1
+            vpn1_int1_vrrp_group_ip: 10.0.121.1
+            vpn1_int1_vrrp_group_priority: 110
+            vpn1_int1_vrrp_group_timer: 1000
+            vpn1_int2_if_name: GigabitEthernet7
+            vpn1_int2_if_description: VPN1 LAN2
+            vpn1_int2_if_shutdown: false
+            vpn1_int2_if_ipv4_address: 10.0.122.1/24
+            vpn1_ipv4_route1_prefix: 10.1.2.1/32
+            vpn1_ipv4_route1_nexthop1_ip: 10.0.121.10
+            vpn1_ipv4_route1_nexthop1_distance: 1
+            vpn1_ipv4_route2_prefix: 10.1.2.2/32
+            vpn1_ipv4_route2_nexthop1_ip: 10.0.122.10
+            vpn1_ipv4_route2_nexthop1_distance: 1
+            vpn1_ipv4_route3_prefix: TEMPLATE_IGNORE
+            vpn1_ipv4_route3_nexthop1_ip: TEMPLATE_IGNORE
+            vpn1_ipv4_route3_nexthop1_distance: TEMPLATE_IGNORE
+            vpn1_ipv4_route4_prefix: TEMPLATE_IGNORE
+            vpn1_ipv4_route4_nexthop1_ip: TEMPLATE_IGNORE
+            vpn1_ipv4_route4_nexthop1_distance: TEMPLATE_IGNORE
+            vpn511_int1_if_name: Loopback511
+            vpn511_int1_if_description: Inband-mgmt
+            vpn511_int1_if_shutdown: false
+            vpn511_int1_if_ipv4_address: 10.255.254.102/32
+            vpn512_int1_if_name: GigabitEthernet3
+            vpn512_int1_if_description: OOB-mgmt
+            vpn512_int1_if_shutdown: false
+        - chassis_id: C8K-B85FD975-461C-24AE-372D-641340459572
+          model: C8000V
+          device_template: DT-C8000V-DUALCPE-SITE
+          device_variables:
+            site_id: 2102
+            system_ip: 10.0.2.103
+            system_hostname: SITE2102-C8KV-02
+            logging_server_source_interface: Loopback511
+            ntp_server_source_interface: Loopback511
+            global_cdp_enable: true
+            global_lldp_enable: false
+            global_ip_domain_lookup_enable: true
+            snmp_shutdown: false
+            snmp_trap_source_interface: Loopback511
+            snmp_contact: contact@acme.com
+            snmp_location: Location 2102
+            system_location: Site2102
+            system_description: Site 2102 C8KV02
+            timezone: UTC
+            system_latitude: 50
+            system_longitude: 3
+            ondemand_tunnel_enable: false
+            ondemand_tunnel_idle_timeout: 10
+            vpn0_layer4_ecmp_enable: true
+            vpn0_ipv4_route1_prefix: 0.0.0.0/0
+            vpn0_ipv4_route1_nexthop1_ip: 192.168.252.22
+            vpn0_ipv4_route1_nexthop1_distance: 1
+            vpn0_ipv4_route2_prefix: TEMPLATE_IGNORE
+            vpn0_ipv4_route2_nexthop1_ip: TEMPLATE_IGNORE
+            vpn0_ipv4_route2_nexthop1_distance: TEMPLATE_IGNORE
+            vpn0_tloc01_if_name: GigabitEthernet1
+            vpn0_tloc01_if_description: INET-1
+            vpn0_tloc01_if_shutdown: false
+            vpn0_tloc01_shaping_rate: 1000000
+            vpn0_tloc01_tunnel_ipsec_preference: 1
+            vpn0_tloc01_tunnel_weight: 1
+            vpn0_tloc01_tunnel_color: custom1
+            vpn0_tloc01_tunnel_group: 100
+            vpn0_tloc01_tunnel_restrict: false
+            vpn0_tloc01_tunnel_vmanage_connection_preference: 5
+            vpn0_tloc02_if_name: GigabitEthernet5
+            vpn0_tloc02_if_description: INET-via-TLOCEXT
+            vpn0_tloc02_if_shutdown: false
+            vpn0_tloc02_shaping_rate: 1000000
+            vpn0_tloc02_tunnel_ipsec_preference: 1
+            vpn0_tloc02_tunnel_weight: 1
+            vpn0_tloc02_tunnel_color: custom2
+            vpn0_tloc02_tunnel_group: 100
+            vpn0_tloc02_tunnel_restrict: false
+            vpn0_tloc02_tunnel_vmanage_connection_preference: 5
+            vpn0_tloc02_if_ipv4_address: 192.168.252.23/24
+            vpn0_tlocext1_if_name: GigabitEthernet4
+            vpn0_tlocext1_if_description: TLOC-EXT for INET-1
+            vpn0_tlocext1_if_shutdown: false
+            vpn0_tlocext1_if_tloc_extension: GigabitEthernet1
+            vpn0_tlocext1_if_ipv4_address: 192.168.251.23/24
+            vpn1_int1_if_name: GigabitEthernet6
+            vpn1_int1_if_description: VPN1 LAN1
+            vpn1_int1_if_shutdown: false
+            vpn1_int1_if_ipv4_address: 10.0.121.3/24
+            vpn1_int1_vrrp_group_id: 1
+            vpn1_int1_vrrp_group_ip: 10.0.121.1
+            vpn1_int1_vrrp_group_priority: 105
+            vpn1_int1_vrrp_group_timer: 1000
+            vpn1_int2_if_name: GigabitEthernet7
+            vpn1_int2_if_description: VPN1 LAN2
+            vpn1_int2_if_shutdown: false
+            vpn1_int2_if_ipv4_address: 10.0.132.1/24
+            vpn1_ipv4_route1_prefix: 10.1.3.1/32
+            vpn1_ipv4_route1_nexthop1_ip: 10.0.131.10
+            vpn1_ipv4_route1_nexthop1_distance: 1
+            vpn1_ipv4_route2_prefix: 10.1.3.2/32
+            vpn1_ipv4_route2_nexthop1_ip: 10.0.132.10
+            vpn1_ipv4_route2_nexthop1_distance: 1
+            vpn1_ipv4_route3_prefix: TEMPLATE_IGNORE
+            vpn1_ipv4_route3_nexthop1_ip: TEMPLATE_IGNORE
+            vpn1_ipv4_route3_nexthop1_distance: TEMPLATE_IGNORE
+            vpn1_ipv4_route4_prefix: TEMPLATE_IGNORE
+            vpn1_ipv4_route4_nexthop1_ip: TEMPLATE_IGNORE
+            vpn1_ipv4_route4_nexthop1_distance: TEMPLATE_IGNORE
+            vpn511_int1_if_name: Loopback511
+            vpn511_int1_if_description: Inband-mgmt
+            vpn511_int1_if_shutdown: false
+            vpn511_int1_if_ipv4_address: 10.255.254.103/32
+            vpn512_int1_if_name: GigabitEthernet3
+            vpn512_int1_if_description: OOB-mgmt
+            vpn512_int1_if_shutdown: false

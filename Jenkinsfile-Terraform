@@ -1,0 +1,40 @@
+pipeline {
+    agent {
+        docker {
+            image 'danischm/aac:0.8.0'
+            label 'digidev'
+            args '-u root'
+        }
+    }
+
+    environment { 
+        SDWAN_USERNAME = credentials('SDWAN_USERNAME')
+        SDWAN_PASSWORD = credentials('SDWAN_PASSWORD')
+        WEBEX_TOKEN = credentials('WEBEX_TOKEN')
+        WEBEX_ROOM_ID = "Y2lzY29zcGFyazovL3VzL1JPT00vNTFmMGNmODAtYjI0My0xMWU5LTljZjUtNWY0NGQ2ZTlmYWY0"
+        GIT_COMMIT_MESSAGE = "${sh(returnStdout: true, script: 'git config --global --add safe.directory "*" && git log -1 --pretty=%B ${GIT_COMMIT}').trim()}"
+        GIT_COMMIT_AUTHOR = "${sh(returnStdout: true, script: 'git show -s --pretty=%an').trim()}"
+        GIT_EVENT = "${(env.CHANGE_ID != null) ? 'Pull Request' : 'Push'}"
+    }
+
+    options {
+        disableConcurrentBuilds()
+        newContainerPerStage()
+        timeout(time: 1, unit: 'HOURS')
+    }
+
+    stages {
+        stage('Test SDWAN 20.9 Terraform') {
+            steps {
+                sh 'pytest'
+            }
+        }
+    }
+    
+    post {
+        always {
+            sh "BUILD_STATUS=${currentBuild.currentResult} python .ci/webex-notification-jenkins-terraform.py"
+            cleanWs()
+        }
+    }
+}
