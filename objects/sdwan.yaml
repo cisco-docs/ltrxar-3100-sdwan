@@ -87,83 +87,83 @@ objects:
   - name: App Probe Class
     template: app_probe_class
     folder: policy_objects
-    paths: [sdwan.policy_objects.app_probe_class]
+    paths: [sdwan.policy_objects.app_probe_classes]
   - name: Application List
     template: application_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.application_list]
+    paths: [sdwan.policy_objects.application_lists]
   - name: AS Path List
     template: as_path_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.as_path_list]
+    paths: [sdwan.policy_objects.as_path_lists]
   - name: Class Map
     template: class_map
     folder: policy_objects
-    paths: [sdwan.policy_objects.class_map]
+    paths: [sdwan.policy_objects.class_maps]
   - name: Color List
     template: color_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.color_list]
+    paths: [sdwan.policy_objects.color_lists]
   - name: Expanded Community List
     template: expanded_community_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.expanded_community_list]
+    paths: [sdwan.policy_objects.expanded_community_lists]
   - name: Extended Community List
     template: extended_community
     folder: policy_objects
-    paths: [sdwan.policy_objects.extended_community_list]
+    paths: [sdwan.policy_objects.extended_community_lists]
   - name: IPv4 Data Prefix List
     template: ipv4_data_prefix_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.ipv4_data_prefix_list]
+    paths: [sdwan.policy_objects.ipv4_data_prefix_lists]
   - name: IPv4 Prefix List
     template: ipv4_prefix_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.ipv4_prefix_list]
+    paths: [sdwan.policy_objects.ipv4_prefix_lists]
   - name: IPv6 Data Prefix List
     template: ipv6_data_prefix_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.ipv6_data_prefix_list]
+    paths: [sdwan.policy_objects.ipv6_data_prefix_lists]
   - name: IPv6 Prefix List
     template: ipv6_prefix_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.ipv6_prefix_list]
+    paths: [sdwan.policy_objects.ipv6_prefix_lists]
   - name: Mirror List
     template: mirror_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.mirror_list]
+    paths: [sdwan.policy_objects.mirror_lists]
   - name: Policer
     template: policer
     folder: policy_objects
-    paths: [sdwan.policy_objects.policer]
+    paths: [sdwan.policy_objects.policers]
   - name: Preferred Color Group
     template: preferred_color_group
     folder: policy_objects
-    paths: [sdwan.policy_objects.preferred_color_group]
+    paths: [sdwan.policy_objects.preferred_color_groups]
   - name: Region List
     template: region_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.region_list]
+    paths: [sdwan.policy_objects.region_lists]
   - name: Site List
     template: site_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.site_list]
+    paths: [sdwan.policy_objects.site_lists]
   - name: SLA Class
     template: sla_class
     folder: policy_objects
-    paths: [sdwan.policy_objects.sla_class]
+    paths: [sdwan.policy_objects.sla_classes]
   - name: Standard Community List
     template: standard_community_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.standard_community_list]
+    paths: [sdwan.policy_objects.standard_community_lists]
   - name: TLOC List
     template: tloc_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.tloc_list]
+    paths: [sdwan.policy_objects.tloc_lists]
   - name: VPN List
     template: vpn_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.vpn_list]
+    paths: [sdwan.policy_objects.vpn_lists]
   - name: ACL Definition
     template: acl_definition
     folder: localized_policies
