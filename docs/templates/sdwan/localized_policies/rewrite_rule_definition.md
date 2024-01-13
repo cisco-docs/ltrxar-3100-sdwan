@@ -10,25 +10,18 @@ Configure policy rewrite rules for the QoS mapping.
 sdwan:
   localized_policies:
     definitions:
-      rewriteRule:
+      rewrite_rules:
         - name: REWRITE-RULE-MPLS
           description: "DCSP rewrite for MPLS underlay"
-          parameters:
-            definition:
-              rules:
-                - class: CLASS-REALTIME
-                  dscp: "46"
-                  plp: high
-                - class: CLASS-NETCONTROL
-                  dscp: "48"
-                  plp: high
-                - class: CLASS-DEFAULT
-                  dscp: "0"
-                  plp: low
-                - class: CLASS-CRITICALDATA
-                  dscp: "26"
-                  plp: high
-                - class: CLASS-SCAVENGER
-                  dscp: "0"
-                  plp: low
+          rules:
+            - class_map: CLASS-REALTIME
+              dscp: 46
+              priority: high
+            - class: CLASS-NETCONTROL
+              dscp: 48
+              priority: high
+            - class: CLASS-DEFAULT
+              dscp: 0
+              layer2_cos: 0
+              priority: low
 ```

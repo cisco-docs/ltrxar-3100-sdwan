@@ -164,30 +164,38 @@ objects:
     template: vpn_list
     folder: policy_objects
     paths: [sdwan.policy_objects.vpn_lists]
-  - name: ACL Definition
-    template: acl_definition
+  - name: IPv4 Access Control List Definition
+    template: ipv4_access_control_list_definition
     folder: localized_policies
-    paths: [sdwan.localized_policies.definitions.acl]
-  - name: Device Access Policy Definition
-    template: device_access_policy_definition
+    paths: [sdwan.localized_policies.definitions.ipv4_access_control_lists]
+  - name: IPv6 Access Control List Definition
+    template: ipv6_access_control_list_definition
     folder: localized_policies
-    paths: [sdwan.localized_policies.definitions.deviceAccessPolicy]
+    paths: [sdwan.localized_policies.definitions.ipv6_access_control_lists]
+  - name: IPv4 Device Access Policy Definition
+    template: ipv4_device_access_policy_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.ipv4_device_access_policies]
+  - name: IPv6 Device Access Policy Definition
+    template: ipv6_device_access_policy_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.ipv6_device_access_policies]
   - name: QoS Map Definition
     template: qos_map_definition
     folder: localized_policies
-    paths: [sdwan.localized_policies.definitions.qosMap]
+    paths: [sdwan.localized_policies.definitions.qos_maps]
   - name: Rewrite Rule Definition
     template: rewrite_rule_definition
     folder: localized_policies
-    paths: [sdwan.localized_policies.definitions.rewriteRule]
-  - name: vEdge Route Definition
-    template: vedge_route_definition
+    paths: [sdwan.localized_policies.definitions.rewrite_rules]
+  - name: Route Policy Definition
+    template: route_policy_definition
     folder: localized_policies
-    paths: [sdwan.localized_policies.definitions.vedgeRoute]
-  - name: Feature Policy
-    template: feature_policy
+    paths: [sdwan.localized_policies.definitions.route_policies]
+  - name: Feature Localized Policy
+    template: localized_policy_feature_policy
     folder: localized_policies
-    paths: [sdwan.localized_policies.policies.feature]
+    paths: [sdwan.localized_policies.feature_policies]
   - name: Site
     template: site
     folder: sites

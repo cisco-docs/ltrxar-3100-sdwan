@@ -11,7 +11,7 @@ class Rule:
     paths = [
         "sdwan.sites.id",
         "sdwan.cedge_device_templates.device_template.name",
-        "sdwan.localized_policies.policies.feature.name",
+        "sdwan.localized_policies.feature_policies.name",
         "sdwan.centralized_policies.feature_policies.name",
         "sdwan.centralized_policies.definitions.control_policy.hub_and_spoke_topology.name",
         "sdwan.centralized_policies.definitions.control_policy.mesh_topology.name",
@@ -27,14 +27,14 @@ class Rule:
     for type in feature_template_types:
         paths.append(str("sdwan.cedge_feature_templates." + type + ".name"))
     
-    # Verify unique policy list names per type
-    localPolicyListTypes = ['asPath', 'class', 'community', 'dataPrefix', 'expandedCommunity', 'extCommunity', 'fqdn', 'ipssignature', 'localapp', 'localdomain', 'mirror', 'policer', 'prefix', 'tgapikey', 'umbrelladata', 'urlblacklist', 'urlwhitelist', 'vpn', 'zone']
-    for type in localPolicyListTypes:
-        paths.append(str("sdwan.localized_policies.lists." + type + ".name"))
+    # Verify unique policy objects names per type
+    policy_object_types = ['app_probe_classes', 'application_lists', 'as_path_lists', 'class_maps', 'color_lists', 'expanded_community_lists', 'extended_community_lists', 'ipv4_data_prefix_lists', 'ipv4_prefix_lists', 'ipv6_data_prefix_lists', 'ipv6_prefix_lists', 'mirror_lists', 'policers', 'preferred_color_groups', 'region_lists', 'site_lists', 'sla_classes', 'standard_community_lists', 'tloc_lists', 'vpn_lists']
+    for type in policy_object_types:
+        paths.append(str("sdwan.policy_objects." + type + ".name"))
 
     # Verify unique policy definition names per type
-    localPolicyDefinitionTypes = ['acl', 'advancedMalwareProtection', 'deviceAccessPolicy', 'dnssecurity', 'intrusionprevention', 'qosMap', 'rewriteRule', 'ssldecryption', 'sslutdprofile', 'vedgeRoute', 'urlfiltering', 'zonebasedfw']
-    for type in localPolicyDefinitionTypes:
+    localized_policy_definition_types = ['ipv4_access_control_lists', 'ipv4_device_access_policies', 'ipv6_access_control_lists', 'ipv6_device_access_policies', 'rewrite_rules', 'route_policies', 'qos_maps']
+    for type in localized_policy_definition_types:
         paths.append(str("sdwan.localized_policies.definitions." + type + ".name"))
 
     @classmethod

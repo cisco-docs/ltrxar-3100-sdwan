@@ -5,10 +5,8 @@ class Rule:
 
     paths = []
     # Verify Policy Definition Names referenced in the Localized Policies
-    policy_definition_type = [
-        'acl', 'deviceAccessPolicy', 'qosMap', 'rewriteRule', 'vedgeRoute'
-    ]
-    for type in policy_definition_type:
+    localized_policy_definition_types = ['ipv4_access_control_lists', 'ipv4_device_access_policies', 'ipv6_access_control_lists', 'ipv6_device_access_policies', 'rewrite_rules', 'route_policies', 'qos_maps']
+    for type in localized_policy_definition_types:
         paths.append({
             "key": str("sdwan.localized_policies.definitions." + type + ".name"),
             "references": [
@@ -22,13 +20,14 @@ class Rule:
         policy_template_dict = {
             "policy_templates": []
         }
-        for policy_template in inventory['sdwan']['localized_policies']['policies']['feature']:
+        for policy_template in inventory['sdwan']['localized_policies']['feature_policies']:
             policy_template_definitions = {}
-            if "assembly" in policy_template['parameters']:
-                for policy_definition in policy_template['parameters']['assembly']:
-                    if not policy_definition['type'] in policy_template_definitions:
-                        policy_template_definitions[policy_definition['type']] = []
-                    policy_template_definitions[policy_definition['type']].append(policy_definition['definitionName'])
+            if "definitions" in policy_template:
+                for policy_definition_type, policy_definition_names in policy_template['definitions'].items():
+                    if not policy_definition_type in policy_template_definitions:
+                        policy_template_definitions[policy_definition_type] = []
+                    for policy_definition_name in policy_definition_names:
+                        policy_template_definitions[policy_definition_type].append(policy_definition_name)
             policy_template_dict['policy_templates'].append({
                 "name": policy_template['name'],
                 "policy_definitions": policy_template_definitions

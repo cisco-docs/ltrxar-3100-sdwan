@@ -12,18 +12,27 @@ For Cisco vEdge devices, each interface has eight queues, numbered from 0 throug
 sdwan:
   localized_policies:
     definitions:
-      qosMap:
-        - name: QOS-MAP-1P4Q
-          description: "1-prio 4-red queue qos-map"
-          parameters:
-            definition:
-              qosSchedulers:
-                - bandwidthPercent: "10"
-                  bufferPercent: "10"
-                  burst: "200000"
-                  classMapRef: CLASS-REALTIME
-                  drops: tail-drop
-                  queue: "0"
-                  scheduling: llq
-                  tempKeyValues: Low Latency Queuing(LLQ) Tail CLASS-REALTIME
+      qos_maps:
+        - name: QOS-MAP-1P2Q
+          description: "1-prio 2-red queue qos-map"
+          qos_schedulers:
+            - queue: 0
+              bandwidth_percent: 30
+              buffer_percent: 30
+              burst_bytes: 200000
+              scheduling_type: llq
+              drop_type: tail-drop
+              class_map: REALTIME
+            - queue: 1
+              bandwidth_percent: 30
+              buffer_percent: 30
+              scheduling_type: wrr
+              drop_type: red-drop
+              class_map: TRANSACTIONAL
+            - queue: 2
+              bandwidth_percent: 40
+              buffer_percent: 40
+              scheduling_type: wrr
+              drop_type: red-drop
+              class_map: DEFAULT
 ```

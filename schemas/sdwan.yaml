@@ -988,269 +988,228 @@ policy_objects_vpn_list_vpn_id_range:
   from: int(min=0, max=65530)
   to: int(min=0, max=65530)
 # Localized Policy schema
+# Missing: CLI policies support
 localized_policies:
-  definitions: include("localized_policy_definitions", required=False)
-  policies: include("localized_policy_templates", required=False)
+  definitions: include("localized_policies_definitions", required=False)
+  feature_policies: list(include("localized_policies_feature_policies"), required=False)
 # Localized Policy Definitions
-# Supported definition types: acl, deviceAccessPolicy, qosMap, rewriteRule, vedgeRoute
 # Missing: support for per-device variables in data prefix or community list entries
-localized_policy_definitions:
-  acl: list(include("policy_definition_acl"), required=False)
-  deviceAccessPolicy: list(include("policy_definition_deviceaccesspolicy"), required=False)
-  qosMap: list(include("policy_definition_qosMap"), required=False)
-  rewriteRule: list(include("policy_definition_rewriteRule"), required=False)
-  vedgeRoute: list(include("policy_definition_vedgeRoute"), required=False)
-# ACL Policy definition
-policy_definition_acl:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
+localized_policies_definitions:
+  ipv4_access_control_lists: list(include("localized_policies_definitions_ipv4_access_control_lists"), required=False)
+  ipv4_device_access_policies: list(include("localized_policies_definitions_ipv4_device_access_policy"), required=False)
+  ipv6_access_control_lists: list(include("localized_policies_definitions_ipv6_access_control_lists"), required=False)
+  ipv6_device_access_policies: list(include("localized_policies_definitions_ipv6_device_access_policy"), required=False)
+  rewrite_rules: list(include("localized_policies_definitions_rewrite_rule"), required=False)
+  route_policies: list(include("localized_policies_definitions_route_policy"), required=False)
+  qos_maps: list(include("localized_policies_definitions_qos_map"), required=False)
+# IPv4 Access-List Policy Definition
+localized_policies_definitions_ipv4_access_control_lists:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
   description: str()
-  parameters: include("policy_definition_acl_parameters", required=False)
-policy_definition_acl_parameters:
-  defaultAction: include("policy_definition_acl_parameters_type", required=False)
-  sequences: list(include("policy_definition_acl_sequence"), required=False)
-policy_definition_acl_parameters_type:
-  type: enum("accept", "drop")
-policy_definition_acl_sequence:
-  actions: list(include("policy_definition_acl_action_class"), include("policy_definition_acl_action_count"), include("policy_definition_acl_action_log"), include("policy_definition_acl_action_mirror"), include("policy_definition_acl_action_set"), include("policy_definition_acl_action_policer"), required=False)
-  baseAction: enum("accept", "drop")
-  match: include("policy_definition_acl_match_entries", required=False)
-  sequenceId: int(min=1, max=65534)
-  sequenceIpType: enum("ipv4", "ipv6")
-  sequenceName: str(equals="Access Control List", required=False)
-  sequenceType: str(equals="acl", required=False)
-policy_definition_acl_action_class:
-  type: enum("class")
-  parameter: include("policy_definition_acl_action_class_parameters", required=False)
-policy_definition_acl_action_class_parameters:
-  ref: str()
-policy_definition_acl_action_count:
-  type: enum("count")
-  parameter: str()
-policy_definition_acl_action_log:
-  type: enum("log")
-  parameter: any(str(), null(), required=False)
-policy_definition_acl_action_mirror:
-  type: enum("mirror")
-  parameter: include("policy_definition_acl_action_mirror_parameters", required=False)
-policy_definition_acl_action_mirror_parameters:
-  ref: str()
-policy_definition_acl_action_set:
-  type: enum("set")
-  parameter: list(include("policy_definition_acl_action_set_nexthop"), include("policy_definition_acl_action_set_dscp"))
-policy_definition_acl_action_set_dscp:
-  field: enum("dscp")
-  value: regex('^[0-9]{,2}$')
-policy_definition_acl_action_set_nexthop:
-  field: enum("nextHop")
-  value: ip(version=4)
-policy_definition_acl_action_nexthop:
-  type: enum("nextHop")
-  parameter: ip(version=4)
-policy_definition_acl_action_policer:
-  type: enum("policer")
-  parameter: include("policy_definition_acl_action_policer_parameters", required=False)
-policy_definition_acl_action_policer_parameters:
-  ref: str()
-policy_definition_acl_match_entries:
-  entries: list(include("policy_definition_acl_match_class"), include("policy_definition_acl_match_dscp"), include("policy_definition_acl_match_ipaddress"), include("policy_definition_acl_match_packetlength"), include("policy_definition_acl_match_plp"), include("policy_definition_acl_match_port"), include("policy_definition_acl_match_prefix"), include("policy_definition_acl_match_protocol"), include("policy_definition_acl_match_tcp"), required=False)
-policy_definition_acl_match_class:
-  field: enum("class")
-  ref: str()
-policy_definition_acl_match_dscp:
-  field: enum("dscp")
-  value: regex('^[0-9]{,2}$')
-policy_definition_acl_match_ipaddress:
-  field: enum("destinationIp", "sourceIp")
-  value: ip(version=4)
-policy_definition_acl_match_packetlength:
-  field: enum("packetLength")
-  value: int(min=0, max=65535)
-policy_definition_acl_match_plp:
-  field: enum("plp")
-  value: enum("high", "low")
-policy_definition_acl_match_port:
-  field: enum("destinationPort", "sourcePort")
-  value: regex('^[0-9]{,5}$')
-policy_definition_acl_match_prefix:
-  field: enum("destinationDataPrefixList", "sourceDataPrefixList")
-  ref: str()
-policy_definition_acl_match_protocol:
-  field: enum("protocol")
-  value: str()
-policy_definition_acl_match_tcp:
-  field: enum("tcp")
-  value: enum("syn")
-# Device Access Policy definition
-policy_definition_deviceaccesspolicy:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  default_action: enum("accept", "drop")
+  sequences: list(include("localized_policies_definitions_ipv4_access_control_list_sequence"), required=False)
+localized_policies_definitions_ipv4_access_control_list_sequence:
+  id: int(min=1, max=65534)
+  name: str(required=False)
+  base_action: enum("accept", "drop")
+  match_criterias: include("localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias")
+  actions: include("localized_policies_definitions_ipv4_access_control_list_sequence_actions", required=False)
+localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias:
+  class: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  destination_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  destination_ip_prefix: ip(version=4, required=False)
+  destination_ports: list(int(min=0, max=65535), required=False)
+  destination_port_ranges: list(include("localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias_destination_port_range"), required=False)
+  dscp: int(min=0, max=63, required=False)
+  packet_length: int(min=0, max=65535, required=False)
+  priority: enum("high", "low", required=False)
+  protocols: list(int(min=0, max=255), required=False)
+  source_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  source_ip_prefix: ip(version=4, required=False)
+  source_ports: list(int(min=0, max=65535), required=False)
+  source_port_ranges: list(include("localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias_source_port_range"), required=False)
+  tcp: enum("syn", required=False)
+localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias_destination_port_range:
+  from: int(min=0, max=65535)
+  to: int(min=0, max=65535)
+localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias_source_port_range:
+  from: int(min=0, max=65535)
+  to: int(min=0, max=65535)
+localized_policies_definitions_ipv4_access_control_list_sequence_actions:
+  counter_name: str(min=1, max=20, required=False)
+  class: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  dscp: int(min=0, max=63, required=False)
+  log: bool(required=False)
+  mirror_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  next_hop: ip(version=4, required=False)
+  policer: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+# IPv4 Device Access Policy Definition
+localized_policies_definitions_ipv4_device_access_policy:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
   description: str()
-  parameters: include("policy_definition_deviceaccesspolicy_parameters", required=False)
-policy_definition_deviceaccesspolicy_parameters:
-  defaultAction: include("policy_definition_deviceaccesspolicy_parameters_type", required=False)
-  sequences: list(include("policy_definition_deviceaccesspolicy_sequence"), required=False)
-policy_definition_deviceaccesspolicy_parameters_type:
-  type: enum("accept", "drop")
-policy_definition_deviceaccesspolicy_sequence:
-  actions: list(include("policy_definition_acl_action_count"), required=False)
-  baseAction: enum("accept", "drop")
-  match: include("policy_definition_dap_match_entries", required=False)
-  sequenceId: int(min=1, max=65534)
-  sequenceIpType: enum("ipv4", "ipv6")
-  sequenceName: str(required=False)
-  sequenceType: str(equals="deviceaccesspolicy", required=False)
-policy_definition_dap_match_entries:
-  entries: list(include("policy_definition_acl_match_prefix"), include("policy_definition_acl_match_ipaddress"), include("policy_definition_dap_match_port"), required=False)
-policy_definition_dap_match_port:
-  field: enum("destinationPort", "sourcePort")
-  value: enum("22", "161")
-# QoS Map Policy definition
-policy_definition_qosMap:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  default_action: enum("accept", "drop")
+  sequences: list(include("localized_policies_definitions_ipv4_device_access_policy_sequence"), required=False)
+localized_policies_definitions_ipv4_device_access_policy_sequence:
+  id: int(min=1, max=65534)
+  name: str(required=False)
+  base_action: enum("accept", "drop")
+  match_criterias: include("localized_policies_definitions_ipv4_device_access_policy_sequence_match_criterias")
+  counter_name: str(min=1, max=20, required=False)
+localized_policies_definitions_ipv4_device_access_policy_sequence_match_criterias:
+  destination_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  destination_ip_prefix: ip(version=4, required=False)
+  destination_port: enum(22, 161)
+  source_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  source_ip_prefix: ip(version=4, required=False)
+  source_ports: list(int(min=0, max=65535), required=False)
+# IPv6 Access-List Policy Definition
+localized_policies_definitions_ipv6_access_control_lists:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
   description: str()
-  parameters: include("policy_definition_qosMap_parameters", required=False)
-policy_definition_qosMap_parameters:
-  definition: include("policy_definition_qosMap_parameters_definition", required=False)
-policy_definition_qosMap_parameters_definition:
-  qosSchedulers: list(include("policy_definition_qos_scheduler"))
-policy_definition_qos_scheduler:
-  bandwidthPercent: regex('^[0-9]{,2}$')
-  bufferPercent: regex('^[0-9]{,2}$')
-  burst: regex('^[0-9]{,8}$', required=False) # burst min=5000, max=10000000
-  classMapRef: regex('^[^<>!&$@\/"() ]{,128}$')
-  drops: enum("tail-drop", "red-drop")
-  queue: regex('^[0-7]{,1}$')
-  scheduling: enum("llq", "wrr")
-  tempKeyValues: str(required=False)
-# Rewrite Rule Policy definition
-policy_definition_rewriteRule:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  default_action: enum("accept", "drop")
+  sequences: list(include("localized_policies_definitions_ipv6_access_control_list_sequence"), required=False)
+localized_policies_definitions_ipv6_access_control_list_sequence:
+  id: int(min=1, max=65534)
+  name: str(required=False)
+  base_action: enum("accept", "drop")
+  match_criterias: include("localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias", required=False)
+  actions: include("localized_policies_definitions_ipv6_access_control_list_sequence_actions", required=False)
+localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias:
+  class: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  destination_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  destination_ip_prefix: ip(version=6, required=False)
+  destination_port_ranges: list(include("localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias_destination_port_range"), required=False)
+  destination_ports: list(int(min=0, max=65535), required=False)
+  next_header: int(min=0, max=255, required=False)
+  packet_length: int(min=0, max=65535, required=False)
+  priority: enum("high", "low", required=False)
+  source_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  source_ip_prefix: ip(version=6, required=False)
+  source_port_ranges: list(include("localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias_source_port_range"), required=False)
+  source_ports: list(int(min=0, max=65535), required=False)
+  tcp: enum("syn", required=False)
+  traffic_class: int(min=0, max=63)
+localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias_destination_port_range:
+  from: int(min=0, max=65535)
+  to: int(min=0, max=65535)
+localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias_source_port_range:
+  from: int(min=0, max=65535)
+  to: int(min=0, max=65535)
+localized_policies_definitions_ipv6_access_control_list_sequence_actions:
+  class: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  counter_name: str(min=1, max=20, required=False)
+  log: bool(required=False)
+  mirror_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  next_hop: ip(version=4, required=False)
+  policer: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  traffic_class: int(min=0, max=63, required=False)
+# IPv6 Device Access Policy Definition
+localized_policies_definitions_ipv6_device_access_policy:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
   description: str()
-  parameters: include("policy_definition_rewriteRule_parameters", required=False)
-policy_definition_rewriteRule_parameters:
-  definition: include("policy_definition_rewriteRule_parameters_definition", required=False)
-policy_definition_rewriteRule_parameters_definition:
-  rules: list(include("policy_definition_rewrite_rule"))
-policy_definition_rewrite_rule:
-  class: regex('^[^<>!&$@\/"() ]{,128}$')
-  dscp: regex('^[0-9]{,2}$')
-  layer2Cos: regex('^[0-7]{,1}$', required=False)
-  plp: enum("high", "low")
-# Route Policy definition
-policy_definition_vedgeRoute:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  default_action: enum("accept", "drop")
+  sequences: list(include("localized_policies_definitions_ipv6_device_access_policy_sequence"), required=False)
+localized_policies_definitions_ipv6_device_access_policy_sequence:
+  id: int(min=1, max=65534)
+  name: str(required=False)
+  base_action: enum("accept", "drop")
+  match_criterias: include("localized_policies_definitions_ipv6_device_access_policy_sequence_match_criterias")
+  counter_name: str(min=1, max=20, required=False)
+localized_policies_definitions_ipv6_device_access_policy_sequence_match_criterias:
+  destination_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  destination_ip_prefix: ip(version=4, required=False)
+  destination_port: enum(22, 161)
+  source_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  source_ip_prefix: ip(version=4, required=False)
+  source_ports: list(int(min=0, max=65535), required=False)
+# Rewrite Rule Policy Definition
+localized_policies_definitions_rewrite_rule:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
   description: str()
-  parameters: include("policy_definition_vedgeRoute_parameters", required=False)
-policy_definition_vedgeRoute_parameters:
-  defaultAction: include("policy_definition_vedgeRoute_parameters_defaultAction", required=False)
-  sequences: list(include("policy_definition_vedgeRoute_sequence"), required=False)
-policy_definition_vedgeRoute_parameters_defaultAction:
-  type: enum("accept", "reject")
-policy_definition_vedgeRoute_sequence:
-  actions: list(include("policy_definition_vedgeRoute_actions"), required=False)
-  baseAction: enum("accept", "reject")
-  match: include("policy_definition_vedgeRoute_match_entries", required=False)
-  sequenceId: int(min=1, max=65534)
-  sequenceIpType: enum("ipv4", "ipv6")
-  sequenceName: str(equals="Route", required=False)
-  sequenceType: str(equals="vedgeRoute", required=False)
-policy_definition_vedgeRoute_actions:
-  parameter: list(include("policy_definition_vedgeroute_action_aggregator"), include("policy_definition_vedgeroute_action_aspath"), include("policy_definition_vedgeroute_action_atomicaggregate"), include("policy_definition_vedgeroute_action_community"), include("policy_definition_vedgeroute_action_community_additive"), include("policy_definition_vedgeroute_action_metric"), include("policy_definition_vedgeroute_action_metrictype"), include("policy_definition_vedgeroute_action_nexthop"), include("policy_definition_vedgeroute_action_tag"), include("policy_definition_vedgeroute_action_origin"), include("policy_definition_vedgeroute_action_originator"), required=False)
-  type: str(equals="set")
-policy_definition_vedgeroute_action_aggregator:
-  field: enum("aggregator")
-  value: include("policy_definition_vedgeroute_action_aggregator_value", required=False)
-policy_definition_vedgeroute_action_aggregator_value:
-  aggregator: int(min=0, max=4294967295)
-  ipaddress: ip(version=4)
-policy_definition_vedgeroute_action_aspath:
-  field: enum("asPath")
-  value: include("policy_definition_vedgeroute_action_aspath_value")
-policy_definition_vedgeroute_action_aspath_value:
-  prepend: regex('^[0-9]{,5}$')
-  exclude: regex('^[0-9]{,5}$', required=False)
-policy_definition_vedgeroute_action_atomicaggregate:
-  field: enum("atomicAggregate")
-  value: enum("true")
-policy_definition_vedgeroute_action_community:
-  field: enum("community")
-  vipVariableName: str(required=False)
-  value: any(str(), enum("internet", "local-AS"), required=False)
-policy_definition_vedgeroute_action_community_additive:
-  field: enum("communityAdditive")
-  value: enum("true", "false")
-policy_definition_vedgeroute_action_metric:
-  field: enum("localPreference", "metric", "weight")
-  value: regex('^[0-9]{,10}$')
-policy_definition_vedgeroute_action_metrictype:
-  field: enum("metricType")
-  value: enum("type1", "type2")
-policy_definition_vedgeroute_action_nexthop:
-  field: enum("nextHop")
-  value: ip(version=4)
-policy_definition_vedgeroute_action_tag:
-  field: enum("ompTag", "ospfTag")
-  value: regex('^[0-9]{,10}$')
-policy_definition_vedgeroute_action_origin:
-  field: enum("origin")
-  value: enum("igp", "egp", "incomplete")
-policy_definition_vedgeroute_action_originator:
-  field: enum("originator")
-  value: ip(version=4)
-policy_definition_vedgeRoute_match_entries:
-  entries: list(include("policy_definition_vedgeroute_match_address"), include("policy_definition_vedgeroute_match_aspath"), include("policy_definition_vedgeroute_match_community"), include("policy_definition_vedgeroute_match_expandedcommunity"), include("policy_definition_vedgeroute_match_extendedcommunity"), include("policy_definition_vedgeroute_match_metric"), include("policy_definition_vedgeroute_match_nexthop"), include("policy_definition_vedgeroute_match_origin"), include("policy_definition_vedgeroute_match_peer"), include("policy_definition_vedgeroute_match_tag"), required=False)
-policy_definition_vedgeroute_match_address:
-  field: enum("address")
-  ref: str() # name of prefix list
-policy_definition_vedgeroute_match_aspath:
-  field: enum("asPath")
-  ref: str() # name of asPath list
-policy_definition_vedgeroute_match_community:
-  field: enum("community") # "advancedCommunity" used in the definition payload when mutliple standard community are combined (with multiple standard community lists only "or" match flag can be used)
-  ref: str() # list of standard community list names
-  matchFlag: enum("and", "or", "exact") # For "and" and "exact" flags, a single community list can be provided
-policy_definition_vedgeroute_match_expandedcommunity:
-  field: enum("expandedCommunity")
-  ref: str() # name of expanded community list
-policy_definition_vedgeroute_match_extendedcommunity:
-  field: enum("extCommunity")
-  ref: str() # name of extended community list
-policy_definition_vedgeroute_match_metric:
-  field: enum("localPreference", "metric")
-  value: int(min=0, max=4294967295)
-policy_definition_vedgeroute_match_nexthop:
-  field: enum("nextHop")
-  ref: str() # name of prefix list
-policy_definition_vedgeroute_match_origin:
-  field: enum("origin")
-  value: enum("igp", "egp", "incomplete")
-policy_definition_vedgeroute_match_peer:
-  field: enum("peer")
-  value: ip(version=4)
-policy_definition_vedgeroute_match_tag:
-  field: enum("ompTag", "ospfTag")
-  value: regex('^[0-9]{,10}$')
-# Localized Policy template schema
-localized_policy_templates:
-  feature: list(include("localized_policy_template_feature"))
-localized_policy_template_feature:
-  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  rules: list(include("localized_policies_definitions_rewrite_rule_rule"))
+localized_policies_definitions_rewrite_rule_rule:
+  class: regex('^[A-Za-z0-9-_]{1,128}$')
+  dscp: int(min=0, max=63)
+  layer2_cos: int(min=0, max=7, required=False)
+  priority: enum("high", "low")
+# Route Policy Definition
+localized_policies_definitions_route_policy:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
   description: str()
-  parameters: include("localized_policy_template_feature_parameters", required=False)
-localized_policy_template_feature_parameters:
-  assembly: list(include("localized_policy_template_assembly"), required=False)
-  settings: include("localized_policy_template_settings", required=False)
-localized_policy_template_assembly:
-  type: enum("acl", "deviceAccessPolicy", "qosMap", "vedgeRoute", "rewriteRule")
-  definitionName: regex('^[^<>!&$@\/"() ]{,128}$')
-localized_policy_template_settings:
-  appVisibility: bool(required=False)
-  appVisibilityIPv6: bool(required=False)
-  flowVisibility: bool(required=False)
-  flowVisibilityIPv6: bool(required=False)
-  implicitAclLogging: bool(required=False)
-  ipVisibilityCacheEntries: int(min=16, max=2000000, required=False)
-  ipV6VisibilityCacheEntries: int(min=16, max=2000000, required=False)
-  logFrequency: int(min=1, max=2147483647, required=False) # should be a power of 2
+  default_action: enum("accept", "reject")
+  sequences: list(include("localized_policies_definitions_route_policy_sequence"), required=False)
+localized_policies_definitions_route_policy_sequence:
+  id: int(min=1, max=65534)
+  name: str(required=False)
+  ip_type: enum("ipv4", "ipv6", "both")
+  base_action: enum("accept", "reject")
+  match_criterias: include("localized_policies_definitions_route_policy_sequence_match_criterias", required=False)
+  actions: include("localized_policies_definitions_route_policy_sequence_actions", required=False)
+localized_policies_definitions_route_policy_sequence_match_criterias:
+  as_path_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  bgp_local_preference: int(min=0, max=4294967295, required=False)
+  expanded_community_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  extended_community_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  metric: int(min=0, max=4294967295, required=False)
+  next_hop_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  omp_tag: int(min=0, max=4294967295, required=False)
+  origin: enum("egp", "igp", "incomplete", required=False)
+  ospf_tag: int(min=0, max=4294967295, required=False)
+  peer: ip(version=4, required=False)
+  prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+  standard_community_lists: list(regex('^[A-Za-z0-9-_]{1,128}$'), required=False)
+  standard_community_lists_criteria: enum("or", "and", "exact", required=False)
+localized_policies_definitions_route_policy_sequence_actions:
+  aggregator: int(min=0, max=4294967295, required=False)
+  aggregator_ip: ip(version=4, required=False)
+  atomic_aggregate: bool(required=False)
+  communities: list(any(int(min=0, max=4294967295), regex('^[0-9]{,5}(:)[0-9]{,5}$'), enum("internet", "local-AS")), required=False)
+  community_additive: bool(required=False)
+  exclude_as_paths: list(int(min=0, max=4294967295), required=False)
+  local_preference: int(min=0, max=4294967295, required=False)
+  metric: int(min=0, max=4294967295, required=False)
+  metric_type: enum("type1", "type2", required=False)
+  next_hop: any(ip(version=4), ip(version=6), required=False)
+  omp_tag: int(min=0, max=4294967295, required=False)
+  origin: enum("egp", "igp", "incomplete", required=False)
+  originator: ip(version=4, required=False)
+  ospf_tag: int(min=0, max=4294967295, required=False)
+  prepend_as_paths: list(int(min=0, max=4294967295), required=False)
+  weight: int(min=0, max=4294967295, required=False)
+# QoS Map Policy Definition
+localized_policies_definitions_qos_map:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  description: str()
+  qos_schedulers: list(include("localized_policies_definitions_qos_map_qos_scheduler", required=False))
+localized_policies_definitions_qos_map_qos_scheduler:
+  queue: int(min=0, max=7)
+  bandwidth_percent: int(min=1, max=100)
+  buffer_percent: int(min=1, max=100)
+  burst_bytes: int(min=5000, max=10000000, required=False)
+  scheduling_type: enum("llq", "wrr")
+  drop_type: enum("tail-drop", "red-drop")
+  class_map: regex('^[A-Za-z0-9-_]{1,128}$')
+# Feature Localized Policy template schema
+localized_policies_feature_policies:
+  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  description: str()
+  definitions: include("localized_policies_feature_policies_definitions", required=False)
+  implicit_acl_logging: bool(required=False)
+  ipv4_application_visibility: bool(required=False)
+  ipv4_flow_visibility: bool(required=False)
+  ipv4_visibility_cache_entries: int(min=16, max=2000000, required=False)
+  ipv6_application_visibility: bool(required=False)
+  ipv6_flow_visibility: bool(required=False)
+  ipv6_visibility_cache_entries: int(min=16, max=2000000, required=False)
+  log_frequency: int(min=1, max=2147483647, required=False) # should be a power of 2
+localized_policies_feature_policies_definitions:
+  ipv4_access_control_lists: list(regex('^[A-Za-z0-9-_]{1,128}$'), required=False)
+  ipv4_device_access_policies: list(regex('^[A-Za-z0-9-_]{1,128}$'), required=False)
+  ipv6_access_control_lists: list(regex('^[A-Za-z0-9-_]{1,128}$'), required=False)
+  ipv6_device_access_policies: list(regex('^[A-Za-z0-9-_]{1,128}$'), required=False)
+  rewrite_rules: list(regex('^[A-Za-z0-9-_]{1,128}$'), required=False)
+  route_policies: list(regex('^[A-Za-z0-9-_]{1,128}$'), required=False)
+  qos_maps: list(regex('^[A-Za-z0-9-_]{1,128}$'), required=False)
 # Device template schema
 cedge_device_templates:
   device_template: list(include("cedge_device_template"))
@@ -1545,7 +1504,7 @@ centralized_policy_application_aware_routing_app_route_match_application_list:
 centralized_policy_application_aware_routing_app_route_match_cloud_saas_application_list:
   cloud_saas_application_list: str()
 centralized_policy_application_aware_routing_app_route_match_dns_application_list:
- dns_application_list: str()
+  dns_application_list: str()
 centralized_policy_application_aware_routing_app_route_match_dns:
   dns: enum("request", "response")
 centralized_policy_application_aware_routing_app_route_match_dscp:
@@ -1776,12 +1735,12 @@ centralized_policy_data_traffic_data_traffic_engineering_action_set_local_tloc_l
 centralized_policy_data_traffic_data_traffic_engineering_action_set_local_tloc_list_values:
   colors: list(enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6"))
   encaps: list(enum("ipsec", "gre"))
-  restrict: enum("restrict", "allow") 
+  restrict: enum("restrict", "allow")
 centralized_policy_data_traffic_data_traffic_engineering_action_set_next_hop:
   next_hop: ip(version=4)
   when_next_hop_is_not_available: enum("route_table_entry", required=False)
 centralized_policy_data_traffic_data_traffic_engineering_action_set_tloc:
- tloc: include("centralized_policy_data_traffic_data_traffic_engineering_action_set_tloc_values")
+  tloc: include("centralized_policy_data_traffic_data_traffic_engineering_action_set_tloc_values")
 centralized_policy_data_traffic_data_traffic_engineering_action_set_tloc_values:
   ip: ip(version=4)
   color: str() # Name of the color
