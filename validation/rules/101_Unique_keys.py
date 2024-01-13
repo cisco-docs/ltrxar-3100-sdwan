@@ -7,10 +7,19 @@ class Rule:
     # - Site Ids
     # - Device Template Names
     # - Localized Policy Template Names
+    # - Centralized Policy definition Names
     paths = [
         "sdwan.sites.id",
         "sdwan.cedge_device_templates.device_template.name",
-        "sdwan.localized_policies.policies.feature.name"
+        "sdwan.localized_policies.policies.feature.name",
+        "sdwan.centralized_policies.feature_policies.name",
+        "sdwan.centralized_policies.definitions.control_policy.hub_and_spoke_topology.name",
+        "sdwan.centralized_policies.definitions.control_policy.mesh_topology.name",
+        "sdwan.centralized_policies.definitions.control_policy.vpn_membership.name",
+        "sdwan.centralized_policies.definitions.control_policy.custom_control_topology.name",
+        "sdwan.centralized_policies.definitions.data_policy.traffic_data.name",
+        "sdwan.centralized_policies.definitions.data_policy.cflowd.name",
+        "sdwan.centralized_policies.definitions.data_policy.application_aware_routing.name",
     ]
 
     # Verify unique feature template names per type
