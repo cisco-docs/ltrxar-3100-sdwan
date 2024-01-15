@@ -32,7 +32,7 @@ class Rule:
         device_template_dict = {
             "device_templates": []
         }
-        for device_template in inventory['sdwan']['cedge_device_templates']['device_template']:
+        for device_template in inventory.get('sdwan', {}).get('cedge_device_templates', {}).get('device_template', {}):
             device_template_features = {}
             for feature_template in device_template['parameters']['feature_templates']:
                 if not feature_template['templateType'] in device_template_features:

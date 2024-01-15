@@ -59,12 +59,12 @@ class Rule:
         device_template_var_dict = {}
         results = []
         # Get the list of variables per feature template
-        for type in inventory['sdwan']['cedge_feature_templates']:
+        for type in inventory.get('sdwan', {}).get('cedge_feature_templates', {}):
             for template in inventory['sdwan']['cedge_feature_templates'][type]:
                 template_vars = cls.get_feature_template_vars(template)
                 feature_template_var_dict[template['name']] = template_vars
         # Determine the list of variables for each device template
-        for deviceTemplate in inventory['sdwan']['cedge_device_templates']['device_template']:
+        for deviceTemplate in inventory.get('sdwan', {}).get('cedge_device_templates', {}).get('device_template', {}):
             device_template_vars = []
             # Retrieve the list of feature templates in the device template
             feature_template_list = cls.get_device_feature_templates(deviceTemplate['parameters'])
@@ -76,7 +76,7 @@ class Rule:
                     print("Feature template not found: " + feature_template)
             device_template_var_dict[deviceTemplate['name']] = device_template_vars
         # Verify the presence of the required device variables in each site and router
-        for site in inventory['sdwan']['sites']:
+        for site in inventory.get('sdwan', {}).get('sites', {}):
             for router in site['routers']:
                 # Verify missing vars in the router
                 if router['device_template'] in device_template_var_dict:

@@ -7,7 +7,7 @@ class Rule:
     @classmethod
     def verify_tunnel_source(cls, inventory):
         results = []
-        if "cisco_vpn_interface_ipsec" in inventory['sdwan']['cedge_feature_templates']:
+        if "cisco_vpn_interface_ipsec" in inventory.get('sdwan', {}).get('cedge_feature_templates', {}):
             for template in inventory['sdwan']['cedge_feature_templates']['cisco_vpn_interface_ipsec']:
                 if "tunnel-source" in template['parameters'] and "tunnel-source-interface" in template['parameters']:
                     results.append("sdwan.cedge_feature_templates.cisco_vpn_interface_ipsec." + template['name'] + " - duplicate tunnel source parameters")                        

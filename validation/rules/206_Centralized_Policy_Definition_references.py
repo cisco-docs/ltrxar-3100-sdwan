@@ -17,7 +17,7 @@ class Rule:
     @classmethod
     def feature_policies(cls, inventory):
         results = {}
-        for fpds in inventory['sdwan']['centralized_policies']['feature_policies']:
+        for fpds in inventory.get('sdwan', {}).get('centralized_policies', {}).get('feature_policies', {}):
             fpdsname = fpds['name']
             fpdsdict = {}
             for x in cls.policy_definition_sub_type:

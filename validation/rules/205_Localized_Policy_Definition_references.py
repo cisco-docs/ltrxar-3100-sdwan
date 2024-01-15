@@ -20,7 +20,7 @@ class Rule:
         policy_template_dict = {
             "policy_templates": []
         }
-        for policy_template in inventory['sdwan']['localized_policies']['feature_policies']:
+        for policy_template in inventory.get('sdwan', {}).get('localized_policies', {}).get('feature_policies', {}):
             policy_template_definitions = {}
             if "definitions" in policy_template:
                 for policy_definition_type, policy_definition_names in policy_template['definitions'].items():

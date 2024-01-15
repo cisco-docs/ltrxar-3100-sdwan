@@ -8,7 +8,7 @@ class Rule:
     def verify_aaa_groups(cls, inventory):
         configured_server_groups = ['local']
         results = []
-        if "cedge_aaa" in inventory['sdwan']['cedge_feature_templates']:
+        if "cedge_aaa" in inventory.get('sdwan', {}).get('cedge_feature_templates', {}):
             for template in inventory['sdwan']['cedge_feature_templates']['cedge_aaa']:
                 if "radius" in template['parameters']:
                     for group in template['parameters']['radius']:
