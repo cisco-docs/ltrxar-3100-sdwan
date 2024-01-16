@@ -14,44 +14,36 @@ sdwan:
     definitions:
       control_policy:
         hub_and_spoke_topology:
-          - name: Test_hubnspoke_number1
-            description: Test_hubnspoke_number1
-            vpn_list: vpn_list_texas
+          - name: HST_DEFINITION_TEST1
+            description: HST_DEFINITION_TEST1
+            vpn_list: VPN-LIST-HST-TEST1
             hub_and_spoke_sites:
               - name: group1
                 equal_preference: true
                 advertise_tloc: false
-                tloc_list: tloclist1
+                tloc_list: TLOC-LIST-HST-TEST1
                 spokes:
-                  - site_list: sitelist1
+                  - site_list: CALIFORNIA-HST-TEST
                     hubs:
-                      - site_list: sitelist2
-                        ipv6_prefix_lists:
-                          - pfxlist1
-                      - site_list: sitelist3
+                      - site_list: BOSTON-HST-TEST
+                      - site_list: NEWYORK-HST-TEST
                         ipv4_prefix_lists:
-                          - pfxlist9
-                  - site_list: sitelist66
+                          - PREFIX-LIST-HST-TEST
+                  - site_list: WASHINGTON-HST-TEST
                     hubs:
-                      - site_list: sitelist44
-                        ipv4_prefix_lists:
-                          - pfxlist4
-                        ipv6_prefix_lists:
-                          - pfxlist6
+                      - site_list: KENTUCKY-HST-TEST
               - name: group2
-                equal_preference: false
-                advertise_tloc: true
-                tloc_list: tloclist2
+                equal_preference: true
+                advertise_tloc: false        
+                tloc_list: TLOC-LIST-HST-TEST2
                 spokes:
-                  - site_list: sitelist9
+                  - site_list: CALIFORNIA-HST-TEST
                     hubs:
-                      - site_list: sitelist10
-                      - site_list: sitelist11
-                      - site_list: sitelist12
-                      - site_list: sitelist13
-                      - site_list: sitelist14
+                      - site_list: BOSTON-HST-TEST
+                      - site_list: NEWYORK-HST-TEST
                         ipv4_prefix_lists:
-                          - pfxlist44
-                        ipv6_prefix_lists:
-                          - pfxlist966
+                          - PREFIX-LIST-HST-TEST
+                  - site_list: WASHINGTON-HST-TEST
+                    hubs:
+                      - site_list: KENTUCKY-HST-TEST
 ```                           

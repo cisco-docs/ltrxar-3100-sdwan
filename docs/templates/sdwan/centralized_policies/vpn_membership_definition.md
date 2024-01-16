@@ -12,14 +12,14 @@ sdwan:
     definitions:
       control_policy:
         vpn_membership:
-          - name: Test_vpn_mem_number1
-            description: Test_vpn_mem_number1
+          - name: VPN_DEFINITION_TEST1
+            description: VPN_DEFINITION_TEST1
             groups:
-              - site_list: texas
+              - site_list: DELHI-VPNM-TEST
                 vpn_lists:
-                  - datacenter
-                  - branches
-              - site_list: texas
+                  - VPN-LIST-VPNM-TEST1
+                  - VPN-LIST-VPNM-TEST2
+              - site_list: MUMBAI-VPNM-TEST
                 vpn_lists:
-                  - retail_branches
+                  - VPN-LIST-VPNM-TEST3
 ```

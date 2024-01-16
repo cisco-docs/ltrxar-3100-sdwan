@@ -17,49 +17,57 @@ sdwan:
             default_action_type: accept
             sequences:
               - base_action: accept
-                id: 2
-                name: traffic_engineering_1
+                id: 3
+                name: rule3
                 ip_type: ipv4
                 type: traffic_engineering
                 match_criterias:
-                  - application_list: all_good_applications
-                  - dscp: 54
-                  - packet_length: 1150
-                  - plp: high
-                  - protocols:
-                      - 6
-                      - 7
-                      - 8
-                  - source_data_prefix_list: east_prefixes
-                  - source_data_prefix: 10.10.1.1/24
-                  - source_ports:
-                      - 676
-                      - 53
-                  - destination_data_prefix_list: west_prefixes
-                  - destination_data_prefix: 10.20.1.1/24
-                  - destination_ports:
-                      - 443
-                      - 8080
-                  - tcp: 'syn'
+                  application_list: APP-LIST-TD-TEST2
+                  dscp: 54
+                  packet_length: 1150
+                  plp: high
+                  protocols:
+                    - 89
+                    - 90
+                    - 91
+                  source_data_prefix_list: PREFIX-LIST-TD-TEST2
+                  source_data_prefix: 10.2.1.0/24
+                  source_ports:
+                    - 676
+                    - 53
+                  source_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  destination_data_prefix_list: PREFIX-LIST-TD-TEST1
+                  destination_data_prefix: 10.1.1.0/24
+                  destination_ports:
+                    - 676
+                    - 53
+                  destination_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  tcp: 'syn'
                 actions:
-                  - counter: abc
-                  - log: enabled
-                  - set_parameters:
-                    - next_hop: 10.2.1.1
-                      when_next_hop_is_not_available: route_table_entry
-                    - tloc_list: TLOC-LIST-TD-TEST1
-                    - tloc:
-                        ip: 10.10.5.66
-                        color: biz-internet
-                        encap: ipsec
-                    - vpn: 1
-                    - local_tloc_list: 
-                        restrict: restrict
-                        colors:                                           
-                          - custom1
-                          - custom2
-                        encaps:
-                          - ipsec
-                          - gre 
-
+                  log: true
+                  counter_name: LOGGER-TD-TEST2
+                  tloc_list: TLOC-LIST-TD-TEST1
+                  tloc:
+                    ip: 10.10.54.97
+                    color: custom2
+                    encap: ipsec
+                  vpn: 6
+                  local_tloc_list: 
+                    restrict: true
+                    colors:
+                      - custom1
+                      - custom2
+                    encaps:
+                      - ipsec
+                  next_hop: 
+                    ip_address: 10.10.10.4
+                    when_next_hop_is_not_available: route_table_entry
 ```

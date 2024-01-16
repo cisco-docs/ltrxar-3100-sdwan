@@ -14,20 +14,26 @@ sdwan:
     definitions:
       data_policy:
         cflowd:
-          - name: Cflowd_Policy_v01
-            description: Sample Cflowd Policy
-            active_flow_timeout: 100
-            inactive_flow_timeout: 10
-            sampling_interval: 10
-            flow_refresh: 120
+          - name: CFLOW_DEFINITION_TEST2
+            description: CFLOW_DEFINITION_TEST2
+            active_flow_timeout: 30
+            inactive_flow_timeout: 3600
+            sampling_interval: 30
+            flow_refresh: 60
             protocol: ipv4
             tos: true
             remarked_dscp: true
             collectors:
-              - vpn: 1
-                ip_address: 10.0.0.1
+              - vpn: 112
+                ip_address: 173.36.118.129
                 port: 2048
-                transport: transport_tcp
-                source_interface: Ethernet1
+                transport: transport_udp
+                source_interface: GigabitEthernet0
+                export_spreading: enable
+              - vpn: 101
+                ip_address: 173.36.118.130
+                port: 2048
+                transport: transport_udp
+                source_interface: GigabitEthernet1
                 export_spreading: enable
 ```

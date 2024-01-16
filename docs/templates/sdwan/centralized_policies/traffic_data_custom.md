@@ -20,68 +20,60 @@ sdwan:
             sequences:
               - base_action: accept
                 id: 5
-                name: rule3
+                name: rule5
                 ip_type: ipv4
                 type: custom
                 match_criterias:
-                  - application_list: APP-LIST-TD-TEST2
-                  - dns_application_list: APP-LIST-TD-TEST2
-                  - dns: request
-                  - dscp: 54
-                  - packet_length: 1150
-                  - plp: high
-                  - protocols:
-                      - 89
-                      - 90
-                      - 91
-                  - source_data_prefix_list: PREFIX-LIST-TD-TEST2
-                  - source_data_prefix: 10.2.1.0/24
-                  - source_ports:
-                      - 576
-                      - 80
-                  - destination_data_prefix_list: PREFIX-LIST-TD-TEST1
-                  - destination_data_prefix: 10.1.1.0/24
-                  - destination_ports:
-                      - 443
-                      - 8080
-                  - destination_region: primary-region
-                  - tcp: 'syn'
-                  - traffic_to: access
+                  application_list: APP-LIST-TD-TEST2
+                  dns_application_list: APP-LIST-TD-TEST2
+                  dns: request
+                  dscp: 54
+                  packet_length: 1150
+                  plp: high
+                  protocols:
+                    - 89
+                    - 90
+                    - 91
+                  source_data_prefix_list: PREFIX-LIST-TD-TEST2
+                  source_data_prefix: 10.2.1.0/24
+                  source_ports:
+                    - 676
+                    - 53
+                  source_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  destination_data_prefix_list: PREFIX-LIST-TD-TEST1
+                  destination_data_prefix: 10.1.1.0/24
+                  destination_ports:
+                    - 676
+                    - 53
+                  destination_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  tcp: 'syn'
+                  traffic_to: access
                 actions:
-                  - log: enabled
-                  - counter_name: LOGGER-TD-TEST2
-                  - cflowd: enabled
-                  - sig: enabled
-                    sig_fallback_to_routing: false
-                  - loss_correction: fecAdaptive
-                    loss_threshold_percentage: 5
-                  - nat_vpn: 0
-                    nat_vpn_fallback: true
-                  - redirect_dns_type: ipAddress
-                    redirect_dns_ip_address: 8.2.2.2
-                  - appqoe_optimization_tcp: true
-                    appqoe_optimization_dre: false
-                  - set_parameters:
-                    - dscp: 42
-                    - forwarding_class: video_live
-                    - local_tloc_list: 
-                        restrict: allow
-                        colors:
-                          - mpls
-                          - biz-internet
-                        encaps:
-                          - ipsec
-                          - gre
-                    - next_hop: 100.10.10.4
-                      when_next_hop_is_not_available: route_table_entry
-                    - policer_list: POLICER-TD-TEST1
-                    - service:
-                        type: FW
-                        vpn: 62
-                        tloc:
-                          ip: 10.59.160.1
-                          color: gold
-                          encap: ipsec
-                        local: enabled
-                        restrict: enabled
+                  nat_vpn: 
+                    vpn_id: 0
+                    nat_vpn_fallback: false
+                  redirect_dns:
+                    type: ipAddress
+                    ip_address: 8.2.2.2
+                  appqoe_optimization:
+                    tcp: true
+                    dre: true
+                    service_node_group: SNG-APPQOE21
+                  dscp: 42
+                  forwarding_class: video_live
+                  local_tloc_list: 
+                    restrict: true
+                    colors:
+                      - custom1
+                      - custom2
+                    encaps:
+                      - ipsec
 ```

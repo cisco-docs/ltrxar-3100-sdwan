@@ -14,24 +14,16 @@ sdwan:
     definitions:
       control_policy:
         mesh_topology:
-          - name: Test_mesh_number1
-            description: Test_mesh_number1
-            vpn_list: vpnlistblr
+          - name: MT_DEFINITION_TEST1
+            description: MT_DEFINITION_TEST1
+            vpn_list: VPN-LIST-MT-TEST1
             mesh_groups:
-              - name: region1
+              - name: MESH-REGION-TEST1
                 site_lists:
-                  - texas
-                  - blr
-              - name: region3
+                  - PHOENIX-MT-TEST
+                  - HOSUTON-MT-TEST
+              - name: MESH-REGION-TEST2
                 site_lists:
-                  - mexico
-                  - canada
-          - name: Test_mesh_number2
-            description: Test_mesh_number2
-            vpn_list: vpn_list_mum
-            mesh_groups:
-              - name: region8
-                site_lists:
-                  - sitelist9
-                  - sitelist10
+                  - MADISON-MT-TEST
+                  - KANSAS-MT-TEST
 ```                   

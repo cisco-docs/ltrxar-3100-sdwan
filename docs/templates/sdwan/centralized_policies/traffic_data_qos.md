@@ -18,36 +18,46 @@ sdwan:
             sequences:
               - base_action: accept
                 id: 1
-                name: 1strule
+                name: rule1
                 ip_type: ipv4
                 type: qos
                 match_criterias:
-                  - application_list: all_good_applications
-                  - dscp: 54
-                  - packet_length: 1150
-                  - plp: high
-                  - protocols:
-                      - 6
-                      - 7
-                      - 8
-                  - source_data_prefix_list: allindia_prefixes
-                  - source_data_prefix: 10.1.1.0/24
-                  - source_ports:
-                      - 676
-                      - 53
-                  - destination_data_prefix_list: allus_prefixes
-                  - destination_data_prefix: 10.2.1.0/24
-                  - destination_ports:
-                      - 443
-                      - 8080
-                  - tcp: 'syn'
+                  application_list: APP-LIST-TD-TEST1
+                  dscp: 54
+                  packet_length: 1150
+                  plp: high
+                  protocols:
+                    - 6
+                    - 7
+                    - 8
+                  source_data_prefix_list: PREFIX-LIST-TD-TEST1
+                  source_data_prefix: 10.1.1.0/24
+                  source_ports:
+                    - 676
+                    - 53
+                  source_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  destination_data_prefix_list: PREFIX-LIST-TD-TEST2
+                  destination_data_prefix: 10.2.1.0/24
+                  destination_ports:
+                    - 676
+                    - 53
+                  destination_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  tcp: 'syn'
                 actions:
-                  - log: enabled
-                  - counter_name: abc
-                  - loss_correction: fecAdaptive
+                  log: true
+                  counter_name: LOGGER-TD-TEST1
+                  dscp: 42
+                  forwarding_class: video_live
+                  policer_list: POLICER-TD-TEST1
+                  loss_correction:
+                    type: fecAlways
                     loss_threshold_percentage: 3
-                  - set_parameters:
-                    - dscp: 42
-                    - forwarding_class: video_live
-                    - policer_list: test_list_policer
 ```
