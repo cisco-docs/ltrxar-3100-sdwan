@@ -5,22 +5,10 @@ class Rule:
 
     paths = []
     # Verify Feature Template Names referenced in the Device Templates
-    feature_template_types = [
-        "cedge_aaa", "cedge_global", "cisco_banner", "cisco_bfd",  "cisco_omp", "cisco_security", "cisco_sig_credentials", "cisco_snmp", "cisco_system", "cisco_thousandeyes", "cisco_vpn", "cli-template", "virtual-application-utd"
-    ]
+    feature_template_types = ["aaa_templates", "banner_templates", "bfd_templates", "bgp_templates", "cli_templates", "dhcp_server_templates", "ethernet_interface_templates", "global_settings_templates", "ipsec_interface_templates", "logging_templates", "ntp_templates", "omp_templates", "ospf_templates", "secure_internet_gateway_templates", "security_templates", "sig_credentials_templates", "snmp_templates", "svi_interface_templates", "switchport_templates", "system_templates", "thousandeyes_templates", "vpn_templates"]
     for type in feature_template_types:
         paths.append({
-            "key": str("sdwan.cedge_feature_templates." + type + ".name"),
-            "references": [
-                str("device_templates.feature_templates." + type)
-            ]
-        })
-    feature_subtemplate_types = [
-        "cisco_vpn_interface", "cisco_bgp", "cisco_ospf", "cisco_logging", "cisco_ntp", "cisco_secure_internet_gateway", "cisco_vpn_interface_ipsec"
-    ]
-    for type in feature_subtemplate_types:
-        paths.append({
-            "key": str("sdwan.cedge_feature_templates." + type + ".name"),
+            "key": str("sdwan.edge_feature_templates." + type + ".name"),
             "references": [
                 str("device_templates.feature_templates." + type)
             ]

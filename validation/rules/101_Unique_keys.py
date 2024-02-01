@@ -23,9 +23,9 @@ class Rule:
     ]
 
     # Verify unique feature template names per type
-    feature_template_types = ["cedge_aaa", "cedge_global", "cisco_banner", "cisco_bfd", "cisco_logging", "cisco_ntp", "cisco_omp", "cisco_security", "cisco_snmp", "cisco_system", "cisco_vpn", "cli-template"]
+    feature_template_types = ["aaa_templates", "banner_templates", "bfd_templates", "bgp_templates", "cli_templates", "dhcp_server_templates", "ethernet_interface_templates", "global_settings_templates", "ipsec_interface_templates", "logging_templates", "ntp_templates", "omp_templates", "ospf_templates", "secure_internet_gateway_templates", "security_templates", "sig_credentials_templates", "snmp_templates", "svi_interface_templates", "switchport_templates", "system_templates", "thousandeyes_templates", "vpn_templates"]
     for type in feature_template_types:
-        paths.append(str("sdwan.cedge_feature_templates." + type + ".name"))
+        paths.append(str("sdwan.edge_feature_templates." + type + ".name"))
     
     # Verify unique policy objects names per type
     policy_object_types = ['app_probe_classes', 'application_lists', 'as_path_lists', 'class_maps', 'color_lists', 'expanded_community_lists', 'extended_community_lists', 'ipv4_data_prefix_lists', 'ipv4_prefix_lists', 'ipv6_data_prefix_lists', 'ipv6_prefix_lists', 'mirror_lists', 'policers', 'preferred_color_groups', 'region_lists', 'site_lists', 'sla_classes', 'standard_community_lists', 'tloc_lists', 'vpn_lists']

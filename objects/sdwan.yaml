@@ -1,85 +1,93 @@
 ---
 objects:
-  - name: cEdge AAA
-    template: cedge_aaa
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cedge_aaa]
-  - name: cEdge Global
-    template: cedge_global
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cedge_global]
-  - name: Cisco Banner
-    template: cisco_banner
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_banner]
-  - name: Cisco BFD
-    template: cisco_bfd
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_bfd]
-  - name: Cisco BGP
-    template: cisco_bgp
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_bgp]
-  - name: Cisco DHCP Server
-    template: cisco_dhcp_server
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_dhcp_server]
-  - name: Cisco Logging
-    template: cisco_logging
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_logging]
-  - name: Cisco NTP
-    template: cisco_ntp
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_ntp]
-  - name: Cisco OMP
-    template: cisco_omp
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_omp]
-  - name: Cisco OSPF
-    template: cisco_ospf
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_ospf]
-  - name: Cisco Secure Internet Gateway
-    template: cisco_secure_internet_gateway
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_secure_internet_gateway]
-  - name: Cisco Security
-    template: cisco_security
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_security]
-  - name: Cisco SIG Credentials
-    template: cisco_sig_credentials
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_sig_credentials]
-  - name: Cisco SNMP
-    template: cisco_snmp
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_snmp]
-  - name: Cisco System
-    template: cisco_system
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_system]
-  - name: Cisco ThousandEyes
-    template: cisco_thousandeyes
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_thousandeyes]
-  - name: Cisco VPN
-    template: cisco_vpn
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_vpn]
-  - name: Cisco VPN Interface
-    template: cisco_vpn_interface
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_vpn_interface]
-  - name: Cisco VPN Interface IPSec
-    template: cisco_vpn_interface_ipsec
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cisco_vpn_interface_ipsec]
-  - name: CLI Template
+  - name: Edge AAA
+    template: aaa
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.aaa_templates]
+  - name: Edge Banner
+    template: banner
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.banner_templates]
+  - name: Edge BFD
+    template: bfd
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.bfd_templates]
+  - name: Edge BGP
+    template: bgp
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.bgp_templates]
+  - name: Edge CLI Feature Template
     template: cli_template
-    folder: feature_templates
-    paths: [sdwan.cedge_feature_templates.cli-template]
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.cli_templates]
+  - name: Edge DHCP Server
+    template: dhcp_server
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.dhcp_server_templates]
+  - name: Edge Global Settings
+    template: global_settings
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.global_settings_templates]
+  - name: Edge Logging
+    template: logging
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.logging_templates]
+  - name: Edge NTP
+    template: ntp
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.ntp_templates]
+  - name: Edge OMP
+    template: omp
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.omp_templates]
+  - name: Edge OSPF
+    template: ospf
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.ospf_templates]
+  - name: Edge Secure Internet Gateway
+    template: secure_internet_gateway
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.secure_internet_gateway_templates]
+  - name: Edge Security
+    template: security
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.security_templates]
+  - name: Edge SIG Credentials
+    template: sig_credentials
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.sig_credentials_templates]
+  - name: Edge SNMP
+    template: snmp
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.snmp_templates]
+  - name: Edge VPN Interface SVI
+    template: svi_interface
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.svi_interface_templates]
+  - name: Edge Switchport
+    template: switchport
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.switchport_templates]
+  - name: Edge System
+    template: system
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.system_templates]
+  - name: Edge ThousandEyes
+    template: thousandeyes
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.thousandeyes_templates]
+  - name: Edge VPN
+    template: vpn
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.vpn_templates]
+  - name: Edge VPN Interface Ethernet
+    template: ethernet_interface
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.ethernet_interface_templates]
+  - name: Edge VPN Interface IPsec
+    template: ipsec_interface
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.ipsec_interface_templates]
   - name: Device Template
     template: device_template
     folder: device_templates
