@@ -20,6 +20,7 @@ pipeline {
     options {
         disableConcurrentBuilds()
         newContainerPerStage()
+        timeout(time: 1, unit: 'HOURS')
     }
 
     stages {
@@ -41,6 +42,7 @@ pipeline {
                 }
             }
             sh "BUILD_STATUS=${currentBuild.currentResult} python .ci/webex-notification-jenkins.py"
+            cleanWs()
         }
     }
 }
