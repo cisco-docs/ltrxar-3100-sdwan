@@ -90,8 +90,8 @@ objects:
     paths: [sdwan.edge_feature_templates.ipsec_interface_templates]
   - name: Device Template
     template: device_template
-    folder: device_templates
-    paths: [sdwan.cedge_device_templates.device_template]
+    folder: edge_device_templates
+    paths: [sdwan.edge_device_templates.device_template]
   - name: App Probe Class
     template: app_probe_class
     folder: policy_objects

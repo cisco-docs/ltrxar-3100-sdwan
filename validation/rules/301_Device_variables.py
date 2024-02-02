@@ -6,26 +6,25 @@ class Rule:
     severity = "HIGH"
 
     @classmethod
-    def get_feature_template_vars(cls, object):
+    def get_feature_template_vars(cls, key, object):
         results = []
         if isinstance(object, dict):
             for key, obj in object.items():
-                explore_obj = cls.get_feature_template_vars(obj)
+                explore_obj = cls.get_feature_template_vars(key, obj)
                 for entry in explore_obj:
                     if not entry in results:
                         results.append(entry)
         elif isinstance(object, list):
             for obj in object:
-                explore_obj = cls.get_feature_template_vars(obj)
+                explore_obj = cls.get_feature_template_vars("", obj)
                 for entry in explore_obj:
                     if not entry in results:
                         results.append(entry)
-        elif isinstance(object, str):
-            if object.startswith("DEVICE_VARIABLE;"):
-                if not object.split(";")[1] in results:
-                    results.append(object.split(";")[1])
+        elif isinstance(object, (str, int)):
+            if key.endswith("_variable"):
+                results.append(object)
             # Find vars in CLI templates
-            elif "{{" in object:
+            elif isinstance(object, str) and "{{" in object:
                 vars = re.findall(r'{{.*?}}', object)
                 for var in vars:
                     var_name = re.sub("{{|}}|\s", "", var)
@@ -34,23 +33,29 @@ class Rule:
 
     @classmethod
     def get_device_feature_templates(cls, object):
+        feature_template_types_in_device_template = ["aaa_template", "banner_template", "bfd_template", "bgp_template", "cli_template", "dhcp_server_template", "ethernet_interface_templates", "global_settings_template", "ipsec_interface_templates", "logging_template", "ntp_template", "omp_template", "ospf_template", "secure_internet_gateway_template", "security_template", "sig_credentials_template", "snmp_template", "svi_interface_templates", "switchport_templates", "system_template", "thousandeyes_template", "vpn_0_template", "vpn_512_template", "vpn_service_templates"]
         results = []
         if isinstance(object, dict):
-            if "templateName" in object:
-                results.append(object['templateName'])
+            if "name" in object and "description" not in object:
+                results.append(object['name'])
             for key, obj in object.items():
-                explore_obj = cls.get_device_feature_templates(obj)
-                if isinstance(explore_obj, list):
-                    for entry in explore_obj:
-                        if not entry in results:
-                            results.append(entry)
-        elif isinstance(object, list):
-            for obj in object:
-                explore_obj = cls.get_device_feature_templates(obj)
-                if isinstance(explore_obj, list):
-                    for entry in explore_obj:
-                        if not entry in results:
-                            results.append(entry)
+                if key in feature_template_types_in_device_template:
+                    if isinstance(obj, str):
+                        results.append(obj)
+                    elif isinstance(obj, dict):
+                        explore_obj = cls.get_device_feature_templates(obj)
+                        if isinstance(explore_obj, list):
+                            for entry in explore_obj:
+                                if not entry in results:
+                                    results.append(entry)
+                    elif isinstance(obj, list):
+                        for obj_entry in obj:
+                            explore_obj = cls.get_device_feature_templates(obj_entry)
+                            if isinstance(explore_obj, list):
+                                for entry in explore_obj:
+                                    if not entry in results:
+                                        results.append(entry)
+
         return(results)
 
     @classmethod
@@ -59,21 +64,21 @@ class Rule:
         device_template_var_dict = {}
         results = []
         # Get the list of variables per feature template
-        for type in inventory.get('sdwan', {}).get('cedge_feature_templates', {}):
-            for template in inventory['sdwan']['cedge_feature_templates'][type]:
-                template_vars = cls.get_feature_template_vars(template)
+        for type in inventory.get('sdwan', {}).get('edge_feature_templates', {}):
+            for template in inventory['sdwan']['edge_feature_templates'][type]:
+                template_vars = cls.get_feature_template_vars("", template)
                 feature_template_var_dict[template['name']] = template_vars
         # Determine the list of variables for each device template
-        for deviceTemplate in inventory.get('sdwan', {}).get('cedge_device_templates', {}).get('device_template', {}):
+        for deviceTemplate in inventory.get('sdwan', {}).get('edge_device_templates', {}):
             device_template_vars = []
             # Retrieve the list of feature templates in the device template
-            feature_template_list = cls.get_device_feature_templates(deviceTemplate['parameters'])
+            feature_template_list = cls.get_device_feature_templates(deviceTemplate)
             for feature_template in feature_template_list:
                 if feature_template in feature_template_var_dict:
                     for var in feature_template_var_dict[feature_template]:
                         device_template_vars.append(var)
                 else:
-                    print("Feature template not found: " + feature_template)
+                    results.append("Feature template not found: " + feature_template)
             device_template_var_dict[deviceTemplate['name']] = device_template_vars
         # Verify the presence of the required device variables in each site and router
         for site in inventory.get('sdwan', {}).get('sites', {}):
@@ -86,9 +91,9 @@ class Rule:
                     # Verify if the router has unnecessary vars - can the severity be set to warning or minor?
                     for var in router['device_variables']:
                         if var not in device_template_var_dict[router['device_template']]:
-                            print(router['chassis_id'] + " - " + router['device_template'] + " - unnecessary variable: " + var)
+                            results.append(router['chassis_id'] + " - " + router['device_template'] + " - unnecessary variable: " + var)
                 else:
-                    print("Router device template not found: " + router['device_template'])
+                    results.append("Router device template not found: " + router['device_template'])
         return results
 
     @classmethod

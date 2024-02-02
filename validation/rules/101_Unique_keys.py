@@ -10,7 +10,7 @@ class Rule:
     # - Centralized Policy definition Names
     paths = [
         "sdwan.sites.id",
-        "sdwan.cedge_device_templates.device_template.name",
+        "sdwan.edge_device_templates.name",
         "sdwan.localized_policies.feature_policies.name",
         "sdwan.centralized_policies.feature_policies.name",
         "sdwan.centralized_policies.definitions.control_policy.hub_and_spoke_topology.name",

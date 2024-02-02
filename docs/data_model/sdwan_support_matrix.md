@@ -35,7 +35,7 @@ This table provides an overview of which object is supported in combination with
 
 <span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse
 ---|---|---|---
-[Device Template](./sdwan/device_templates/device_template.md) | :material-check: | :material-check: | :material-check:
+[Device Template](./sdwan/edge_device_templates/device_template.md) | :material-check: | :material-check: | :material-check:
 
 ### Policy Objects
 

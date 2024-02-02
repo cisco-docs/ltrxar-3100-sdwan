@@ -6,7 +6,7 @@ sdwan:
   edge_feature_templates: include("edge_feature_templates", required=False)
   policy_objects: include("policy_objects", required=False)
   localized_policies: include("localized_policies", required=False)
-  cedge_device_templates: include("cedge_device_templates", required=False)
+  edge_device_templates: list(include("edge_device_templates"), required=False)
   sites: list(include("sites"), required=False)
   multi_region_fabric: include("multi_region_fabric", required=False)
   centralized_policies: include("centralized_policies", required=False) # new tree for centralized policy.
@@ -2204,27 +2204,69 @@ localized_policies_feature_policies_definitions:
   route_policies: list(regex('^[A-Za-z0-9-_]{1,128}$'), required=False)
   qos_maps: list(regex('^[A-Za-z0-9-_]{1,128}$'), required=False)
 # Device template schema
-cedge_device_templates:
-  device_template: list(include("cedge_device_template"))
-cedge_device_template:
+edge_device_templates:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
-  parameters: include("cedge_device_template_parameters", required=False)
-cedge_device_template_parameters:
   device_model: enum("ASR-1001-HX", "ASR-1001-X", "ASR-1002-HX", "ASR-1002-X", "ASR-1006-X", "C1101-4P", "C1101-4PLTEP", "C1101-4PLTEPW", "C1109-2PLTEGB", "C1109-2PLTEUS", "C1109-2PLTEVZ", "C1109-4PLTE2P", "C1109-4PLTE2PW", "C1111-4P", "C1111-4PLTEEA", "C1111-4PLTELA", "C1111-4PW", "C1111-8P", "C1111-8PLTEEA", "C1111-8PLTEEAW", "C1111-8PLTELA", "C1111-8PLTELAW", "C1111-8PW", "C1111X-8P", "C1112-8P", "C1112-8PLTEEA", "C1112-8PLTEEAWE", "C1112-8PWE", "C1113-8P", "C1113-8PLTEEA", "C1113-8PLTEEAW", "C1113-8PLTELA", "C1113-8PLTELAWZ", "C1113-8PLTEW", "C1113-8PM", "C1113-8PMLTEEA", "C1113-8PMWE", "C1113-8PW", "C1116-4P", "C1116-4PLTEEA", "C1116-4PLTEEAWE", "C1116-4PWE", "C1117-4P", "C1117-4PLTEEA", "C1117-4PLTEEAW", "C1117-4PLTELA", "C1117-4PLTELAWZ", "C1117-4PM", "C1117-4PMLTEEA", "C1117-4PMLTEEAWE", "C1117-4PMWE", "C1117-4PW", "C1118-8P", "C1121-4P", "C1121-4PLTEP", "C1121-8P", "C1121-8PLTEP", "C1121-8PLTEPW", "C1121X-8P", "C1121X-8PLTEP", "C1121X-8PLTEPW", "C1126-8PLTEP", "C1126X-8PLTEP", "C1127-8PLTEP", "C1127-8PMLTEP", "C1127X-8PLTEP", "C1127X-8PMLTEP", "C1128-8PLTEP", "C1131-8PLTEPW", "C1131-8PW", "C1131X-8PLTEPW", "C1131X-8PW", "C1161-8P", "C1161-8PLTEP", "C1161X-8P", "C1161X-8PLTEP", "C8000V", "C8200-1N-4T", "C8200L-1N-4T", "C8300-1N1S-4T2X", "C8300-1N1S-6T", "C8300-2N2S-4T2X", "C8300-2N2S-6T", "C8500-12X", "C8500-12X4QC", "C8500-20X6C", "C8500L-8S4X", "IR-1101", "IR-1821", "IR-1831", "IR-1833", "IR-1835", "IR-8140H", "IR-8140H-P", "IR-8340", "ISR-4221", "ISR-4221X", "ISR-4321", "ISR-4331", "ISR-4351", "ISR-4431", "ISR-4451-X", "ISR-4461", "ISR1100-4G-XE", "ISR1100-4GLTEGB-XE", "ISR1100-4GLTENA-XE", "ISR1100-6G-XE", "ISR1100X-4G-XE", "ISR1100X-6G-XE")
+  system_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  logging_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  ntp_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  aaa_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  bfd_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  omp_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  security_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  vpn_0_template: include("edge_device_templates_vpn_0", required=False)
+  vpn_512_template: include("edge_device_templates_vpn_512", required=False)
+  vpn_service_templates: list(include("edge_device_templates_vpn_service"), required=False)
+  global_settings_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  banner_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  snmp_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  cli_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   localized_policy: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
-  feature_templates: list(include("dt_feature_template_ref"))
-dt_feature_template_ref:
-  templateName: regex('^[^<>!&$@\/"() ]{,128}$')
-  templateType: enum("cedge_aaa", "cedge_global", "cisco_banner", "cisco_bfd", "cisco_omp", "cisco_security", "cisco_sig_credentials", "cisco_snmp", "cisco_system", "cisco_thousandeyes", "cisco_vpn", "cli-template", "virtual-application-utd")
-  subTemplates: list(include("dt_feature_subtemplates_level1"), required=False)
-dt_feature_subtemplates_level1:
-  templateName: regex('^[^<>!&$@\/"() ]{,128}$')
-  templateType: enum("cisco_bgp", "cisco_ospf", "cisco_vpn_interface", "cisco_logging", "cisco_ntp", "cisco_secure_internet_gateway", "cisco_vpn_interface_ipsec")
-  subTemplates: list(include("dt_feature_subtemplates_level2"), required=False)
-dt_feature_subtemplates_level2:
-  templateName: regex('^[^<>!&$@\/"() ]{,128}$')
-  templateType: enum("cisco_dhcp_server")
+  switchport_templates: list(include("edge_device_templates_switchport"), required=False)
+  thousandeyes_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+edge_device_templates_vpn_0:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  bgp_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  ethernet_interface_templates: list(include("edge_device_templates_vpn_0_ethernet_interface"), required=False)
+  ipsec_interface_templates: list(include("edge_device_templates_vpn_0_interface_ipsec"), required=False)
+  svi_interface_templates: list(include("edge_device_templates_vpn_0_interface_svi"), required=False)
+  ospf_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  secure_internet_gateway_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  sig_credentials_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+edge_device_templates_vpn_0_ethernet_interface:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+edge_device_templates_vpn_0_interface_ipsec:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  dhcp_server_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+edge_device_templates_vpn_0_interface_svi:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+edge_device_templates_vpn_512:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  ethernet_interface_templates: list(include("edge_device_templates_vpn_512_ethernet_interface"), required=False)
+  svi_interface_templates: list(include("edge_device_templates_vpn_512_interface_svi"), required=False)
+edge_device_templates_vpn_512_ethernet_interface:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+edge_device_templates_vpn_512_interface_svi:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+edge_device_templates_vpn_service:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  bgp_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  ethernet_interface_templates: list(include("edge_device_templates_vpn_service_ethernet_interface"), required=False)
+  ipsec_interface_templates: list(include("edge_device_templates_vpn_service_interface_ipsec"), required=False)
+  svi_interface_templates: list(include("edge_device_templates_vpn_service_interface_svi"), required=False)
+  ospf_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+edge_device_templates_vpn_service_ethernet_interface:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  dhcp_server_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+edge_device_templates_vpn_service_interface_ipsec:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  dhcp_server_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+edge_device_templates_vpn_service_interface_svi:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
+  dhcp_server_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+edge_device_templates_switchport:
+  name: regex('^[^<>!&$@\/"() ]{,128}$')
 # SD-WAN Site schema - per-device variables
 sites:
   id: int(min=1, max=4294967295)
