@@ -24,40 +24,40 @@ class Rule:
     ]
 
     policy_object_reference = {
-        'color_list': 'color',
-        'site_list': 'site',
-        'site_lists': 'site',
-        'site_lists_in': 'site',
-        'site_lists_out': 'site',
-        'community_list': 'community',
-        'expanded_community_list': 'expandedCommunity',
-        'tloc_list': 'tloc',
-        'vpn_list': 'vpn',
-        'vpn_lists': 'vpn',
-        'export_to_vpn_list' : 'vpn',
-        'ipv4_prefix_list': 'prefix',
-        'ipv4_prefix_lists': 'prefix',
-        'application_list': 'app',
-        'cloud_saas_application_list': 'app',
-        'dns_application_list': 'app',
-        'source_data_prefix_list': 'dataPrefix',
-        'destination_data_prefix_list': 'dataPrefix',
+        'color_list': 'color_lists',
+        'site_list': 'site_lists',
+        'site_lists': 'site_lists',
+        'site_lists_in': 'site_lists',
+        'site_lists_out': 'site_lists',
+        'community_list': 'standard_community_lists',
+        'expanded_community_list': 'expanded_community_lists',
+        'tloc_list': 'tloc_lists',
+        'vpn_list': 'vpn_lists',
+        'vpn_lists': 'vpn_lists',
+        'export_to_vpn_list' : 'vpn_lists',
+        'ipv4_prefix_list': 'ipv4_prefix_lists',
+        'ipv4_prefix_lists': 'ipv4_prefix_lists',
+        'application_list': 'application_lists',
+        'cloud_saas_application_list': 'application_lists',
+        'dns_application_list': 'application_lists',
+        'source_data_prefix_list': 'ipv4_data_prefix_lists',
+        'destination_data_prefix_list': 'ipv4_data_prefix_lists',
         'preferred_color_group': 'preferred_color_groups',
-        'policer_list': 'policer',
-        'region_list': 'region',
-        'region_lists': 'region',
-        'region_lists_in': 'region',
-        'region_lists_out': 'region'
+        'policer_list': 'policers',
+        'region_list': 'region_lists',
+        'region_lists': 'region_lists',
+        'region_lists_in': 'region_lists',
+        'region_lists_out': 'region_lists'
     }
 
-    # Extract the Policy Object Names defined in the Policy Objects at ['sdwan']['policy_objects']['lists'][.]
+    # Extract the Policy Object Names defined in the Policy Objects at ['sdwan']['policy_objects'][.]
     @classmethod
     def policy_objects(cls, inventory):
         results = {}
         for pot in cls.policy_object_reference:
             results[pot] = []
             try:
-                for pobjs in inventory['sdwan']['policy_objects']['lists'][cls.policy_object_reference[pot]]:
+                for pobjs in inventory['sdwan']['policy_objects'][cls.policy_object_reference[pot]]:
                     results[pot].append(pobjs['name'])
             except KeyError:
                 continue
@@ -173,7 +173,7 @@ class Rule:
         return results  
 
     # Compare the Policy objects referenced in the Centralized Policies at ['sdwan']['centralized_policies']['feature_policies'] 
-    # and ['sdwan']['centralized_policies']['definitions'][.][.] to the Policy objects defined in the Policy Objects at ['sdwan']['policy_objects']['lists'][.]
+    # and ['sdwan']['centralized_policies']['definitions'][.][.] to the Policy objects defined in the Policy Objects at ['sdwan']['policy_objects'][.]
     # and find the missing Policy Objects
     @classmethod
     def match(cls, inventory):
@@ -182,5 +182,5 @@ class Rule:
         missing_policy_objects = []
         for x in definitions:
             if x[str(x['type'])] not in policy_objects[x['type']]:
-                missing_policy_objects.append(str("Missing Policy object '" + x[str(x['type'])] + "' at ['sdwan']['policy_objects']['lists']['" + x['policy_objects_name'] + "'] referenced under ['sdwan']['centralized_policies']['definitions']['" + x['pdtype'] +"']['" + x['pdsubtype'] +"'] name: '" + x['name'] + "', sequence name: '" + x['sequence']+ "'"))
+                missing_policy_objects.append(str("Missing Policy object '" + x[str(x['type'])] + "' at ['sdwan']['policy_objects']['" + x['policy_objects_name'] + "'] referenced under ['sdwan']['centralized_policies']['definitions']['" + x['pdtype'] +"']['" + x['pdsubtype'] +"'] name: '" + x['name'] + "', sequence name: '" + x['sequence']+ "'"))
         return missing_policy_objects

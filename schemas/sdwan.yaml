@@ -2364,9 +2364,9 @@ centralized_policy_control_topology_hubandspoke:
   hub_and_spoke_sites: list(include("centralized_policy_control_topology_hubandspoke_sites"))
 centralized_policy_control_topology_hubandspoke_sites:
   name: regex('^[A-Za-z0-9\-_]{1,127}$')
-  equal_preference: bool()
-  advertise_tloc: bool()
-  tloc_list: regex('^[A-Za-z0-9\-_]{1,32}$') # name of TLOC list
+  equal_preference: bool(required=False)
+  advertise_tloc: bool(required=False)
+  tloc_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of TLOC list
   spokes: list(include("centralized_policy_control_topology_hubandspoke_spoke_sites"))
 centralized_policy_control_topology_hubandspoke_spoke_sites:
   site_list: regex('^[A-Za-z0-9\-_]{1,32}$') # name of Site list
