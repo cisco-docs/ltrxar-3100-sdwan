@@ -91,7 +91,7 @@ objects:
   - name: Device Template
     template: device_template
     folder: edge_device_templates
-    paths: [sdwan.edge_device_templates.device_template]
+    paths: [sdwan.edge_device_templates]
   - name: App Probe Class
     template: app_probe_class
     folder: policy_objects
@@ -211,7 +211,10 @@ objects:
   - name: Hub and Spoke Topology Definition
     template: hubandspoke_definition
     folder: centralized_policies
-    paths: [sdwan.centralized_policies.definitions.control_policy.hub_and_spoke_topology]
+    paths:
+      [
+        sdwan.centralized_policies.definitions.control_policy.hub_and_spoke_topology,
+      ]
   - name: Mesh Topology Definition
     template: mesh_definition
     folder: centralized_policies
@@ -219,11 +222,15 @@ objects:
   - name: Custom Control Topology Definition
     template: custom_control_definition
     folder: centralized_policies
-    paths: [sdwan.centralized_policies.definitions.control_policy.custom_control_topology]
+    paths:
+      [
+        sdwan.centralized_policies.definitions.control_policy.custom_control_topology,
+      ]
   - name: VPN Membership Definition
     template: vpn_membership_definition
     folder: centralized_policies
-    paths: [sdwan.centralized_policies.definitions.control_policy.vpn_membership]
+    paths:
+      [sdwan.centralized_policies.definitions.control_policy.vpn_membership]
   - name: Traffic Data Service Chaining Definition
     template: traffic_data_service_chaining
     folder: centralized_policies
@@ -263,4 +270,7 @@ objects:
   - name: Application Aware Routing
     template: application_aware_routing
     folder: centralized_policies
-    paths: [sdwan.centralized_policies.definitions.data_policy.application_aware_routing]
+    paths:
+      [
+        sdwan.centralized_policies.definitions.data_policy.application_aware_routing,
+      ]
