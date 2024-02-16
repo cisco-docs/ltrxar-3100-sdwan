@@ -2477,7 +2477,7 @@ centralized_policy_application_aware_routing:
   sequences: list(include("centralized_policy_application_aware_routing_app_route"))
 centralized_policy_application_aware_routing_default_action_type:
   none: bool(required=False)
-  sla_class_list: enum("default","transactional_data","business_data","bulk_data","business_critical",str())
+  sla_class_list: any(enum("default", "transactional_data", "business_data", "bulk_data", "business_critical"), str(), required=False)
 centralized_policy_application_aware_routing_app_route:
   id: int(min=1, max=65534)
   name: regex('^[A-Za-z0-9\-_]{1,127}$')
