@@ -2,7 +2,6 @@
 sdwan: include('sdwan', required=False)
 ---
 sdwan:
-  vmanage: include("vmanage", required=False)
   edge_feature_templates: include("edge_feature_templates", required=False)
   policy_objects: include("policy_objects", required=False)
   localized_policies: include("localized_policies", required=False)
@@ -10,11 +9,6 @@ sdwan:
   sites: list(include("sites"), required=False)
   multi_region_fabric: include("multi_region_fabric", required=False)
   centralized_policies: include("centralized_policies", required=False) # new tree for centralized policy.
-# vManage API settings
-vmanage:
-  vmanage_ip: ip()
-  vmanage_user: str()
-  vmanage_password: str()
 # Edge Feature Templates
 edge_feature_templates:
   aaa_templates: list(include("edge_feature_templates_aaa"), required=False)
@@ -881,7 +875,7 @@ edge_feature_templates_ipsec_interface_ipsec:
   ciphersuite_variable: str(exclude='\'"~`$&+,', min=1, max=255, required=False)
   perfect_forward_secrecy: enum("group-1", "group-2", "group-5", "group-14", "group-15", "group-16", "group-19", "group-20", "group-21", "group-24", "none", required=False)
   perfect_forward_secrecy_variable: str(exclude='\'"~`$&+,', min=1, max=255, required=False)
-  rekey_interval: any(str(starts_with="DEVICE_VARIABLE;"), int(min=120, max=2592000), required=False)
+  rekey_interval: int(min=120, max=2592000, required=False)
   rekey_interval_variable: str(exclude='\'"~`$&+,', min=1, max=255, required=False)
   replay_window: int(min=64, max=4096, required=False)
   replay_window_variable: str(exclude='\'"~`$&+,', min=1, max=255, required=False)
@@ -900,7 +894,7 @@ edge_feature_templates_logging:
   max_size_variable: str(exclude='\'"~`$&+,', min=1, max=255, required=False)
   tls_profiles: list(include("edge_feature_templates_logging_tls_profile"), required=False)
 edge_feature_templates_logging_ipv4_server:
-  hostname_ip: any(str(matches='^[a-z0-9.-]+$', max=255), ip(version=4), required=False)
+  hostname_ip: any(ip(version=4), str(), required=False)
   hostname_ip_variable: str(exclude='\'"~`$&+,', min=1, max=255, required=False)
   enable_tls: bool(required=False)
   enable_tls_variable: str(exclude='\'"~`$&+,', min=1, max=255, required=False)
@@ -914,7 +908,7 @@ edge_feature_templates_logging_ipv4_server:
   vpn_id: int(min=0, max=65530, required=False)
   vpn_id_variable: str(exclude='\'"~`$&+,', min=1, max=255, required=False)
 edge_feature_templates_logging_ipv6_server:
-  hostname_ip: any(str(matches='^[a-z0-9.-]+$', max=255), ip(version=6))
+  hostname_ip: any(ip(version=6), str(), required=False)
   hostname_ip_variable: str(exclude='\'"~`$&+,', min=1, max=255, required=False)
   enable_tls: bool(required=False)
   enable_tls_variable: str(exclude='\'"~`$&+,', min=1, max=255, required=False)
@@ -960,7 +954,7 @@ edge_feature_templates_ntp_authentication_key:
 edge_feature_templates_ntp_server:
   authentication_key_id: int(min=1, max=65535, required=False)
   authentication_key_id_variable: str(exclude='\'"~`$&+,', min=1, max=255, required=False)
-  hostname_ip: any(str(matches='^[a-z0-9.-]+$', max=255), ip(version=4), required=False)
+  hostname_ip: any(ip(version=4), str(), required=False)
   hostname_ip_variable: str(exclude='\'"~`$&+,', min=1, max=255, required=False)
   optional: bool(required=False)
   prefer: bool(required=False)
@@ -2162,7 +2156,7 @@ localized_policies_definitions_route_policy_sequence_actions:
   local_preference: int(min=0, max=4294967295, required=False)
   metric: int(min=0, max=4294967295, required=False)
   metric_type: enum("type1", "type2", required=False)
-  next_hop: any(ip(version=4), ip(version=6), required=False)
+  next_hop: ip(required=False)
   omp_tag: int(min=0, max=4294967295, required=False)
   origin: enum("egp", "igp", "incomplete", required=False)
   originator: ip(version=4, required=False)
@@ -2308,28 +2302,22 @@ centralized_policy_policies_mesh_entries:
   policy_definition: str()
 centralized_policy_policies_customcontrol_entries:
   policy_definition: str()
-  site_region: any(include("centralized_policy_policies_customcontrol_site_list"), include("centralized_policy_policies_customcontrol_region_list"), include("centralized_policy_policies_customcontrol_region"))
-centralized_policy_policies_customcontrol_site_list:
+  site_region: include("centralized_policy_policies_customcontrol_entries_site_region")
+centralized_policy_policies_customcontrol_entries_site_region:
   site_lists_in: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
   site_lists_out: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
-centralized_policy_policies_customcontrol_region_list:
   region_lists_in: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
   region_lists_out: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
-centralized_policy_policies_customcontrol_region:
   region_in: int(min=0, max=63)
   region_out: int(min=0, max=63)
 centralized_policy_policies_vpn_membership_entries:
   policy_definition: str()
 centralized_policy_application_aware_routing_entries:
   policy_definition: str()
-  site_region_vpn: any(include("centralized_policy_application_aware_routing_site_list_vpn_list"), include("centralized_policy_application_aware_routing_region_list_vpn_list"), include("centralized_policy_application_aware_routing_region_vpn_list"), required=False)
-centralized_policy_application_aware_routing_site_list_vpn_list:
+  site_region_vpn: include("centralized_policy_application_aware_routing_entries_site_region_vpn", required=False)
+centralized_policy_application_aware_routing_entries_site_region_vpn:
   site_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
-  vpn_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
-centralized_policy_application_aware_routing_region_list_vpn_list:
   region_list: regex('^[A-Za-z0-9\-_]{1,32}$')
-  vpn_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
-centralized_policy_application_aware_routing_region_vpn_list:
   region: int(min=0, max=63)
   vpn_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
 centralized_policy_policies_traffic_data_entries:
@@ -2454,22 +2442,19 @@ centralized_policy_control_topology_customcontrol_route_actions:
   community_additive: bool(required=False)
   omp_tag: int(min=0, max=4294967295,required=False)
   preference: int(min=0, max=4294967295,required=False)
-  tloc: include("centralized_policy_control_topology_customcontrol_route_action_set_tloc_value",required=False)
+  tloc: include("centralized_policy_control_topology_customcontrol_route_action_set_tloc_value", required=False)
   tloc_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of site list
   tloc_action: enum("strict", "primary", "backup", "ecmp",required=False)
-  service: any(include("centralized_policy_control_topology_customcontrol_route_action_set_service_and_tloc"), include("centralized_policy_control_topology_customcontrol_route_action_set_service_and_tloclist"),required=False)
+  service: include("centralized_policy_control_topology_customcontrol_route_actions_service", required=False)
   export_to_vpn_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of VPN list
 centralized_policy_control_topology_customcontrol_route_action_set_tloc_value:
   ip: ip(version=4)
   color: enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6")
   encap: enum("ipsec", "gre")
-? centralized_policy_control_topology_customcontrol_route_action_set_service_and_tloc
-: type: enum("IDP", "IDS", "FW", "netsvc1", "netsvc2", "netsvc3", "netsvc4", "netsvc5", "appqoe")
+centralized_policy_control_topology_customcontrol_route_actions_service:
+  type: enum("IDP", "IDS", "FW", "netsvc1", "netsvc2", "netsvc3", "netsvc4", "netsvc5", "appqoe")
   vpn: int(min=0, max=65530)
   tloc: include("centralized_policy_control_topology_customcontrol_route_action_set_tloc_value")
-? centralized_policy_control_topology_customcontrol_route_action_set_service_and_tloclist
-: type: enum("IDP", "IDS", "FW", "netsvc1", "netsvc2", "netsvc3", "netsvc4", "netsvc5")
-  vpn: int(min=0, max=65530)
   tloc_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of TLOC list
 #Centralized Policy - Control Policy - definitions - VPN Membership
 centralized_policy_control_vpn_membership:
@@ -2488,9 +2473,10 @@ centralized_policy_data:
 centralized_policy_application_aware_routing:
   name: regex('^[A-Za-z0-9\-_]{1,127}$')
   description: str()
-  default_action_type: any(str(equals="none"), include("application_aware_routing_app_route_sla_class_list"), required=False)
+  default_action_type: include("centralized_policy_application_aware_routing_default_action_type", required=False)
   sequences: list(include("centralized_policy_application_aware_routing_app_route"))
-application_aware_routing_app_route_sla_class_list:
+centralized_policy_application_aware_routing_default_action_type:
+  none: bool(required=False)
   sla_class_list: enum("default","transactional_data","business_data","bulk_data","business_critical",str())
 centralized_policy_application_aware_routing_app_route:
   id: int(min=1, max=65534)
@@ -2573,19 +2559,14 @@ centralized_policy_data_traffic_data_service_chaining_match_source_port_ranges:
 centralized_policy_data_traffic_data_service_chaining_actions:
   counter_name: regex('^[A-Za-z0-9\-_]{1,20}$', required=False)
   log: bool(required=False)
-  service: any(include("centralized_policy_data_traffic_data_service_chaining_action_set_service_tloc"),include("centralized_policy_data_traffic_data_service_chaining_action_set_service_tloc_list") , required=False)
+  service: include("centralized_policy_data_traffic_data_service_chaining_actions_service", required=False)
   tloc: include("centralized_policy_data_traffic_data_service_chaining_action_set_tloc_value", required=False)
   tloc_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of site list
   vpn: int(min=0, max=65530, required=False)
-centralized_policy_data_traffic_data_service_chaining_action_set_service_tloc:
+centralized_policy_data_traffic_data_service_chaining_actions_service:
   type: enum("appqoe", "FW", "IDP", "IDS", "netsvc1", "netsvc2", "netsvc3", "netsvc4", "netsvc5")
   vpn: int(min=0, max=65530, required=False)
   tloc: include("centralized_policy_data_traffic_data_service_chaining_action_set_tloc_value", required=False)
-  local: bool(required=False)
-  restrict: bool(required=False)
-? centralized_policy_data_traffic_data_service_chaining_action_set_service_tloc_list
-: type: enum("appqoe", "FW", "IDP", "IDS", "netsvc1", "netsvc2", "netsvc3", "netsvc4", "netsvc5")
-  vpn: int(min=0, max=65530, required=False)
   tloc_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of site list
   local: bool(required=False)
   restrict: bool(required=False)
@@ -2765,7 +2746,7 @@ centralized_policy_data_traffic_data_custom_actions:
   next_hop: include("centralized_policy_data_traffic_data_custom_action_next_hop", required=False)
   preferred_color_group: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
   policer_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
-  service: any(include("centralized_policy_data_traffic_data_custom_action_service_tloc"), include("centralized_policy_data_traffic_data_custom_action_service_tloc_list"), required=False)
+  service: include("centralized_policy_data_traffic_data_custom_actions_service", required=False)
   tloc: include("centralized_policy_data_traffic_data_custom_action_tloc_value", required=False)
   tloc_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of site list
   vpn: int(min=0, max=65530, required=False)
@@ -2792,15 +2773,10 @@ centralized_policy_data_traffic_data_custom_action_local_tloc_list_values:
 centralized_policy_data_traffic_data_custom_action_next_hop:
   ip_address: ip(version=4)
   when_next_hop_is_not_available: enum("route_table_entry", required=False)
-centralized_policy_data_traffic_data_custom_action_service_tloc:
+centralized_policy_data_traffic_data_custom_actions_service:
   type: enum("appqoe", "FW", "IDP", "IDS", "netsvc1", "netsvc2", "netsvc3", "netsvc4", "netsvc5")
   vpn: int(min=0, max=65530, required=False)
   tloc: include("centralized_policy_data_traffic_data_custom_action_tloc_value", required=False)
-  local: bool(required=False)
-  restrict: bool(required=False)
-centralized_policy_data_traffic_data_custom_action_service_tloc_list:
-  type: enum("appqoe", "FW", "IDP", "IDS", "netsvc1", "netsvc2", "netsvc3", "netsvc4", "netsvc5")
-  vpn: int(min=0, max=65530, required=False)
   tloc_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of site list
   local: bool(required=False)
   restrict: bool(required=False)
