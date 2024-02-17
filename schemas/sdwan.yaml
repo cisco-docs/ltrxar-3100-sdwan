@@ -2304,21 +2304,21 @@ centralized_policy_policies_customcontrol_entries:
   policy_definition: str()
   site_region: include("centralized_policy_policies_customcontrol_entries_site_region")
 centralized_policy_policies_customcontrol_entries_site_region:
-  site_lists_in: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
-  site_lists_out: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
-  region_lists_in: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
-  region_lists_out: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
-  region_in: int(min=0, max=63)
-  region_out: int(min=0, max=63)
+  site_lists_in: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)
+  site_lists_out: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)
+  region_lists_in: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)
+  region_lists_out: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)
+  region_in: int(min=0, max=63, required=False)
+  region_out: int(min=0, max=63, required=False)
 centralized_policy_policies_vpn_membership_entries:
   policy_definition: str()
 centralized_policy_application_aware_routing_entries:
   policy_definition: str()
   site_region_vpn: include("centralized_policy_application_aware_routing_entries_site_region_vpn", required=False)
 centralized_policy_application_aware_routing_entries_site_region_vpn:
-  site_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
-  region_list: regex('^[A-Za-z0-9\-_]{1,32}$')
-  region: int(min=0, max=63)
+  site_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)
+  region_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
+  region: int(min=0, max=63, required=False)
   vpn_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
 centralized_policy_policies_traffic_data_entries:
   policy_definition: str()
@@ -2454,7 +2454,7 @@ centralized_policy_control_topology_customcontrol_route_action_set_tloc_value:
 centralized_policy_control_topology_customcontrol_route_actions_service:
   type: enum("IDP", "IDS", "FW", "netsvc1", "netsvc2", "netsvc3", "netsvc4", "netsvc5", "appqoe")
   vpn: int(min=0, max=65530)
-  tloc: include("centralized_policy_control_topology_customcontrol_route_action_set_tloc_value")
+  tloc: include("centralized_policy_control_topology_customcontrol_route_action_set_tloc_value", required=False)
   tloc_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of TLOC list
 #Centralized Policy - Control Policy - definitions - VPN Membership
 centralized_policy_control_vpn_membership:
