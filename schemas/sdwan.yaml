@@ -2001,8 +2001,8 @@ localized_policies_definitions_ipv4_access_control_list_sequence:
   base_action: enum("accept", "drop")
   match_criterias: include("localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias")
   actions: include("localized_policies_definitions_ipv4_access_control_list_sequence_actions", required=False)
-? localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias
-: class: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias:
+  class: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
   destination_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
   destination_ip_prefix: ip(version=4, required=False)
   destination_ports: list(int(min=0, max=65535), required=False)
@@ -2016,11 +2016,11 @@ localized_policies_definitions_ipv4_access_control_list_sequence:
   source_ports: list(int(min=0, max=65535), required=False)
   source_port_ranges: list(include("localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias_source_port_range"), required=False)
   tcp: enum("syn", required=False)
-? localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias_destination_port_range
-: from: int(min=0, max=65535)
+localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias_destination_port_range:
+  from: int(min=0, max=65535)
   to: int(min=0, max=65535)
-? localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias_source_port_range
-: from: int(min=0, max=65535)
+localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias_source_port_range:
+  from: int(min=0, max=65535)
   to: int(min=0, max=65535)
 localized_policies_definitions_ipv4_access_control_list_sequence_actions:
   counter_name: str(min=1, max=20, required=False)
@@ -2042,8 +2042,8 @@ localized_policies_definitions_ipv4_device_access_policy_sequence:
   base_action: enum("accept", "drop")
   match_criterias: include("localized_policies_definitions_ipv4_device_access_policy_sequence_match_criterias")
   counter_name: str(min=1, max=20, required=False)
-? localized_policies_definitions_ipv4_device_access_policy_sequence_match_criterias
-: destination_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+localized_policies_definitions_ipv4_device_access_policy_sequence_match_criterias:
+  destination_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
   destination_ip_prefix: ip(version=4, required=False)
   destination_port: enum(22, 161)
   source_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
@@ -2061,8 +2061,8 @@ localized_policies_definitions_ipv6_access_control_list_sequence:
   base_action: enum("accept", "drop")
   match_criterias: include("localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias", required=False)
   actions: include("localized_policies_definitions_ipv6_access_control_list_sequence_actions", required=False)
-? localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias
-: class: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias:
+  class: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
   destination_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
   destination_ip_prefix: ip(version=6, required=False)
   destination_port_ranges: list(include("localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias_destination_port_range"), required=False)
@@ -2076,11 +2076,11 @@ localized_policies_definitions_ipv6_access_control_list_sequence:
   source_ports: list(int(min=0, max=65535), required=False)
   tcp: enum("syn", required=False)
   traffic_class: int(min=0, max=63)
-? localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias_destination_port_range
-: from: int(min=0, max=65535)
+localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias_destination_port_range:
+  from: int(min=0, max=65535)
   to: int(min=0, max=65535)
-? localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias_source_port_range
-: from: int(min=0, max=65535)
+localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias_source_port_range:
+  from: int(min=0, max=65535)
   to: int(min=0, max=65535)
 localized_policies_definitions_ipv6_access_control_list_sequence_actions:
   class: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
@@ -2102,8 +2102,8 @@ localized_policies_definitions_ipv6_device_access_policy_sequence:
   base_action: enum("accept", "drop")
   match_criterias: include("localized_policies_definitions_ipv6_device_access_policy_sequence_match_criterias")
   counter_name: str(min=1, max=20, required=False)
-? localized_policies_definitions_ipv6_device_access_policy_sequence_match_criterias
-: destination_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
+localized_policies_definitions_ipv6_device_access_policy_sequence_match_criterias:
+  destination_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
   destination_ip_prefix: ip(version=4, required=False)
   destination_port: enum(22, 161)
   source_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
@@ -2202,17 +2202,17 @@ edge_device_templates:
   name: regex('^[^<>!&$@\/"() ]{,128}$')
   description: str()
   device_model: enum("ASR-1001-HX", "ASR-1001-X", "ASR-1002-HX", "ASR-1002-X", "ASR-1006-X", "C1101-4P", "C1101-4PLTEP", "C1101-4PLTEPW", "C1109-2PLTEGB", "C1109-2PLTEUS", "C1109-2PLTEVZ", "C1109-4PLTE2P", "C1109-4PLTE2PW", "C1111-4P", "C1111-4PLTEEA", "C1111-4PLTELA", "C1111-4PW", "C1111-8P", "C1111-8PLTEEA", "C1111-8PLTEEAW", "C1111-8PLTELA", "C1111-8PLTELAW", "C1111-8PW", "C1111X-8P", "C1112-8P", "C1112-8PLTEEA", "C1112-8PLTEEAWE", "C1112-8PWE", "C1113-8P", "C1113-8PLTEEA", "C1113-8PLTEEAW", "C1113-8PLTELA", "C1113-8PLTELAWZ", "C1113-8PLTEW", "C1113-8PM", "C1113-8PMLTEEA", "C1113-8PMWE", "C1113-8PW", "C1116-4P", "C1116-4PLTEEA", "C1116-4PLTEEAWE", "C1116-4PWE", "C1117-4P", "C1117-4PLTEEA", "C1117-4PLTEEAW", "C1117-4PLTELA", "C1117-4PLTELAWZ", "C1117-4PM", "C1117-4PMLTEEA", "C1117-4PMLTEEAWE", "C1117-4PMWE", "C1117-4PW", "C1118-8P", "C1121-4P", "C1121-4PLTEP", "C1121-8P", "C1121-8PLTEP", "C1121-8PLTEPW", "C1121X-8P", "C1121X-8PLTEP", "C1121X-8PLTEPW", "C1126-8PLTEP", "C1126X-8PLTEP", "C1127-8PLTEP", "C1127-8PMLTEP", "C1127X-8PLTEP", "C1127X-8PMLTEP", "C1128-8PLTEP", "C1131-8PLTEPW", "C1131-8PW", "C1131X-8PLTEPW", "C1131X-8PW", "C1161-8P", "C1161-8PLTEP", "C1161X-8P", "C1161X-8PLTEP", "C8000V", "C8200-1N-4T", "C8200L-1N-4T", "C8300-1N1S-4T2X", "C8300-1N1S-6T", "C8300-2N2S-4T2X", "C8300-2N2S-6T", "C8500-12X", "C8500-12X4QC", "C8500-20X6C", "C8500L-8S4X", "IR-1101", "IR-1821", "IR-1831", "IR-1833", "IR-1835", "IR-8140H", "IR-8140H-P", "IR-8340", "ISR-4221", "ISR-4221X", "ISR-4321", "ISR-4331", "ISR-4351", "ISR-4431", "ISR-4451-X", "ISR-4461", "ISR1100-4G-XE", "ISR1100-4GLTEGB-XE", "ISR1100-4GLTENA-XE", "ISR1100-6G-XE", "ISR1100X-4G-XE", "ISR1100X-6G-XE")
-  system_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
-  logging_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  system_template: regex('^[^<>!&$@\/"() ]{,128}$')
+  logging_template: regex('^[^<>!&$@\/"() ]{,128}$')
   ntp_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   aaa_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
-  bfd_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
-  omp_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
-  security_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
-  vpn_0_template: include("edge_device_templates_vpn_0", required=False)
-  vpn_512_template: include("edge_device_templates_vpn_512", required=False)
+  bfd_template: regex('^[^<>!&$@\/"() ]{,128}$')
+  omp_template: regex('^[^<>!&$@\/"() ]{,128}$')
+  security_template: regex('^[^<>!&$@\/"() ]{,128}$')
+  vpn_0_template: include("edge_device_templates_vpn_0")
+  vpn_512_template: include("edge_device_templates_vpn_512")
   vpn_service_templates: list(include("edge_device_templates_vpn_service"), required=False)
-  global_settings_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
+  global_settings_template: regex('^[^<>!&$@\/"() ]{,128}$')
   banner_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   snmp_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
   cli_template: regex('^[^<>!&$@\/"() ]{,128}$', required=False)
@@ -2506,8 +2506,8 @@ centralized_policy_application_aware_routing_app_route_match_criterias:
 centralized_policy_application_aware_routing_app_route_match_source_port_ranges:
   from: int(min=0, max=65535)
   to: int(min=0, max=65535)
-? centralized_policy_application_aware_routing_app_route_match_destination_port_ranges
-: from: int(min=0, max=65535)
+centralized_policy_application_aware_routing_app_route_match_destination_port_ranges: 
+  from: int(min=0, max=65535)
   to: int(min=0, max=65535)
 centralized_policy_application_aware_routing_app_route_actions:
   counter_name: regex('^[A-Za-z0-9\-_]{1,20}$', required=False)
@@ -2553,8 +2553,8 @@ centralized_policy_data_traffic_data_service_chaining_match_criterias:
 centralized_policy_data_traffic_data_service_chaining_match_source_port_ranges:
   from: int(min=0, max=65535)
   to: int(min=0, max=65535)
-? centralized_policy_data_traffic_data_service_chaining_match_destination_port_ranges
-: from: int(min=0, max=65535)
+centralized_policy_data_traffic_data_service_chaining_match_destination_port_ranges:
+  from: int(min=0, max=65535)
   to: int(min=0, max=65535)
 centralized_policy_data_traffic_data_service_chaining_actions:
   counter_name: regex('^[A-Za-z0-9\-_]{1,20}$', required=False)
@@ -2638,11 +2638,11 @@ centralized_policy_data_traffic_data_application_firewall_match_criterias:
   destination_ports: list(int(min=0, max=65535), required=False)
   destination_port_ranges: list(include("centralized_policy_data_traffic_data_application_firewall_match_destination_port_ranges"), required=False)
   tcp: enum("syn", required=False)
-? centralized_policy_data_traffic_data_application_firewall_match_source_port_ranges
-: from: int(min=0, max=65535)
+centralized_policy_data_traffic_data_application_firewall_match_source_port_ranges:
+  from: int(min=0, max=65535)
   to: int(min=0, max=65535)
-? centralized_policy_data_traffic_data_application_firewall_match_destination_port_ranges
-: from: int(min=0, max=65535)
+centralized_policy_data_traffic_data_application_firewall_match_destination_port_ranges:
+  from: int(min=0, max=65535)
   to: int(min=0, max=65535)
 centralized_policy_data_traffic_data_application_firewall_actions:
   counter_name: regex('^[A-Za-z0-9\-_]{1,20}$', required=False)
@@ -2671,11 +2671,11 @@ centralized_policy_data_traffic_data_traffic_engineering_match_criterias:
   destination_ports: list(int(min=0, max=65535), required=False)
   destination_port_ranges: list(include("centralized_policy_data_traffic_data_traffic_engineering_match_destination_port_ranges"), required=False)
   tcp: enum("syn", required=False)
-? centralized_policy_data_traffic_data_traffic_engineering_match_source_port_ranges
-: from: int(min=0, max=65535)
+centralized_policy_data_traffic_data_traffic_engineering_match_source_port_ranges:
+  from: int(min=0, max=65535)
   to: int(min=0, max=65535)
-? centralized_policy_data_traffic_data_traffic_engineering_match_destination_port_ranges
-: from: int(min=0, max=65535)
+centralized_policy_data_traffic_data_traffic_engineering_match_destination_port_ranges:
+  from: int(min=0, max=65535)
   to: int(min=0, max=65535)
 centralized_policy_data_traffic_data_traffic_engineering_actions:
   counter_name: regex('^[A-Za-z0-9\-_]{1,20}$', required=False)
@@ -2689,8 +2689,8 @@ centralized_policy_data_traffic_data_traffic_engineering_action_set_tloc_values:
   ip: ip(version=4)
   color: enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6")
   encap: enum("ipsec", "gre")
-? centralized_policy_data_traffic_data_traffic_engineering_action_set_local_tloc_list_values
-: colors: list(enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6"))
+centralized_policy_data_traffic_data_traffic_engineering_action_set_local_tloc_list_values:
+  colors: list(enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6"))
   encaps: list(enum("ipsec", "gre"))
   restrict: bool(required=False)
 centralized_policy_data_traffic_data_traffic_engineering_action_set_next_hop:
