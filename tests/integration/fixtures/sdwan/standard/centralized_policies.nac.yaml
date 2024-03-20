@@ -1,0 +1,493 @@
+---
+# Centralized Policies Definitions and feature_policies
+sdwan:
+  centralized_policies:
+    definitions:
+      control_policy:
+        custom_control_topology:
+          - name: CCT_DEFINITION_TEST1
+            description: CCT_DEFINITION_TEST1
+            default_action_type: accept
+            sequences:
+              - id: 1
+                base_action: accept
+                name: rule1
+                ip_type: ipv4
+                type: route
+                match_criterias:
+                  color_list: COLOR-INTERNET-CCT-TEST
+                  community_list: COMMUNITY-REGION-CCT-TEST
+                  omp_tag: 65
+                  expanded_community_list: EXP-COMMUNITY-CCT-TEST
+                  preference: 45
+                  originator: 10.10.20.30
+                  origin: bgp
+                  site_id: 6789056
+                  path_type: direct-path
+                  tloc_list: TLOC-LIST-CCT-TEST1
+                  vpn_list: VPN-LIST-CCT-TEST1
+                  ipv4_prefix_list: PREFIX-LIST-CCT-TEST
+                actions:
+                  community: 100:1000
+                  community_additive: true
+                  preference: 48
+                  omp_tag: 88
+                  service:
+                    type: netsvc1
+                    vpn: 62
+                    tloc:
+                      ip: 3.4.5.6
+                      color: custom1
+                      encap: ipsec
+                  export_to_vpn_list: VPN-LIST-CCT-TEST2
+              - base_action: accept
+                id: 2
+                name: rule2
+                ip_type: ipv4
+                type: tloc
+                match_criterias:
+                  carrier: carrier1
+                  color_list: COLOR-INTERNET-CCT-TEST2
+                  domain_id: 567
+                  group_id: 678
+                  omp_tag: 77
+                  originator: 12.13.14.15
+                  preference: 88
+                  site_list: TEXAS-CCT-TEST
+                  tloc:
+                    ip: 10.10.33.67
+                    color: custom1
+                    encap: ipsec
+                actions:
+                  omp_tag: 89
+                  preference: 49
+        hub_and_spoke_topology:
+          - name: HST_DEFINITION_TEST1
+            description: HST_DEFINITION_TEST1
+            vpn_list: VPN-LIST-HST-TEST1
+            hub_and_spoke_sites:
+              - name: group1
+                spokes:
+                  - site_list: CALIFORNIA-HST-TEST
+                    hubs:
+                      - site_list: BOSTON-HST-TEST
+                      - site_list: NEWYORK-HST-TEST
+                  - site_list: WASHINGTON-HST-TEST
+                    hubs:
+                      - site_list: KENTUCKY-HST-TEST
+              - name: group2
+                equal_preference: true
+                advertise_tloc: false
+                tloc_list: TLOC-LIST-HST-TEST2
+                spokes:
+                  - site_list: CALIFORNIA-HST-TEST
+                    hubs:
+                      - site_list: BOSTON-HST-TEST
+                      - site_list: NEWYORK-HST-TEST
+                        ipv4_prefix_lists:
+                          - PREFIX-LIST-HST-TEST
+                  - site_list: WASHINGTON-HST-TEST
+                    hubs:
+                      - site_list: KENTUCKY-HST-TEST
+          - name: HST_DEFINITION_TEST2
+            description: HST_DEFINITION_TEST2
+            vpn_list: VPN-LIST-HST-TEST1
+            hub_and_spoke_sites:
+              - name: group1
+                equal_preference: true
+                advertise_tloc: false
+                tloc_list: TLOC-LIST-HST-TEST1
+                spokes:
+                  - site_list: CALIFORNIA-HST-TEST
+                    hubs:
+                      - site_list: BOSTON-HST-TEST
+                      - site_list: NEWYORK-HST-TEST
+                        ipv4_prefix_lists:
+                          - PREFIX-LIST-HST-TEST
+                  - site_list: WASHINGTON-HST-TEST
+                    hubs:
+                      - site_list: KENTUCKY-HST-TEST
+        mesh_topology:
+          - name: MT_DEFINITION_TEST1
+            description: MT_DEFINITION_TEST1
+            vpn_list: VPN-LIST-MT-TEST1
+            mesh_groups:
+              - name: MESH-REGION-TEST1
+                site_lists:
+                  - PHOENIX-MT-TEST
+                  - HOSUTON-MT-TEST
+              - name: MESH-REGION-TEST2
+                site_lists:
+                  - MADISON-MT-TEST
+                  - KANSAS-MT-TEST
+          - name: MT_DEFINITION_TEST2
+            description: MT_DEFINITION_TEST2
+            vpn_list: VPN-LIST-MT-TEST1
+            mesh_groups:
+              - name: MESH-REGION-TEST1
+                site_lists:
+                  - PHOENIX-MT-TEST
+                  - HOSUTON-MT-TEST
+              - name: MESH-REGION-TEST2
+                site_lists:
+                  - MADISON-MT-TEST
+                  - KANSAS-MT-TEST
+        vpn_membership:
+          - name: VPN_DEFINITION_TEST1
+            description: VPN_DEFINITION_TEST1
+            groups:
+              - site_list: DELHI-VPNM-TEST
+                vpn_lists:
+                  - VPN-LIST-VPNM-TEST1
+                  - VPN-LIST-VPNM-TEST2
+              - site_list: MUMBAI-VPNM-TEST
+                vpn_lists:
+                  - VPN-LIST-VPNM-TEST3
+          - name: VPN_DEFINITION_TEST2
+            description: VPN_DEFINITION_TEST2
+            groups:
+              - site_list: DELHI-VPNM-TEST
+                vpn_lists:
+                  - VPN-LIST-VPNM-TEST1
+                  - VPN-LIST-VPNM-TEST2
+              - site_list: MUMBAI-VPNM-TEST
+                vpn_lists:
+                  - VPN-LIST-VPNM-TEST3
+      data_policy:
+        application_aware_routing:
+          - name: Test_application_aware_routing_number2
+            description: Test_application_aware_routing_number2
+            default_action_type:
+              sla_class_list: default
+            sequences:
+              - id: 1
+                name: aar_rule
+                ip_type: ipv4
+                type: app_route
+                match_criterias:
+                  application_list: APP-LIST-TD-TEST3
+                  cloud_saas_application_list: APP-LIST-TD-TEST3
+                  dns_application_list: APP-LIST-TD-TEST3
+                  dns: request
+                  dscp: 54
+                  plp: high
+                  protocols:
+                    - 6
+                  source_data_prefix_list: PREFIX-LIST-AAR-TEST3
+                  source_data_prefix: 10.1.1.0/24
+                  source_ports:
+                    - 675
+                  destination_data_prefix_list: PREFIX-LIST-AAR-TEST4
+                  destination_data_prefix: 10.2.1.0/24
+                  destination_ports:
+                    - 676
+                  traffic_to: core
+                  destination_region: primary-region
+                actions:
+                  counter_name: abc
+                  log: true
+                  cloud_sla: true
+        traffic_data:
+          - name: TD_DEFINITION_TEST1
+            description: TD_DEFINITION_TEST1
+            default_action_type: drop
+            sequences:
+              - base_action: accept
+                id: 1
+                name: rule1
+                ip_type: ipv4
+                type: qos
+                match_criterias:
+                  application_list: APP-LIST-TD-TEST1
+                  dscp: 54
+                  packet_length: 1150
+                  plp: high
+                  protocols:
+                    - 6
+                    - 7
+                    - 8
+                  source_data_prefix_list: PREFIX-LIST-TD-TEST1
+                  source_data_prefix: 10.1.1.0/24
+                  source_ports:
+                    - 676
+                    - 53
+                  source_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  destination_data_prefix_list: PREFIX-LIST-TD-TEST2
+                  destination_data_prefix: 10.2.1.0/24
+                  destination_ports:
+                    - 676
+                    - 53
+                  destination_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  tcp: "syn"
+                actions:
+                  log: true
+                  counter_name: LOGGER-TD-TEST1
+                  dscp: 42
+                  forwarding_class: video_live
+                  policer_list: POLICER-TD-TEST1
+                  loss_correction:
+                    type: fecAlways
+                    loss_threshold_percentage: 3
+              - base_action: accept
+                id: 7
+                name: rule7
+                ip_type: ipv4
+                type: service_chaining
+                match_criterias:
+                  application_list: APP-LIST-TD-TEST2
+                  dscp: 54
+                  packet_length: 1150
+                  plp: high
+                  protocols:
+                    - 89
+                    - 90
+                    - 91
+                  source_data_prefix_list: PREFIX-LIST-TD-TEST2
+                  source_data_prefix: 10.2.1.0/24
+                  source_ports:
+                    - 676
+                    - 53
+                  source_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  destination_data_prefix_list: PREFIX-LIST-TD-TEST1
+                  destination_data_prefix: 10.1.1.0/24
+                  destination_ports:
+                    - 676
+                    - 53
+                  destination_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  tcp: "syn"
+                actions:
+                  log: true
+                  counter_name: LOGGER-TD-TEST2
+                  service:
+                    type: FW
+                    vpn: 62
+                    tloc_list: TLOC-LIST-TD-TEST1
+              - base_action: accept
+                id: 3
+                name: rule3
+                ip_type: ipv4
+                type: traffic_engineering
+                match_criterias:
+                  application_list: APP-LIST-TD-TEST2
+                  dscp: 54
+                  packet_length: 1150
+                  plp: high
+                  protocols:
+                    - 89
+                    - 90
+                    - 91
+                  source_data_prefix_list: PREFIX-LIST-TD-TEST2
+                  source_data_prefix: 10.2.1.0/24
+                  source_ports:
+                    - 676
+                    - 53
+                  source_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  destination_data_prefix_list: PREFIX-LIST-TD-TEST1
+                  destination_data_prefix: 10.1.1.0/24
+                  destination_ports:
+                    - 676
+                    - 53
+                  destination_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  tcp: "syn"
+                actions:
+                  log: true
+                  counter_name: LOGGER-TD-TEST2
+                  tloc_list: TLOC-LIST-TD-TEST1
+                  tloc:
+                    ip: 10.10.54.97
+                    color: custom2
+                    encap: ipsec
+                  vpn: 6
+                  local_tloc_list:
+                    restrict: true
+                    colors:
+                      - custom1
+                      - custom2
+                    encaps:
+                      - ipsec
+                  next_hop:
+                    ip_address: 10.10.10.4
+                    when_next_hop_is_not_available: route_table_entry
+              - base_action: drop
+                id: 4
+                name: rule4
+                ip_type: ipv4
+                type: application_firewall
+                match_criterias:
+                  application_list: APP-LIST-TD-TEST2
+                  dscp: 54
+                  packet_length: 1150
+                  plp: high
+                  protocols:
+                    - 89
+                    - 90
+                    - 91
+                  source_data_prefix_list: PREFIX-LIST-TD-TEST2
+                  source_data_prefix: 10.2.1.0/24
+                  source_ports:
+                    - 676
+                    - 53
+                  source_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  destination_data_prefix_list: PREFIX-LIST-TD-TEST1
+                  destination_data_prefix: 10.1.1.0/24
+                  destination_ports:
+                    - 676
+                    - 53
+                  destination_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  tcp: "syn"
+                actions:
+                  log: true
+                  counter_name: LOGGER-TD-TEST2
+              - base_action: accept
+                id: 5
+                name: rule5
+                ip_type: ipv4
+                type: custom
+                match_criterias:
+                  application_list: APP-LIST-TD-TEST2
+                  dns_application_list: APP-LIST-TD-TEST2
+                  dns: request
+                  dscp: 54
+                  packet_length: 1150
+                  plp: high
+                  protocols:
+                    - 89
+                    - 90
+                    - 91
+                  source_data_prefix_list: PREFIX-LIST-TD-TEST2
+                  source_data_prefix: 10.2.1.0/24
+                  source_ports:
+                    - 676
+                    - 53
+                  source_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  destination_data_prefix_list: PREFIX-LIST-TD-TEST1
+                  destination_data_prefix: 10.1.1.0/24
+                  destination_ports:
+                    - 676
+                    - 53
+                  destination_port_ranges:
+                    - from: 1001
+                      to: 2000
+                    - from: 3001
+                      to: 4000
+                  tcp: "syn"
+                  traffic_to: access
+                actions:
+                  dscp: 42
+                  forwarding_class: video_live
+                  local_tloc_list:
+                    restrict: true
+                    colors:
+                      - custom1
+                      - custom2
+                    encaps:
+                      - ipsec
+                      # - gre #
+                  next_hop:
+                    ip_address: 10.10.10.4
+                    when_next_hop_is_not_available: route_table_entry
+                  service:
+                    type: FW
+                    vpn: 62
+                    tloc_list: TLOC-LIST-TD-TEST1
+        cflowd:
+          - name: CFLOW_DEFINITION_TEST2
+            description: CFLOW_DEFINITION_TEST2
+            active_flow_timeout: 30
+            inactive_flow_timeout: 3600
+            sampling_interval: 30
+            flow_refresh: 60
+            protocol: ipv4
+            tos: true
+            remarked_dscp: true
+            collectors:
+              - vpn: 112
+                ip_address: 173.36.118.129
+                port: 2048
+                transport: transport_udp
+                source_interface: GigabitEthernet0
+                export_spreading: enable
+              - vpn: 101
+                ip_address: 173.36.118.130
+                port: 2048
+                transport: transport_udp
+                source_interface: GigabitEthernet1
+                export_spreading: enable
+    feature_policies:
+      - name: Super_policy_test2
+        description: Super_policy_test2
+        hub_and_spoke_topology:
+          - policy_definition: HST_DEFINITION_TEST1
+        mesh_topology:
+          - policy_definition: MT_DEFINITION_TEST1
+        vpn_membership:
+          - policy_definition: VPN_DEFINITION_TEST1
+        custom_control_topology:
+          - policy_definition: CCT_DEFINITION_TEST1
+            site_region:
+              site_lists_in:
+                - CHICAGO-CCT-TEST
+              site_lists_out:
+                - DENVER-CCT-TEST
+                - ATLANTA-CCT-TEST
+        traffic_data:
+          - policy_definition: TD_DEFINITION_TEST1
+            site_region_vpn:
+              - direction: service
+                site_lists:
+                  - GOA-TD-TEST
+                vpn_lists:
+                  - VPN-LIST-TD-TEST1
+              - direction: all
+                site_lists:
+                  - CHENNAI-TD-TEST
+                vpn_lists:
+                  - VPN-LIST-TD-TEST2
+        cflowd:
+          - policy_definition: CFLOW_DEFINITION_TEST2
+            site_lists:
+              - MY-CFLOW-TEST
+        application_aware_routing:
+          - policy_definition: Test_application_aware_routing_number2
+            site_region_vpn:
+              site_lists:
+                - CHENNAI-TD-TEST
+              vpn_lists:
+                - VPN-LIST-TD-TEST1
+    activated_policy: Super_policy_test2

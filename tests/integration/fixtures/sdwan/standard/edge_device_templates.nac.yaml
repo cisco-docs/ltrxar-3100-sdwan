@@ -1,0 +1,100 @@
+---
+# Edge Device template data
+sdwan:
+  edge_device_templates:
+    - name: DT-C8000V-SINGLECPE
+      description: "Test device template"
+      device_model: C8000V
+      aaa_template: FT-CEDGE-AAA-01
+      banner_template: FT-CEDGE-BANNER-01
+      bfd_template: FT-CEDGE-BFD-01
+      cli_template: FT-EDGE-CLI-LOGGING
+      global_settings_template: FT-CEDGE-GLOBAL-01
+      localized_policy: LOCAL-POLICY-TEMPLATE-01
+      logging_template: FT-CEDGE-LOGGING-01
+      ntp_template: FT-CEDGE-NTP-01
+      omp_template: FT-CEDGE-OMP-01
+      security_template: FT-CEDGE-SECURITY-01
+      snmp_template: FT-CEDGE-SNMPV3-01
+      system_template: FT-CEDGE-SYSTEM-01
+      vpn_0_template:
+        name: FT-CEDGE-VPN0-01
+        ethernet_interface_templates:
+          - name: FT-CEDGE-WAN-TLOC1
+          - name: FT-CEDGE-WAN-TLOC2
+      vpn_service_templates:
+        - name: FT-CEDGE-VPN1-ACTIVE-01
+          bgp_template: FT-CEDGE-BGP-VPN1-ACTIVE
+          ethernet_interface_templates:
+            - name: FT-CEDGE-VPN1-LAN1
+        - name: FT-CEDGE-VPN511-01
+          ethernet_interface_templates:
+            - name: FT-CEDGE-VPN511-LOOPBACK511
+      vpn_512_template:
+        name: FT-CEDGE-VPN512-01
+        ethernet_interface_templates:
+          - name: FT-CEDGE-VPN512-OOB
+    - name: DT-C8000V-DUALCPE-ACTIVE
+      description: "Dual-CPE site, active template"
+      device_model: C8000V
+      aaa_template: FT-CEDGE-AAA-01
+      banner_template: FT-CEDGE-BANNER-01
+      bfd_template: FT-CEDGE-BFD-01
+      cli_template: FT-EDGE-CLI-LOGGING
+      global_settings_template: FT-CEDGE-GLOBAL-01
+      localized_policy: LOCAL-POLICY-TEMPLATE-01
+      logging_template: FT-CEDGE-LOGGING-01
+      ntp_template: FT-CEDGE-NTP-01
+      omp_template: FT-CEDGE-OMP-01
+      security_template: FT-CEDGE-SECURITY-01
+      snmp_template: FT-CEDGE-SNMPV3-01
+      system_template: FT-CEDGE-SYSTEM-01
+      vpn_0_template:
+        name: FT-CEDGE-VPN0-01
+        ethernet_interface_templates:
+          - name: FT-CEDGE-WAN-TLOC1
+          - name: FT-CEDGE-WAN-TLOC2
+      vpn_service_templates:
+        - name: FT-CEDGE-VPN1-ACTIVE-01
+          bgp_template: FT-CEDGE-BGP-VPN1-ACTIVE
+          ethernet_interface_templates:
+            - name: FT-CEDGE-VPN1-LAN1
+        - name: FT-CEDGE-VPN511-01
+          ethernet_interface_templates:
+            - name: FT-CEDGE-VPN511-LOOPBACK511
+      vpn_512_template:
+        name: FT-CEDGE-VPN512-01
+        ethernet_interface_templates:
+          - name: FT-CEDGE-VPN512-OOB
+    - name: DT-C8000V-DUALCPE-STANDBY
+      description: "Dual-CPE site, active template"
+      device_model: C8000V
+      aaa_template: FT-CEDGE-AAA-01
+      banner_template: FT-CEDGE-BANNER-01
+      bfd_template: FT-CEDGE-BFD-01
+      cli_template: FT-EDGE-CLI-LOGGING
+      global_settings_template: FT-CEDGE-GLOBAL-01
+      localized_policy: LOCAL-POLICY-TEMPLATE-01
+      logging_template: FT-CEDGE-LOGGING-01
+      ntp_template: FT-CEDGE-NTP-01
+      omp_template: FT-CEDGE-OMP-01
+      security_template: FT-CEDGE-SECURITY-01
+      snmp_template: FT-CEDGE-SNMPV3-01
+      system_template: FT-CEDGE-SYSTEM-01
+      vpn_0_template:
+        name: FT-CEDGE-VPN0-01
+        ethernet_interface_templates:
+          - name: FT-CEDGE-WAN-TLOC1
+          - name: FT-CEDGE-WAN-TLOC2
+      vpn_service_templates:
+        - name: FT-CEDGE-VPN1-STANDBY-01
+          bgp_template: FT-CEDGE-BGP-VPN1-STANDBY
+          ethernet_interface_templates:
+            - name: FT-CEDGE-VPN1-LAN1
+        - name: FT-CEDGE-VPN511-01
+          ethernet_interface_templates:
+            - name: FT-CEDGE-VPN511-LOOPBACK511
+      vpn_512_template:
+        name: FT-CEDGE-VPN512-01
+        ethernet_interface_templates:
+          - name: FT-CEDGE-VPN512-OOB

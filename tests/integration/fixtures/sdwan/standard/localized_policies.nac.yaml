@@ -1,0 +1,281 @@
+---
+# Localized Policies
+sdwan:
+  localized_policies:
+    definitions:
+      ipv4_access_control_lists:
+        - name: ACL-TLOCEXT-DSCP
+          description: Set traffic class based on DSCP on inbound tloc-extension
+          default_action: accept
+          sequences:
+            - id: 10
+              name: ACL
+              base_action: accept
+              match_criterias:
+                dscp: 46
+              actions:
+                class: CLASS-REALTIME
+                counter_name: 10-CLASS-REALTIME
+            - id: 20
+              name: ACL
+              base_action: accept
+              match_criterias:
+                dscp: 48
+              actions:
+                class: CLASS-NETCONTROL
+            - id: 30
+              base_action: accept
+              match_criterias:
+                dscp: 0
+              actions:
+                class: CLASS-DEFAULT
+            - id: 40
+              base_action: accept
+              match_criterias:
+                dscp: 26
+              actions:
+                class: CLASS-CRITICALDATA
+            - id: 50
+              base_action: accept
+              match_criterias:
+                dscp: 8
+              actions:
+                class: CLASS-SCAVENGER
+        - name: ACL-NETCONF830-DROP
+          description: Drop traffic to netconf port
+          default_action: accept
+          sequences:
+            - id: 10
+              base_action: drop
+              match_criterias:
+                destination_ports:
+                  - 830
+                destination_ip_prefix: 10.1.1.1/32
+              actions:
+                counter_name: 10-DROP-NETCONF
+        - name: ACL-GRE-DROP
+          description: Drop non-encrypted tunneled traffic GRE IPIP
+          default_action: accept
+          sequences:
+            - id: 10
+              base_action: drop
+              match_criterias:
+                protocols:
+                  - 47
+                  - 94
+              actions:
+                counter_name: 10-DROP-TUNNEL
+        - name: ACL-SET-NEXTHOP
+          description: set nexthop
+          default_action: accept
+          sequences:
+            - id: 1
+              base_action: accept
+              match_criterias:
+                destination_data_prefix_list: DPL-DEFAULT
+                tcp: syn
+              actions:
+                dscp: 0
+                next_hop: 10.1.1.1
+                counter_name: INTERNET
+                log: true
+                class: CLASS-DEFAULT
+      ipv4_device_access_policies:
+        - name: ACL-DEVICEACCESSPOLICY-01
+          description: SSH and SNMP access control
+          default_action: drop
+          sequences:
+            - id: 10
+              base_action: accept
+              match_criterias:
+                source_ip_prefix: 10.254.1.0/24
+                destination_ip_prefix: 10.253.7.0/24
+                destination_port: 22
+              counter_name: SEQ10-SSH
+            - id: 15
+              base_action: accept
+              match_criterias:
+                source_ip_prefix: 172.16.0.0/12
+                destination_port: 22
+              counter_name: SEQ15-SSH
+            - id: 20
+              base_action: accept
+              match_criterias:
+                source_ip_prefix: 192.168.0.0/16
+                destination_port: 22
+              counter_name: SEQ15-SSH
+            - id: 25
+              base_action: accept
+              match_criterias:
+                source_ip_prefix: 10.254.1.0/24
+                destination_ip_prefix: 10.253.7.0/24
+                destination_port: 161
+              counter_name: SEQ20-SNMP
+      qos_maps:
+        - name: QOS-MAP-1P4Q
+          description: 1-prio 4-red queue qos-map
+          qos_schedulers:
+            - queue: 0
+              bandwidth_percent: 10
+              buffer_percent: 10
+              burst_bytes: 200000
+              scheduling_type: llq
+              drop_type: tail-drop
+              class_map: CLASS-REALTIME
+            - queue: 1
+              bandwidth_percent: 15
+              buffer_percent: 15
+              scheduling_type: wrr
+              drop_type: red-drop
+              class_map: CLASS-NETCONTROL
+            - queue: 2
+              bandwidth_percent: 40
+              buffer_percent: 40
+              scheduling_type: wrr
+              drop_type: red-drop
+              class_map: CLASS-DEFAULT
+            - queue: 3
+              bandwidth_percent: 30
+              buffer_percent: 30
+              scheduling_type: wrr
+              drop_type: red-drop
+              class_map: CLASS-CRITICALDATA
+            - queue: 4
+              bandwidth_percent: 5
+              buffer_percent: 5
+              scheduling_type: wrr
+              drop_type: red-drop
+              class_map: CLASS-SCAVENGER
+      rewrite_rules:
+        - name: REWRITE-RULE-MPLS
+          description: DCSP rewrite for MPLS underlay
+          rules:
+            - class: CLASS-REALTIME
+              dscp: 46
+              priority: high
+            - class: CLASS-NETCONTROL
+              dscp: 48
+              priority: high
+            - class: CLASS-DEFAULT
+              dscp: 0
+              priority: low
+            - class: CLASS-CRITICALDATA
+              dscp: 26
+              priority: high
+            - class: CLASS-SCAVENGER
+              dscp: 0
+              priority: low
+      route_policies:
+        - name: ROUTE-MAP-SET-OMPTAG
+          description: Set OMP tag based on community list
+          default_action: accept
+          sequences:
+            - id: 10
+              ip_type: ipv4
+              base_action: accept
+              match_criterias:
+                standard_community_lists:
+                  - COMMUNITY-REGION1
+                standard_community_lists_criteria: or
+              actions:
+                omp_tag: 1122334455
+        - name: ROUTE-MAP-SET-COMMUNITY
+          description: Set community
+          default_action: accept
+          sequences:
+            - id: 10
+              ip_type: ipv4
+              base_action: accept
+              match_criterias:
+                as_path_list: ASPATH-PRIVATE
+              actions:
+                communities:
+                  - internet
+                community_additive: true
+        - name: RM-SITE-BGP-OUT-ACTIVE
+          description: BGP out - active router for the VPN
+          default_action: accept
+          sequences:
+            - id: 1
+              ip_type: ipv4
+              base_action: accept
+              actions:
+                metric: 100
+        - name: RM-SITE-BGP-OUT-STANDBY
+          description: BGP out - standby router for the VPN
+          default_action: accept
+          sequences:
+            - id: 1
+              ip_type: ipv4
+              base_action: accept
+              actions:
+                metric: 200
+        - name: RM-SITE-BGP-TO-OMP-ACTIVE
+          description: BGP to OMP - Active router for the VPN
+          default_action: accept
+          sequences:
+            - id: 1
+              ip_type: ipv4
+              base_action: accept
+              actions:
+                omp_tag: 1111
+        - name: RM-SITE-BGP-TO-OMP-STANDBY
+          description: BGP to OMP - Standby router for the VPN
+          default_action: accept
+          sequences:
+            - id: 1
+              ip_type: ipv4
+              base_action: accept
+              actions:
+                omp_tag: 2222
+    feature_policies:
+      - name: LOCAL-POLICY-TEMPLATE-01
+        description: Localized Policy v01
+        ipv4_application_visibility: true
+        ipv6_application_visibility: false
+        ipv4_flow_visibility: true
+        ipv6_flow_visibility: false
+        implicit_acl_logging: false
+        ipv4_visibility_cache_entries: 1000
+        ipv6_visibility_cache_entries: 1000
+        log_frequency: 1024
+        definitions:
+          qos_maps:
+            - QOS-MAP-1P4Q
+          rewrite_rules:
+            - REWRITE-RULE-MPLS
+          route_policies:
+            - ROUTE-MAP-SET-OMPTAG
+            - RM-SITE-BGP-OUT-ACTIVE
+            - RM-SITE-BGP-OUT-STANDBY
+            - RM-SITE-BGP-TO-OMP-ACTIVE
+            - RM-SITE-BGP-TO-OMP-STANDBY
+          ipv4_access_control_lists:
+            - ACL-NETCONF830-DROP
+          ipv4_device_access_policies:
+            - ACL-DEVICEACCESSPOLICY-01
+      - name: LOCAL-POLICY-TEMPLATE-02
+        description: Localized Policy v02
+        ipv4_application_visibility: false
+        ipv6_application_visibility: false
+        ipv4_flow_visibility: false
+        ipv6_flow_visibility: false
+        implicit_acl_logging: false
+        definitions:
+          ipv4_access_control_lists:
+            - ACL-NETCONF830-DROP
+            - ACL-TLOCEXT-DSCP
+          ipv4_device_access_policies:
+            - ACL-DEVICEACCESSPOLICY-01
+          qos_maps:
+            - QOS-MAP-1P4Q
+          rewrite_rules:
+            - REWRITE-RULE-MPLS
+          route_policies:
+            - ROUTE-MAP-SET-OMPTAG
+      - name: LOCAL-POLICY-TEMPLATE-03
+        description: Localized Policy v03
+        ipv4_application_visibility: true
+        ipv6_application_visibility: false
+        implicit_acl_logging: true
+        log_frequency: 1024

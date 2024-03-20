@@ -3,11 +3,17 @@ import os
 import errorhandler
 import pytest
 import tftest
+from util import render_templates, revert_snapshot, terraform_post_process
+
 
 pytestmark = pytest.mark.integration
 pytestmark = pytest.mark.sdwan
 
 error_handler = errorhandler.ErrorHandler()
+
+DATA_PATH = "tests/integration/fixtures/sdwan/standard/"
+OUTPUT_PATH = "templates_temp/"
+SDWAN_TEST_TEMPLATES_PATH = "templates/sdwan/"
 
 
 def full_sdwan_terraform_test(terraform_path, sdwan_url):
@@ -25,7 +31,9 @@ def full_sdwan_terraform_test(terraform_path, sdwan_url):
         output = tf.apply()
         if "No changes. Your infrastructure matches the configuration." not in output:
             pytest.fail(output)
-
+        error = sdwan_render_run_tests(DATA_PATH, OUTPUT_PATH)
+        if error:
+            pytest.fail(error)
         try:
             tf.destroy()
         except:
@@ -46,6 +54,19 @@ def full_sdwan_terraform_test(terraform_path, sdwan_url):
         if os.path.exists(state_backup_path):
             os.remove(state_backup_path)
 
+def sdwan_render_run_tests(DATA_PATH, OUTPUT_PATH):
+    """Render SDWAN test suites and run them using iac-test"""
+    error = render_templates(
+        DATA_PATH, OUTPUT_PATH, SDWAN_TEST_TEMPLATES_PATH
+    )
+    if error:
+        pytest.fail(error)
+    try:
+        iac_test.pabot.run_pabot(OUTPUT_PATH)
+    except SystemExit as e:
+        if e.code != 0:
+            return "Robot testing failed."
+    return None
 
 @pytest.mark.sdwan_209
 @pytest.mark.terraform
