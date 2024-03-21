@@ -47,28 +47,28 @@ def full_sdwan_terraform_test(data_paths, terraform_path, sdwan_url, version, tm
             pytest.fail(output)
 
         # Run tests
-        # data_paths.append(os.path.join(terraform_path, "defaults.yaml"))
-        # error = sdwan_render_run_tests(
-        #     sdwan_url, data_paths, os.path.join(tmpdir, "results/")
-        # )
-        # shutil.copy(
-        #     os.path.join(tmpdir, "results/", "log.html"),
-        #     "sdwan_tf_{}_log.html".format(version),
-        # )
-        # shutil.copy(
-        #     os.path.join(tmpdir, "results/", "report.html"),
-        #     "sdwan_tf_{}_report.html".format(version),
-        # )
-        # shutil.copy(
-        #     os.path.join(tmpdir, "results/", "output.xml"),
-        #     "sdwan_tf_{}_output.xml".format(version),
-        # )
-        # shutil.copy(
-        #     os.path.join(tmpdir, "results/", "xunit.xml"),
-        #     "sdwan_tf_{}_xunit.xml".format(version),
-        # )
-        # if error:
-        #     pytest.fail(error)
+        data_paths.append(os.path.join(terraform_path, "defaults.yaml"))
+        error = sdwan_render_run_tests(
+            sdwan_url, data_paths, os.path.join(tmpdir, "results/")
+        )
+        shutil.copy(
+            os.path.join(tmpdir, "results/", "log.html"),
+            "sdwan_tf_{}_log.html".format(version),
+        )
+        shutil.copy(
+            os.path.join(tmpdir, "results/", "report.html"),
+            "sdwan_tf_{}_report.html".format(version),
+        )
+        shutil.copy(
+            os.path.join(tmpdir, "results/", "output.xml"),
+            "sdwan_tf_{}_output.xml".format(version),
+        )
+        shutil.copy(
+            os.path.join(tmpdir, "results/", "xunit.xml"),
+            "sdwan_tf_{}_xunit.xml".format(version),
+        )
+        if error:
+            pytest.fail(error)
     finally:
         try:
             tf.destroy()

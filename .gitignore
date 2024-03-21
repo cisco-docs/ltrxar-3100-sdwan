@@ -415,6 +415,16 @@ site/
 # Pabot
 .pabotsuitenames
 
+# Test logs
+sdwan_*.html
+sdwan_*.xml
+
+# Debug logs
+*.log
+
+# Envrc
+.envrc
+
 # Prettier
 .prettierignore
 
