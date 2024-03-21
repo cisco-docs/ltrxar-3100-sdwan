@@ -38,6 +38,10 @@ REPOS = [
                 "src": "../validation/rules",
                 "dst": "./.rules",
             },
+            {
+                "src": "../templates/sdwan/test",
+                "dst": "./tests/templates",
+            },
         ],
         "files": [
             {
