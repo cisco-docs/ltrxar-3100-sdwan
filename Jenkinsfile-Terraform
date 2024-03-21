@@ -28,6 +28,12 @@ pipeline {
             steps {
                 sh 'pytest'
             }
+            post {
+                always {
+                    junit 'sdwan_tf_20.9_xunit.xml'
+                    archiveArtifacts 'sdwan_tf_20.9_*.html, sdwan_tf_20.9_*.xml'
+                }
+            }
         }
     }
 
