@@ -1,0 +1,28 @@
+*** Settings ***
+Documentation   Verify Extended Community List Configuration
+Suite Setup     Login SDWAN Manager
+Default Tags    sdwan  config  extended_community_lists
+Resource        ../../sdwan_common.resource
+
+{% if sdwan.policy_objects.extended_community_lists is defined%}
+
+*** Test Cases ***
+Get Extended Community List(s)
+   ${r}=    GET On Session    sdwan_manager    /dataservice/template/policy/list/extcommunity
+   Set Suite Variable    ${r}
+
+{% for extended_community in sdwan.policy_objects.extended_community_lists | default([]) %}
+{% set extended_community_name = extended_community.name %}
+
+Verify Policy Objects Extended Community List {{ extended_community_name }}
+   ${extended_community_id}=    Get Value From Json    ${r.json()}    $..data[?(@..name=="{{extended_community_name }}")].listId
+   ${r_id}=   GET On Session    sdwan_manager    /dataservice/template/policy/list/extcommunity/${extended_community_id[0]}
+   Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ extended_community_name }}    msg=extended community
+
+{% set extended_community_list = extended_community.extended_communities %}
+   ${com_list}=    Create List    {{ extended_community_list | join('   ') }}
+   Should Be Equal Value Json List    ${r_id.json()}    $..entries..community    ${com_list}    msg=extended community list is
+
+{% endfor %}
+
+{% endif %}
