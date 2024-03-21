@@ -1,4 +1,4 @@
-# Edge VPN Interface IPsec Feature Template
+# VPN Interface IPsec Feature Template
 
 Configure a standard IPsec interface, the interface name, the admin status, the IKEv2 parameters, the IPsec parameters, the tunnel source interface, the tunnel destination, the IP maximum transmission unit (MTU), the Transmission Control Protocol maximum segment size (TCP MSS), and more.
 

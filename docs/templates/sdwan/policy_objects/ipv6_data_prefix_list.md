@@ -1,4 +1,4 @@
-# IPv4 Data Prefix List
+# IPv6 Data Prefix List
 
 An IPv6 data prefix list specifies one or more IPv6 prefixes. You can specify both unicast and multicast addresses.
 

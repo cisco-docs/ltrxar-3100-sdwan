@@ -1,4 +1,4 @@
-# Edge Switchport Feature Template
+# Switchport Feature Template
 
 Use the Switch Port template to configure bridging for Cisco Catalyst SD-WAN.
 

@@ -1,4 +1,4 @@
-# Cisco CLI Template Feature Template
+# CLI Feature Template
 
 Configure devices using CLI templates.
 

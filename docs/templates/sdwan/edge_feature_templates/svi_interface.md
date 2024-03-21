@@ -1,4 +1,4 @@
-# Edge VPN Interface SVI Feature Template
+# VPN Interface SVI Feature Template
 
 Configure an interface name, the status of the interface, static IPv4 and v6 addressing, DHCP helper, VRRP, ingress/egress access control list (ACL) for IPv4 and 6, static Address Resolution Protocol (ARP), IP maximum transmission unit (MTU), Transmission Control Protocol maximum segment size (TCP MSS) and more.
 
