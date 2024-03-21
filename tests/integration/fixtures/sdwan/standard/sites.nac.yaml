@@ -4,7 +4,7 @@ sdwan:
   sites:
     - id: 2101
       routers:
-        - chassis_id: C8K-CC678D1C-8EDF-3966-4F51-ABFAB64F5ABE
+        - chassis_id: C8K-40C0CCFD-9EA8-2B2E-E73B-32C5924EC79B
           model: C8000V
           device_template: DT-C8000V-SINGLECPE
           device_variables:
@@ -72,7 +72,7 @@ sdwan:
             vpn512_int1_if_shutdown: false
     - id: 2102
       routers:
-        - chassis_id: C8K-BBD7E2E1-08B4-4AE3-7961-D5BB97896CB8
+        - chassis_id: C8K-E94D7B88-4B9E-3323-C6C3-F29079FAAC3B
           model: C8000V
           device_template: DT-C8000V-DUALCPE-ACTIVE
           device_variables:
@@ -138,7 +138,7 @@ sdwan:
             vpn512_int1_if_name: GigabitEthernet3
             vpn512_int1_if_description: OOB-mgmt
             vpn512_int1_if_shutdown: false
-        - chassis_id: C8K-B85FD975-461C-24AE-372D-641340459572
+        - chassis_id: C8K-B5EE117E-1210-C396-EC41-D3DA64D6A51A
           model: C8000V
           device_template: DT-C8000V-DUALCPE-STANDBY
           device_variables:
@@ -201,208 +201,6 @@ sdwan:
             vpn511_int1_if_description: Inband-mgmt
             vpn511_int1_if_shutdown: false
             vpn511_int1_if_ipv4_address: 10.255.254.103/32
-            vpn512_int1_if_name: GigabitEthernet3
-            vpn512_int1_if_description: OOB-mgmt
-            vpn512_int1_if_shutdown: false
-    - id: 2104
-      routers:
-        - chassis_id: C8K-42400CBA-D066-4454-40D9-D02E478937A2
-          model: C8000V
-          device_template: DT-C8000V-SINGLECPE
-          device_variables:
-            site_id: 2104
-            system_ip: 10.0.2.104
-            system_hostname: SITE2104-C8KV-01
-            logging_server_source_interface: Loopback511
-            ntp_server_source_interface: Loopback511
-            global_cdp_enable: true
-            global_lldp_enable: false
-            global_ip_domain_lookup_enable: true
-            snmp_shutdown: false
-            snmp_trap_source_interface: Loopback511
-            snmp_contact: contact@acme.com
-            snmp_location: Location 2104
-            system_location: Site2104
-            system_description: Site 2104 C8KV01
-            timezone: UTC
-            system_latitude: 50
-            system_longitude: 6
-            ondemand_tunnel_enable: false
-            ondemand_tunnel_idle_timeout: 10
-            vpn0_layer4_ecmp_enable: true
-            vpn0_tloc01_if_name: GigabitEthernet1
-            vpn0_tloc01_if_description: INET-1
-            vpn0_tloc01_if_shutdown: false
-            vpn0_tloc01_shaping_rate: 1000000
-            vpn0_tloc01_tunnel_ipsec_preference: 1
-            vpn0_tloc01_tunnel_weight: 1
-            vpn0_tloc01_tunnel_color: custom1
-            vpn0_tloc01_tunnel_group: 100
-            vpn0_tloc01_tunnel_restrict: false
-            vpn0_tloc01_tunnel_vmanage_connection_preference: 5
-            vpn0_tloc02_if_name: GigabitEthernet2
-            vpn0_tloc02_if_description: MPLS-1
-            vpn0_tloc02_if_shutdown: false
-            vpn0_tloc02_shaping_rate: 1000000
-            vpn0_tloc02_tunnel_ipsec_preference: 1
-            vpn0_tloc02_tunnel_weight: 1
-            vpn0_tloc02_tunnel_color: private1
-            vpn0_tloc02_tunnel_group: 200
-            vpn0_tloc02_tunnel_restrict: false
-            vpn0_tloc02_tunnel_vmanage_connection_preference: 5
-            vpn1_int1_if_name: GigabitEthernet6
-            vpn1_int1_if_description: VPN1 LAN1
-            vpn1_int1_if_shutdown: false
-            vpn1_int1_if_ipv4_address: 10.0.141.1/24
-            vpn1_bgp_as_number: 65001
-            vpn1_bgp_shutdown: false
-            vpn1_bgp_ipv4_maximum_paths: 2
-            vpn1_bgp_ipv4_neighbor1_address: 10.0.141.10
-            vpn1_bgp_ipv4_neighbor1_shutdown: false
-            vpn1_bgp_ipv4_neighbor1_remote_as: 65100
-            vpn1_bgp_ipv4_neighbor1_password: cisco123
-            vpn1_bgp_ipv4_neighbor2_address: TEMPLATE_IGNORE
-            vpn1_bgp_ipv4_neighbor2_shutdown: TEMPLATE_IGNORE
-            vpn1_bgp_ipv4_neighbor2_remote_as: TEMPLATE_IGNORE
-            vpn1_bgp_ipv4_neighbor2_password: TEMPLATE_IGNORE
-            vpn511_int1_if_name: Loopback511
-            vpn511_int1_if_description: Inband-mgmt
-            vpn511_int1_if_shutdown: false
-            vpn511_int1_if_ipv4_address: 10.255.254.104/32
-            vpn512_int1_if_name: GigabitEthernet3
-            vpn512_int1_if_description: OOB-mgmt
-            vpn512_int1_if_shutdown: false
-    - id: 2105
-      routers:
-        - chassis_id: C8K-A71081D2-0E41-6008-5EBD-043CE50112EF
-          model: C8000V
-          device_template: DT-C8000V-DUALCPE-ACTIVE
-          device_variables:
-            site_id: 2105
-            system_ip: 10.0.2.105
-            system_hostname: SITE2105-C8KV-01
-            logging_server_source_interface: Loopback511
-            ntp_server_source_interface: Loopback511
-            global_cdp_enable: true
-            global_lldp_enable: false
-            global_ip_domain_lookup_enable: true
-            snmp_shutdown: false
-            snmp_trap_source_interface: Loopback511
-            snmp_contact: contact@acme.com
-            snmp_location: Location 2105
-            system_location: Site2105
-            system_description: Site 2105 C8KV01
-            timezone: UTC
-            system_latitude: 40
-            system_longitude: 10
-            ondemand_tunnel_enable: false
-            ondemand_tunnel_idle_timeout: 10
-            vpn0_layer4_ecmp_enable: true
-            vpn0_tloc01_if_name: GigabitEthernet1
-            vpn0_tloc01_if_description: INET-1
-            vpn0_tloc01_if_shutdown: false
-            vpn0_tloc01_shaping_rate: 1000000
-            vpn0_tloc01_tunnel_ipsec_preference: 1
-            vpn0_tloc01_tunnel_weight: 1
-            vpn0_tloc01_tunnel_color: custom1
-            vpn0_tloc01_tunnel_group: 100
-            vpn0_tloc01_tunnel_restrict: false
-            vpn0_tloc01_tunnel_vmanage_connection_preference: 5
-            vpn0_tloc02_if_name: GigabitEthernet2
-            vpn0_tloc02_if_description: MPLS-1
-            vpn0_tloc02_if_shutdown: false
-            vpn0_tloc02_shaping_rate: 1000000
-            vpn0_tloc02_tunnel_ipsec_preference: 1
-            vpn0_tloc02_tunnel_weight: 1
-            vpn0_tloc02_tunnel_color: private1
-            vpn0_tloc02_tunnel_group: 200
-            vpn0_tloc02_tunnel_restrict: false
-            vpn0_tloc02_tunnel_vmanage_connection_preference: 5
-            vpn1_int1_if_name: GigabitEthernet6
-            vpn1_int1_if_description: VPN1 LAN1
-            vpn1_int1_if_shutdown: false
-            vpn1_int1_if_ipv4_address: 10.0.151.1/24
-            vpn1_bgp_as_number: 65001
-            vpn1_bgp_shutdown: false
-            vpn1_bgp_ipv4_maximum_paths: 2
-            vpn1_bgp_ipv4_neighbor1_address: 10.0.151.8
-            vpn1_bgp_ipv4_neighbor1_shutdown: false
-            vpn1_bgp_ipv4_neighbor1_remote_as: 65100
-            vpn1_bgp_ipv4_neighbor1_password: cisco123
-            vpn1_bgp_ipv4_neighbor2_address: TEMPLATE_IGNORE
-            vpn1_bgp_ipv4_neighbor2_shutdown: TEMPLATE_IGNORE
-            vpn1_bgp_ipv4_neighbor2_remote_as: TEMPLATE_IGNORE
-            vpn1_bgp_ipv4_neighbor2_password: TEMPLATE_IGNORE
-            vpn511_int1_if_name: Loopback511
-            vpn511_int1_if_description: Inband-mgmt
-            vpn511_int1_if_shutdown: false
-            vpn511_int1_if_ipv4_address: 10.255.254.105/32
-            vpn512_int1_if_name: GigabitEthernet3
-            vpn512_int1_if_description: OOB-mgmt
-            vpn512_int1_if_shutdown: false
-        - chassis_id: C8K-3F8DA8DB-5122-4134-5A9C-D70839492819
-          model: C8000V
-          device_template: DT-C8000V-DUALCPE-STANDBY
-          device_variables:
-            site_id: 2105
-            system_ip: 10.0.2.106
-            system_hostname: SITE2105-C8KV-02
-            logging_server_source_interface: Loopback511
-            ntp_server_source_interface: Loopback511
-            global_cdp_enable: true
-            global_lldp_enable: false
-            global_ip_domain_lookup_enable: true
-            snmp_shutdown: false
-            snmp_trap_source_interface: Loopback511
-            snmp_contact: contact@acme.com
-            snmp_location: Location 2105
-            system_location: Site2105
-            system_description: Site 2105 C8KV02
-            timezone: UTC
-            system_latitude: 40
-            system_longitude: 10
-            ondemand_tunnel_enable: false
-            ondemand_tunnel_idle_timeout: 10
-            vpn0_layer4_ecmp_enable: true
-            vpn0_tloc01_if_name: GigabitEthernet1
-            vpn0_tloc01_if_description: INET-1
-            vpn0_tloc01_if_shutdown: false
-            vpn0_tloc01_shaping_rate: 1000000
-            vpn0_tloc01_tunnel_ipsec_preference: 1
-            vpn0_tloc01_tunnel_weight: 1
-            vpn0_tloc01_tunnel_color: custom1
-            vpn0_tloc01_tunnel_group: 100
-            vpn0_tloc01_tunnel_restrict: false
-            vpn0_tloc01_tunnel_vmanage_connection_preference: 5
-            vpn0_tloc02_if_name: GigabitEthernet2
-            vpn0_tloc02_if_description: MPLS-1
-            vpn0_tloc02_if_shutdown: false
-            vpn0_tloc02_shaping_rate: 1000000
-            vpn0_tloc02_tunnel_ipsec_preference: 1
-            vpn0_tloc02_tunnel_weight: 1
-            vpn0_tloc02_tunnel_color: private1
-            vpn0_tloc02_tunnel_group: 200
-            vpn0_tloc02_tunnel_restrict: false
-            vpn0_tloc02_tunnel_vmanage_connection_preference: 5
-            vpn1_int1_if_name: GigabitEthernet6
-            vpn1_int1_if_description: VPN1 LAN1
-            vpn1_int1_if_shutdown: false
-            vpn1_int1_if_ipv4_address: 10.0.161.1/24
-            vpn1_bgp_as_number: 65001
-            vpn1_bgp_shutdown: false
-            vpn1_bgp_ipv4_maximum_paths: 2
-            vpn1_bgp_ipv4_neighbor1_address: 10.0.161.13
-            vpn1_bgp_ipv4_neighbor1_shutdown: false
-            vpn1_bgp_ipv4_neighbor1_remote_as: 65100
-            vpn1_bgp_ipv4_neighbor1_password: cisco123
-            vpn1_bgp_ipv4_neighbor2_address: TEMPLATE_IGNORE
-            vpn1_bgp_ipv4_neighbor2_shutdown: TEMPLATE_IGNORE
-            vpn1_bgp_ipv4_neighbor2_remote_as: TEMPLATE_IGNORE
-            vpn1_bgp_ipv4_neighbor2_password: TEMPLATE_IGNORE
-            vpn511_int1_if_name: Loopback511
-            vpn511_int1_if_description: Inband-mgmt
-            vpn511_int1_if_shutdown: false
-            vpn511_int1_if_ipv4_address: 10.255.254.106/32
             vpn512_int1_if_name: GigabitEthernet3
             vpn512_int1_if_description: OOB-mgmt
             vpn512_int1_if_shutdown: false

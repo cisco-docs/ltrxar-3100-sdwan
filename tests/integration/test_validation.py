@@ -7,11 +7,13 @@ pytestmark = pytest.mark.validate
 
 error_handler = errorhandler.ErrorHandler()
 
-SCHEMA_PATH = "schemas/schema.yaml"
+SCHEMA_PATH = "schemas/sdwan.yaml"
 VALIDATION_RULES_PATH = "validation/rules/"
 
 
-@pytest.mark.parametrize("data_paths", [(["tests/integration/fixtures/sdwan/standard/"])])
+@pytest.mark.parametrize(
+    "data_paths", [(["tests/integration/fixtures/sdwan/standard/"])]
+)
 def test_sdwan_validation(data_paths):
     validator = Validator(SCHEMA_PATH, VALIDATION_RULES_PATH)
     validator.validate_syntax(data_paths)
