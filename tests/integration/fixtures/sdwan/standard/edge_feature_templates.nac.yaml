@@ -674,6 +674,7 @@ sdwan:
     secure_internet_gateway_templates:
       - name: FT-CEDGE-SIG-UMBRELLA01
         description: Umbrella SIG 1x HA Tunnel
+        sig_provider: umbrella
         tracker_source_ip: 192.168.1.1
         zscaler_aup_enabled: true
         zscaler_authentication_required: false
@@ -698,11 +699,11 @@ sdwan:
             mtu: 1400
             tcp_mss: 1360
             tunnel_dc_preference: primary-dc
-            sig_provider: umbrella
             shutdown: false
             track: true
             tunnel_destination: 3.5.1.2
             tunnel_source_interface: GigabitEthernet0/0/0
+            tunnel_type: ipsec
           - dpd_interval: 10
             dpd_retries: 3
             name: ipsec2
@@ -712,11 +713,11 @@ sdwan:
             mtu: 1400
             tcp_mss: 1360
             tunnel_dc_preference: primary-dc
-            sig_provider: umbrella
             shutdown: false
             track: true
             tunnel_destination: 3.5.1.2
             tunnel_source_interface: GigabitEthernet0/0/0
+            tunnel_type: ipsec
         high_availability_interface_pairs:
           - active_interface: ipsec2
             active_interface_weight: 1
