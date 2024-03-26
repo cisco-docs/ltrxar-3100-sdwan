@@ -2002,7 +2002,7 @@ localized_policies_definitions_ipv4_access_control_list_sequence:
   id: int(min=1, max=65534)
   name: str(required=False)
   base_action: enum("accept", "drop")
-  match_criterias: include("localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias")
+  match_criterias: include("localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias", required=False)
   actions: include("localized_policies_definitions_ipv4_access_control_list_sequence_actions", required=False)
 localized_policies_definitions_ipv4_access_control_list_sequence_match_criterias:
   class: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
