@@ -186,7 +186,6 @@ sdwan:
         cli_config: |
           logging discriminator auth mnemonics drops AUTH_PASSED
           logging console discriminator auth
-          logging buffered discriminator auth
       - name: FT-EDGE-CLI-BGP
         description: "Edge CLI Template to set BGP local AS"
         cli_config: |
