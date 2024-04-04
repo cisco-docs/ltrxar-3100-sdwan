@@ -25,7 +25,7 @@ TEMPLATE = """[**[{status}] {job_name} {build}**]({url})
 * _Author_: {author}
 * _Branch_: {branch}
 * _Event_: {event}
-* _Test Reports_: [SD-WAN 20.9]({build_url}artifact/sdwan_tf_20.9_log.html)
+* _Test Reports_: [SD-WAN 20.9]({build_url}artifact/sdwan_tf_20.9_log.html), [SD-WAN 20.12]({build_url}artifact/sdwan_tf_20.12_log.html)
 """.format(
     status=str(os.getenv("BUILD_STATUS") or "").lower(),
     job_name=str(os.getenv("JOB_NAME")).rsplit("/", 1)[0],

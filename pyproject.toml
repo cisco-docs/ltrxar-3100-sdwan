@@ -1,3 +1,3 @@
 [tool.pytest.ini_options]
 filterwarnings = ["ignore::DeprecationWarning", "ignore::PendingDeprecationWarning"]
-markers = ["unit", "integration", "validate", "sdwan", "sdwan_209", "terraform"]
+markers = ["unit", "integration", "validate", "sdwan", "sdwan_209", "sdwan_2012", "terraform"]

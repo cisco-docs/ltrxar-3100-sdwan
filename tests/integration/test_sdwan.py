@@ -90,6 +90,7 @@ def full_sdwan_terraform_test(data_paths, terraform_path, sdwan_url, version, tm
         (
             [
                 "tests/integration/fixtures/sdwan/standard/",
+                "tests/integration/fixtures/sdwan/standard_209/",
             ],
             "tests/integration/fixtures/sdwan/terraform_209",
             "https://10.50.202.8",
@@ -98,4 +99,24 @@ def full_sdwan_terraform_test(data_paths, terraform_path, sdwan_url, version, tm
     ],
 )
 def test_sdwan_terraform_209(data_paths, terraform_path, sdwan_url, version, tmpdir):
+    full_sdwan_terraform_test(data_paths, terraform_path, sdwan_url, version, tmpdir)
+
+
+@pytest.mark.sdwan_2012
+@pytest.mark.terraform
+@pytest.mark.parametrize(
+    "data_paths, terraform_path, sdwan_url, version",
+    [
+        (
+            [
+                "tests/integration/fixtures/sdwan/standard/",
+                "tests/integration/fixtures/sdwan/standard_2012/",
+            ],
+            "tests/integration/fixtures/sdwan/terraform_2012",
+            "https://10.50.202.6",
+            "20.12",
+        ),
+    ],
+)
+def test_sdwan_terraform_2012(data_paths, terraform_path, sdwan_url, version, tmpdir):
     full_sdwan_terraform_test(data_paths, terraform_path, sdwan_url, version, tmpdir)

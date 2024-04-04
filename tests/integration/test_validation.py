@@ -12,7 +12,15 @@ VALIDATION_RULES_PATH = "validation/rules/"
 
 
 @pytest.mark.parametrize(
-    "data_paths", [(["tests/integration/fixtures/sdwan/standard/"])]
+    "data_paths",
+    [
+        (
+            [
+                "tests/integration/fixtures/sdwan/standard/",
+                "tests/integration/fixtures/sdwan/standard_209/",
+            ]
+        )
+    ],
 )
 def test_sdwan_validation(data_paths):
     validator = Validator(SCHEMA_PATH, VALIDATION_RULES_PATH)
