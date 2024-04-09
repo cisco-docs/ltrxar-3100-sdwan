@@ -4,7 +4,9 @@ class Rule:
     id = "301"
     description = "Verify Device Variables"
     severity = "HIGH"
-
+    
+    # Verify Device Variables
+    # Get Feature Tempate Variables
     @classmethod
     def get_feature_template_vars(cls, key, object):
         results = []
