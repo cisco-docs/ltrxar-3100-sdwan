@@ -73,3 +73,4 @@ class Rule:
         except KeyError:
             pass
         return missing_definitions
+    
