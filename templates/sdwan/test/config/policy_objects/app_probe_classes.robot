@@ -4,7 +4,7 @@ Suite Setup     Login SDWAN Manager
 Default Tags    sdwan    config    app_probe_classes_lists
 Resource        ../../sdwan_common.resource
 
-{% if sdwan.policy_objects.app_probe_classes is defined%}
+{% if sdwan.policy_objects.app_probe_classes is defined %}
 
 *** Test Cases ***
 Get App Probe Classes List(s)

@@ -4,7 +4,7 @@ Suite Setup     Login SDWAN Manager
 Default Tags    sdwan    config    policers
 Resource        ../../sdwan_common.resource
 
-{% if sdwan.policy_objects.policers is defined%}
+{% if sdwan.policy_objects.policers is defined %}
 
 *** Test Cases ***
 Get Policers List

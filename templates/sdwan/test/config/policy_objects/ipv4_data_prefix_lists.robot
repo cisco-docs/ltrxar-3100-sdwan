@@ -4,7 +4,7 @@ Suite Setup     Login SDWAN Manager
 Default Tags    sdwan    config    ipv4_data_prefix_lists
 Resource        ../../sdwan_common.resource
 
-{% if sdwan.policy_objects.ipv4_data_prefix_lists is defined%}
+{% if sdwan.policy_objects.ipv4_data_prefix_lists is defined %}
 
 *** Test Cases ***
 Get IPv4 Data Prefix List(s)

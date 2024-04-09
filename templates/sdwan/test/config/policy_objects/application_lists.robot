@@ -4,7 +4,8 @@ Suite Setup     Login SDWAN Manager
 Default Tags    sdwan    config    application_lists
 Resource        ../../sdwan_common.resource
 
-{% if sdwan.policy_objects.application_lists is defined%}
+{% if sdwan.policy_objects.application_lists is defined %}
+
 
 *** Test Cases ***
 Get Application List(s)
@@ -19,15 +20,13 @@ Verify Policy Objects Application List {{ application_name }}
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/list/app/${application_id[0]}
     Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ application_name }}    msg=application name
 
-{% if application.applications is defined %}
-    ${app_list}=   Create List   {{ application.applications | join('   ') }}
+{% set app_applications = application.applications | default([]) %}
+    ${app_list}=   Create List   {{ app_applications | join('   ') }}
     Should Be Equal Value Json List    ${r_id.json()}    $..entries..app    ${app_list}    msg=applications
-{% endif %}
 
-{% if application.application_families is defined %}
-    ${app_family_list}=   Create List   {{ application.application_families | join('   ') }}
+{% set app_application_families = application.application_families | default([]) %}
+    ${app_family_list}=   Create List   {{ app_application_families | join('   ') }}
     Should Be Equal Value Json List    ${r_id.json()}    $..entries..appFamily    ${app_family_list}    msg=application families
-{% endif %}
 
 {% endfor %}
 
