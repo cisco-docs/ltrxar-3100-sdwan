@@ -2468,6 +2468,7 @@ centralized_policy_control_vpn_membership_groups:
   site_list: regex('^[A-Za-z0-9\-_]{1,32}$') # name of site list
   vpn_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$')) # list of vpn lists
 #Centralized Policy - Data Policy
+#Centralized Policy - Data Policy contains Application_Aware_Routing and Traffic_Data
 centralized_policy_data:
   application_aware_routing: list(include("centralized_policy_application_aware_routing"), required=False)
   traffic_data: list(include("centralized_policy_data_traffic_data"), required=False)
@@ -2529,7 +2530,7 @@ centralized_policy_data_traffic_data:
   description: str()
   default_action_type: enum("accept", "drop")
   sequences: list(include("centralized_policy_data_traffic_data_service_chaining"), include("centralized_policy_data_traffic_data_qos"), include("centralized_policy_data_traffic_data_application_firewall"), include("centralized_policy_data_traffic_data_traffic_engineering"), include("centralized_policy_data_traffic_data_custom"), required=False)
-#Centralized Policy - Data Policy - Definitions - service chaining
+#Centralized Policy - Data Policy - Definitions - service chaining 
 centralized_policy_data_traffic_data_service_chaining:
   base_action: enum("accept", "drop")
   id: int(min=1, max=65534)
