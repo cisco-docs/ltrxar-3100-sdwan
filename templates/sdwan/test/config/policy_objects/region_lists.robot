@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation   Verify Region Lists
 Suite Setup     Login SDWAN Manager
+Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags    sdwan   config   region_lists
 Resource        ../../sdwan_common.resource
 

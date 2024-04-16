@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation    Verify Vpn Lists
 Suite Setup      Login SDWAN Manager
+Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags     sdwan  config  vpn_lists
 Resource         ../../sdwan_common.resource
 

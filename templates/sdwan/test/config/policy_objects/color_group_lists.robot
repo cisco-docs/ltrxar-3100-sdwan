@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation   Verify Preferred Color Group Lists
 Suite Setup     Login SDWAN Manager
+Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags    sdwan  config  preferred_color_groups
 Resource        ../../sdwan_common.resource
 Library         String

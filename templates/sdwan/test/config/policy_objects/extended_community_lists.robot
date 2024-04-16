@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation   Verify Extended Community List Configuration
 Suite Setup     Login SDWAN Manager
+Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags    sdwan  config  extended_community_lists
 Resource        ../../sdwan_common.resource
 

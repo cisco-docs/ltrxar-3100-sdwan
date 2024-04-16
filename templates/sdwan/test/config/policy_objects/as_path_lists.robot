@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation   Verify As Path Lists
 Suite Setup     Login SDWAN Manager
+Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags    sdwan    config    as_path_lists
 Resource        ../../sdwan_common.resource
 

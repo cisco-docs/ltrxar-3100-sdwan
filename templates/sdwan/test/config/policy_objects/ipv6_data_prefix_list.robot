@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation   Verify IPv6 Data Prefix List Configuration
 Suite Setup     Login SDWAN Manager
+Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags    sdwan  config  ipv6_data_prefix_lists
 Resource        ../../sdwan_common.resource
 

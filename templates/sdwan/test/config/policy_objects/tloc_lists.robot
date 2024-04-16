@@ -1,6 +1,7 @@
 *** Settings ***
 Documentation   Verify Tloc Lists
 Suite Setup     Login SDWAN Manager
+Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags    sdwan    config    tloc_lists
 Resource        ../../sdwan_common.resource
 

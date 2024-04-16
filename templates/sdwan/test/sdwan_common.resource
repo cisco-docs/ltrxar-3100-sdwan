@@ -29,6 +29,11 @@ Login SDWAN Manager
    ${m_headers}=   Create Dictionary   X-XSRF-TOKEN=${manager_token}   Cookie=${manager_cookie}   accept=application/json
    Create Session   sdwan_manager   %{SDWAN_URL}   headers=${m_headers}
 
+Logout SDWAN Manager
+   ${manager_cookie}=   Get Parallel Value For Key   manager_cookie
+   ${m_headers}=   Create Dictionary   Cookie=${manager_cookie}   accept=*/*
+   ${response}=   Wait Until Keyword Succeeds   6x   10s   GET On Session   sdwan_manager   /logout   headers=${m_headers}
+
 Should Be Equal Value Json String
    [Arguments]   ${json}    ${json_path}   ${value}=${EMPTY}  ${msg}=${EMPTY}
    ${r_value}=   Get Value From Json   ${json}   ${json_path}
