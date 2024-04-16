@@ -55,7 +55,7 @@ pipeline {
                 }
                 stage('Test SDWAN 20.12 Terraform') {
                     steps {
-                        sh 'pytest -m"sdwan_2012'
+                        sh 'pytest -m sdwan_2012'
                     }
                     post {
                         always {
