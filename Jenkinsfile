@@ -10,6 +10,8 @@ pipeline {
     environment {
         DD_GITHUB_TOKEN = credentials('DD_GITHUB_TOKEN')
         DD_INTERNAL_GITHUB_TOKEN = credentials('DD_INTERNAL_GITHUB_TOKEN')
+        SDWAN_USERNAME = credentials('SDWAN_USERNAME')
+        SDWAN_PASSWORD = credentials('SDWAN_PASSWORD')
         WEBEX_TOKEN = credentials('WEBEX_TOKEN')
         WEBEX_ROOM_ID = 'Y2lzY29zcGFyazovL3VzL1JPT00vNTFmMGNmODAtYjI0My0xMWU5LTljZjUtNWY0NGQ2ZTlmYWY0'
         GIT_COMMIT_MESSAGE = "${sh(returnStdout: true, script: 'git config --global --add safe.directory "*" && git log -1 --pretty=%B ${GIT_COMMIT}').trim()}"
