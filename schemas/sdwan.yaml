@@ -1084,7 +1084,7 @@ edge_feature_templates_ospf_redistribute:
   protocol_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
   route_policy: str(required=False)
   route_policy_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
-# Edge Secure Internet Gateway Feature Template
+# Edge Secure Internet Gateway Feature Template
 edge_feature_templates_secure_internet_gateway:
   name: regex('^[^<>!&" ]{1,128}$')
   description: str()
@@ -2276,7 +2276,7 @@ edge_router:
 # SD-WAN Multi-Region Fabric
 multi_region_fabric:
   enabled: bool()
-#Centralized Policy Tree
+# Centralized Policy Tree
 centralized_policies:
   definitions: include("centralized_policy_definitions", required=False)
   feature_policies: list(include("centralized_policy_policies"), required=False)
@@ -2341,13 +2341,13 @@ centralized_policy_policies_traffic_data_region_vpn_list:
 centralized_policy_policies_cflowd_entries:
   policy_definition: str()
   site_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'))
-#Centralized Policy - Control Policy
+# Centralized Policy - Control Policy
 centralized_policy_control:
   hub_and_spoke_topology: list(include("centralized_policy_control_topology_hubandspoke"), required=False)
   mesh_topology: list(include("centralized_policy_control_topology_mesh"), required=False)
   custom_control_topology: list(include("centralized_policy_control_topology_customcontrol"), required=False)
   vpn_membership: list(include("centralized_policy_control_vpn_membership"), required=False)
-#Centralized Policy - Control Policy - definitions - Hub and Spoke
+# Centralized Policy - Control Policy - definitions - Hub and Spoke
 centralized_policy_control_topology_hubandspoke:
   name: regex('^[A-Za-z0-9\-_]{1,127}$')
   description: str()
@@ -2366,7 +2366,7 @@ centralized_policy_control_topology_hubandspoke_hub_sites:
   site_list: regex('^[A-Za-z0-9\-_]{1,32}$') # name of Site list
   ipv4_prefix_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False) # name of IPV4 prefixList
   ipv6_prefix_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False) # name of IPV6 prefixList
-#Centralized Policy - Control Policy - definitions - Mesh
+# Centralized Policy - Control Policy - definitions - Mesh
 centralized_policy_control_topology_mesh:
   name: regex('^[A-Za-z0-9\-_]{1,127}$')
   description: str()
@@ -2375,7 +2375,7 @@ centralized_policy_control_topology_mesh:
 centralized_policy_control_topology_mesh_meshgroups:
   name: regex('^[A-Za-z0-9\-_]{1,127}$')
   site_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)
-#Centralized Policy - Control Policy - definitions - Control
+# Centralized Policy - Control Policy - definitions - Control
 centralized_policy_control_topology_customcontrol:
   name: regex('^[A-Za-z0-9\-_]{1,127}$')
   description: str()
@@ -2459,7 +2459,7 @@ centralized_policy_control_topology_customcontrol_route_actions_service:
   vpn: int(min=0, max=65530)
   tloc: include("centralized_policy_control_topology_customcontrol_route_action_set_tloc_value", required=False)
   tloc_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of TLOC list
-#Centralized Policy - Control Policy - definitions - VPN Membership
+# Centralized Policy - Control Policy - definitions - VPN Membership
 centralized_policy_control_vpn_membership:
   name: regex('^[A-Za-z0-9\-_]{1,127}$')
   description: str()
@@ -2467,13 +2467,13 @@ centralized_policy_control_vpn_membership:
 centralized_policy_control_vpn_membership_groups:
   site_list: regex('^[A-Za-z0-9\-_]{1,32}$') # name of site list
   vpn_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$')) # list of vpn lists
-#Centralized Policy - Data Policy
-#Centralized Policy - Data Policy contains Application_Aware_Routing and Traffic_Data
+# Centralized Policy - Data Policy
+# Centralized Policy - Data Policy contains Application_Aware_Routing and Traffic_Data
 centralized_policy_data:
   application_aware_routing: list(include("centralized_policy_application_aware_routing"), required=False)
   traffic_data: list(include("centralized_policy_data_traffic_data"), required=False)
   cflowd: list(include("centralized_policy_data_cflowd"), required=False)
-#Centralized Policy - definitions - Application_Aware_Routing
+# Centralized Policy - definitions - Application_Aware_Routing
 centralized_policy_application_aware_routing:
   name: regex('^[A-Za-z0-9\-_]{1,127}$')
   description: str()
@@ -2510,7 +2510,7 @@ centralized_policy_application_aware_routing_app_route_match_criterias:
 centralized_policy_application_aware_routing_app_route_match_source_port_ranges:
   from: int(min=0, max=65535)
   to: int(min=0, max=65535)
-centralized_policy_application_aware_routing_app_route_match_destination_port_ranges: 
+centralized_policy_application_aware_routing_app_route_match_destination_port_ranges:
   from: int(min=0, max=65535)
   to: int(min=0, max=65535)
 centralized_policy_application_aware_routing_app_route_actions:
@@ -2524,13 +2524,13 @@ centralized_policy_application_aware_routing_app_route_action_sla_class_list:
   preferred_colors: list(enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6"), required=False)
   preferred_color_group: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
   when_sla_not_met: enum("strict_drop", "fallback_to_best_path", "load_balance", required=False)
-#Centralized Policy - Data Policy - definitions - traffic data
+# Centralized Policy - Data Policy - definitions - traffic data
 centralized_policy_data_traffic_data:
   name: regex('^[A-Za-z0-9\-_]{1,127}$')
   description: str()
   default_action_type: enum("accept", "drop")
   sequences: list(include("centralized_policy_data_traffic_data_service_chaining"), include("centralized_policy_data_traffic_data_qos"), include("centralized_policy_data_traffic_data_application_firewall"), include("centralized_policy_data_traffic_data_traffic_engineering"), include("centralized_policy_data_traffic_data_custom"), required=False)
-#Centralized Policy - Data Policy - Definitions - service chaining 
+# Centralized Policy - Data Policy - Definitions - service chaining
 centralized_policy_data_traffic_data_service_chaining:
   base_action: enum("accept", "drop")
   id: int(min=1, max=65534)
@@ -2578,7 +2578,7 @@ centralized_policy_data_traffic_data_service_chaining_action_set_tloc_value:
   ip: ip(version=4)
   color: enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6")
   encap: enum("ipsec", "gre")
-#Centralized Policy - Data Policy - Definitions - qos
+# Centralized Policy - Data Policy - Definitions - qos
 centralized_policy_data_traffic_data_qos:
   base_action: enum("accept", "drop")
   id: int(min=1, max=65534)
@@ -2618,7 +2618,7 @@ centralized_policy_data_traffic_data_qos_actions:
 centralized_policy_data_traffic_data_qos_action_set_loss_correction:
   type: enum("fecAdaptive", "fecAlways", "packetDuplication")
   loss_threshold_percentage: int(min=1, max=5, required=False)
-#Centralized Policy - Data Policy - Definitions - Application Firewall
+# Centralized Policy - Data Policy - Definitions - Application Firewall
 centralized_policy_data_traffic_data_application_firewall:
   base_action: enum("accept", "drop")
   id: int(min=1, max=65534)
@@ -2651,7 +2651,7 @@ centralized_policy_data_traffic_data_application_firewall_match_destination_port
 centralized_policy_data_traffic_data_application_firewall_actions:
   counter_name: regex('^[A-Za-z0-9\-_]{1,20}$', required=False)
   log: bool(required=False)
-#Centralized Policy - Data Policy - Definitions - Traffic Engineering
+# Centralized Policy - Data Policy - Definitions - Traffic Engineering
 centralized_policy_data_traffic_data_traffic_engineering:
   base_action: enum("accept", "drop")
   id: int(min=1, max=65534)
@@ -2700,7 +2700,7 @@ centralized_policy_data_traffic_data_traffic_engineering_action_set_local_tloc_l
 centralized_policy_data_traffic_data_traffic_engineering_action_set_next_hop:
   ip_address: ip(version=4)
   when_next_hop_is_not_available: enum("route_table_entry", required=False)
-#Centralized Policy - Data Policy - Definitions - Custom sequence
+# Centralized Policy - Data Policy - Definitions - Custom sequence
 centralized_policy_data_traffic_data_custom:
   base_action: enum("accept", "drop")
   id: int(min=1, max=65534)
@@ -2788,7 +2788,7 @@ centralized_policy_data_traffic_data_custom_action_tloc_value:
   ip: ip(version=4)
   color: enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6")
   encap: enum("ipsec", "gre")
-#Centralized Policy - Data Policy - Definitions - Cflowd
+# Centralized Policy - Data Policy - Definitions - Cflowd
 centralized_policy_data_cflowd:
   name: regex('^[A-Za-z0-9\-_]{1,127}$')
   description: str()

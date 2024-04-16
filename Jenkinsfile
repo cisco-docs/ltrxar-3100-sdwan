@@ -24,12 +24,44 @@ pipeline {
     }
 
     stages {
+        stage('Lint') {
+            steps {
+                sh 'yamllint -s .'
+                sh 'pytest -m validate'
+            }
+        }
         stage('Publish Documentation') {
             when {
                 branch 'master'
             }
             steps {
                 build job: '/netascode/netascode/master', wait: false
+            }
+        }
+        stage('Test') {
+            parallel {
+                stage('Test SDWAN 20.9 Terraform') {
+                    steps {
+                        sh 'pytest -m sdwan_209'
+                    }
+                    post {
+                        always {
+                            junit 'sdwan_tf_20.9_xunit.xml'
+                            archiveArtifacts 'sdwan_tf_20.9_*.html, sdwan_tf_20.9_*.xml'
+                        }
+                    }
+                }
+                stage('Test SDWAN 20.12 Terraform') {
+                    steps {
+                        sh 'pytest -m"sdwan_2012'
+                    }
+                    post {
+                        always {
+                            junit 'sdwan_tf_20.12_xunit.xml'
+                            archiveArtifacts 'sdwan_tf_20.12_*.html, sdwan_tf_20.12_*.xml'
+                        }
+                    }
+                }
             }
         }
     }
