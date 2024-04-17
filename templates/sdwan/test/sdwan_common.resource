@@ -5,6 +5,7 @@ Library   JSONLibrary
 Library   Collections
 Library   OperatingSystem
 Library   String
+Library   packaging.version
 
 *** Variables ***
 &{login_json}=   j_username=%{SDWAN_USERNAME}   j_password=%{SDWAN_PASSWORD}
@@ -22,17 +23,29 @@ Get SDWAN Manager Token
    Set Parallel Value For Key   manager_token   ${r_token.text}
    Set Parallel Value For Key   manager_cookie   ${r_cookie[0]}
 
+Get SDWAN Manager Version
+   ${response}=   GET On Session   sdwan_manager   /dataservice/system/device/controllers   params=model=vmanage
+   ${r_version}=   Get Value From Json   ${response.json()}   $.data[0].version
+   Set Parallel Value For Key   manager_version   ${r_version[0]}
+
 Login SDWAN Manager
    Run Only Once   Get SDWAN Manager Token
    ${manager_token}=   Get Parallel Value For Key   manager_token
    ${manager_cookie}=   Get Parallel Value For Key   manager_cookie
    ${m_headers}=   Create Dictionary   X-XSRF-TOKEN=${manager_token}   Cookie=${manager_cookie}   accept=application/json
    Create Session   sdwan_manager   %{SDWAN_URL}   headers=${m_headers}
+   Run Only Once   Get SDWAN Manager Version
 
 Logout SDWAN Manager
    ${manager_cookie}=   Get Parallel Value For Key   manager_cookie
    ${m_headers}=   Create Dictionary   Cookie=${manager_cookie}   accept=*/*
-   ${response}=   Wait Until Keyword Succeeds   6x   10s   GET On Session   sdwan_manager   /logout   headers=${m_headers}
+   ${manager_version}=   Get Parallel Value For Key   manager_version
+   ${version_check}=   Evaluate   packaging.version.Version('${manager_version}') >= packaging.version.Version('20.12')
+   IF   ${version_check}
+       ${response}=   Wait Until Keyword Succeeds   6x   10s   POST On Session   sdwan_manager   /logout   headers=${m_headers}
+   ELSE
+       ${response}=   Wait Until Keyword Succeeds   6x   10s   GET On Session   sdwan_manager   /logout   headers=${m_headers}
+   END
 
 Should Be Equal Value Json String
    [Arguments]   ${json}    ${json_path}   ${value}=${EMPTY}  ${msg}=${EMPTY}
