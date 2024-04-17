@@ -7,6 +7,10 @@ pipeline {
         }
     }
 
+    triggers {
+        cron(env.BRANCH_NAME == 'master' ? '0 4 * * *' : '')
+    }
+
     environment {
         DD_GITHUB_TOKEN = credentials('DD_GITHUB_TOKEN')
         DD_INTERNAL_GITHUB_TOKEN = credentials('DD_INTERNAL_GITHUB_TOKEN')
