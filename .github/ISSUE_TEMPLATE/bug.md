@@ -1,3 +1,12 @@
+---
+name: Bug Report
+about: Template to submit a bug against SDWAN as Code
+title: ''
+labels: 'bug'
+assignees: ''
+
+---
+
 ## Describe defect
 
 A clear and concise description of what the defect is.
