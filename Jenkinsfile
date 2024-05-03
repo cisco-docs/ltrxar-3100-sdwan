@@ -44,6 +44,17 @@ pipeline {
                 build job: '/netascode/netascode/master', wait: false
             }
         }
+        stage('Prepare') {
+            environment {
+                VMANAGE_USER = credentials('SDWAN_USERNAME')
+                VMANAGE_PASSWORD = credentials('SDWAN_PASSWORD')
+            }
+            steps {
+                sh "pip install cisco-sdwan"
+                sh 'VMANAGE_IP=10.50.202.8 sdwan --verbose delete --not-regex "(_basic)|(umbrellaTokenList)" all'
+                sh 'VMANAGE_IP=10.50.202.6 sdwan --verbose delete --not-regex "(_basic)|(umbrellaTokenList)|(Policy_Profile_Global)" all'
+            }
+        }
         stage('Test') {
             parallel {
                 stage('Test SDWAN 20.9 Terraform') {
