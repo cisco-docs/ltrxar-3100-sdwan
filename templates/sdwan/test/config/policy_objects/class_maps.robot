@@ -13,14 +13,12 @@ Get Class Map List(s)
     Set Suite Variable    ${r}
 
 {% for class_map in sdwan.policy_objects.class_maps | default([]) %}
-{% set class_map_name = class_map.name %}
-{% set class_map_queue = class_map.queue %}
 
-Verify Policy Objects Class Map List {{ class_map_name }}
-    ${class_map_id}=    Get Value From Json    ${r.json()}    $..data[?(@..name=="{{class_map_name }}")].listId
+Verify Policy Objects Class Map List {{ class_map.name }}
+    ${class_map_id}=    Get Value From Json    ${r.json()}    $..data[?(@..name=="{{class_map.name }}")].listId
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/list/class/${class_map_id[0]}
-    Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ class_map_name }}    msg=class map name
-    Should Be Equal Value Json String    ${r_id.json()}    $..entries..queue    {{ class_map_queue }}    msg=class map queue
+    Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ class_map.name }}    msg=class map name
+    Should Be Equal Value Json String    ${r_id.json()}    $..entries..queue    {{ class_map.queue }}    msg=class map queue
 
 {% endfor %}
 

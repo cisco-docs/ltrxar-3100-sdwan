@@ -13,12 +13,11 @@ Get Vpn List(s)
     Set Suite Variable   ${r}
 
 {% for vpn in sdwan.policy_objects.vpn_lists | default([]) %}
-{% set vpn_name = vpn.name %}
 
-Verify Policy Objects Vpn List {{ vpn_name }}
-    ${vpn_id}=   Get Value From Json   ${r.json()}   $..data[?(@..name=="{{vpn_name }}")].listId
+Verify Policy Objects Vpn List {{ vpn.name }}
+    ${vpn_id}=   Get Value From Json   ${r.json()}   $..data[?(@..name=="{{vpn.name }}")].listId
     ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/vpn/${vpn_id[0]}
-    Should Be Equal Value Json String   ${r_id.json()}   $..name   {{ vpn_name }}
+    Should Be Equal Value Json String   ${r_id.json()}   $..name   {{ vpn.name }}
 
 {% if vpn.vpn_id_ranges is defined %}
 {%- set vpn_range_list = [] -%}
@@ -33,15 +32,13 @@ Verify Policy Objects Vpn List {{ vpn_name }}
 {% endif %}
 
 {% if vpn.vpn_ids is defined and vpn.vpn_id_ranges is defined%}
-{% set req_vpn_ids = vpn.vpn_ids %}
-{% set vpn_string = req_vpn_ids | map('string') | join(',') %}
+{% set vpn_string = vpn.vpn_ids | map('string') | join(',') %}
 {% set new_id_list = vpn_string.split(',') %}
 {% set vpn_list = new_id_list + vpn_range_list %}
     ${id_list}=   Create List   {{ vpn_list | join('   ') }}
     Should Be Equal Value Json List   ${r_id.json()}   $..vpn  ${id_list}   msg=vpn ids or ranges are
 {% elif vpn.vpn_ids is defined %}
-{% set req_vpn_ids = vpn.vpn_ids %}
-    ${list}=   Create List   {{ req_vpn_ids | join('   ') }}
+    ${list}=   Create List   {{ vpn.vpn_ids | join('   ') }}
     Should Be Equal Value Json List   ${r_id.json()}   $..vpn  ${list}   msg=vpn ids are
 {% elif vpn.vpn_id_ranges is defined %}
     ${id_list}=   Create List   {{ vpn_range_list | join('   ') }}

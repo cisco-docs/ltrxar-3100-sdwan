@@ -13,15 +13,12 @@ Get Expanded Community List(s)
     Set Suite Variable    ${r}
 
 {% for expanded_community in sdwan.policy_objects.expanded_community_lists | default([]) %}
-{% set expanded_community_name = expanded_community.name %}
 
-Verify Policy Objects Expanded Community List {{ expanded_community_name }}
-    ${expanded_community_id}=    Get Value From Json    ${r.json()}    $..data[?(@..name=="{{expanded_community_name}}")].listId
+Verify Policy Objects Expanded Community List {{ expanded_community.name }}
+    ${expanded_community_id}=    Get Value From Json    ${r.json()}    $..data[?(@..name=="{{expanded_community.name}}")].listId
     ${r_id}=   GET On Session    sdwan_manager    /dataservice/template/policy/list/expandedcommunity/${expanded_community_id[0]}
-    Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ expanded_community_name }}    msg=expanded community
-
-{% set expanded_community_list = expanded_community.expanded_communities %}
-    ${com_list}=    Create List    {{ expanded_community_list | join('   ') }}
+    Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ expanded_community.name }}    msg=expanded community
+    ${com_list}=    Create List    {{ expanded_community.expanded_communities | join('   ') }}
     Should Be Equal Value Json List    ${r_id.json()}    $..entries..community    ${com_list}    msg=expanded community list is
 
 {% endfor %}

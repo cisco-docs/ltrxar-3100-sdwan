@@ -51,9 +51,9 @@ Should Be Equal Value Json String
    [Arguments]   ${json}    ${json_path}   ${value}=${EMPTY}  ${msg}=${EMPTY}
    ${r_value}=   Get Value From Json   ${json}   ${json_path}
    ${r_value}=   Set Variable If    ${r_value} == []    not_defined    ${r_value[0]}
-   Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg} mismatch
+   Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg}
 
 Should Be Equal Value Json List
    [Arguments]   ${json}   ${json_path}   ${value}=${None}   ${msg}=${EMPTY}
    ${r_value}=   Get Value From Json   ${json}   ${json_path}
-   Run Keyword If   "${value}" != "${None}"   Lists Should Be Equal   ${r_value}   ${value}   ignore_order=True   msg=${msg} mismatch
+   Run Keyword If   "${value}" != "${None}"   Lists Should Be Equal   ${r_value}   ${value}   ignore_order=True   msg=${msg}

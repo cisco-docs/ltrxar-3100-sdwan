@@ -13,12 +13,11 @@ Get Standard Community List(s)
     Set Suite Variable    ${r}
 
 {% for standard_community in sdwan.policy_objects.standard_community_lists | default([]) %}
-{% set standard_community_name = standard_community.name %}
 
-Verify Policy Objects Standard Community List {{ standard_community_name }}
-    ${standard_community_id}=    Get Value From Json    ${r.json()}    $..data[?(@..name=="{{standard_community_name }}")].listId
+Verify Policy Objects Standard Community List {{ standard_community.name }}
+    ${standard_community_id}=    Get Value From Json    ${r.json()}    $..data[?(@..name=="{{standard_community.name }}")].listId
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/list/community/${standard_community_id[0]}
-    Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ standard_community_name }}
+    Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ standard_community.name }}
 
 {% if standard_community.standard_communities is defined %}
     ${community_list}=    Create List   {{ standard_community.standard_communities | join('   ') }}

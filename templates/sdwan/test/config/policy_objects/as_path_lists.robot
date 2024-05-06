@@ -13,15 +13,12 @@ Get As Path List(s)
     Set Suite Variable    ${r}
 
 {% for as_path_list in sdwan.policy_objects.as_path_lists | default([]) %}
-{% set as_path_list_name = as_path_list.name %}
 
-Verify Policy Objects As Path List {{ as_path_list_name }}
-    ${as_path_list_id}=    Get Value From Json    ${r.json()}    $..data[?(@..name=="{{as_path_list_name }}")].listId
+Verify Policy Objects As Path List {{ as_path_list.name }}
+    ${as_path_list_id}=    Get Value From Json    ${r.json()}    $..data[?(@..name=="{{as_path_list.name }}")].listId
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/list/aspath/${as_path_list_id[0]}
-    Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ as_path_list_name }}    msg=as path name
-
-{% set as_path_list_paths = as_path_list.as_paths %}
-    ${aspath_list}=    Create List    {{ as_path_list_paths | join('   ') }}
+    Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ as_path_list.name }}    msg=as path name
+    ${aspath_list}=    Create List    {{ as_path_list.as_paths | join('   ') }}
     Should Be Equal Value Json List    ${r_id.json()}    $..entries..asPath    ${aspath_list}    msg=as path lists
 
 {% endfor %}

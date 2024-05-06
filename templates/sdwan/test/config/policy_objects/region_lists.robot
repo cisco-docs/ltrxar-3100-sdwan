@@ -13,12 +13,11 @@ Get Region List(s)
     Set Suite Variable   ${r}
 
 {% for region in sdwan.policy_objects.region_lists | default([]) %}
-{%- set region_name= region.name -%}
 
-Verify Policy Objects Region List {{ region_name }}
-    ${region_id}=   Get Value From Json   ${r.json()}   $..data[?(@..name=="{{ region_name }}")].listId
+Verify Policy Objects Region List {{ region.name }}
+    ${region_id}=   Get Value From Json   ${r.json()}   $..data[?(@..name=="{{ region.name }}")].listId
     ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/region/${region_id[0]}
-    Should Be Equal Value Json String   ${r_id.json()}   $..name   {{ region_name }}   msg=Region name
+    Should Be Equal Value Json String   ${r_id.json()}   $..name   {{ region.name }}   msg=Region name
 {% if region.region_ids is defined and region.region_id_ranges is defined %}
 {%- set req_region_ids= region.region_ids -%}
 {%- set region_string= req_region_ids | map('string') | join(',') -%}
@@ -46,8 +45,7 @@ Verify Policy Objects Region List {{ region_name }}
     ${region_range_list}=   Create List   {{ region_ranges | join('   ') }}
     Should Be Equal Value Json List   ${r_id.json()}   $..regionId   ${region_range_list}   msg=Region ranges are
 {% elif region.region_ids is defined %}
-{% set req_region_ids= region.region_ids %}
-    ${reg_ids}=   Create List   {{ req_region_ids | join('   ') }}
+    ${reg_ids}=   Create List   {{ region.region_ids | join('   ') }}
     Should Be Equal Value Json List   ${r_id.json()}   $..regionId   ${reg_ids}   msg=Region Ids are
 {% endif %}
 
