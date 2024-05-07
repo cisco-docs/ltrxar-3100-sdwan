@@ -1,0 +1,19 @@
+sdwan:
+  feature_profiles:
+    cli_profiles:
+      - name: cli1
+        config:
+          cli_configuration: |
+            logging discriminator auth mnemonics drops AUTH_PASSED
+            logging console discriminator auth
+      - name: cli2
+        description: test cli profile with bgp configuration
+        config:
+          name: cli-config
+          description: cli config parcel
+          cli_configuration: |
+            ! This template is using variables
+            router bgp {{bgp_as_number}}
+              address-family ipv4 unicast vrf 10
+              neighbor {{bgp_neighbor_ip}} local-as {{bgp_neighbor_local_as}}
+            !

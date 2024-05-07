@@ -8,7 +8,8 @@ sdwan:
   edge_device_templates: list(include("edge_device_templates"), required=False)
   sites: list(include("sites"), required=False)
   multi_region_fabric: include("multi_region_fabric", required=False)
-  centralized_policies: include("centralized_policies", required=False) # new tree for centralized policy.
+  centralized_policies: include("centralized_policies", required=False)
+  feature_profiles: include("feature_profiles", required=False)
 # Edge Feature Templates
 edge_feature_templates:
   aaa_templates: list(include("edge_feature_templates_aaa"), required=False)
@@ -2807,3 +2808,14 @@ centralized_policy_data_cflowd_collectors:
   transport: enum("transport_tcp","transport_udp")
   source_interface: str()
   export_spreading: enum("enable","disable")
+# UX 2.0
+feature_profiles:
+  cli_profiles: list(include("feature_profiles_cli"), required=False)
+feature_profiles_cli:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  config: include("feature_profiles_cli_config", required=False)
+feature_profiles_cli_config:
+  name: regex('^[^&<>! \"]{1,128}$', required=False)
+  description: str(required=False)
+  cli_configuration: str()

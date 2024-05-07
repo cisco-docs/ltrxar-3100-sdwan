@@ -164,7 +164,7 @@ class Rule:
     @classmethod
     def build_feature_templates_policy_references_dict(cls, inventory):
         feature_templates_policy_references_dict = {}
-        for feature_templates in inventory.get("sdwan", {}).get("edge_feature_templates", []).values():
+        for feature_templates in inventory.get("sdwan", {}).get("edge_feature_templates", {}).values():
             for feature_template in feature_templates:
                 feature_templates_policy_references_dict[feature_template.get("name")] = cls.build_feature_template_keys_list(feature_template)
         return feature_templates_policy_references_dict
