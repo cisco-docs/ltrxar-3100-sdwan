@@ -27,10 +27,8 @@ Verify Edge Feature Template OSPF Feature template {{ ospf.name }}
 {% endfor %}
 
     ${dt_list}=    Get Value From Json    ${ospf_id}    $..deviceType
-    FOR    ${item}    IN    @{dt_list}[0]
-        ${test_list}=    Create List    {{ test_list | join('   ') }}
-        List Should Contain Value    ${test_list}    ${item}    msg=device type mismatch
-    END
+    ${test_list}=    Create List    {{ test_list | join('   ') }}
+    Lists Should Be Equal    ${dt_list[0]}    ${test_list}    ignore_order=True    msg=device types
 
     ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ospf.name }}")].templateId
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${template_id[0]}

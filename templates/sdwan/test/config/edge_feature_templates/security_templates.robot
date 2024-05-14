@@ -5,7 +5,7 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    security_templates
 Resource        ../../sdwan_common.resource
 
-{% if sdwan.edge_feature_templates.security_templates is defined%}
+{% if sdwan.edge_feature_templates.security_templates is defined %}
 
 *** Test Cases ***
 Get Security Feature template
@@ -27,10 +27,8 @@ Verify Edge Feature Template Security Feature template {{ security_template.name
 {% endfor %}
 
     ${dt_list}=    Get Value From Json    ${security_template_id}    $..deviceType
-    FOR    ${item}    IN    @{dt_list}[0]
-        ${test_lists}=   Create List   {{ test_list | join('   ') }}
-        List Should Contain Value    ${test_lists}    ${item}    msg=security template device type mismatch
-    END
+    ${test_lists}=   Create List   {{ test_list | join('   ') }}
+    Lists Should Be Equal    ${dt_list[0]}    ${test_lists}    ignore_order=True    msg=security template device types
 
     ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{security_template.name }}")].templateId
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${template_id[0]}
