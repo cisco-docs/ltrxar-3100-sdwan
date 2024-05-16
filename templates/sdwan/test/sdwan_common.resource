@@ -57,3 +57,16 @@ Should Be Equal Value Json List
    [Arguments]   ${json}   ${json_path}   ${value}=${None}   ${msg}=${EMPTY}
    ${r_value}=   Get Value From Json   ${json}   ${json_path}
    Run Keyword If   "${value}" != "${None}"   Lists Should Be Equal   ${r_value}   ${value}   ignore_order=True   msg=${msg}
+
+Should Be Equal Value Json List Length
+   [Arguments]   ${json}   ${json_path}   ${value}=${None}   ${msg}=${EMPTY}
+   ${r_value}=   Get Value From Json   ${json}   ${json_path}
+   ${status}=    Run Keyword And Return Status  Get Length   ${r_value[0]}
+   IF  ${status} == ${True}
+       ${r_length}=    Get Length     ${r_value[0]}
+   ELSE
+       ${r_length}=    Get Length     ${r_value}
+   END
+   Run Keyword If   "${value}" != "${None}"  Should Be Equal As Integers    ${r_length}    ${value}    msg=${msg}
+
+   
