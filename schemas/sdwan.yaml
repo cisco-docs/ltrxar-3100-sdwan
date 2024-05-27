@@ -2091,7 +2091,7 @@ localized_policies_definitions_ipv6_access_control_list_sequence_actions:
   counter_name: str(min=1, max=20, required=False)
   log: bool(required=False)
   mirror_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
-  next_hop: ip(version=4, required=False)
+  next_hop: ip(version=6, required=False)
   policer: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
   traffic_class: int(min=0, max=63, required=False)
 # IPv6 Device Access Policy Definition
@@ -2108,10 +2108,10 @@ localized_policies_definitions_ipv6_device_access_policy_sequence:
   counter_name: str(min=1, max=20, required=False)
 localized_policies_definitions_ipv6_device_access_policy_sequence_match_criterias:
   destination_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
-  destination_ip_prefix: ip(version=4, required=False)
+  destination_ip_prefix: ip(version=6, required=False)
   destination_port: enum(22, 161)
   source_data_prefix_list: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
-  source_ip_prefix: ip(version=4, required=False)
+  source_ip_prefix: ip(version=6, required=False)
   source_ports: list(int(min=0, max=65535), required=False)
 # Rewrite Rule Policy Definition
 localized_policies_definitions_rewrite_rule:
