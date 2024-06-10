@@ -60,23 +60,11 @@ Verify Edge Feature Template OMP Feature template {{ omp_template.name }}
     Should Be Equal Value Json String    ${r_id.json()}    $..["transport-gateway"].vipValue    {{ omp_template.transport_gateway | default("not_defined") }}    msg=transport gateway
     Should Be Equal Value Json String    ${r_id.json()}    $..["transport-gateway"].vipVariableName    {{ omp_template.transport_gateway_variable | default("not_defined") }}    msg=transport gateway variable
 
-{% if omp_template.ipv4_advertise_protocols | default("not_defined") == 'not_defined' %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..["advertise"].vipValue[{{loop.index0}}].protocol.vipValue    {{ omp_template.ipv4_advertise_protocols | default("not_defined") }}    msg=no omp ipv4 advertise protocols available
-{% else %}
-    ${omp_ipv4_advertise_protocols_list}=    Create List    {{ omp_template.ipv4_advertise_protocols | join('   ') }}
-    ${proto_ipv4}=    Get Value From Json    ${r_id.json()}    $..["advertise"].vipValue[0].protocol.vipValue
-    ${proto_ipv4_list}=    Split String    ${proto_ipv4[0]}
-    Lists Should Be Equal    ${proto_ipv4_list}    ${omp_ipv4_advertise_protocols_list}    ignore_order=True    msg=omp ipv4 advertise protocols
-{% endif %}
+    ${omp_ipv4_advertise_protocols_list}=    Create List    {{ omp_template.ipv4_advertise_protocols | join('   ') | default([]) }}
+    Should Be Equal Value Json List    ${r_id.json()}    $.advertise.vipValue..protocol.vipValue    ${omp_ipv4_advertise_protocols_list}    msg=omp ipv4 advertise protocols
 
-{% if omp_template.ipv6_advertise_protocols | default("not_defined") == 'not_defined' %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..ipv6-advertise.vipValue[{{loop.index0}}].protocol.vipValue    {{ omp_template.ipv6_advertise_protocols | default("not_defined") }}    msg=no omp ipv6 advertise protocols available
-{% else %}
-    ${proto_ipv6}=    Get Value From Json    ${r_id.json()}    $..ipv6-advertise.vipValue[0].protocol.vipValue
-    ${proto_ipv6_list}=    Split String    ${proto_ipv6[0]}
-    ${omp_ipv6_advertise_protocols_list}=    Create List    {{ omp_template.ipv6_advertise_protocols | join('   ') }}
-    Lists Should Be Equal    ${proto_ipv6_list}    ${omp_ipv6_advertise_protocols_list}    ignore_order=True    msg=omp ipv6 advertise protocols
-{% endif %}
+    ${omp_ipv6_advertise_protocols_list}=    Create List    {{ omp_template.ipv6_advertise_protocols | join('   ') | default([]) }}
+    Should Be Equal Value Json List    ${r_id.json()}    $["ipv6-advertise"].vipValue..protocol.vipValue    ${omp_ipv6_advertise_protocols_list}    msg=omp ipv6 advertise protocols
 
 {% endfor %}
 {% endif %}
