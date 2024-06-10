@@ -17,3 +17,176 @@ sdwan:
               address-family ipv4 unicast vrf 10
               neighbor {{bgp_neighbor_ip}} local-as {{bgp_neighbor_local_as}}
             !
+    system_profiles:
+      - name: system1
+        aaa:
+          users:
+            - name: admin
+              password: $6$Oz2ydqNXLLDIsPSG$LhogoactFVb9eJgqgv/O/Zb.FHg74drK4maijc.Q9q/KhyDcPfwrHx9Vy6G9hY7oKWbyas4XKms7f7Znl/ndF.
+        banner:
+          login: "simple login banner"
+        bfd:
+          name: bfd
+        global:
+          name: global
+        logging:
+          name: logging
+      - name: system2
+        description: full profile
+        aaa:
+          name: aaa_full
+          description: AAA parcel with full configuration
+          accounting_rules:
+            - groups:
+              - tacacs-511
+              id: rule1
+              level: 1
+              method: exec
+              start_stop: true
+          auth_order:
+            - tacacs-511
+            - local
+          authorization_rules:
+            - authenticated: true
+              groups:
+                - tacacs-511
+              id: rule1
+              level: 15
+              method: commands
+          authorization_config_commands: true
+          authorization_console: false
+          dot1x_accounting: true
+          dot1x_authentication: true
+          radius_groups:
+            - servers:
+                - accounting_port: 1000
+                  address: 10.0.0.1
+                  authentication_port: 1001
+                  key: $CRYPT_CLUSTER$jq34CKAzT5KGdEjIpYarKg==$MZkY/AdOWzm/kiLHOsKHJg==
+                  key_type: key
+                  retransmit: 50
+                  secret_key: 070c285f4d06485744
+                  timeout: 200
+              source_interface_variable: radius_source_interface
+              vpn: 0
+          tacacs_groups:
+            - vpn: 511
+              source_interface_variable: tacacs_source_interface
+              servers:
+                - address: 10.1.1.1
+                  port: 49
+                  key: $CRYPT_CLUSTER$jq34CKAzT5KGdEjIpYarKg==$MZkY/AdOWzm/kiLHOsKHJg==
+                  secret_key: 070c285f4d06485744
+                  timeout: 200
+          users:
+            - name: admin
+              password: $6$Oz2ydqNXLLDIsPSG$LhogoactFVb9eJgqgv/O/Zb.FHg74drK4maijc.Q9q/KhyDcPfwrHx9Vy6G9hY7oKWbyas4XKms7f7Znl/ndF.
+              privilege: 15
+            - name: failsafe
+              password: $6$v0UN8x4fkvZd0Lnj$hq13MC.W5ElstGlolO38fshGEYxSechW4K5zEdrJD1trSH30AaNKvL4VUlOtxersGmIDNefPwyrSqbJpCpXGJ.
+              privilege: 15
+              public_key_chains:
+                - key_type: "key1"
+                  key_string: abcd12345
+        banner:
+          name: banner_full
+          description: banner parcel with full configuration
+          login: |
+            This is line 1 of banner\n
+            This is line 2 of banner\n
+          motd_variable: motd_banner
+        bfd:
+          name: bfd_full
+          description: BFD parcel with full configuration
+          colors:
+            - color: biz-internet
+              default_dscp: 0
+              hello_interval: 100000
+              multiplier: 3
+              path_mtu_discovery: true
+          default_dscp: 46
+          multiplier: 5
+          poll_interval: 36000
+        flexible_port_speed:
+          name: flexible_port_speed_full
+          description: flexible port speed parcel with full configuration
+          port_type: 8 ports of 1/10GE + 4 ports of 40GE
+        global:
+          name: global_full
+          description: global parcel with full configuration
+          arp_proxy: true
+          cdp: true
+          console_logging: true
+          domain_lookup: false
+          ftp_passive: false
+          http_authentication: local
+          http_server: false
+          https_server: true
+          ignore_bootp: true
+          ip_source_routing: true
+          lldp: true
+          nat64_udp_timeout: 10000
+          nat64_tcp_timeout: 10000
+          rsh_rcp: true
+          snmp_ifindex_persist: true
+          source_interface: Loopback0
+          ssh_version: 2
+          tcp_keepalives_in: false
+          tcp_keepalives_out: false
+          tcp_small_servers: true
+          telnet_outbound: false
+          udp_small_servers: true
+          vty_logging: true
+        logging:
+          name: logging_full
+          description: logging parcel with full configuration
+          disk_file_size: 15
+          disk_file_rotate: 5
+          ipv4_servers:
+            - hostname_ip: 10.0.0.1
+              severity: informational
+              source_interface: Loopback0
+              tls_enable: true
+              tls_properties_custom_profile: true
+              tls_properties_profile: tls1
+              vpn_id: 511
+          ipv6_servers:
+            - hostname_ip: fc00::1
+              severity: error
+              source_interface: Loopback0
+              tls_enable: true
+              tls_properties_custom_profile: true
+              tls_properties_profile: tls1
+              vpn_id: 511
+          tls_profiles:
+            - cipher_suites:
+              - aes-128-cbc-sha
+              - aes-256-cbc-sha
+              - rsa-aes-cbc-sha2
+              name: tls1
+              tls_version: TLSv1.2
+        mrf:
+          name: mrf_full
+          description: multi-region fabric parcel with full configuration
+          migration_to_mrf: enabled
+          migration_bgp_community: 65000
+          role: edge-router
+          secondary_region_id_variable: secondary_region_id
+        ntp:
+          name: ntp_full
+          description: NTP parcel with full configuration
+          authentication_keys:
+            - id: 1
+              md5_value_variable: ntp_key
+          authoritative_ntp_server: true
+          authoritative_ntp_server_source_interface: Loopback0
+          authoritative_ntp_server_stratum: 5
+          servers:
+            - authentication_key: 1
+              hostname_ip: 10.0.0.1
+              prefer: true
+              source_interface: Loopback0
+              ntp_version: 4
+              vpn_id: 511
+          trusted_keys:
+            - 1
