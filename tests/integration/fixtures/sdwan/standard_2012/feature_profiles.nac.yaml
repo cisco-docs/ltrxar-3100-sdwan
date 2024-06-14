@@ -25,12 +25,41 @@ sdwan:
               password: $6$Oz2ydqNXLLDIsPSG$LhogoactFVb9eJgqgv/O/Zb.FHg74drK4maijc.Q9q/KhyDcPfwrHx9Vy6G9hY7oKWbyas4XKms7f7Znl/ndF.
         banner:
           login: "simple login banner"
+        basic:
+          name: basic
         bfd:
           name: bfd
         global:
           name: global
         logging:
           name: logging
+        omp:
+          name: omp
+        performance_monitoring:
+          name: perfmonitor
+        security:
+          name: security
+        snmp:
+          name: snmpv2
+          communities:
+            - authorization: read-only
+              name: JpKWRdzbvLeN9NE
+              user_label: com1
+              view: test_view
+          contact_person: person1
+          location: test location
+          shutdown: false
+          trap_target_servers:
+            - ip: 10.1.1.1
+              port: 9999
+              source_interface: Loopback0
+              user_label: com1
+              vpn_id: 1
+          views:
+            - name: test_view
+              oids:
+                - exclude: false
+                  id: 1.3.6.1
       - name: system2
         description: full profile
         aaa:
@@ -95,6 +124,52 @@ sdwan:
             This is line 1 of banner\n
             This is line 2 of banner\n
           motd_variable: motd_banner
+        basic:
+          name: basic_full
+          description: basic parcel with full configuration
+          admin_tech_on_failure: true
+          affinity_group_number: 1
+          affinity_group_preferences:
+            - 1
+            - 2
+            - 3
+          affinity_per_vrfs:
+            - affinity_group_number: 10
+              vrf_range: 1-9
+          affinity_preference_auto: true
+          console_baud_rate: 9600
+          control_session_pps: 10000
+          controller_groups:
+            - 20
+            - 21
+          device_groups:
+            - emea
+            - branch
+          enhanced_app_aware_routing: moderate
+          geo_fencing_enable: true
+          geo_fencing_sms_enable: true
+          geo_fencing_sms_mobile_numbers:
+            - number: "+123456789"
+          idle_timeout: 300
+          latitude: 50
+          location: Krakow
+          longitude: 19
+          max_omp_sessions: 2
+          multitenant: false
+          on_demand_tunnel: true
+          on_demand_tunnel_idle_timeout: 1200
+          overlay_id: 1
+          port_hopping: false
+          port_offset: 0
+          site_types:
+            - type-1
+            - branch
+          system_description: branch
+          timezone: Europe/Warsaw
+          track_default_gateway: true
+          track_interface_tag: 11
+          track_transport: true
+          transport_gateway: true
         bfd:
           name: bfd_full
           description: BFD parcel with full configuration
@@ -190,3 +265,107 @@ sdwan:
               vpn_id: 511
           trusted_keys:
             - 1
+        omp:
+          name: omp_full
+          description: OMP parcel with full configuration
+          advertise_ipv4_bgp: true
+          advertise_ipv4_connected: true
+          advertise_ipv4_eigrp: false
+          advertise_ipv4_isis: false
+          advertise_ipv4_lisp: false
+          advertise_ipv4_ospf: true
+          advertise_ipv4_ospf_v3: true
+          advertise_ipv4_static: false
+          advertise_ipv6_bgp: true
+          advertise_ipv6_connected: true
+          advertise_ipv6_eigrp: false
+          advertise_ipv6_isis: false
+          advertise_ipv6_lisp: false
+          advertise_ipv6_ospf: true
+          advertise_ipv6_static: true
+          advertisement_interval: 10000
+          ecmp_limit: 16
+          eor_timer: 3600
+          graceful_restart: true
+          graceful_restart_timer: 86400
+          holdtime: 10000
+          ignore_region_path_length: false
+          omp_admin_distance_ipv4: 251
+          omp_admin_distance_ipv6: 251
+          overlay_as: 65000
+          send_path_limit: 16
+          shutdown: false
+          site_types:
+            - type-1
+            - branch
+          transport_gateway: prefer
+        performance_monitoring:
+          name: perfmonitor
+          description: performance monitoring parcel with full configuration
+          app_perf_monitor_app_groups:
+            - amazon-group
+            - apple-group
+            - box-group
+          app_perf_monitor_enabled: true
+          event_driven_config_enabled: true
+          event_driven_events:
+            - SLA_CHANGE
+            - PMTU_CHANGE
+          monitoring_config_enabled: true
+          monitoring_config_interval: 60
+        security:
+          name: security_full
+          description: security parcel with full configuration
+          anti_replay_window: 8192
+          extended_anti_replay_window: 2048
+          integrity_types:
+            - esp
+            - ip-udp-esp
+          ipsec_pairwise_keying: true
+          key_chains:
+            - key_id: 1
+              name: key1
+          keys:
+            - id: 1
+              accept_ao_mismatch: true
+              accept_life_time_duration: 10000
+              accept_life_time_local: true
+              accept_life_time_start_epoch: 1714125354
+              crypto_algorithm: aes-128-cmac
+              include_tcp_options: true
+              key_chain_name: key1
+              key_string: fUPXTH0Z87sKcKy
+              receiver_id: 1
+              send_id: 1
+              send_life_time_infinite: true
+              send_life_time_local: true
+              send_life_time_start_epoch: 1714125354
+          rekey_time: 172800
+        snmp:
+          name: snmpv3_full
+          description: snmp parcel with full configuration
+          contact_person: person1
+          groups:
+            - name: group1
+              security_level: no-auth-no-priv
+              view: test_view
+          location: test location
+          shutdown: false
+          trap_target_servers:
+            - ip: 10.1.1.1
+              port: 9999
+              source_interface: Loopback0
+              user: user1
+              vpn_id: 1
+          users:
+            - authentication_password: 31CMd8v0LZZXgmfmB
+              authentication_protocol: sha
+              group: group1
+              name: user1
+              privacy_password: 8DEiOQ2t6bHte1IiN
+              privacy_protocol: aes-cfb-128
+          views:
+            - name: test_view
+              oids:
+                - exclude: false
+                  id: 1.3.6.1

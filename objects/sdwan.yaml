@@ -274,3 +274,67 @@ objects:
       [
         sdwan.centralized_policies.definitions.data_policy.application_aware_routing,
       ]
+  - name: CLI Profile
+    template: cli
+    folder: feature_profiles
+    paths: [sdwan.feature_profiles.cli_profiles]
+  - name: System Profile
+    template: system
+    folder: feature_profiles
+    paths: [sdwan.feature_profiles.system_profiles]
+  - name: AAA Profile Parcel
+    template: aaa
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.system_profiles.aaa]
+  - name: Banner Profile Parcel
+    template: banner
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.system_profiles.banner]
+  - name: Basic Profile Parcel
+    template: basic
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.system_profiles.basic]
+  - name: BFD Profile Parcel
+    template: bfd
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.system_profiles.bfd]
+  - name: CLI Config Profile Parcel
+    template: cli_config
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.cli_profiles.cli_config]
+  - name: Flexible Port Speed Profile Parcel
+    template: flexible_port_speed
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.system_profiles.flexible_port_speed]
+  - name: Global Profile Parcel
+    template: global
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.system_profiles.global]
+  - name: Logging Profile Parcel
+    template: logging
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.system_profiles.logging]
+  - name: Multi-Region Fabric Profile Parcel
+    template: mrf
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.system_profiles.mrf]
+  - name: NTP Profile Parcel
+    template: ntp
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.system_profiles.ntp]
+  - name: OMP Profile Parcel
+    template: omp
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.system_profiles.omp]
+  - name: Performance Monitoring Profile Parcel
+    template: performance_monitoring
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.system_profiles.performance_monitoring]
+  - name: Security Profile Parcel
+    template: security
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.system_profiles.security]
+  - name: SNMP Profile Parcel
+    template: snmp
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.system_profiles.snmp]
