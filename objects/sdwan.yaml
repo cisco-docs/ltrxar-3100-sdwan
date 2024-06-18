@@ -301,7 +301,7 @@ objects:
   - name: CLI Config Profile Parcel
     template: cli_config
     folder: profile_parcels
-    paths: [sdwan.feature_profiles.cli_profiles.cli_config]
+    paths: [sdwan.feature_profiles.cli_profiles.config]
   - name: Flexible Port Speed Profile Parcel
     template: flexible_port_speed
     folder: profile_parcels
