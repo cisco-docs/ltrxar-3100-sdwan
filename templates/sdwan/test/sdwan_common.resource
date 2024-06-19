@@ -17,14 +17,14 @@ Get SDWAN Manager Token
    ${log_level}=   Set Log Level   NONE
    ${response}=   Wait Until Keyword Succeeds   6x   10s   POST On Session   login   /j_security_check   data=${login_json}
    Set Log Level   ${log_level}
-   ${r_token}=   GET On Session   login   /dataservice/client/token
+   ${r_token}=   Wait Until Keyword Succeeds   6x   10s   GET On Session   login   /dataservice/client/token
    ${cookie}=   Get from dictionary   ${response.headers}   set-cookie
    ${r_cookie}=   Split string   ${cookie}   separator=;
    Set Parallel Value For Key   manager_token   ${r_token.text}
    Set Parallel Value For Key   manager_cookie   ${r_cookie[0]}
 
 Get SDWAN Manager Version
-   ${response}=   GET On Session   sdwan_manager   /dataservice/system/device/controllers   params=model=vmanage
+   ${response}=   Wait Until Keyword Succeeds   6x   10s   GET On Session   sdwan_manager   /dataservice/system/device/controllers   params=model=vmanage
    ${r_version}=   Get Value From Json   ${response.json()}   $.data[0].version
    Set Parallel Value For Key   manager_version   ${r_version[0]}
 
