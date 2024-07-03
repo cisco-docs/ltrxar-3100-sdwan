@@ -277,11 +277,31 @@ objects:
   - name: CLI Profile
     template: cli
     folder: feature_profiles
-    paths: [sdwan.feature_profiles.cli_profiles]
+    paths: [
+      sdwan.feature_profiles.cli_profiles.name,
+      sdwan.feature_profiles.cli_profiles.description,
+      ]
+  - name: Service Profile
+    template: service
+    folder: feature_profiles
+    paths: [
+      sdwan.feature_profiles.service_profiles.name,
+      sdwan.feature_profiles.service_profiles.description,
+    ]
   - name: System Profile
     template: system
     folder: feature_profiles
-    paths: [sdwan.feature_profiles.system_profiles]
+    paths: [
+      sdwan.feature_profiles.system_profiles.name,
+      sdwan.feature_profiles.system_profiles.description,
+    ]
+  - name: Transport Profile
+    template: transport
+    folder: feature_profiles
+    paths: [
+      sdwan.feature_profiles.transport_profiles.name,
+      sdwan.feature_profiles.transport_profiles.description,
+    ]
   - name: AAA Profile Parcel
     template: aaa
     folder: profile_parcels
