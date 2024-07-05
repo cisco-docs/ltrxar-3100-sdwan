@@ -124,18 +124,23 @@ Verify Edge Feature Template VPN Feature Template {{ vpn.name }}
     Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].distance.vipValue    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_null0_distance | default("not_defined") }}    msg=ipv4 next hop null0 distance
     Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].distance.vipVariableName    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_null0_distance_variable | default("not_defined") }}    msg=ipv4 next hop null0 distance variable
 
+    ${dia_val}=    Get Value From Json    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].vpn.vipValue
 {% if vpn.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") | lower() == "true" %}
-    ${dia_val}=    Get Value From Json    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].vpn.vipValue
-    ${r_value}=    Set Variable If    "${dia_val[0]}" == "0"    true
-    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") | lower() }}    msg=ipv4 next hop dia
+    IF    ${dia_val} == []
+        ${r_value}=    Set Variable    not_defined
+    ELSE
+        ${r_value}=    Set Variable If    "${dia_val[0]}" == "0"    true
+    END
+    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_dia | lower() }}    msg=ipv4 next hop dia
 {% elif vpn.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") | lower() == "false" %}
-    ${dia_val}=    Get Value From Json    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].vpn.vipValue
-    ${r_value}=    Set Variable If    ${dia_val} == []    false
-    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") | lower() }}    msg=ipv4 next hop dia
+    IF    ${dia_val} == []
+        ${r_value}=    Set Variable    false
+    ELSE
+        ${r_value}=    Set Variable    ${dia_val[0]}
+    END
+    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_dia | lower() }}    msg=ipv4 next hop dia
 {% elif vpn.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") == "not_defined" %}
-    ${dia_val}=    Get Value From Json    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].vpn.vipValue
-    ${r_value}=    Set Variable If    ${dia_val} == []    not_defined
-    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") }}    msg=ipv4 next hop dia
+    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].vpn.vipValue    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") }}    msg=ipv4 next hop dia
 {% endif %}
 
     Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].vipOptional    {{ vpn.ipv4_static_routes[v4_route_index].optional | default("not_defined") }}    msg=ipv4 optional
@@ -186,18 +191,23 @@ Verify Edge Feature Template VPN Feature Template {{ vpn.name }}
     Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].nat.vipVariableName    {{ vpn.ipv6_static_routes[v6_route_index].nat_variable | default("not_defined") }}    msg=ipv6 nat variable
     Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].null0.vipValue    {{ vpn.ipv6_static_routes[v6_route_index].next_hop_null0 | default("not_defined") | lower() }}    msg=ipv6 next hop null0
 
+    ${dia_val}=    Get Value From Json    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].vpn.vipValue
 {% if vpn.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") | lower() == "true" %}
-    ${dia_val}=    Get Value From Json    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].vpn.vipValue
-    ${r_value}=    Set Variable If    "${dia_val[0]}" == "0"    true
-    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") | lower() }}    msg=ipv6 next hop dia
+    IF    ${dia_val} == []
+        ${r_value}=    Set Variable    not_defined
+    ELSE
+        ${r_value}=    Set Variable If    "${dia_val[0]}" == "0"    true
+    END
+    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv6_static_routes[v6_route_index].next_hop_dia | lower() }}    msg=ipv6 next hop dia
 {% elif vpn.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") | lower() == "false" %}
-    ${dia_val}=    Get Value From Json    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].vpn.vipValue
-    ${r_value}=    Set Variable If    ${dia_val} == []    false
-    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") | lower() }}    msg=ipv6 next hop dia
+    IF    ${dia_val} == []
+        ${r_value}=    Set Variable    false
+    ELSE
+        ${r_value}=    Set Variable    ${dia_val[0]}
+    END
+    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv6_static_routes[v6_route_index].next_hop_dia | lower() }}    msg=ipv6 next hop dia
 {% elif vpn.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") == "not_defined" %}
-    ${dia_val}=    Get Value From Json    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].vpn.vipValue
-    ${r_value}=    Set Variable If    ${dia_val} == []    not_defined
-    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") }}    msg=ipv6 next hop dia
+    Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].vpn.vipValue    {{ vpn.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") }}    msg=ipv6 next hop dia
 {% endif %}
 
     Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].vipOptional    {{ vpn.ipv6_static_routes[v6_route_index].optional | default("not_defined") }}    msg=ipv6 optional
