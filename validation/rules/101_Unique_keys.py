@@ -20,6 +20,9 @@ class Rule:
         "sdwan.centralized_policies.definitions.data_policy.traffic_data.name",
         "sdwan.centralized_policies.definitions.data_policy.cflowd.name",
         "sdwan.centralized_policies.definitions.data_policy.application_aware_routing.name",
+        "sdwan.security_policies.feature_policies.name",
+        "sdwan.security_policies.definitions.zone_based_firewall.name",
+        "sdwan.security_policies.definitions.intrusion_prevention.name",
     ]
 
     # Verify unique feature template names per type
@@ -28,7 +31,7 @@ class Rule:
         paths.append(str("sdwan.edge_feature_templates." + type + ".name"))
     
     # Verify unique policy objects names per type
-    policy_object_types = ['app_probe_classes', 'application_lists', 'as_path_lists', 'class_maps', 'color_lists', 'expanded_community_lists', 'extended_community_lists', 'ipv4_data_prefix_lists', 'ipv4_prefix_lists', 'ipv6_data_prefix_lists', 'ipv6_prefix_lists', 'mirror_lists', 'policers', 'preferred_color_groups', 'region_lists', 'site_lists', 'sla_classes', 'standard_community_lists', 'tloc_lists', 'vpn_lists']
+    policy_object_types = ['app_probe_classes', 'application_lists', 'as_path_lists', 'class_maps', 'color_lists', 'expanded_community_lists', 'extended_community_lists', 'ipv4_data_prefix_lists', 'ipv4_prefix_lists', 'ipv6_data_prefix_lists', 'ipv6_prefix_lists', 'mirror_lists', 'policers', 'preferred_color_groups', 'region_lists', 'site_lists', 'sla_classes', 'standard_community_lists', 'tloc_lists', 'vpn_lists', 'fqdn_lists', 'zones', 'local_application_lists']
     for type in policy_object_types:
         paths.append(str("sdwan.policy_objects." + type + ".name"))
 
