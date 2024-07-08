@@ -45,7 +45,7 @@ Verify Localized Policies Device Access IPv4 ACL {{ ipv4_device.name }}
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{ sequence_index }}].match.entries[?(@.field=="destinationPort")].value    {{ ipv4_device.sequences[sequence_index].match_criterias.destination_port }}    msg=destination port
 
     ${src_data_prefix_id}=    Get Value From Json    ${r_id.json()}    $.sequences[{{ sequence_index }}].match.entries[?(@.field=="sourceDataPrefixList")].ref
-    IF    ${dst_data_prefix_id} == []
+    IF    ${src_data_prefix_id} == []
         Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{ sequence_index }}].match.entries[?(@.field=="sourceDataPrefixList")].ref    {{ ipv4_device.sequences[sequence_index].match_criterias.source_data_prefix_list | default("not_defined") }}    msg=source data prefix list
     ELSE
         ${src_data_prefix_details}=    GET On Session    sdwan_manager    /dataservice/template/policy/list/dataprefix/${src_data_prefix_id[0]}
