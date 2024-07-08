@@ -268,8 +268,15 @@ Verify Centralized Policy Data Policy Traffic Data Service Type {{ item.type }}
 {% if item.type == "qos" or item.type == "custom" %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="dscp")].value    {{ item.actions.dscp | default("not_defined") }}    msg=dscp
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="forwardingClass")].value    {{ item.actions.forwarding_class | default("not_defined") }}    msg=forwarding class
-    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="lossProtectFec")].parameter    {{ item.actions.loss_correction.type | default("not_defined") }}    msg=loss correction type
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="lossProtect")].parameter    {{ item.actions.loss_correction.type | default("not_defined") }}    msg=loss correction type
+{% if item.actions.loss_correction.type == "fecAlways" %}
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="lossProtectFec")].parameter    fecAlways    msg=fec always
+{% elif item.actions.loss_correction.type == "packetDuplication" %}
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="lossProtectPktDup")].parameter    packetDuplication    msg=packet duplication
+{% elif item.actions.loss_correction.type == "fecAdaptive" %}
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="lossProtectFec")].parameter    fecAdaptive    msg=fec adaptive
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="lossProtectFec")].value    {{ item.actions.loss_correction.loss_threshold_percentage | default("not_defined") }}    msg=loss threshold percentage
+{% endif %}
 
     ${policer_list_id}=    Get Value From Json    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="policer")].ref
     IF    ${policer_list_id} == []
@@ -318,6 +325,5 @@ Verify Centralized Policy Data Policy Traffic Data Service Type {{ item.type }}
 {% endif %}
 
 {% endfor %}
-
 {% endfor %}
 {% endif %}
