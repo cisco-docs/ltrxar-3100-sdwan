@@ -61,6 +61,9 @@ This table provides an overview of which object is supported in combination with
 [Standard Community List](./sdwan/policy_objects/standard_community_list.md) | | |
 [TLOC List](./sdwan/policy_objects/tloc_list.md) | | |
 [VPN List](./sdwan/policy_objects/vpn_list.md) | | |
+[Zones](./sdwan/policy_objects/zones.md) | | |
+[FQDN List](./sdwan/policy_objects/fqdn_list.md) | | |
+[Local Application List](./sdwan/policy_objects/local_application_list.md) | | |
 
 ### Localized Policies
 

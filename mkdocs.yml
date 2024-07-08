@@ -104,6 +104,9 @@ nav:
           - Standard Community List: data_model/sdwan/policy_objects/standard_community_list.md
           - TLOC List: data_model/sdwan/policy_objects/tloc_list.md
           - VPN List: data_model/sdwan/policy_objects/vpn_list.md
+          - Zones: data_model/sdwan/policy_objects/zones.md
+          - FQDN List: data_model/sdwan/policy_objects/fqdn_list.md
+          - Local Application List: data_model/sdwan/policy_objects/local_application_list.md
       - Localized Policies:
           - ACL Definition: data_model/sdwan/localized_policies/acl_definition.md
           - Device Access Policy Definition: data_model/sdwan/localized_policies/device_access_policy_definition.md

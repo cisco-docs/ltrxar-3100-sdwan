@@ -1873,6 +1873,9 @@ policy_objects:
   standard_community_lists: list(include("policy_objects_standard_community_list"), required=False)
   tloc_lists: list(include("policy_objects_tloc_list"), required=False)
   vpn_lists: list(include("policy_objects_vpn_list"), required=False)
+  zones: list(include("policy_objects_zone"), required=False)
+  fqdn_lists: list(include("policy_objects_fqdn_list"), required=False)
+  local_application_lists: list(include("policy_objects_local_application_list"), required=False)
 policy_objects_app_probe_class:
   name: regex('^[A-Za-z0-9-_]{1,128}$')
   forwarding_class: regex('^[^<>!&$@\\\/"() ]{1,128}$')
@@ -1978,6 +1981,17 @@ policy_objects_vpn_list:
 policy_objects_vpn_list_vpn_id_range:
   from: int(min=0, max=65530)
   to: int(min=0, max=65530)
+policy_objects_zone:
+  name: regex('^[A-Za-z0-9\-_]{1,32}$')
+  vpn_ids: list(int(min=0, max=65530), required=False)
+  interfaces: list(regex('^(Ethernet|FastEthernet|FiveGigabitEthernet|FortyGigabitEthernet|GigabitEthernet|HundredGigE|Loopback|TenGigabitEthernet|Tunnel|TwentyFiveGigabitEthernet|TwentyFiveGigE|TwoGigabitEthernet|VirtualPortGroup|Vlan)(([1-9]\d|\d)\/){0,2}(0|[1-9]\d*)([:|.][1-9]\d*)?'), required=False)
+policy_objects_fqdn_list:
+  name: regex('^[A-Za-z0-9\-_]{1,32}$')
+  fqdns: list(regex('^(?=.{1,120}$)((\*|[a-zA-Z0-9-]{1,63})\.)+([a-zA-Z0-9-]{2,63})$'), max=64, required=False)
+policy_objects_local_application_list:
+  name: regex('^[A-Za-z0-9\-_]{1,32}$')
+  applications: list(str(), required=False)
+  application_families: list(enum("application-service", "audio-video", "authentication", "behavioral", "database", "encrypted", "erp", "file-server", "file-transfer", "forum", "game", "instant-messaging", "mail", "microsoft-office", "middleware", "network-management", "network-service", "peer-to-peer", "printer", "routing", "security-service", "terminal", "thin-client", "tunneling", "web", "webmail"), required=False)
 # Localized Policy schema
 # Missing: CLI policies support
 localized_policies:
