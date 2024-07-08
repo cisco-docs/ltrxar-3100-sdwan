@@ -129,6 +129,9 @@ nav:
           - Feature Policy: data_model/sdwan/centralized_policies/feature_policy.md
           - CLI Policy: data_model/sdwan/centralized_policies/cli_policy.md
           - Activation: data_model/sdwan/centralized_policies/activation.md
+      - Security Policies:
+          - Zone based Firewall Definition: data_model/sdwan/security_policies/zone_based_firewall_definition.md
+          - Feature Policy: data_model/sdwan/security_policies/feature_policy.md
       - Sites:
           - Site: data_model/sdwan/sites/site.md
   - Python:

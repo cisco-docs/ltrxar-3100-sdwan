@@ -274,6 +274,14 @@ objects:
       [
         sdwan.centralized_policies.definitions.data_policy.application_aware_routing,
       ]
+  - name: Zone based Firewall Definition
+    template: zone_based_firewall_definition
+    folder: security_policies
+    paths: [sdwan.security_policies.definitions.zone_based_firewall]
+  - name: Feature Policy
+    template: feature_policy
+    folder: security_policies
+    paths: [sdwan.security_policies.feature_policies]
   - name: Zones
     template: zones
     folder: policy_objects

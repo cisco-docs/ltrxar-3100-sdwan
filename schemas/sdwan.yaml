@@ -10,6 +10,7 @@ sdwan:
   multi_region_fabric: include("multi_region_fabric", required=False)
   centralized_policies: include("centralized_policies", required=False)
   feature_profiles: include("feature_profiles", required=False)
+  security_policies: include("security_policies", required=False)
 # Edge Feature Templates
 edge_feature_templates:
   aaa_templates: list(include("edge_feature_templates_aaa"), required=False)
@@ -2235,6 +2236,7 @@ edge_device_templates:
   snmp_template: regex('^[^<>!&" ]{1,128}$', required=False)
   cli_template: regex('^[^<>!&" ]{1,128}$', required=False)
   localized_policy: regex('^[^<>!&" ]{1,128}$', required=False)
+  security_policy: regex('^[^<>!&" ]{1,128}$', required=False)
   switchport_templates: list(include("edge_device_templates_switchport"), required=False)
   thousandeyes_template: regex('^[^<>!&" ]{1,128}$', required=False)
 edge_device_templates_vpn_0:
@@ -2836,6 +2838,91 @@ feature_profiles_cli_config:
   name: regex('^[^&<>! \"]{1,128}$', required=False)
   description: str(required=False)
   cli_configuration: str()
+# Security Policy Tree
+security_policies:
+  definitions: include("security_policy_definitions", required=False)
+  feature_policies: list(include("security_policy_feature_policies"), required=False)
+security_policy_definitions:
+  zone_based_firewall: list(include("security_policy_zone_based_firewall"), required=False)
+security_policy_zone_based_firewall:
+  name: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
+  description: str(required=False)
+  default_action_type: enum("pass", "drop")
+  rules: list(include("security_policy_zone_based_firewall_rules"), required=False)
+  zone_pairs: list(include("security_policy_zone_based_firewall_zone_pairs"))
+security_policy_zone_based_firewall_rules:
+  id: int(min=1, max=65534)
+  name: regex('^[A-Za-z0-9\-_]{1,32}$')
+  base_action: enum("pass", "drop", "inspect")
+  match_criterias: include("security_policy_zone_based_firewall_rules_match_criterias", required=False)
+  actions: include("security_policy_zone_based_firewall_rules_actions", required=False)
+security_policy_zone_based_firewall_rules_match_criterias:
+  source_data_prefix_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)
+  source_ip_prefix: ip(version=4, required=False)
+  source_ip_prefix_variable: str(required=False)
+  source_fqdn_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)
+  source_fqdn: regex('^(?=.{1,120}$)((\*|[a-zA-Z0-9-]{1,63})\.)+([a-zA-Z0-9-]{2,63})$', required=False)
+  # source_geo_location_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)  # Wait for Geo Location List Definition in Policy Objects
+  source_geo_locations: list(str(max=3), required=False)
+  # source_port_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)   # Wait for Port List Definition in Policy Objects
+  source_ports: list(int(min=0, max=65535), required=False)
+  source_port_ranges: list(include("security_policy_zone_based_firewall_rules_match_criterias_source_port_range"), required=False)
+  destination_data_prefix_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)
+  destination_ip_prefix: ip(version=4, required=False)
+  destination_ip_prefix_variable: str(required=False)
+  destination_fqdn_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)
+  destination_fqdn: regex('^(?=.{1,120}$)((\*|[a-zA-Z0-9-]{1,63})\.)+([a-zA-Z0-9-]{2,63})$', required=False)
+  # destination_geo_location_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)  # Wait for Geo Location List Definition in Policy Objects
+  destination_geo_locations: list(str(max=3), required=False)
+  # destination_port_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)   # Wait for Port List Definition in Policy Objects
+  destination_ports: list(int(min=0, max=65535), required=False)
+  destination_port_ranges: list(include("security_policy_zone_based_firewall_rules_match_criterias_destination_port_range"), required=False)
+  # protocol_lists: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)   # Wait for Protocol List Definition in Policy Objects
+  # protocol_names: list(str(), required=False)   # Work in progress to handle protocol names in Terraform.
+  protocols: list(int(min=0, max=255), required=False)
+  local_application_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
+  # rule_sets: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)  # Wait for Rule Set Definition in Policy Objects
+security_policy_zone_based_firewall_rules_match_criterias_source_port_range:
+  from: int(min=0, max=65535)
+  to: int(min=0, max=65535)
+security_policy_zone_based_firewall_rules_match_criterias_destination_port_range:
+  from: int(min=0, max=65535)
+  to: int(min=0, max=65535)
+security_policy_zone_based_firewall_rules_actions:
+  log: bool(required=False)
+security_policy_zone_based_firewall_zone_pairs:
+  source_zone: any(enum('self_zone'), regex('^[A-Za-z0-9\-_]{1,32}$'))
+  destination_zone: any(enum('self_zone'), regex('^[A-Za-z0-9\-_]{1,32}$'))
+security_policy_feature_policies:
+  name: regex('^[A-Za-z0-9\-_]{1,32}$')
+  description: str(required=False)
+  use_case: enum("custom", "compliance", "guest_access", "direct_cloud_access", "direct_internet_access", "app_qoe")
+  firewall_policies: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)
+  intrusion_prevention_policy: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
+  # url_filtering_policy: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # Wait for URL Filtering Policy Definition
+  # advanced_malware_protection_policy: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # Wait for Advanced Malware Protection Policy Definition
+  # dns_security_policy: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # Wait for DNS Security Policy Definition
+  # tls_ssl_decryption_policy: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # Wait for TLS/SSL Decryption Policy Definition
+  additional_settings: include("security_policy_feature_policies_additional_settings", required=False)
+security_policy_feature_policies_additional_settings:
+  firewall: include("security_policy_feature_policies_additional_settings_firewall", required=False)
+  ips_url_amp: include("security_policy_feature_policies_additional_settings_ips_url_amp", required=False)
+security_policy_feature_policies_additional_settings_firewall:
+  direct_internet_applications: bool(required=False)
+  tcp_syn_flood_limit: int(min=1, max=4294967295, required=False)
+  high_speed_logging: include("security_policy_feature_policies_additional_settings_firewall_high_speed_logging", required=False)
+  audit_trail: bool(required=False)
+  match_stats_per_filter: bool(required=False)
+security_policy_feature_policies_additional_settings_firewall_high_speed_logging:
+  vpn_id: int(min=0, max=65530)
+  server_ip: ip(version=4)
+  server_port: int(min=0, max=65535)
+security_policy_feature_policies_additional_settings_ips_url_amp:
+  external_syslog_server: include("security_policy_feature_policies_additional_settings_ips_url_amp_external_syslog_server")
+  failure_mode: enum("open", "close")
+security_policy_feature_policies_additional_settings_ips_url_amp_external_syslog_server:
+  vpn_id: int(min=0, max=65530)
+  server_ip: ip(version=4)
 feature_profiles_service:
   name: regex('^[^&<>! \"]{1,128}$')
   description: str(required=False)
