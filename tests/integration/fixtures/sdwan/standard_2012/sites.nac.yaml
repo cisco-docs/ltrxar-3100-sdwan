@@ -2,15 +2,15 @@
 # SD-WAN Sites
 sdwan:
   sites:
-    - id: 2101
+    - id: 3
       routers:
-        - chassis_id: C8K-15411CCC-D476-0B3B-21F2-5D6AC387EE7B
+        - chassis_id: C8K-25679DF5-DE95-81BC-5D4A-56907294945B
           model: C8000V
           device_template: DT-C8000V-SINGLECPE
           device_variables:
-            site_id: 2101
-            system_ip: 10.0.2.101
-            system_hostname: SITE2101-C8KV-01
+            site_id: 3
+            system_ip: 10.0.0.3
+            system_hostname: Edge3
             logging_server_source_interface: Loopback511
             ntp_server_source_interface: Loopback511
             global_cdp_enable: true
@@ -70,15 +70,15 @@ sdwan:
             vpn512_int1_if_name: GigabitEthernet3
             vpn512_int1_if_description: OOB-mgmt
             vpn512_int1_if_shutdown: false
-    - id: 2102
+    - id: 1
       routers:
         - chassis_id: C8K-172343D2-7380-8B1B-5509-6FCB24AFA689
           model: C8000V
           device_template: DT-C8000V-DUALCPE-ACTIVE
           device_variables:
-            site_id: 2102
-            system_ip: 10.0.2.102
-            system_hostname: SITE2102-C8KV-01
+            site_id: 1
+            system_ip: 10.1.1.2
+            system_hostname: edge2
             logging_server_source_interface: Loopback511
             ntp_server_source_interface: Loopback511
             global_cdp_enable: true
@@ -138,13 +138,13 @@ sdwan:
             vpn512_int1_if_name: GigabitEthernet3
             vpn512_int1_if_description: OOB-mgmt
             vpn512_int1_if_shutdown: false
-        - chassis_id: C8K-25679DF5-DE95-81BC-5D4A-56907294945B
+        - chassis_id: C8K-15411CCC-D476-0B3B-21F2-5D6AC387EE7B
           model: C8000V
           device_template: DT-C8000V-DUALCPE-STANDBY
           device_variables:
-            site_id: 2102
-            system_ip: 10.0.2.103
-            system_hostname: SITE2102-C8KV-02
+            site_id: 1
+            system_ip: 10.1.1.1
+            system_hostname: edge1
             logging_server_source_interface: Loopback511
             ntp_server_source_interface: Loopback511
             global_cdp_enable: true
