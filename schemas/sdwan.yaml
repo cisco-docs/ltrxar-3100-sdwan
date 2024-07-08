@@ -2824,20 +2824,6 @@ centralized_policy_data_cflowd_collectors:
   transport: enum("transport_tcp","transport_udp")
   source_interface: str()
   export_spreading: enum("enable","disable")
-# UX 2.0
-feature_profiles:
-  cli_profiles: list(include("feature_profiles_cli"), required=False)
-  service_profiles: list(include("feature_profiles_service"), required=False)
-  system_profiles: list(include("feature_profiles_system"), required=False)
-  transport_profiles: list(include("feature_profiles_transport"), required=False)
-feature_profiles_cli:
-  name: regex('^[^&<>! \"]{1,128}$')
-  description: str(required=False)
-  config: include("feature_profiles_cli_config", required=False)
-feature_profiles_cli_config:
-  name: regex('^[^&<>! \"]{1,128}$', required=False)
-  description: str(required=False)
-  cli_configuration: str()
 # Security Policy Tree
 security_policies:
   definitions: include("security_policy_definitions", required=False)
@@ -2923,6 +2909,20 @@ security_policy_feature_policies_additional_settings_ips_url_amp:
 security_policy_feature_policies_additional_settings_ips_url_amp_external_syslog_server:
   vpn_id: int(min=0, max=65530)
   server_ip: ip(version=4)
+# UX 2.0
+feature_profiles:
+  cli_profiles: list(include("feature_profiles_cli"), required=False)
+  service_profiles: list(include("feature_profiles_service"), required=False)
+  system_profiles: list(include("feature_profiles_system"), required=False)
+  transport_profiles: list(include("feature_profiles_transport"), required=False)
+feature_profiles_cli:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  config: include("feature_profiles_cli_config", required=False)
+feature_profiles_cli_config:
+  name: regex('^[^&<>! \"]{1,128}$', required=False)
+  description: str(required=False)
+  cli_configuration: str()
 feature_profiles_service:
   name: regex('^[^&<>! \"]{1,128}$')
   description: str(required=False)
