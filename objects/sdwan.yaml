@@ -378,3 +378,7 @@ objects:
     template: snmp
     folder: profile_parcels
     paths: [sdwan.feature_profiles.system_profiles.snmp]
+  - name: WAN VPN Profile Parcel
+    template: wan_vpn
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.transport_profiles.wan_vpn]
