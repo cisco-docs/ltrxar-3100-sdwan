@@ -289,7 +289,7 @@ objects:
   - name: FQDN List
     template: fqdn_list
     folder: policy_objects
-    paths: [sdwan.policy_objects.fqdn_list]
+    paths: [sdwan.policy_objects.fqdn_lists]
   - name: Local Application List
     template: local_application_list
     folder: policy_objects
