@@ -374,6 +374,10 @@ objects:
     template: security
     folder: profile_parcels
     paths: [sdwan.feature_profiles.system_profiles.security]
+  - name: Service Endpoint Tracker Profile Parcel
+    template: service_endpoint_tracker
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.service_profiles.endpoint_trackers]
   - name: SNMP Profile Parcel
     template: snmp
     folder: profile_parcels
