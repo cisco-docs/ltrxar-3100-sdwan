@@ -2830,6 +2830,7 @@ security_policies:
   feature_policies: list(include("security_policy_feature_policies"), required=False)
 security_policy_definitions:
   zone_based_firewall: list(include("security_policy_zone_based_firewall"), required=False)
+  intrusion_prevention: list(include("security_policy_intrusion_prevention"), required=False)
 security_policy_zone_based_firewall:
   name: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
   description: str(required=False)
@@ -2909,6 +2910,15 @@ security_policy_feature_policies_additional_settings_ips_url_amp:
 security_policy_feature_policies_additional_settings_ips_url_amp_external_syslog_server:
   vpn_id: int(min=0, max=65530)
   server_ip: ip(version=4)
+security_policy_intrusion_prevention:
+  name: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
+  description: str(required=False)
+  mode: enum("security") # Only "security" (legacy) mode is supported
+  inspection_mode: enum("protection", "detection")
+  log_level: enum("emergency", "alert", "critical", "error", "warning", "notice", "informational", "debug")
+  signature_set: enum("balanced", "connectivity", "security")
+  # signature_whitelist: str(required=False) ## Pending on the availability of the policy object
+  target_vpns: list(int(min=0, max=65530))
 # UX 2.0
 feature_profiles:
   cli_profiles: list(include("feature_profiles_cli"), required=False)

@@ -132,6 +132,7 @@ nav:
       - Security Policies:
           - Zone based Firewall Definition: data_model/sdwan/security_policies/zone_based_firewall_definition.md
           - Feature Policy: data_model/sdwan/security_policies/feature_policy.md
+          - Intrusion Prevention Policy: data_model/sdwan/security_policies/intrusion_prevention_policy.md
       - Sites:
           - Site: data_model/sdwan/sites/site.md
   - Python:

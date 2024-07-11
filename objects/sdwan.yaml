@@ -274,6 +274,7 @@ objects:
       [
         sdwan.centralized_policies.definitions.data_policy.application_aware_routing,
       ]
+
   - name: Zone based Firewall Definition
     template: zone_based_firewall_definition
     folder: security_policies
@@ -294,6 +295,11 @@ objects:
     template: local_application_list
     folder: policy_objects
     paths: [sdwan.policy_objects.local_application_lists]
+  - name: Intrusion Prevention Definition
+    template: intrusion_prevention_definition
+    folder: security_policies
+    paths: [sdwan.security_policies.definitions.intrusion_prevention]
+
   - name: CLI Profile
     template: cli
     folder: feature_profiles

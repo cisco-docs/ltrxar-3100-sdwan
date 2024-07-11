@@ -95,12 +95,15 @@ This table provides an overview of which object is supported in combination with
 [CLI Policy](./sdwan/centralized_policies/cli_policy.md) | :material-check: | :material-check: | :material-check:
 [Activation](./sdwan/centralized_policies/activation.md) | :material-check: | :material-check: | :material-check:
 
+
 ### Security Policies
 
 <span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse
 ---|---|---|---
 [Zone based Firewall Definition](./sdwan/security_policies/zone_based_firewall_definition.md) | :material-check: | :material-check: | :material-check:
 [Feature Policy](./sdwan/security_policies/fature_policy.md) | :material-check: | :material-check: | :material-check:
+[Intrusion Prevention Definition](./sdwan/security_policies/intrusion_prevention_definition.md) | :material-check: | :material-check: | :material-check:
+
 ### Sites
 
 <span style="display: inline-block; width:200px">Description</span> | Python | Terraform | Reverse
