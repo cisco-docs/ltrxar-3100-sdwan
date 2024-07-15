@@ -1,4 +1,4 @@
-# Policy
+# Security Policy
 
 Policy combines one or more Security policy definitions to create a Policy based on use-case. These policies can then be attached to device templates.
 

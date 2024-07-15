@@ -1,6 +1,6 @@
-# Zone based Firewall
+# Zone-Based Firewall
 
-Zone based Firewall defines the matching conditions and Actions to configure a Firewall policy.
+Zone-Based Firewall defines the matching conditions and actions to configure a firewall policy.
 
 {{ doc_gen }}
 

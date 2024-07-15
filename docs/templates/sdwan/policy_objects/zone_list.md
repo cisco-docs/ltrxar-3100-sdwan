@@ -1,4 +1,4 @@
-# Zones
+# Zone List
 
 Zones defines the VPN List or Interface List that can be used in Security Policies.
 

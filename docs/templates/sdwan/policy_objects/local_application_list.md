@@ -1,6 +1,6 @@
-# Application List
+# Local Application List
 
-Local Application list specifies one or more NBAR applications or applications families.
+Local Application list specifies one or more NBAR applications or applications families for use in Security Policies.
 Application names should be provided in the format accepted by the API.
 
 {{ doc_gen }}
