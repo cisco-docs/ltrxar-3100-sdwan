@@ -275,16 +275,16 @@ objects:
         sdwan.centralized_policies.definitions.data_policy.application_aware_routing,
       ]
 
-  - name: Zone based Firewall Definition
+  - name: Zone-Based Firewall Definition
     template: zone_based_firewall_definition
     folder: security_policies
     paths: [sdwan.security_policies.definitions.zone_based_firewall]
-  - name: Feature Policy
+  - name: Security Policy
     template: feature_policy
     folder: security_policies
     paths: [sdwan.security_policies.feature_policies]
-  - name: Zones
-    template: zones
+  - name: Zone List
+    template: zone_list
     folder: policy_objects
     paths: [sdwan.policy_objects.zones]
   - name: FQDN List
@@ -299,7 +299,6 @@ objects:
     template: intrusion_prevention_definition
     folder: security_policies
     paths: [sdwan.security_policies.definitions.intrusion_prevention]
-
   - name: CLI Profile
     template: cli
     folder: feature_profiles
