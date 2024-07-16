@@ -18,10 +18,10 @@ sdwan:
       snmp_template: FT-CEDGE-SNMPV3-01
       system_template: FT-CEDGE-SYSTEM-01
       vpn_0_template:
-        name: FT-CEDGE-VPN0-01
+        name: FT-CEDGE-VPN0-02
         ethernet_interface_templates:
-          - name: FT-CEDGE-WAN-TLOC1
-          - name: FT-CEDGE-WAN-TLOC2
+          - name: FT-CEDGE-WAN-TLOC1-STATIC
+          - name: FT-CEDGE-WAN-TLOC2-STATIC
       vpn_service_templates:
         - name: FT-CEDGE-VPN1-ACTIVE-01
           bgp_template: FT-CEDGE-BGP-VPN1-ACTIVE
@@ -50,10 +50,10 @@ sdwan:
       snmp_template: FT-CEDGE-SNMPV3-01
       system_template: FT-CEDGE-SYSTEM-01
       vpn_0_template:
-        name: FT-CEDGE-VPN0-01
+        name: FT-CEDGE-VPN0-02
         ethernet_interface_templates:
-          - name: FT-CEDGE-WAN-TLOC1
-          - name: FT-CEDGE-WAN-TLOC2
+          - name: FT-CEDGE-WAN-TLOC1-STATIC
+          - name: FT-CEDGE-WAN-TLOC2-STATIC
       vpn_service_templates:
         - name: FT-CEDGE-VPN1-ACTIVE-01
           bgp_template: FT-CEDGE-BGP-VPN1-ACTIVE
@@ -82,10 +82,10 @@ sdwan:
       snmp_template: FT-CEDGE-SNMPV3-01
       system_template: FT-CEDGE-SYSTEM-01
       vpn_0_template:
-        name: FT-CEDGE-VPN0-01
+        name: FT-CEDGE-VPN0-02
         ethernet_interface_templates:
-          - name: FT-CEDGE-WAN-TLOC1
-          - name: FT-CEDGE-WAN-TLOC2
+          - name: FT-CEDGE-WAN-TLOC1-STATIC
+          - name: FT-CEDGE-WAN-TLOC2-STATIC
       vpn_service_templates:
         - name: FT-CEDGE-VPN1-STANDBY-01
           bgp_template: FT-CEDGE-BGP-VPN1-STANDBY

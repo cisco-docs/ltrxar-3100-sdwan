@@ -277,7 +277,7 @@ sdwan:
         qos_map: QOS-MAP-1P4Q
         rewrite_rule: REWRITE-RULE-MPLS
         shaping_rate_variable: vpn0_tloc01_shaping_rate
-        shutdown_variable: vpn0_tloc01_if_tracker
+        shutdown_variable: vpn0_tloc01_if_shutdown
         tunnel_interface:
           allow_service_bgp: false
           allow_service_dhcp: true
@@ -296,6 +296,37 @@ sdwan:
           ipsec_encapsulation: true
           ipsec_preference_variable: vpn0_tloc01_tunnel_ipsec_preference
           ipsec_weight_variable: vpn0_tloc01_tunnel_weight
+          group_variable: vpn0_tloc01_tunnel_group
+          hello_interval: 1000
+          hello_tolerance: 12
+          vmanage_connection_preference_variable: vpn0_tloc01_tunnel_vmanage_connection_preference
+      - name: FT-CEDGE-WAN-TLOC2-STATIC
+        description: CEDGE TLOC2 with static IP Settings, NAT enabled
+        interface_description_variable: vpn0_tloc02_if_description
+        interface_name_variable: vpn0_tloc02_if_name
+        ipv4_address_variable: vpn0_tloc02_if_ipv4_address
+        ipv4_nat: true
+        ipv4_nat_type: interface
+        shaping_rate_variable: vpn0_tloc02_shaping_rate
+        shutdown_variable: vpn0_tloc02_if_shutdown
+        tunnel_interface:
+          allow_service_bgp: false
+          allow_service_dhcp: true
+          allow_service_dns: true
+          allow_service_https: false
+          allow_service_icmp: true
+          allow_service_netconf: false
+          allow_service_ntp: true
+          allow_service_ospf: false
+          allow_service_snmp: false
+          allow_service_ssh: false
+          allow_service_stun: false
+          clear_dont_fragment: false
+          color_variable: vpn0_tloc02_tunnel_color
+          restrict_variable: vpn0_tloc02_tunnel_restrict
+          ipsec_encapsulation: true
+          ipsec_preference_variable: vpn0_tloc02_tunnel_ipsec_preference
+          ipsec_weight_variable: vpn0_tloc02_tunnel_weight
           group_variable: vpn0_tloc02_tunnel_group
           hello_interval: 1000
           hello_tolerance: 12
@@ -586,11 +617,11 @@ sdwan:
         vpn_name: VPN0
         vpn_id: 0
         ipv4_static_routes:
-          - prefix_variable: vpn0_ipv4_route1_prefix
+          - prefix: 0.0.0.0/0
             optional: false
             next_hops:
-              - address_variable: vpn0_ipv4_route1_nexthop1_ip
-                distance_variable: vpn0_ipv4_route1_nexthop1_distance
+              - address_variable: vpn0_nexthop1_ip
+              - address_variable: vpn0_nexthop2_ip
       - name: FT-CEDGE-VPN0-03
         description: CEDGE VPN0 with static IP routes
         enhance_ecmp_keying_variable: vpn0_layer4_ecmp_enable
