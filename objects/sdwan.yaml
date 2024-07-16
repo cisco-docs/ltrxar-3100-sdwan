@@ -379,14 +379,18 @@ objects:
     template: security
     folder: profile_parcels
     paths: [sdwan.feature_profiles.system_profiles.security]
-  - name: Service Endpoint Tracker Profile Parcel
-    template: service_endpoint_tracker
+  - name: Service IPv4 Tracker Profile Parcel
+    template: service_ipv4_tracker
     folder: profile_parcels
-    paths: [sdwan.feature_profiles.service_profiles.endpoint_trackers]
+    paths: [sdwan.feature_profiles.service_profiles.ipv4_trackers]
   - name: SNMP Profile Parcel
     template: snmp
     folder: profile_parcels
     paths: [sdwan.feature_profiles.system_profiles.snmp]
+  - name: Transport IPv6 Tracker Profile Parcel
+    template: transport_ipv6_tracker
+    folder: profile_parcels
+    paths: [sdwan.feature_profiles.transport_profiles.ipv6_trackers]
   - name: WAN VPN Profile Parcel
     template: wan_vpn
     folder: profile_parcels

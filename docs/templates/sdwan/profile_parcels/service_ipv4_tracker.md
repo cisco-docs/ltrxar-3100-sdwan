@@ -1,6 +1,6 @@
-# Service Endpoint Tracker Profile Parcel
+# Service IPv4 Tracker Profile Parcel
 
-Configure Endpoint Tracker for IP, URL or TCP/UDP.
+Configure IPv4 Endpoint Tracker for IP, URL or TCP/UDP.
 
 {{ doc_gen }}
 
@@ -11,7 +11,7 @@ sdwan:
   feature_profiles:
     service_profiles:
       - name: service1
-        endpoint_trackers:
+        ipv4_trackers:
           - name: static_route_tracker1
             threshold: 300
             interval: 20

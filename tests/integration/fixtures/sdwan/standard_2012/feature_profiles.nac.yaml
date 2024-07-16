@@ -21,26 +21,28 @@ sdwan:
       - name: service1
       - name: service2
         description: full profile
-        endpoint_trackers:
+        ipv4_trackers:
           - name: static_route_ip_tracker
             description: Static Route IP Tracker
             endpoint_ip: 1.1.1.1
             interval: 60
             multiplier: 2
             threshold: 500
-            tracker_name: ip_tracker
+            tracker_name: service_ipv4_ip_tracker
           - name: static_route_api_tracker
             description: Static Route API URL Tracker
             threshold: 300
             interval: 20
             multiplier: 1
             endpoint_api_url: https://api.example.com
+            tracker_name: service_ipv4_api_tracker
           - name: static_route_dns_tracker
             description: Static Route DNS Tracker
             threshold: 300
             interval: 20
             multiplier: 1
             endpoint_api_url: https://api.example.com
+            tracker_name: service_ipv4_dns_tracker
           - name: static_route_tcp_tracker
             description: Static Route TCP Tracker
             threshold: 300
@@ -49,6 +51,7 @@ sdwan:
             endpoint_tcp_udp_ip: 8.8.8.8
             endpoint_tcp_udp_port: 80
             endpoint_tcp_udp_protocol: tcp
+            tracker_name: service_ipv4_tcp_tracker
     system_profiles:
       - name: system1
         aaa:
@@ -99,7 +102,7 @@ sdwan:
           description: AAA parcel with full configuration
           accounting_rules:
             - groups:
-              - tacacs-511
+                - tacacs-511
               id: rule1
               level: 1
               method: exec
@@ -267,9 +270,9 @@ sdwan:
               vpn_id: 511
           tls_profiles:
             - cipher_suites:
-              - aes-128-cbc-sha
-              - aes-256-cbc-sha
-              - rsa-aes-cbc-sha2
+                - aes-128-cbc-sha
+                - aes-256-cbc-sha
+                - rsa-aes-cbc-sha2
               name: tls1
               tls_version: TLSv1.2
         mrf:
@@ -405,6 +408,28 @@ sdwan:
       - name: transport1
       - name: transport2
         description: full profile
+        ipv6_trackers:
+          - name: ip_tracker
+            description: IP Tracker
+            endpoint_ip: fc00::1
+            interval: 60
+            multiplier: 2
+            threshold: 500
+            tracker_name: transport_ipv6_ip_tracker
+          - name: api_tracker
+            description: API URL Tracker
+            threshold: 300
+            interval_variable: api_tracker_interval
+            multiplier: 1
+            endpoint_api_url: https://api.example.com
+            tracker_name: transport_ipv6_api_tracker
+          - name: dns_tracker
+            description: DNS Tracker
+            threshold: 300
+            interval: 20
+            multiplier: 1
+            endpoint_api_url: https://api.example.com
+            tracker_name: transport_ipv6_dns_tracker
         wan_vpn:
           name: wan_vpn
           description: VPN 0 configuration
