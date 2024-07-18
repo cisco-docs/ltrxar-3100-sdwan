@@ -86,6 +86,21 @@ Verify Edge Device Templates {{ edt.name }}
         Should Be Equal Value Json String    ${localized_pilicies.json()}    $..policyName    {{ edt.localized_policy | default("not_defined") }}    msg=localized policy
     END
 
+    ${sp_policy_id}=    Get Value From Json    ${r_id.json()}    $..securityPolicyId
+    IF    ${sp_policy_id} == []
+        Should Be Equal Value Json String    ${r_id.json()}    $..securityPolicyId    {{ edt.security_policy | default("not_defined") }}    msg=security policy
+    ELSE
+        ${security_policies}=   GET On Session   sdwan_manager   /dataservice/template/policy/security/definition/${sp_policy_id[0]}
+        Should Be Equal Value Json String    ${security_policies.json()}    $..policyName    {{ edt.security_policy | default("not_defined") }}    msg=security policy
+    END
+
+    # ${utd_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="virtual-application-utd")].templateId
+    # IF    ${utd_id} == []
+    #     Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${utd_id}")].templateName    {{ edt.security_policy.container_profile | default("not_defined") }}    msg=container profile
+    # ELSE
+    #     Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${utd_id[0]}")].templateName    {{ edt.security_policy.container_profile | default("not_defined") }}    msg=container profile
+    # END
+
 {% set exp_switchport_templates = [] %}
 {% for item in edt.switchport_templates | default([]) %}
 {% set _ = exp_switchport_templates.append(item.name) %}
