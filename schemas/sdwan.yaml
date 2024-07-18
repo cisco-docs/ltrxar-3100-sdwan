@@ -1988,7 +1988,7 @@ policy_objects_zone:
   interfaces: list(regex('^(Ethernet|FastEthernet|FiveGigabitEthernet|FortyGigabitEthernet|GigabitEthernet|HundredGigE|Loopback|TenGigabitEthernet|Tunnel|TwentyFiveGigabitEthernet|TwentyFiveGigE|TwoGigabitEthernet|VirtualPortGroup|Vlan)(([1-9]\d|\d)\/){0,2}(0|[1-9]\d*)([:|.][1-9]\d*)?'), required=False)
 policy_objects_fqdn_list:
   name: regex('^[A-Za-z0-9\-_]{1,32}$')
-  fqdns: list(regex('^(?=.{1,120}$)((\*|[a-zA-Z0-9-]{1,63})\.)+([a-zA-Z0-9-]{2,63})$'), max=64, required=False)
+  fqdns: list(regex('^(?=.{1,120}$)((\*|[a-zA-Z0-9-]{1,63})\.)+([a-zA-Z0-9-]{2,63})$'), max=64)
 policy_objects_local_application_list:
   name: regex('^[A-Za-z0-9\-_]{1,32}$')
   applications: list(str(), required=False)
