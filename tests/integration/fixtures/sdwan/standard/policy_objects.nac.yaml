@@ -121,6 +121,22 @@ sdwan:
         prefixes:
           - 13.12.13.0/24
           - 175.16.31.0/30
+      - name: ZBFW_SDPL_1_uni1
+        prefixes:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+      - name: ZBFW_SDPL_2_uni1
+        prefixes:
+          - 12.12.13.0/24
+          - 174.16.31.0/30
+      - name: ZBFW_DDPL_1_uni1
+        prefixes:
+          - 13.12.13.0/24
+          - 175.16.31.0/30
+      - name: ZBFW_DDPL_2_uni1
+        prefixes:
+          - 12.12.13.0/24
+          - 174.16.31.0/30
     ipv4_prefix_lists:
       - name: PLV4-PRIVATE-RANGES
         entries:
@@ -411,3 +427,56 @@ sdwan:
         vpn_id_ranges:
           - from: 107
             to: 108
+    fqdn_lists:
+      - name: ZBFW_SFL_1_uni1
+        fqdns:
+          - cisco.com
+          - '*.service-now.com'
+          - '*.noc.demo.net'
+      - name: ZBFW_SFL_2_uni1
+        fqdns:
+          - cisco.com
+          - '*.noc.demo.net'
+      - name: ZBFW_DFL_1_uni1
+        fqdns:
+          - cisco.com
+          - '*.service-now.com'
+      - name: ZBFW_DFL_2_uni1
+        fqdns:
+          - cisco.com
+    local_application_lists:
+      - name: ZBFW_LAL_1_uni1
+        applications:
+          - ftps-data
+          - concur
+          - ms-teams-audio
+          - ms-teams-media
+          - ms-teams-video
+        application_families:
+          - audio-video
+          - authentication
+    zones:
+      - name: Test_zone_1_uni1
+        vpn_ids:
+          - 0
+          - 10
+      - name: Test_zone_2_uni1
+        vpn_ids:
+          - 1
+          - 11
+      - name: Test_zone_3_uni1
+        vpn_ids:
+          - 2
+          - 12
+      - name: Test_zone_4_uni1
+        vpn_ids:
+          - 3
+          - 13
+      - name: Test_zone_5_uni1
+        interfaces:
+          - Ethernet0/1
+          - GigabitEthernet1/10
+      - name: Test_zone_6_uni1
+        interfaces:
+          - Ethernet0/2
+          - GigabitEthernet1/11
