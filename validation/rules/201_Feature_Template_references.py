@@ -1,6 +1,6 @@
 class Rule:
     id = "201"
-    description = "Verify Feature Template references"
+    description = "Verify Feature Template and Policy references in Device Template"
     severity = "HIGH"
     
     # Feature Templates can be referenced in Device Templates at ['sdwan']['edge_device_templates'] in 3 levels
@@ -44,6 +44,7 @@ class Rule:
 
     # Extract the Feature Template names referenced in Device Templates at ['sdwan']['edge_device_templates']
     # Extract the Localized Policy names referenced in Device Templates at ['sdwan']['edge_device_templates']
+    # Extract the Security Policy names referenced in Device Templates at ['sdwan']['edge_device_templates']
     @classmethod
     def build_device_template_dict(cls, inventory):
         device_template_dict = {'device_templates': []}
@@ -52,7 +53,8 @@ class Rule:
             template = {
                 'name': device_template.get('name'), 
                 'feature_templates': {},
-                'localized_policies': []
+                'localized_policies': [],
+                'security_policies': []
             }
             ## Initialize the list of feature templates for each feature type
             for feature in cls.feature_template_level1:
@@ -64,6 +66,9 @@ class Rule:
             ## Add the localized policy to the result dictionary
             if "localized_policy" in device_template:
                 template['localized_policies'].append(device_template.get('localized_policy'))
+            ## Add the security policy to the result dictionary
+            if "security_policy" in device_template:
+                template['security_policies'].append(device_template.get('security_policy'))
             ## Loop through the feature templates in the device template at Level 1
             for feature in cls.feature_template_level1:
                 feature_val = device_template.get(feature)
@@ -131,16 +136,26 @@ class Rule:
         results = []
         for fpds in inventory.get('sdwan', {}).get('localized_policies', {}).get('feature_policies', {}):
             results.append(fpds['name'])
-        return results  
+        return results 
+    
+    # Extract the Policy Names of the Security Policies at ['sdwan']['security_policies']['definitions']
+    @classmethod
+    def build_security_policies_list(cls, inventory):
+        results = []
+        for fpds in inventory.get('sdwan', {}).get('security_policies', {}).get('feature_policies', {}):
+            results.append(fpds['name'])
+        return results 
 
     # Validate if the Feature Template names referenced in Device Templates at ['sdwan']['edge_device_templates'] are defined at ['sdwan']['edge_feature_templates']
     # Validate if the Localized Policy names referenced in Device Templates at ['sdwan']['edge_device_templates'] are defined at ['sdwan']['localized_policies']['feature_policies']
+    # Validate if the Security Policy names referenced in Device Templates at ['sdwan']['edge_device_templates'] are defined at ['sdwan']['security_policies']['feature_policies']
     @classmethod
     def match(cls, inventory):
         results = []
         device_template_dict = cls.build_device_template_dict(inventory)
         feature_template_dictionary = cls.build_feature_template_dict(inventory)
         build_localized_policies_list = cls.build_localized_policies_list(inventory)
+        build_security_policies_list = cls.build_security_policies_list(inventory)
         for device_template in device_template_dict.get("device_templates", []):
             for feature_type, feature_templates in device_template.get("feature_templates", {}).items():
                 for template_name in feature_templates:
@@ -152,5 +167,10 @@ class Rule:
                 if localized_policy not in build_localized_policies_list:
                     results.append(
                         f"Validation Error: localized_policy:'{localized_policy}' in device_template:'{device_template.get('name')}' is not a defined in [sdwan][localized_policies][feature_policies]\n"
+                    )
+            for security_policy in device_template.get("security_policies", []):
+                if security_policy not in build_security_policies_list:
+                    results.append(
+                        f"Validation Error: security_policy:'{security_policy}' in device_template:'{device_template.get('name')}' is not a defined in [sdwan][security_policies][feature_policies]\n"
                     )
         return results

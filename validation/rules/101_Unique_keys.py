@@ -8,6 +8,7 @@ class Rule:
     # - Device Template Names
     # - Localized Policy Template Names
     # - Centralized Policy definition Names
+    # - Security Policy definition Names
     paths = [
         "sdwan.sites.id",
         "sdwan.edge_device_templates.name",
