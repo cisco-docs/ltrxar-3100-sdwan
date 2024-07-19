@@ -3046,11 +3046,7 @@ feature_profiles_system_aaa_user:
   password_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
   privilege: enum(1, 15, required=False)
   privilege_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
-  public_key_chains: list(include("feature_profiles_system_aaa_user_public_key_chain"), max=2, required=False)
-feature_profiles_system_aaa_user_public_key_chain:
-  key_type: str(min=1, max=32, required=False)
-  key_type_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
-  key_string: str(min=1, max=1024)
+  public_key_chains: list(regex('^AAAA[0-9A-Za-z+/]+[=]{0,3}$'), max=2, required=False)
 feature_profiles_system_banner:
   name: regex('^[^&<>! \"]{1,128}$', required=False)
   description: str(required=False)

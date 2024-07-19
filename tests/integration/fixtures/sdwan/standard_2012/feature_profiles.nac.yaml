@@ -150,8 +150,7 @@ sdwan:
               password: $6$v0UN8x4fkvZd0Lnj$hq13MC.W5ElstGlolO38fshGEYxSechW4K5zEdrJD1trSH30AaNKvL4VUlOtxersGmIDNefPwyrSqbJpCpXGJ.
               privilege: 15
               public_key_chains:
-                - key_type: "key1"
-                  key_string: abcd12345
+                - AAAAB3NzaC1yc2EAAAADAQABAAACAQDOeSUjLRhVpL+hf3FDm846GJSzi3muWztewThuovwvDwq3AicP6Q2ZTvHTuD8pT3zOZyYp8W2OJE8XcYu/UlayccWzJD6/behqJ7x1Zxm0wgPekpgl7swXHubUY9GoJmfqfdv8qHqrxovUXU0nwevFU+RpLXIeAl262dm19EUgSRjMeZfYLeRKE2qRaiNhVclHveYhu/mm52MDQa2QzxcNToPL3emEWMMYw2rkY7W6tMcveEC1r83FTRfaRx+So1nAqDqgHLqwPEgRfLBMeOog7fWzUP46BVm9qdHnCoWhMfiNKups/Zs3OJBTIyWIGLf9g/EJh/SBdaGy2OvHXmnJGTVyysqZx1P4J7mZSF7zrDXf2L/OThK2F/YadQVxKJwKkec/V+lSziG/AulsmJLCqPhCyBVNLGm6zJnLwd9o3iO/LyEcI4FBxN8dU/neyjo11D1zhrWSYej2rgLA5fV4V1f/EPUbqeL86jg7lpBPT4r0fPYP1Qmul9KjHUtQA2+q5AMJTusgKTev7VIkKcPep4IWiPwDjWlGvXRekNjB9nnzDCgO1Dz94l6NzmR9+yW4yb9R4crxkpfrawS+GOmMzfIAyG7eMpv59rFIXpW+chsVQG2pMESQzCv4Cc3NDpgfX9FfTwRjlN1FokGxO4rxDAJQXDdAPVQH+hhMhIdusw==
         banner:
           name: banner_full
           description: banner parcel with full configuration

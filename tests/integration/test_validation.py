@@ -19,6 +19,12 @@ VALIDATION_RULES_PATH = "validation/rules/"
                 "tests/integration/fixtures/sdwan/standard/",
                 "tests/integration/fixtures/sdwan/standard_209/",
             ]
+        ),
+        (
+            [
+                "tests/integration/fixtures/sdwan/standard/",
+                "tests/integration/fixtures/sdwan/standard_2012/",
+            ]
         )
     ],
 )
