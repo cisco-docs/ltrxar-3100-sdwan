@@ -16,6 +16,7 @@ Get BGP Feature Template
 {% for bgp in sdwan.edge_feature_templates.bgp_templates | default([]) %}
 
 Verify Edge Feature BGP Configuration Template {{ bgp.name }}
+
     ${bgp_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ bgp.name }}")]
     Should Be Equal Value Json String    ${bgp_id}    $..templateName    {{ bgp.name }}    msg=name
     Should Be Equal Value Json String    ${bgp_id}    $..templateDescription    {{ bgp.description }}    msg=description
@@ -32,7 +33,6 @@ Verify Edge Feature BGP Configuration Template {{ bgp.name }}
 
     ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{bgp.name }}")].templateId
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${template_id[0]}
-    Set Suite Variable   ${r_id}
  
     Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].best-path.med.always-compare.vipValue    {{ bgp.always_compare_med | default("not_defined") | lower() }}    msg=always compare med
     Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].best-path.med.always-compare.vipVariableName    {{ bgp.always_compare_med_variable | default("not_defined") }}    msg=always compare med variable
@@ -76,7 +76,6 @@ Verify Edge Feature BGP Configuration Template {{ bgp.name }}
 {% elif ip_type == bgp.ipv6_address_family %}
 {% set af = 'ipv6_address_family' %}
 {% endif %}
-Verify Edge Feature BGP Configuration With Address FamilyTemplate {{ af }}
 
     Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{loop.index0}}].default-information.originate.vipValue    {{ ip_type.default_information_originate | default("not_defined") | lower()}}    msg= default information originate
     Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{loop.index0}}].default-information.originate.vipVariableName    {{ ip_type.default_information_originate_variable | default("not_defined") }}    msg=default information originate variable
@@ -235,7 +234,6 @@ Verify Edge Feature BGP Configuration With Address FamilyTemplate {{ af }}
 {% endfor %}
 {% endfor %}
 
-Verify Edge Feature BGP Configuration With MPLS Interfaces
     Should Be Equal Value Json List Length    ${r_id.json()}    $.[bgp].mpls-interface.vipValue    {{ bgp.mpls_interfaces | length }}    msg=mpls interfaces length
 {% for mpls_int in bgp.mpls_interfaces | default([]) %}
     Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].mpls-interface.vipValue[{{loop.index0}}].if-name.vipValue    {{ mpls_int.interface_name | default("not_defined") }}    msg=mpls interfaces list

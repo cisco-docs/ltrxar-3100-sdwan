@@ -17,14 +17,13 @@ Get Rewrite Rule Configurations
 Verify Rewrite Rule Configuration {{ rewrite_rule.name }}
     ${rewrite_rule_id}=   Get Value From Json   ${r.json()}   $..data[?(@..name=="{{ rewrite_rule.name }}")].definitionId
     ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/definition/rewriterule/${rewrite_rule_id[0]}
-    Set Suite Variable    ${r_id}
+
     Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ rewrite_rule.name }}    msg=name
     Should Be Equal Value Json String    ${r_id.json()}    $..description    {{ rewrite_rule.description }}    msg=description
 
     Should Be Equal Value Json List Length   ${r_id.json()}    $..rules    {{ rewrite_rule.rules | length }}    msg=rewrite rule length
 
 {% for rule in rewrite_rule.rules | default([]) %}
-Verify Rewrite Rule Class {{ rule.class }}
     ${rule_class_id}=   Get Value From Json   ${r_id.json()}   $..definition.rules[{{loop.index0}}].class
     ${class_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/class/${rule_class_id[0]}
     Should Be Equal Value Json String    ${class_id.json()}    $..name    {{ rule.class }}    msg=rule class

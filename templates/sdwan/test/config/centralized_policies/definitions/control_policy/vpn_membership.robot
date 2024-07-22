@@ -16,7 +16,7 @@ Get VPN Membership
 Verify Centralized Policies Control Policy VPN Membership {{ vpn_membership.name }}
     ${vpn_membership_id}=    Get Value From Json    ${r.json()}    $..data[?(@..name=="{{vpn_membership.name }}")].definitionId
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/definition/vpnmembershipgroup/${vpn_membership_id[0]}
-    Set Suite Variable    ${r_id}
+
     Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ vpn_membership.name }}    msg=name
     Should Be Equal Value Json String    ${r_id.json()}    $..description    {{ vpn_membership.description }}    msg=description
 
@@ -25,7 +25,6 @@ Verify Centralized Policies Control Policy VPN Membership {{ vpn_membership.name
     Should Be Equal As Integers    ${res_groups_length}    {{ vpn_membership.groups | length }}    msg=groups
 
 {% for item in vpn_membership.groups %}
-Verify Site List {{ item.site_list }} for {{ vpn_membership.name }}
     ${site_list_id}=    Get Value From Json    ${r_id.json()}    $..definition.sites[{{loop.index0}}].siteList
     ${site_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/list/site/${site_list_id[0]}
     Should Be Equal Value Json String    ${site_id.json()}    $..name    {{ item.site_list }}    msg=Site list {{ item.site_list }} with VPN membership {{ vpn_membership.name }}

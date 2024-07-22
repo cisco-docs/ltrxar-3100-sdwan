@@ -17,7 +17,7 @@ Get Mesh Topology
 Verify Centralized Policies Control Policy Mesh Topology {{ mesh.name }}
     ${mesh_id}=    Get Value From Json    ${r.json()}    $..data[?(@..name=="{{ mesh.name }}")].definitionId
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/definition/mesh/${mesh_id[0]}
-    Set Suite Variable    ${r_id}
+
     Should Be Equal Value Json String    ${r_id.json()}    $.name    {{ mesh.name }}    msg=mesh name
     Should Be Equal Value Json String    ${r_id.json()}    $.description    {{ mesh.description }}    msg=mesh description
 
@@ -31,7 +31,6 @@ Verify Centralized Policies Control Policy Mesh Topology {{ mesh.name }}
 
 {% for mesh_group in mesh.mesh_groups %}
 
-Verify Mesh Group {{ mesh_group.name }} for {{ mesh.name }}
     Should Be Equal Value Json String    ${r_id.json()}    $.definition.regions[{{loop.index0}}].name    {{ mesh_group.name }}    msg=mesh group name
 
     ${site_list_id}=    Get Value From Json    ${r_id.json()}    $..definition.regions[{{loop.index0}}].siteLists

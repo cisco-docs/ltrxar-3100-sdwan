@@ -10,7 +10,7 @@ Resource        ../../../../sdwan_common.resource
 *** Test Cases ***
 Get Hub And Spoke Topology(s)
    ${r}=   GET On Session   sdwan_manager   /dataservice/template/policy/definition/hubandspoke
-   Set Suite Variable   ${r}
+   Set Suite Variable    ${r}
 
 {% for topology in sdwan.centralized_policies.definitions.control_policy.hub_and_spoke_topology | default([]) %}
 
@@ -19,7 +19,6 @@ Verify Centralized Policies Color Hub and Spoke Topology {{ topology.name }}
    ${topo}=   GET On Session   sdwan_manager   /dataservice/template/policy/definition/hubandspoke/${topo_id[0]}
    Should Be Equal Value Json String   ${topo.json()}   $..name   {{ topology.name }}    msg=Topology
    Should Be Equal Value Json String   ${r.json()}   $..data[?(@..name=="{{ topology.name }}")].description   {{ topology.description }}  msg={{ topology.name }}: Description
-   Set Suite Variable   ${topo}
 
    ${vpn_list_id}=  Get Value From Json   ${topo.json()}   $..vpnList
    ${vpn_list}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/vpn/${vpn_list_id[0]}
@@ -27,10 +26,9 @@ Verify Centralized Policies Color Hub and Spoke Topology {{ topology.name }}
    Should Be Equal Value Json List Length   ${topo.json()}   $..definition.subDefinitions  {{ topology.hub_and_spoke_sites | length }}  msg={{ topology.name }}: Site group numbers
 {% for site_group in topology.hub_and_spoke_sites | default([]) %}
 
-Verify {{ topology.name }} Topology's Site Group {{ site_group.name }}
    Should Be Equal Value Json String   ${topo.json()}   $..definition.subDefinitions.[{{loop.index0}}].name   {{ site_group.name }}      msg={{ topology.name }} Topology's: {{ site_group.name }} Site group
    ${site_group_value}=   Get Value From Json   ${topo.json()}   $..definition.subDefinitions.[{{loop.index0}}].spokes
-   Set Suite Variable   ${site_group_value}
+
    ${spoke_length}=   Get Length   ${site_group_value[0]}
    Should Be Equal As Integers    ${spoke_length}    {{ site_group.spokes | length }}    msg={{ site_group.name }}: No. of Spoke
    Should Be Equal Value Json String   ${topo.json()}   $..definition.subDefinitions.[{{loop.index0}}].equalPreference   {{ site_group.equal_preference | default("not_defined") }}   msg={{ topology.name }} Topology's {{ site_group.name }} Site group's: Equal Preference
@@ -46,17 +44,14 @@ Verify {{ topology.name }} Topology's Site Group {{ site_group.name }}
 
 {% for spoke in site_group.spokes | default([]) %}
 
-Verify {{ topology.name }} Topology's {{ site_group.name }} Site Group for Spoke {{ spoke.site_list }}
    ${sites}=  GET On Session   sdwan_manager   /dataservice/template/policy/list/site/${site_group_value[0][{{loop.index0}}]['siteList']}
    Should Be Equal Value Json String   ${sites.json()}   $..name   {{ spoke.siteList }}   msg={{ topology.name }} Topology's {{ site_group.name }} Site group's: Spoke {{ spoke.siteList }}
    ${hub_ids}=   Set Variable    ${site_group_value[0][{{loop.index0}}]['hubs']}
    ${hub_numbers}=   Get Length   ${hub_ids}
-   Set Suite Variable   ${hub_ids}
    Should Be Equal As Integers    ${hub_numbers}   {{ spoke.hubs | length }}   msg={{ site_group.name }}: Spoke's hub numbers
 
 {% for hubs in spoke.hubs | default([]) %}
 
-Verify {{ topology.name }} Topology's {{ site_group.name }} Site Group's Spoke {{ spoke.site_list }} for Hub {{ hubs.site_list }}
    ${hub_site}=   Get Value From Json   ${hub_ids}   $[{{loop.index0}}].siteList
    ${hub_site_name}=  GET On Session   sdwan_manager   /dataservice/template/policy/list/site/${hub_site}[0]
    Should Be Equal Value Json String   ${hub_site_name.json()}   $..name   {{ hubs.site_list }}  msg={{ spoke.siteList }} Spokes's:{{ hubs.site_list }} Hub site

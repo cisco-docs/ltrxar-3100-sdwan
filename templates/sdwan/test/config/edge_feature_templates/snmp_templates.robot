@@ -15,6 +15,7 @@ Get SNMP Feature template
 
 {% for snmp_template in sdwan.edge_feature_templates.snmp_templates | default([]) %}
 Verify Edge Feature Template SNMP Feature template {{ snmp_template.name }}
+
     ${snmp_template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{snmp_template.name }}")]
     Should Be Equal Value Json String    ${snmp_template_id}    $..templateName    {{ snmp_template.name }}    msg=snmp template name
     Should Be Equal Value Json String    ${snmp_template_id}    $..templateDescription    {{ snmp_template.description }}    msg=snmp template description
@@ -31,7 +32,6 @@ Verify Edge Feature Template SNMP Feature template {{ snmp_template.name }}
 
     ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{snmp_template.name }}")].templateId
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${template_id[0]}
-    Set Suite Variable    ${r_id}
 
     Should Be Equal Value Json String    ${r_id.json()}    $..["contact"].vipValue   {{ snmp_template.contact | default("not_defined") }}    msg=snmp template contact
     Should Be Equal Value Json String    ${r_id.json()}    $..["contact"].vipVariableName    {{ snmp_template.contact_variable | default("not_defined")  }}    msg=snmp template contact variable
@@ -102,7 +102,6 @@ Verify Edge Feature Template SNMP Feature template {{ snmp_template.name }}
     Should Be Equal As Integers    ${snmp_users_items_length}    {{ snmp_template.users | length }}    msg=snmp users length
 
 {% for user in snmp_template.users | default([]) %}
-Verify Edge Feature Template SNMP User {{ user.name }}
     Should Be Equal Value Json String    ${r_id.json()}    $..["user"].vipValue[{{loop.index0}}].auth-password.vipValue    {{ user.authentication_password | default("not_defined") }}    msg=snmp users authentication password
     Should Be Equal Value Json String    ${r_id.json()}    $..["user"].vipValue[{{loop.index0}}].auth-password.vipVariableName    {{ user.authentication_password_variable | default("not_defined") }}    msg=snmp users authentication password variable
     Should Be Equal Value Json String    ${r_id.json()}    $..["user"].vipValue[{{loop.index0}}].auth.vipValue    {{ user.authentication_protocol | default("not_defined") }}    msg=snmp users authentication protocol
