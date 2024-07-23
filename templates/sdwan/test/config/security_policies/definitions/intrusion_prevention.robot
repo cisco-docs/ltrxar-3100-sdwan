@@ -1,0 +1,34 @@
+*** Setting ***
+Documentation     Verify the Intrusion Prevention Policies
+Suite Setup       Login SDWAN Manager
+Suite Teardown    Run On Last Process   Logout SDWAN Manager
+Default Tags      sdwan   config   zones
+Resource          ../../../sdwan_common.resource
+
+{% if sdwan.security_policies.definitions.intrusion_prevention is defined %}
+
+*** Test Cases ***
+
+Get IPS Policy List(s)
+    ${r}=   GET On Session   sdwan_manager   /dataservice/template/policy/definition/intrusionprevention
+    Log   ${r}
+    Set Suite Variable   ${r}
+
+
+{% for ips_policy in sdwan.security_policies.definitions.intrusion_prevention | default([]) %}
+
+Verify Security Policy IPS List {{ ips_policy.name }}
+   ${ips_policy_id}=   Get Value From Json   ${r.json()}   $..data[?(@..name=="{{ ips_policy.name }}")].definitionId
+   ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/definition/intrusionprevention/${ips_policy_id[0]}
+   Should Be Equal Value Json String   ${r_id.json()}   $..name   {{ ips_policy.name }}   msg=intrusion prevention name
+   Should Be Equal Value Json String   ${r_id.json()}   $..description   {{ ips_policy.description | default("not_defined") }}   msg=description
+   Should Be Equal Value Json String   ${r_id.json()}   $..mode   security   msg=mode
+   Should Be Equal Value Json String   ${r_id.json()}   $..definition.signatureSet   {{ ips_policy.signature_set }}   msg=signature set
+   Should Be Equal Value Json String   ${r_id.json()}   $..definition.inspectionMode   {{ ips_policy.inspection_mode }}   msg=inspection mode
+   Should Be Equal Value Json String   ${r_id.json()}   $..definition.logLevel   {{ ips_policy.log_level }}   msg=log level
+   ${target_vpn_list}=   Create List   {{ ips_policy.target_vpns | default([]) | join('   ') }}
+   Should Be Equal Value Json List   ${r_id.json()}   $..definition..targetVpns[*]   ${target_vpn_list}   msg=List of vpn id
+
+{% endfor %}
+
+{% endif %}
