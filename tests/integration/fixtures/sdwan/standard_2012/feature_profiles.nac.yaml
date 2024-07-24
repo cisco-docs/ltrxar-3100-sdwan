@@ -29,28 +29,21 @@ sdwan:
             multiplier: 2
             threshold: 500
             tracker_name: service_ipv4_ip_tracker
-          - name: static_route_api_tracker
-            description: Static Route API URL Tracker
+          - name: static_route_url_tracker
+            description: Static Route URL Tracker
             threshold: 300
             interval: 20
             multiplier: 1
-            endpoint_api_url: https://api.example.com
-            tracker_name: service_ipv4_api_tracker
-          - name: static_route_dns_tracker
-            description: Static Route DNS Tracker
-            threshold: 300
-            interval: 20
-            multiplier: 1
-            endpoint_api_url: https://api.example.com
-            tracker_name: service_ipv4_dns_tracker
+            endpoint_url: https://url.example.com
+            tracker_name: service_ipv4_url_tracker
           - name: static_route_tcp_tracker
             description: Static Route TCP Tracker
             threshold: 300
             interval: 20
             multiplier: 1
-            endpoint_tcp_udp_ip: 8.8.8.8
-            endpoint_tcp_udp_port: 80
-            endpoint_tcp_udp_protocol: tcp
+            endpoint_ip: 8.8.8.8
+            endpoint_port: 80
+            endpoint_protocol: tcp
             tracker_name: service_ipv4_tcp_tracker
     system_profiles:
       - name: system1
