@@ -1883,7 +1883,7 @@ policy_objects_app_probe_class:
   mappings: list(include("policy_objects_app_probe_class_mapping"))
 policy_objects_app_probe_class_mapping:
   color: enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6")
-  dscp: int(min=0, max=63)
+  dscp: int(min=0, max=63, required=False)
 policy_objects_application_list:
   name: regex('^[A-Za-z0-9-_]{1,128}$')
   applications: list(str(), required=False)
