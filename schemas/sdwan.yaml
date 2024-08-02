@@ -2094,7 +2094,7 @@ localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias
   source_port_ranges: list(include("localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias_source_port_range"), required=False)
   source_ports: list(int(min=0, max=65535), required=False)
   tcp: enum("syn", required=False)
-  traffic_class: int(min=0, max=63)
+  traffic_class: int(min=0, max=63, required=False)
 localized_policies_definitions_ipv6_access_control_list_sequence_match_criterias_destination_port_range:
   from: int(min=0, max=65535)
   to: int(min=0, max=65535)
