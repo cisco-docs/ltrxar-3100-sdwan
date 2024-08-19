@@ -354,6 +354,8 @@ sdwan:
         interface_name_variable: vpn1_int1_if_name
         ipv4_address_variable: vpn1_int1_if_ipv4_address
         shutdown_variable: vpn1_int1_if_shutdown
+        ip_mtu: 1500
+        mtu: 1500
       - name: FT-CEDGE-VPN1-LAN1-VRRP
         description: CEDGE, VPN 1, L3 LAN1, VRRP
         interface_description_variable: vpn1_int1_if_description
