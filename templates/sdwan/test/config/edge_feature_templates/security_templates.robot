@@ -75,7 +75,8 @@ Verify Edge Feature Template Security Feature template {{ security_template.name
     Should Be Equal Value Json String    ${r_id.json()}    $..["key"].vipValue[{{loop.index0}}].include-tcp-options.vipValue    {{ security_key.include_tcp_options | default("not_defined") | lower }}    msg=include tcp options
     Should Be Equal Value Json String    ${r_id.json()}    $..["key"].vipValue[{{loop.index0}}].include-tcp-options.vipVariableName    {{ security_key.include_tcp_options_variable | default("not_defined") }}    msg=include tcp options variable
     Should Be Equal Value Json String    ${r_id.json()}    $..["key"].vipValue[{{loop.index0}}].chain-name.vipValue    {{ security_key.key_chain_name }}    msg=key chain names
-    Should Be Equal Value Json String    ${r_id.json()}    $..["key"].vipValue[{{loop.index0}}].key-string.vipValue    {{ security_key.key_string }}    msg=key string
+    Should Be Equal Value Json String    ${r_id.json()}    $..["key"].vipValue[{{loop.index0}}].key-string.vipValue    {{ security_key.key_string | default("not_defined") }}    msg=key string
+    Should Be Equal Value Json String    ${r_id.json()}    $..["key"].vipValue[{{loop.index0}}].key-string.vipVariableName    {{ security_key.key_string_variable | default("not_defined") }}    msg=key string variable
     Should Be Equal Value Json String    ${r_id.json()}    $..["key"].vipValue[{{loop.index0}}].send-id.vipValue    {{ security_key.send_id | default("not_defined") }}    msg=send id
     Should Be Equal Value Json String    ${r_id.json()}    $..["key"].vipValue[{{loop.index0}}].send-id.vipVariableName    {{ security_key.send_id_variable | default("not_defined") }}    msg=send id variable
     Should Be Equal Value Json String    ${r_id.json()}    $..["key"].vipValue[{{loop.index0}}].send-lifetime.lifetime-group-v1.local.vipValue    {{ security_key.send_lifetime | default("not_defined") | lower }}    msg=send lifetime

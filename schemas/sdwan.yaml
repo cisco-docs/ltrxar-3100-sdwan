@@ -1218,7 +1218,8 @@ edge_feature_templates_security_key:
   include_tcp_options: bool(required=False)
   include_tcp_options_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
   key_chain_name: str()
-  key_string: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128) # vManage-encrypted string
+  key_string: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128, required=False) # vManage-encrypted string
+  key_string_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
   send_id: int(min=0, max=255, required=False)
   send_id_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
   send_lifetime: bool(required=False)
@@ -1305,7 +1306,7 @@ edge_feature_templates_snmp_view:
   name: str(min=1, max=32)
   oids: list(include("edge_feature_templates_snmp_view_object_identifier"))
 edge_feature_templates_snmp_view_object_identifier:
-  id: regex('^[0-9.]+$') ## Allow only digits and dots
+  id: regex('^[0-9.]+$', required=False) ## Allow only digits and dots
   id_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
   exclude: bool(required=False)
   exclude_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
