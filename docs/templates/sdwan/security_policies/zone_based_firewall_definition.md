@@ -2,7 +2,7 @@
 
 Zone-Based Firewall defines the matching conditions and actions to configure a firewall policy.
 
-Note: When using "protocol_names" in match_criterias, also populate the "protocols" and "destination_ports" with corresponding values. The full list of "protocol_names" amd their corresponding "protocols" and "destination_ports" can be accessed at https://<vmanage-ip>/app/json/application_protocol.json. when chosing the "protocol_names" as either "tcp" or "udp", "destination_ports" is not mandatory.
+Note: When using "protocol_names" in match_criterias, also populate the "protocols" and "destination_ports" with corresponding values. The full list of "protocol_names" amd their corresponding "protocols" and "destination_ports" can be accessed at `https://<vmanage-ip>/app/json/application_protocol.json`. when chosing the "protocol_names" as either "tcp" or "udp", "destination_ports" is not mandatory.
 
 {{ doc_gen }}
 
