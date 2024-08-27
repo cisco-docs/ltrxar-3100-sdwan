@@ -88,6 +88,10 @@ objects:
     template: ipsec_interface
     folder: edge_feature_templates
     paths: [sdwan.edge_feature_templates.ipsec_interface_templates]
+  - name: Edge Secure App Hosting
+    template: secure_app_hosting
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.secure_app_hosting_templates]
   - name: Device Template
     template: device_template
     folder: edge_device_templates

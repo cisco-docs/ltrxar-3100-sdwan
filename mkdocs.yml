@@ -81,6 +81,7 @@ nav:
           - Cisco VPN Interface: data_model/sdwan/feature_templates/cisco_vpn_interface.md
           - Cisco VPN Interface IPSec: data_model/sdwan/feature_templates/cisco_vpn_interface_ipsec.md
           - CLI Template: data_model/sdwan/feature_templates/cli_template.md
+          - Secure App Hosting: data_model/sdwan/feature_templates/secure_app_hosting.md
       - Device Templates:
           - Device Template: data_model/sdwan/edge_device_templates/device_template.md
       - Policy Objects:

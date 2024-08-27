@@ -27,7 +27,7 @@ class Rule:
     ]
 
     # Verify unique feature template names per type
-    feature_template_types = ["aaa_templates", "banner_templates", "bfd_templates", "bgp_templates", "cli_templates", "dhcp_server_templates", "ethernet_interface_templates", "global_settings_templates", "ipsec_interface_templates", "logging_templates", "ntp_templates", "omp_templates", "ospf_templates", "secure_internet_gateway_templates", "security_templates", "sig_credentials_templates", "snmp_templates", "svi_interface_templates", "switchport_templates", "system_templates", "thousandeyes_templates", "vpn_templates"]
+    feature_template_types = ["aaa_templates", "banner_templates", "bfd_templates", "bgp_templates", "cli_templates", "dhcp_server_templates", "ethernet_interface_templates", "global_settings_templates", "ipsec_interface_templates", "logging_templates", "ntp_templates", "omp_templates", "ospf_templates", "secure_internet_gateway_templates", "security_templates", "sig_credentials_templates", "snmp_templates", "svi_interface_templates", "switchport_templates", "system_templates", "thousandeyes_templates", "vpn_templates", "secure_app_hosting_templates"]
     for type in feature_template_types:
         paths.append(str("sdwan.edge_feature_templates." + type + ".name"))
     

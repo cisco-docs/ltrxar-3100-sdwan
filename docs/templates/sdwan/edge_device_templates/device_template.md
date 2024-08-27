@@ -23,6 +23,9 @@ sdwan:
       snmp_template: FT-SNMP-01-TEST
       global_settings_template: FT-GLOBAL-01-TEST
       localized_policy: LOCAL-POLICY-TEMPLATE-01-TEST
+      security_policy:
+        name: SP-FW-IPS-01-TEST
+        container_profile: utd-prod-01
       cli_template: FT-CLI-01-TEST
       vpn_0_template:
         name: FT-VPN0-01-TEST
