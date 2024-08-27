@@ -41,6 +41,37 @@ class Rule:
     for type in localized_policy_definition_types:
         paths.append(str("sdwan.localized_policies.definitions." + type + ".name"))
 
+    # Verify unique tracker names per feature profile and tracker type
+    tracker_types_per_profile = {'service': ["ipv4_trackers"], 'transport': ["ipv6_trackers"]}
+    for profile, tracker_type in tracker_types_per_profile.items():
+        for type in tracker_type:
+            paths.append(str("sdwan.feature_profiles." + profile + "_profiles." + type + ".tracker_name"))
+            paths.append(str("sdwan.feature_profiles." + profile + "_profiles." + type + ".name"))
+
+    # Verify unique colors in system bfd feature
+    paths.append(str("sdwan.feature_profiles.system_profiles.bfd.colors.color"))
+
+    # Verify unique tls profile names and server ips in system logging feature
+    paths.append(str("sdwan.feature_profiles.system_profiles.logging.tls_profiles.name"))
+    paths.append(str("sdwan.feature_profiles.system_profiles.logging.ipv4_servers.hostname_ip"))
+    paths.append(str("sdwan.feature_profiles.system_profiles.logging.ipv6_servers.hostname_ip"))
+
+    # Verify unique NTP server ips and key ids in system ntp feature
+    paths.append(str("sdwan.feature_profiles.system_profiles.ntp.servers.hostname_ip"))
+    paths.append(str("sdwan.feature_profiles.system_profiles.ntp.authentication_keys.id"))
+
+    # Verify unique keychain names and ids in system security feature
+    paths.append(str("sdwan.feature_profiles.system_profiles.security.key_chains.key_id"))
+    paths.append(str("sdwan.feature_profiles.system_profiles.security.key_chains.name"))
+
+    # Verify unique SNMP view/group/user names in system snmp feature
+    paths.append(str("sdwan.feature_profiles.system_profiles.snmp.views.name"))
+    paths.append(str("sdwan.feature_profiles.system_profiles.snmp.groups.name"))
+    paths.append(str("sdwan.feature_profiles.system_profiles.snmp.users.name"))
+
+    # Verify unique NAT pool names in transport wan_vpn feature
+    paths.append(str("sdwan.feature_profiles.transport_profiles.wan_vpn.nat_64_v4_pools.name"))
+
     @classmethod
     def match_path(cls, inventory, full_path, search_path):
         results = []

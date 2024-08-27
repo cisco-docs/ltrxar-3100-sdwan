@@ -14,6 +14,6 @@ class Rule:
                 profile_names.append(profile['name'])
         non_unique_names = [name for name in set(profile_names) if profile_names.count(name) > 1]
         for name in non_unique_names:
-            results.append(f"Feature Profile name '{name}' is not unique.")
+            results.append(f"Feature Profile name '{name}' is not unique")
 
         return results

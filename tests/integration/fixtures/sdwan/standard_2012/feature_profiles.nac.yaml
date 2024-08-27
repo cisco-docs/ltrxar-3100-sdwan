@@ -67,6 +67,9 @@ sdwan:
           name: perfmonitor
         security:
           name: security
+          integrity_types:
+            - esp
+            - ip-udp-esp
         snmp:
           name: snmpv2
           communities:
