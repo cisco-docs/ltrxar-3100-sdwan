@@ -59,7 +59,9 @@ pipeline {
             parallel {
                 stage('Test SDWAN 20.9 Terraform') {
                     steps {
-                        sh 'pytest -m sdwan_209'
+                        lock(resource: 'nac-ci-sdwan1') {
+                            sh 'pytest -m sdwan_209'
+                        }
                     }
                     post {
                         always {
@@ -70,7 +72,9 @@ pipeline {
                 }
                 stage('Test SDWAN 20.12 Terraform') {
                     steps {
-                        sh 'pytest -m sdwan_2012'
+                        lock(resource: 'nac-ci-sdwan2') {
+                            sh 'pytest -m sdwan_2012'
+                        }
                     }
                     post {
                         always {
