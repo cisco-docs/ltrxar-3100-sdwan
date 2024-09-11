@@ -1,4 +1,4 @@
-# Multi-Region Fabric Profile Parcel
+# Multi-Region Fabric Feature
 
 Configure Multi-Region Fabric parameters.
 

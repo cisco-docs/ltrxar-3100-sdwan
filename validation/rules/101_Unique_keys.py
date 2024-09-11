@@ -42,7 +42,7 @@ class Rule:
         paths.append(str("sdwan.localized_policies.definitions." + type + ".name"))
 
     # Verify unique tracker names per feature profile and tracker type
-    tracker_types_per_profile = {'service': ["ipv4_trackers"], 'transport': ["ipv6_trackers"]}
+    tracker_types_per_profile = {'service': ["ipv4_tracker_groups", "ipv4_trackers"], 'transport': ["ipv4_tracker_groups", "ipv4_trackers", "ipv6_trackers", "ipv6_tracker_groups"]}
     for profile, tracker_type in tracker_types_per_profile.items():
         for type in tracker_type:
             paths.append(str("sdwan.feature_profiles." + profile + "_profiles." + type + ".tracker_name"))

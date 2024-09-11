@@ -8,7 +8,7 @@ class Rule:
 
 
     #########################################################################################################################################
-    # In UX 2.0 features (feature parcels), some parameters are mutually exclusive and should not be defined together.
+    # In UX 2.0 features, some parameters are mutually exclusive and should not be defined together.
     # This rule checks if the mutually exclusive parameters are defined in the configuration features, including:
     # - verify if same parameter is not defined as global and variable at the same time (e.g. "endpoint_ip" and "endpoint_ip_variable" are not allowed at the same time)
     # - verify if mutually exclusive parameters defined in below list are not defined together
@@ -68,6 +68,12 @@ class Rule:
             "feature_type": "snmp",
             "parameter_path": "",
             "parameter_names": ["communities", "users"],
+        },
+        {
+            "feature_profile_type": "transport",
+            "feature_type": "ipv4_trackers",
+            "parameter_path": "",
+            "parameter_names" : ["endpoint_ip", "endpoint_api_url", "endpoint_dns_name"],
         },
         {
             "feature_profile_type": "transport",

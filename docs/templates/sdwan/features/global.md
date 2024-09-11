@@ -1,4 +1,4 @@
-# Global Profile Parcel
+# Global Feature
 
 Configure global settings like SSH version, services, etc.
 

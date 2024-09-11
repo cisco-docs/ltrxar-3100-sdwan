@@ -1,6 +1,6 @@
 # CLI Feature Profile
 
-Using a CLI add-on profile, you can specify CLI commands to execute on devices. You can execute device configurations that are not available through other feature profiles and parcels.
+Using a CLI add-on profile, you can specify CLI commands to execute on devices. You can execute device configurations that are not available through other feature profiles and features.
 
 {{ doc_gen }}
 

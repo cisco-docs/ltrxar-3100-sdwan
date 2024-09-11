@@ -1,12 +1,10 @@
-# WAN VPN Profile Parcel
+# WAN VPN Feature
 
 Add WAN VPN configuration, including DNS servers, NAT, IPv4 or IPv6 static routes and service routes.
 
 {{ doc_gen }}
 
 ### Examples
-
-Note that the example below does not contain configuration of other required profile parcels.
 
 ```yaml
 sdwan:

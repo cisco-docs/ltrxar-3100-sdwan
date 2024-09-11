@@ -3,7 +3,7 @@ class Rule:
     description = "Verify Feature Profile unique names"
     severity = "HIGH"
 
-    feature_profile_types = ["cli_profiles", "service_profiles", "system_profiles", "transport_profiles"]
+    feature_profile_types = ["cli_profiles", "other_profiles", "service_profiles", "system_profiles", "transport_profiles"]
 
     @classmethod
     def match(cls, inventory):

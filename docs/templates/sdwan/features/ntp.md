@@ -1,4 +1,4 @@
-# NTP Profile Parcel
+# NTP Feature
 
 Configure NTP servers and authentication if required.
 

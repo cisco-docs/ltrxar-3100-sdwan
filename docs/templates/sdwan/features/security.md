@@ -1,4 +1,4 @@
-# Security Profile Parcel
+# Security Feature
 
 Change the rekey time, anti-replay window, and authentication types for IPsec.
 

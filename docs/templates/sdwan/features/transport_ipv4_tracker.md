@@ -1,6 +1,6 @@
-# Transport IPv6 Tracker Profile Parcel
+# Transport IPv4 Tracker Feature
 
-Configure IPv6 Tracker for IP, URL or DNS name.
+Configure IPv4 Tracker for IP, URL or DNS name.
 
 {{ doc_gen }}
 
@@ -11,7 +11,7 @@ sdwan:
   feature_profiles:
     transport_profiles:
       - name: transport1
-        ipv6_trackers:
+        ipv4_trackers:
           - name: tracker1
             threshold: 300
             interval: 20

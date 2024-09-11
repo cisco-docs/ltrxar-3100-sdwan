@@ -1,4 +1,4 @@
-# BFD Profile Parcel
+# BFD Feature
 
 Specify the BFD app-route multiplier and poll interval and specify the hello and BFD multiplier for each transport.
 

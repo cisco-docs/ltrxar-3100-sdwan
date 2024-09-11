@@ -10,17 +10,52 @@ sdwan:
         description: test cli profile with bgp configuration
         config:
           name: cli-config
-          description: cli config parcel
+          description: cli config feature
           cli_configuration: |
             ! This template is using variables
             router bgp {{bgp_as_number}}
               address-family ipv4 unicast vrf 10
               neighbor {{bgp_neighbor_ip}} local-as {{bgp_neighbor_local_as}}
             !
+    other_profiles:
+      - name: other1
+        thousandeyes:
+          name: thousandeyes-pac
+          description: thousandeyes feature
+          account_group_token_variable: te_token
+          agent_default_gateway: 10.0.0.1
+          hostname: te-hostname
+          management_ip: 10.0.0.2
+          management_subnet_mask: 255.255.255.252
+          name_server_ip: 1.1.1.1
+          proxy_type: pac
+          pac_proxy_url: https://pac.example.com
+          vpn_id: 0
+      - name: other2
+        description: full profile
+        thousandeyes:
+          name: thousandeyes-static
+          description: thousandeyes feature
+          account_group_token_variable: te_token
+          agent_default_gateway: 10.0.0.1
+          hostname: te-hostname
+          management_ip: 10.0.0.2
+          management_subnet_mask: 255.255.255.252
+          name_server_ip: 1.1.1.1
+          proxy_type: static
+          static_proxy_host: 10.0.0.254
+          static_proxy_port: 1000
+          vpn_id: 0
     service_profiles:
       - name: service1
       - name: service2
         description: full profile
+        ipv4_tracker_groups:
+          - name: ipv4_tracker_group
+            tracker_boolean: or
+            trackers:
+              - static_route_ip_tracker
+              - static_route_url_tracker
         ipv4_trackers:
           - name: static_route_ip_tracker
             description: Static Route IP Tracker
@@ -45,6 +80,31 @@ sdwan:
             endpoint_port: 80
             endpoint_protocol: tcp
             tracker_name: service_ipv4_tcp_tracker
+        object_tracker_groups:
+          - name: object_tracker_group
+            description: Tracker Group
+            id: 10
+            tracker_boolean: and
+            trackers:
+              - object_interface_tracker
+              - object_route_tracker
+        object_trackers:
+          - name: object_interface_tracker
+            description: Interface Tracker
+            id: 1
+            type: Interface
+            interface_name: GigabitEthernet1
+          - name: object_sig_tracker
+            description: SIG Tracker
+            id: 2
+            type: SIG
+          - name: object_route_tracker
+            description: Route Tracker
+            id: 3
+            type: Route
+            route_ip: 10.0.0.0
+            route_mask: 255.0.0.0
+            vpn_id: 1
     system_profiles:
       - name: system1
         aaa:
@@ -95,7 +155,7 @@ sdwan:
         description: full profile
         aaa:
           name: aaa_full
-          description: AAA parcel with full configuration
+          description: AAA feature with full configuration
           accounting_rules:
             - groups:
                 - tacacs-511
@@ -149,14 +209,14 @@ sdwan:
                 - AAAAB3NzaC1yc2EAAAADAQABAAACAQDOeSUjLRhVpL+hf3FDm846GJSzi3muWztewThuovwvDwq3AicP6Q2ZTvHTuD8pT3zOZyYp8W2OJE8XcYu/UlayccWzJD6/behqJ7x1Zxm0wgPekpgl7swXHubUY9GoJmfqfdv8qHqrxovUXU0nwevFU+RpLXIeAl262dm19EUgSRjMeZfYLeRKE2qRaiNhVclHveYhu/mm52MDQa2QzxcNToPL3emEWMMYw2rkY7W6tMcveEC1r83FTRfaRx+So1nAqDqgHLqwPEgRfLBMeOog7fWzUP46BVm9qdHnCoWhMfiNKups/Zs3OJBTIyWIGLf9g/EJh/SBdaGy2OvHXmnJGTVyysqZx1P4J7mZSF7zrDXf2L/OThK2F/YadQVxKJwKkec/V+lSziG/AulsmJLCqPhCyBVNLGm6zJnLwd9o3iO/LyEcI4FBxN8dU/neyjo11D1zhrWSYej2rgLA5fV4V1f/EPUbqeL86jg7lpBPT4r0fPYP1Qmul9KjHUtQA2+q5AMJTusgKTev7VIkKcPep4IWiPwDjWlGvXRekNjB9nnzDCgO1Dz94l6NzmR9+yW4yb9R4crxkpfrawS+GOmMzfIAyG7eMpv59rFIXpW+chsVQG2pMESQzCv4Cc3NDpgfX9FfTwRjlN1FokGxO4rxDAJQXDdAPVQH+hhMhIdusw==
         banner:
           name: banner_full
-          description: banner parcel with full configuration
+          description: banner feature with full configuration
           login: |
             This is line 1 of banner\n
             This is line 2 of banner\n
           motd_variable: motd_banner
         basic:
           name: basic_full
-          description: basic parcel with full configuration
+          description: basic feature with full configuration
           admin_tech_on_failure: true
           affinity_group_number: 1
           affinity_group_preferences:
@@ -202,7 +262,7 @@ sdwan:
           transport_gateway: true
         bfd:
           name: bfd_full
-          description: BFD parcel with full configuration
+          description: BFD feature with full configuration
           colors:
             - color: biz-internet
               default_dscp: 0
@@ -214,11 +274,11 @@ sdwan:
           poll_interval: 36000
         flexible_port_speed:
           name: flexible_port_speed_full
-          description: flexible port speed parcel with full configuration
+          description: flexible port speed feature with full configuration
           port_type: 8 ports of 1/10GE + 4 ports of 40GE
         global:
           name: global_full
-          description: global parcel with full configuration
+          description: global feature with full configuration
           arp_proxy: true
           cdp: true
           console_logging: true
@@ -244,7 +304,7 @@ sdwan:
           vty_logging: true
         logging:
           name: logging_full
-          description: logging parcel with full configuration
+          description: logging feature with full configuration
           disk_file_size: 15
           disk_file_rotate: 5
           ipv4_servers:
@@ -272,14 +332,14 @@ sdwan:
               tls_version: TLSv1.2
         mrf:
           name: mrf_full
-          description: multi-region fabric parcel with full configuration
+          description: multi-region fabric feature with full configuration
           migration_to_mrf: enabled
           migration_bgp_community: 65000
           role: edge-router
           secondary_region_id_variable: secondary_region_id
         ntp:
           name: ntp_full
-          description: NTP parcel with full configuration
+          description: NTP feature with full configuration
           authentication_keys:
             - id: 1
               md5_value_variable: ntp_key
@@ -297,7 +357,7 @@ sdwan:
             - 1
         omp:
           name: omp_full
-          description: OMP parcel with full configuration
+          description: OMP feature with full configuration
           advertise_ipv4_bgp: true
           advertise_ipv4_connected: true
           advertise_ipv4_eigrp: false
@@ -331,7 +391,7 @@ sdwan:
           transport_gateway: prefer
         performance_monitoring:
           name: perfmonitor
-          description: performance monitoring parcel with full configuration
+          description: performance monitoring feature with full configuration
           app_perf_monitor_app_groups:
             - amazon-group
             - apple-group
@@ -345,7 +405,7 @@ sdwan:
           monitoring_config_interval: 60
         security:
           name: security_full
-          description: security parcel with full configuration
+          description: security feature with full configuration
           anti_replay_window: 8192
           extended_anti_replay_window: 2048
           integrity_types:
@@ -373,7 +433,7 @@ sdwan:
           rekey_time: 172800
         snmp:
           name: snmpv3_full
-          description: snmp parcel with full configuration
+          description: snmp feature with full configuration
           contact_person: person1
           groups:
             - name: group1
@@ -403,22 +463,57 @@ sdwan:
       - name: transport1
       - name: transport2
         description: full profile
+        ipv4_tracker_groups:
+          - name: ipv4_tracker_group
+            tracker_boolean: or
+            trackers:
+              - ipv4_ip_tracker
+              - ipv4_api_tracker
+        ipv4_trackers:
+          - name: ipv4_ip_tracker
+            description: IP Tracker
+            endpoint_ip: 10.0.0.1
+            interval: 60
+            multiplier: 2
+            threshold: 500
+            tracker_name: transport_ipv4_ip_tracker
+          - name: ipv4_api_tracker
+            description: API URL Tracker
+            threshold: 300
+            interval_variable: api_tracker_interval
+            multiplier: 1
+            endpoint_api_url: https://api.example.com
+            tracker_name: transport_ipv4_api_tracker
+          - name: ipv4_dns_tracker
+            description: DNS Tracker
+            threshold: 300
+            interval: 20
+            multiplier: 1
+            endpoint_api_url: https://api.example.com
+            tracker_name: transport_ipv4_dns_tracker
+        ipv6_tracker_groups:
+          - name: ipv6_tracker_group
+            tracker_name: ipv6_tracker_group
+            tracker_boolean: and
+            trackers:
+              - ipv6_ip_tracker
+              - ipv6_api_tracker
         ipv6_trackers:
-          - name: ip_tracker
+          - name: ipv6_ip_tracker
             description: IP Tracker
             endpoint_ip: fc00::1
             interval: 60
             multiplier: 2
             threshold: 500
             tracker_name: transport_ipv6_ip_tracker
-          - name: api_tracker
+          - name: ipv6_api_tracker
             description: API URL Tracker
             threshold: 300
             interval_variable: api_tracker_interval
             multiplier: 1
             endpoint_api_url: https://api.example.com
             tracker_name: transport_ipv6_api_tracker
-          - name: dns_tracker
+          - name: ipv6_dns_tracker
             description: DNS Tracker
             threshold: 300
             interval: 20
@@ -437,8 +532,7 @@ sdwan:
           ipv4_primary_dns_address: 1.1.1.1
           ipv4_secondary_dns_address: 1.0.0.1
           ipv4_static_routes:
-            - administrative_distance: 1
-              gateway: nextHop
+            - gateway: nextHop
               network_address: 0.0.0.0
               subnet_mask: 0.0.0.0
               next_hops:
@@ -446,6 +540,10 @@ sdwan:
                   administrative_distance: 1
                 - address: 172.16.2.254
                   administrative_distance: 1
+            - administrative_distance: 200
+              network_address: 192.168.254.0
+              subnet_mask: "255.255.255.0"
+              gateway: null0
           services:
             - TE
           ipv6_primary_dns_address: 2001:4860:4860::8888

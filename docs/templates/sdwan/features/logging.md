@@ -1,4 +1,4 @@
-# Logging Profile Parcel
+# Logging Feature
 
 Configure logging to disk and/or to a remote logging server.
 

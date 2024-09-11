@@ -310,6 +310,13 @@ objects:
       sdwan.feature_profiles.cli_profiles.name,
       sdwan.feature_profiles.cli_profiles.description,
       ]
+  - name: Other Profile
+    template: other
+    folder: feature_profiles
+    paths: [
+      sdwan.feature_profiles.other_profiles.name,
+      sdwan.feature_profiles.other_profiles.description,
+      ]
   - name: Service Profile
     template: service
     folder: feature_profiles
@@ -331,71 +338,99 @@ objects:
       sdwan.feature_profiles.transport_profiles.name,
       sdwan.feature_profiles.transport_profiles.description,
     ]
-  - name: AAA Profile Parcel
+  - name: ThousandEyes Feature
+    template: thousandeyes
+    folder: features
+    paths: [sdwan.feature_profiles.other_profiles.thousandeyes]
+  - name: AAA Feature
     template: aaa
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.system_profiles.aaa]
-  - name: Banner Profile Parcel
+  - name: Banner Feature
     template: banner
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.system_profiles.banner]
-  - name: Basic Profile Parcel
+  - name: Basic Feature
     template: basic
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.system_profiles.basic]
-  - name: BFD Profile Parcel
+  - name: BFD Feature
     template: bfd
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.system_profiles.bfd]
-  - name: CLI Config Profile Parcel
+  - name: CLI Config Feature
     template: cli_config
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.cli_profiles.config]
-  - name: Flexible Port Speed Profile Parcel
+  - name: Flexible Port Speed Feature
     template: flexible_port_speed
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.system_profiles.flexible_port_speed]
-  - name: Global Profile Parcel
+  - name: Global Feature
     template: global
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.system_profiles.global]
-  - name: Logging Profile Parcel
+  - name: Logging Feature
     template: logging
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.system_profiles.logging]
-  - name: Multi-Region Fabric Profile Parcel
+  - name: Multi-Region Fabric Feature
     template: mrf
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.system_profiles.mrf]
-  - name: NTP Profile Parcel
+  - name: NTP Feature
     template: ntp
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.system_profiles.ntp]
-  - name: OMP Profile Parcel
+  - name: OMP Feature
     template: omp
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.system_profiles.omp]
-  - name: Performance Monitoring Profile Parcel
+  - name: Performance Monitoring Feature
     template: performance_monitoring
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.system_profiles.performance_monitoring]
-  - name: Security Profile Parcel
+  - name: Security Feature
     template: security
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.system_profiles.security]
-  - name: Service IPv4 Tracker Profile Parcel
+  - name: Service IPv4 Tracker Group Feature
+    template: service_ipv4_tracker_group
+    folder: features
+    paths: [sdwan.feature_profiles.service_profiles.ipv4_tracker_groups]
+  - name: Service IPv4 Tracker Feature
     template: service_ipv4_tracker
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.service_profiles.ipv4_trackers]
-  - name: SNMP Profile Parcel
+  - name: Service Object Tracker Group Feature
+    template: service_object_tracker_group
+    folder: features
+    paths: [sdwan.feature_profiles.service_profiles.object_tracker_groups]
+  - name: Service Object Tracker Feature
+    template: service_object_tracker
+    folder: features
+    paths: [sdwan.feature_profiles.service_profiles.object_trackers]
+  - name: SNMP Feature
     template: snmp
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.system_profiles.snmp]
-  - name: Transport IPv6 Tracker Profile Parcel
+  - name: Transport IPv4 Tracker Group Feature
+    template: transport_ipv4_tracker_group
+    folder: features
+    paths: [sdwan.feature_profiles.transport_profiles.ipv4_tracker_groups]
+  - name: Transport IPv4 Tracker Feature
+    template: transport_ipv4_tracker
+    folder: features
+    paths: [sdwan.feature_profiles.transport_profiles.ipv4_trackers]
+  - name: Transport IPv6 Tracker Group Feature
+    template: transport_ipv6_tracker_group
+    folder: features
+    paths: [sdwan.feature_profiles.transport_profiles.ipv6_tracker_groups]
+  - name: Transport IPv6 Tracker Feature
     template: transport_ipv6_tracker
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.transport_profiles.ipv6_trackers]
-  - name: WAN VPN Profile Parcel
+  - name: WAN VPN Feature
     template: wan_vpn
-    folder: profile_parcels
+    folder: features
     paths: [sdwan.feature_profiles.transport_profiles.wan_vpn]

@@ -8,7 +8,7 @@ class Rule:
 
 
     #########################################################################################################################################
-    # In UX 2.0 features (feature parcels), some parameters have no default value and are required to be set as global or as variable.
+    # In UX 2.0 features, some parameters have no default value and are required to be set as global or as variable.
     # This rule checks if the required parameters are set in the features.
     # For any additional parameters where the validation is required, add the required parameters data to the below list
     # No additional code changes should be required
@@ -32,10 +32,28 @@ class Rule:
 
     required_parameters_data = [
         {
+            "feature_profile_type": "other",
+            "feature_type": "thousandeyes",
+            "parameter_path": "",
+            "parameter_names" : ["account_group_token"],
+        },
+        {
             "feature_profile_type": "service",
             "feature_type": "ipv4_trackers",
             "parameter_path": "",
             "parameter_names" : ["tracker_name"],
+        },
+        {
+            "feature_profile_type": "service",
+            "feature_type": "object_tracker_groups",
+            "parameter_path": "",
+            "parameter_names" : ["id"],
+        },
+        {
+            "feature_profile_type": "service",
+            "feature_type": "object_trackers",
+            "parameter_path": "",
+            "parameter_names" : ["id"],
         },
         {
             "feature_profile_type": "system",
@@ -120,6 +138,18 @@ class Rule:
             "feature_type": "snmp",
             "parameter_path": "views[].oids[]",
             "parameter_names": ["id"],
+        },
+        {
+            "feature_profile_type": "transport",
+            "feature_type": "ipv4_trackers",
+            "parameter_path": "",
+            "parameter_names" : ["tracker_name"],
+        },
+        {
+            "feature_profile_type": "transport",
+            "feature_type": "ipv6_tracker_groups",
+            "parameter_path": "",
+            "parameter_names" : ["tracker_name"],
         },
         {
             "feature_profile_type": "transport",

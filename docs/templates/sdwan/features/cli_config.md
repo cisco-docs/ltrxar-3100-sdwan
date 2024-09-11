@@ -1,4 +1,4 @@
-# CLI Config Parcel
+# CLI Feature
 
 Configure additional CLI commands on the device.
 

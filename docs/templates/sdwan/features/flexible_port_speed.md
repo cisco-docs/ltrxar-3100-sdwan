@@ -1,4 +1,4 @@
-# Flexible Port Speed Profile Parcel
+# Flexible Port Speed Feature
 
 Set the Flexible Port Speed configuration.
 
