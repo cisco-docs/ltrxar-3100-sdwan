@@ -37,7 +37,7 @@ Verify Edge Feature Template SNMP Feature template {{ snmp_template.name }}
     Should Be Equal Value Json String    ${r_id.json()}    $..["contact"].vipVariableName    {{ snmp_template.contact_variable | default("not_defined")  }}    msg=snmp template contact variable
     Should Be Equal Value Json String    ${r_id.json()}    $..["location"].vipValue   {{ snmp_template.location | default("not_defined") }}    msg=snmp template location
     Should Be Equal Value Json String    ${r_id.json()}    $..["location"].vipVariableName    {{ snmp_template.location_variable | default("not_defined") }}    msg=snmp template location variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["shutdown"].vipValue   {{ snmp_template.shutdown | default("not_defined") }}    msg=snmp template shutdown
+    Should Be Equal Value Json String    ${r_id.json()}    $..["shutdown"].vipValue   {{ snmp_template.shutdown | default("not_defined") | lower() }}    msg=snmp template shutdown
     Should Be Equal Value Json String    ${r_id.json()}    $..["shutdown"].vipVariableName    {{ snmp_template.shutdown_variable | default("not_defined") }}    msg=snmp template shutdown variable
 
     ${snmp_community_items}=    Get Value From Json    ${r_id.json()}    $..["community"].vipValue
