@@ -35,18 +35,18 @@ Verify Edge Feature Template AAA Feature Template {{ aaa_template.name }}
 
     Should Be Equal Value Json List Length    ${r_id.json()}    $..["accounting-rule"].vipValue    {{ aaa_template.accounting_rules | length }}    msg=accounting rules
 
-{% for rules in aaa_template.accounting_rules | default([])  %}
+{% for accounting_index in range(aaa_template.accounting_rules | default([]) | length()) %}
 
-    Should Be Equal Value Json String    ${r_id.json()}    $..["accounting-rule"].vipValue..method.vipValue    {{ rules.method }}    msg=method
-    Should Be Equal Value Json String    ${r_id.json()}    $..["accounting-rule"].vipValue..level.vipValue     {{ rules.privilege_level }}    msg=privilege level
-    Should Be Equal Value Json String    ${r_id.json()}    $..["accounting-rule"].vipValue..["start-stop"].vipValue    {{ rules.start_stop | lower }}    msg=start_stop
-    Should Be Equal Value Json String    ${r_id.json()}    $..["accounting-rule"].vipValue..["start-stop"].vipVariableName    {{ rules.start_stop_variable }}    msg=start_stop variable
+    Should Be Equal Value Json String    ${r_id.json()}    $..["accounting-rule"].vipValue[{{accounting_index}}].method.vipValue    {{ aaa_template.accounting_rules[accounting_index].method | default("not_defined")}}    msg=method
+    Should Be Equal Value Json String    ${r_id.json()}    $..["accounting-rule"].vipValue[{{accounting_index}}].level.vipValue     {{ aaa_template.accounting_rules[accounting_index].privilege_level | default("not_defined")}}    msg=privilege level
+    Should Be Equal Value Json String    ${r_id.json()}    $..["accounting-rule"].vipValue[{{accounting_index}}].["start-stop"].vipValue    {{ aaa_template.accounting_rules[accounting_index].start_stop | default("not_defined") | lower }}    msg=start_stop
+    Should Be Equal Value Json String    ${r_id.json()}    $..["accounting-rule"].vipValue[{{accounting_index}}].["start-stop"].vipVariableName    {{ aaa_template.accounting_rules[accounting_index].start_stop_variable | default("not_defined")}}    msg=start_stop variable
 
-{% if rules.groups | default("not_defined") == 'not_defined' %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..["accounting-rule"].vipValue..group.vipValue    {{ rules.groups | default("not_defined") }}    msg=no rules defined
+{% if aaa_template.accounting_rules[accounting_index].groups | default("not_defined") == 'not_defined' %}
+    Should Be Equal Value Json String    ${r_id.json()}    $..["accounting-rule"].vipValue[{{accounting_index}}].group.vipValue    {{ aaa_template.accounting_rules[accounting_index].groups | default("not_defined") }}    msg=no rules defined
 {% else %}
-    ${grp_list}=    Create List    {{ rules.groups | join('   ') }}
-    ${group}=    Get Value From Json    ${r_id.json()}    $..["accounting-rule"].vipValue..group.vipValue
+    ${grp_list}=    Create List    {{ aaa_template.accounting_rules[accounting_index].groups | join('   ') }}
+    ${group}=    Get Value From Json    ${r_id.json()}    $..["accounting-rule"].vipValue[{{accounting_index}}].group.vipValue
     ${rec_group}=    Split String    ${group[0]}
     Lists Should Be Equal    ${rec_group}    ${grp_list}    ignore_order=True    msg=groups
 {% endif %}
@@ -70,16 +70,16 @@ Verify Edge Feature Template AAA Feature Template {{ aaa_template.name }}
 
     Should Be Equal Value Json List Length    ${r_id.json()}    $..["authorization-rule"].vipValue    {{ aaa_template.authorization_rules | length }}    msg=authorization rules
     
-{% for auth_rules in aaa_template.authorization_rules | default([])  %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..["authorization-rule"].vipValue..method.vipValue    {{ auth_rules.method | default("not_defined") }}    msg=method
-    Should Be Equal Value Json String    ${r_id.json()}    $..["authorization-rule"].vipValue..level.vipValue    {{ auth_rules.privilege_level | default("not_defined") }}    msg=privilege level
-    Should Be Equal Value Json String    ${r_id.json()}    $..["authorization-rule"].vipValue..["if-authenticated"].vipValue    {{ auth_rules.authenticated | lower | default("not_defined")}}    msg=authenticated
+{% for authorization_index in range(aaa_template.authorization_rules | default([]) | length()) %}
+    Should Be Equal Value Json String    ${r_id.json()}    $..["authorization-rule"].vipValue[{{authorization_index}}].method.vipValue    {{ aaa_template.authorization_rules[authorization_index].method | default("not_defined") }}    msg=method
+    Should Be Equal Value Json String    ${r_id.json()}    $..["authorization-rule"].vipValue[{{authorization_index}}].level.vipValue    {{ aaa_template.authorization_rules[authorization_index].privilege_level | default("not_defined") }}    msg=privilege level
+    Should Be Equal Value Json String    ${r_id.json()}    $..["authorization-rule"].vipValue[{{authorization_index}}].["if-authenticated"].vipValue    {{ aaa_template.authorization_rules[authorization_index].authenticated | lower | default("not_defined")}}    msg=authenticated
 
-{% if auth_rules.groups | default("not_defined") == 'not_defined' %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..["authorization-rule"].vipValue..group.vipValue    {{ auth_rules.groups | default("not_defined") }}    msg=no authorization rules groups
+{% if aaa_template.authorization_rules[authorization_index].groups | default("not_defined") == 'not_defined' %}
+    Should Be Equal Value Json String    ${r_id.json()}    $..["authorization-rule"].vipValue[{{authorization_index}}].group.vipValue    {{ aaa_template.authorization_rules[authorization_index].groups | default("not_defined") }}    msg=no authorization rules groups
 {% else %}
-    ${group}=    Create List    {{ auth_rules.groups | join('   ') }}
-    ${auth_grp}=    Get Value From Json    ${r_id.json()}    $..["authorization-rule"].vipValue..group.vipValue
+    ${group}=    Create List    {{ aaa_template.authorization_rules[authorization_index].groups | join('   ') }}
+    ${auth_grp}=    Get Value From Json    ${r_id.json()}    $..["authorization-rule"].vipValue[{{authorization_index}}].group.vipValue
     ${rec_grp}=    Split String    ${auth_grp[0]}    ,
     Lists Should Be Equal    ${rec_grp}    ${group}    ignore_order=True    msg=authorization rules groups
 {% endif %}
@@ -103,12 +103,12 @@ Verify Edge Feature Template AAA Feature Template {{ aaa_template.name }}
 
     Should Be Equal Value Json List Length    ${r_id.json()}    $..["radius-dynamic-author"]["radius-client"].vipValue    {{ aaa_template.radius_dynamic_author.clients | length }}    msg=clients
 
-{% for item in aaa_template.radius_dynamic_author.clients | default([])  %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..["radius-dynamic-author"]["radius-client"].vipValue..ip.vipValue    {{ item.ip }}    msg=ip
-    Should Be Equal Value Json String    ${r_id.json()}    $..["radius-dynamic-author"]["radius-client"].vipValue..ip.vipVariableName    {{ item.ip_variable }}    msg=ip variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["radius-dynamic-author"]["radius-client"].vipValue..vipValue..name.vipValue    {{ item.vpn_id }}    msg=vpn id
-    Should Be Equal Value Json String    ${r_id.json()}    $..["radius-dynamic-author"]["radius-client"].vipValue..vipValue..name.vipVariableName    {{ item.vpn_id_variable }}    msg=vpn id variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["radius-dynamic-author"]["radius-client"].vipValue..vipValue..["server-key"].vipValue    {{ item.server_key }}    msg=server key
+{% for radius_dac in range(aaa_template.radius_dynamic_author.clients | default([]) | length()) %}
+    Should Be Equal Value Json String    ${r_id.json()}    $..["radius-dynamic-author"]["radius-client"].vipValue[{{radius_dac}}].ip.vipValue    {{ aaa_template.radius_dynamic_author.clients[radius_dac].ip | default("not_defined") }}    msg=ip
+    Should Be Equal Value Json String    ${r_id.json()}    $..["radius-dynamic-author"]["radius-client"].vipValue[{{radius_dac}}].ip.vipVariableName    {{ aaa_template.radius_dynamic_author.clients[radius_dac].ip_variable | default("not_defined") }}    msg=ip variable
+    Should Be Equal Value Json String    ${r_id.json()}    $..["radius-dynamic-author"]["radius-client"].vipValue[{{radius_dac}}].vpn.vipValue..name.vipValue    {{ aaa_template.radius_dynamic_author.clients[radius_dac].vpn_id | default("not_defined") }}    msg=vpn id
+    Should Be Equal Value Json String    ${r_id.json()}    $..["radius-dynamic-author"]["radius-client"].vipValue[{{radius_dac}}].vpn.vipValue..name.vipVariableName    {{ aaa_template.radius_dynamic_author.clients[radius_dac].vpn_id_variable | default("not_defined") }}    msg=vpn id variable
+    Should Be Equal Value Json String    ${r_id.json()}    $..["radius-dynamic-author"]["radius-client"].vipValue[{{radius_dac}}].vpn.vipValue..server-key.vipValue    {{ aaa_template.radius_dynamic_author.clients[radius_dac].server_key | default("not_defined") }}    msg=server key
 {% endfor %}
 
     Should Be Equal Value Json List Length    ${r_id.json()}    $..radius.vipValue    {{ aaa_template.radius_server_groups | length }}    msg=radius server group
@@ -180,12 +180,12 @@ Verify Edge Feature Template AAA Feature Template {{ aaa_template.name }}
 
 {% for names in aaa_template.users | default([])  %}
 
-    Should Be Equal Value Json String    ${r_id.json()}    $..user.vipValue[{{loop.index0}}].name.vipValue    {{ names.name }}    msg=name
-    Should Be Equal Value Json String    ${r_id.json()}    $..user.vipValue[{{loop.index0}}].vipOptional    {{ names.optional }}    msg=optional
-    Should Be Equal Value Json String    ${r_id.json()}    $..user.vipValue[{{loop.index0}}].password.vipValue    {{ names.password }}    msg=password
-    Should Be Equal Value Json String    ${r_id.json()}    $..user.vipValue[{{loop.index0}}].privilege.vipValue    {{ names.privilege_level }}    msg=privilege level
-    Should Be Equal Value Json String    ${r_id.json()}    $..user.vipValue[{{loop.index0}}].privilege.vipVariableName    {{ names.privilege_level_variable }}    msg=privilege level variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..user.vipValue[{{loop.index0}}].secret.vipValue    {{ names.secret }}    msg=secret
+    Should Be Equal Value Json String    ${r_id.json()}    $..user.vipValue[{{loop.index0}}].name.vipValue    {{ names.name | default("not_defined")}}    msg=name
+    Should Be Equal Value Json String    ${r_id.json()}    $..user.vipValue[{{loop.index0}}].vipOptional    {{ names.optional | default("not_defined")}}    msg=optional
+    Should Be Equal Value Json String    ${r_id.json()}    $..user.vipValue[{{loop.index0}}].password.vipValue    {{ names.password | default("not_defined")}}    msg=password
+    Should Be Equal Value Json String    ${r_id.json()}    $..user.vipValue[{{loop.index0}}].privilege.vipValue    {{ names.privilege_level | default("not_defined")}}    msg=privilege level
+    Should Be Equal Value Json String    ${r_id.json()}    $..user.vipValue[{{loop.index0}}].privilege.vipVariableName    {{ names.privilege_level_variable | default("not_defined")}}    msg=privilege level variable
+    Should Be Equal Value Json String    ${r_id.json()}    $..user.vipValue[{{loop.index0}}].secret.vipValue    {{ names.secret | default("not_defined")}}    msg=secret
 
 {% if names.ssh_rsa_keys | default("not_defined") == 'not_defined' %}
     Should Be Equal Value Json String    ${r_id.json()}    $..user.vipValue[{{loop.index0}}]["pubkey-chain"].vipValue..["key-string"].vipValue    {{ names.ssh_rsa_keys | default("not_defined") }}    msg=no ssh rsa key
