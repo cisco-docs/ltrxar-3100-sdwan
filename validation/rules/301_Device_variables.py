@@ -28,9 +28,9 @@ class Rule:
                 results.append(object)
             # Find vars in CLI templates
             elif isinstance(object, str) and "{{" in object:
-                vars = re.findall(r'{{.*?}}', object)
+                vars = re.findall(r"{{.*?}}", object)
                 for var in vars:
-                    var_name = re.sub("{{|}}|\s", "", var)
+                    var_name = re.sub(r"{{|}}|\s", "", var)
                     results.append(var_name)
         return(results)
 
