@@ -70,6 +70,19 @@ sdwan:
                 protocols:
                   - 6
                   - 17
+            - id: 5
+              name: Rule_5
+              base_action: inspect
+              match_criterias:
+                destination_ports:
+                  - 5190
+                  - 3020
+                protocols:
+                  - 6
+                  - 17
+                protocol_names:
+                  - aol
+                  - cifs
           zone_pairs:
             - source_zone: Test_zone_1_uni1
               destination_zone: Test_zone_2_uni1
@@ -119,6 +132,22 @@ sdwan:
             - 10
             - 20
     feature_policies:
+      - name: SECURITY-POLICY-TEMPLATE-01
+        description: SECURITY-POLICY-TEMPLATE-01
+        use_case: custom
+        firewall_policies:
+          - ZONE-BASED-FIREWALL-01
+          - ZONE-BASED-FIREWALL-02
+        additional_settings:
+          firewall:
+            direct_internet_applications: true
+            tcp_syn_flood_limit: 1239
+            high_speed_logging:
+              vpn_id: 1
+              server_ip: 1.1.1.1
+              server_port: 2055
+            audit_trail: true
+            match_stats_per_filter: true
       - name: SECURITY-POLICY-TEMPLATE-02
         description: SECURITY-POLICY-TEMPLATE-02
         use_case: custom

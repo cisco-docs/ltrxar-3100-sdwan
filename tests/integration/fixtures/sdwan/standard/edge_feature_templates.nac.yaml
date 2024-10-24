@@ -814,3 +814,9 @@ sdwan:
             vlan: 1000
             interface_name: GigabitEthernet0/0/2
             optional: true
+    secure_app_hosting_templates:
+      - name: FT-CEDGE-CONTAINER-PROFILE-01
+        description: utd production profile 1
+        nat: true
+        download_url_database_on_device: false
+        resource_profile: low
