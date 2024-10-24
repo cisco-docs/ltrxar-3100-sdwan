@@ -174,11 +174,9 @@ sdwan:
                   protocols:
                     - 6
                   source_data_prefix_list: PREFIX-LIST-AAR-TEST3
-                  source_data_prefix: 10.1.1.0/24
                   source_ports:
                     - 675
                   destination_data_prefix_list: PREFIX-LIST-AAR-TEST4
-                  destination_data_prefix: 10.2.1.0/24
                   destination_ports:
                     - 676
                   traffic_to: core
@@ -206,7 +204,6 @@ sdwan:
                     - 6
                     - 7
                     - 8
-                  source_data_prefix_list: PREFIX-LIST-TD-TEST1
                   source_data_prefix: 10.1.1.0/24
                   source_ports:
                     - 676
@@ -216,7 +213,6 @@ sdwan:
                       to: 2000
                     - from: 3001
                       to: 4000
-                  destination_data_prefix_list: PREFIX-LIST-TD-TEST2
                   destination_data_prefix: 10.2.1.0/24
                   destination_ports:
                     - 676
@@ -250,7 +246,6 @@ sdwan:
                     - 89
                     - 90
                     - 91
-                  source_data_prefix_list: PREFIX-LIST-TD-TEST2
                   source_data_prefix: 10.2.1.0/24
                   source_ports:
                     - 676
@@ -261,7 +256,6 @@ sdwan:
                     - from: 3001
                       to: 4000
                   destination_data_prefix_list: PREFIX-LIST-TD-TEST1
-                  destination_data_prefix: 10.1.1.0/24
                   destination_ports:
                     - 676
                     - 53
@@ -293,7 +287,6 @@ sdwan:
                     - 90
                     - 91
                   source_data_prefix_list: PREFIX-LIST-TD-TEST2
-                  source_data_prefix: 10.2.1.0/24
                   source_ports:
                     - 676
                     - 53
@@ -302,7 +295,6 @@ sdwan:
                       to: 2000
                     - from: 3001
                       to: 4000
-                  destination_data_prefix_list: PREFIX-LIST-TD-TEST1
                   destination_data_prefix: 10.1.1.0/24
                   destination_ports:
                     - 676
@@ -316,7 +308,6 @@ sdwan:
                 actions:
                   log: true
                   counter_name: LOGGER-TD-TEST2
-                  tloc_list: TLOC-LIST-TD-TEST1
                   tloc:
                     ip: 10.10.54.97
                     color: custom2
@@ -346,7 +337,6 @@ sdwan:
                     - 89
                     - 90
                     - 91
-                  source_data_prefix_list: PREFIX-LIST-TD-TEST2
                   source_data_prefix: 10.2.1.0/24
                   source_ports:
                     - 676
@@ -357,7 +347,6 @@ sdwan:
                     - from: 3001
                       to: 4000
                   destination_data_prefix_list: PREFIX-LIST-TD-TEST1
-                  destination_data_prefix: 10.1.1.0/24
                   destination_ports:
                     - 676
                     - 53
@@ -387,7 +376,6 @@ sdwan:
                     - 90
                     - 91
                   source_data_prefix_list: PREFIX-LIST-TD-TEST2
-                  source_data_prefix: 10.2.1.0/24
                   source_ports:
                     - 676
                     - 53
@@ -397,7 +385,6 @@ sdwan:
                     - from: 3001
                       to: 4000
                   destination_data_prefix_list: PREFIX-LIST-TD-TEST1
-                  destination_data_prefix: 10.1.1.0/24
                   destination_ports:
                     - 676
                     - 53
