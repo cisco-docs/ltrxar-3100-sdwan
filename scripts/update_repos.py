@@ -2,6 +2,7 @@
 
 # Copyright: (c) 2023, Daniel Schmidt <danischm@cisco.com>
 
+import argparse
 import os
 import shutil
 import subprocess
@@ -9,30 +10,10 @@ import tempfile
 
 REPOS = [
     {
-        "url": "https://{}@wwwin-github.cisco.com/AS-Customer/sdwanac.git",
-        "type": "internal",
-        "commit_message": "Nac sdwan updates",
-        "directories": [
-            {
-                "src": "../validation/rules",
-                "dst": "./validation/rules",
-            },
-        ],
-        "files": [
-            {
-                "src": "../schemas/sdwan.yaml",
-                "dst": "./schemas/sdwan.yaml",
-            },
-            {
-                "src": "../defaults/sdwan.yaml",
-                "dst": "./defaults/sdwan.yaml",
-            },
-        ],
-    },
-    {
         "url": "https://{}@wwwin-github.cisco.com/netascode/nac-sdwan-terraform.git",
         "type": "internal",
         "commit_message": "Nac sdwan updates",
+        "update_release_only": True,
         "directories": [
             {
                 "src": "../validation/rules",
@@ -125,7 +106,16 @@ def update_repo(repo):
 
 
 def update_repos():
+    parser = argparse.ArgumentParser()
+    parser.add_argument(
+        "--release",
+        help="Update repos marked as 'update_release_only'",
+        action="store_true",
+    )
+    args = parser.parse_args()
     for repo in REPOS:
+        if repo.get("update_release_only", False) and not args.release:
+            continue
         print("\n-> Updating repo {}\n".format(repo["url"]))
         update_repo(repo)
 
