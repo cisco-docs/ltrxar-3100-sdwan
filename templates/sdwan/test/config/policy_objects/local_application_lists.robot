@@ -2,7 +2,7 @@
 Documentation   Local Application Lists
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process   Logout SDWAN Manager
-Default Tags    sdwan   config   local_application_lists
+Default Tags    sdwan   config   classic_policy_objects
 Resource        ../../sdwan_common.resource
 
 

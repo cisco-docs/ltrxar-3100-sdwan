@@ -2,7 +2,7 @@
 Documentation   Verify Cflowd Policy
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process   Logout SDWAN Manager
-Default Tags    sdwan    config    cflowd
+Default Tags    sdwan    config    centralized_policies    data_policies
 Resource        ../../../../sdwan_common.resource
 
 {% if sdwan.centralized_policies.definitions.data_policy.cflowd is defined %}

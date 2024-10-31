@@ -2,7 +2,7 @@
 Documentation   Verify Extended Community List Configuration
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process   Logout SDWAN Manager
-Default Tags    sdwan  config  extended_community_lists
+Default Tags    sdwan   config   classic_policy_objects
 Resource        ../../sdwan_common.resource
 
 {% if sdwan.policy_objects.extended_community_lists is defined%}

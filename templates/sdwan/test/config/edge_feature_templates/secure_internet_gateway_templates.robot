@@ -2,7 +2,7 @@
 Documentation   Verify Secure Internet Gateway (SIG) Feature Template
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    secure_internet_gateway_templates
+Default Tags    sdwan    config    feature_templates
 Resource        ../../sdwan_common.resource
 
 {% if sdwan.edge_feature_templates.secure_internet_gateway_templates is defined %}

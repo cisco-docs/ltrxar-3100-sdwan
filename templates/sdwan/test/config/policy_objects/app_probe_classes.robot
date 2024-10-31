@@ -2,7 +2,7 @@
 Documentation   Verify App Probe Classes Lists
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process   Logout SDWAN Manager
-Default Tags    sdwan    config    app_probe_classes_lists
+Default Tags    sdwan   config   classic_policy_objects
 Resource        ../../sdwan_common.resource
 
 {% if sdwan.policy_objects.app_probe_classes is defined %}

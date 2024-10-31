@@ -2,7 +2,7 @@
 Documentation   Verify Rewrite Rule Configuration
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process   Logout SDWAN Manager
-Default Tags    sdwan    config    rewrite_rule
+Default Tags    sdwan    config    localized_policies
 Resource        ../../../sdwan_common.resource
 
 {% if sdwan.localized_policies.definitions.rewrite_rules is defined%}

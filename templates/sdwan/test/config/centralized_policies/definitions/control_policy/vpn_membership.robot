@@ -2,7 +2,7 @@
 Documentation   Verify VPN Membership
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    vpn_membership
+Default Tags    sdwan    config    centralized_policies    control_policies
 Resource        ../../../../sdwan_common.resource
 
 {% if sdwan.centralized_policies.definitions.control_policy.vpn_membership is defined %}

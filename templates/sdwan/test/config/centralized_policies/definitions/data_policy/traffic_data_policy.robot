@@ -2,7 +2,7 @@
 Documentation   Verify Traffic Data Policy in Traffic Policy configuration
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    traffic_data
+Default Tags    sdwan    config    centralized_policies    data_policies
 Resource        ../../../../sdwan_common.resource
 
 {% if sdwan.centralized_policies.definitions.data_policy.traffic_data is defined%}

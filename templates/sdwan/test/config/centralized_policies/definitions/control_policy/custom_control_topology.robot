@@ -2,7 +2,7 @@
 Documentation   Verify Custom Control Topology
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process   Logout SDWAN Manager
-Default Tags    sdwan    config    custom_control_topology
+Default Tags    sdwan    config    centralized_policies    control_policies
 Resource        ../../../../sdwan_common.resource
 
 {% if sdwan.centralized_policies.definitions.control_policy.custom_control_topology is defined %}

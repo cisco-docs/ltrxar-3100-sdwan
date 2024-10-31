@@ -2,7 +2,7 @@
 Documentation    Verify Router Policy Configuration
 Suite Setup    Login SDWAN Manager
 Suite Teardown    Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    route_policies
+Default Tags    sdwan    config    localized_policies
 Resource    ../../../sdwan_common.resource
 
 {% if sdwan.localized_policies.definitions.route_policies is defined %}

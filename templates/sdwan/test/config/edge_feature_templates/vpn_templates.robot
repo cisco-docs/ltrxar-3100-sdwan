@@ -2,7 +2,7 @@
 Documentation   Verify VPN Feature Template Configuration
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    vpn_templates
+Default Tags    sdwan    config    feature_templates
 Resource        ../../sdwan_common.resource
 
 {% if sdwan.edge_feature_templates.vpn_templates is defined %}

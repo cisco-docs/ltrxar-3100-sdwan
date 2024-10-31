@@ -2,7 +2,7 @@
 Documentation     Verify feature Policies
 Suite Setup       Login SDWAN Manager
 Suite Teardown    Run On Last Process   Logout SDWAN Manager
-Default Tags      sdwan   config   feature policy
+Default Tags      sdwan   config   security_policies
 Resource          ../../sdwan_common.resource
 
 {% if sdwan.security_policies.feature_policies is defined %}

@@ -2,7 +2,7 @@
 Documentation     Verify Zone Based Firewall
 Suite Setup       Login SDWAN Manager
 Suite Teardown    Run On Last Process   Logout SDWAN Manager
-Default Tags      sdwan    config    zone based firewall
+Default Tags      sdwan   config   security_policies
 Resource          ../../../sdwan_common.resource
 
 {% if sdwan.security_policies.definitions.zone_based_firewall is defined %}

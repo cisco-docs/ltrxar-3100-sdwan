@@ -2,7 +2,7 @@
 Documentation   Verify QoS Map
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    qos_maps
+Default Tags    sdwan    config    localized_policies
 Resource        ../../../sdwan_common.resource
 
 {% if sdwan.localized_policies.definitions.qos_maps is defined %}

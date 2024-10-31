@@ -2,7 +2,7 @@
 Documentation   Verify Switchport Feature template
 Suite Setup     Login SDWAN Manager
 Suite Teardown    Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    aaa_templates
+Default Tags    sdwan    config    feature_templates
 Resource        ../../sdwan_common.resource
 
 {% if sdwan.edge_feature_templates.aaa_templates is defined %}

@@ -1,7 +1,7 @@
 *** Settings ***
 Documentation   Verify Device Templates
 Suite Setup     Login SDWAN Manager
-Default Tags    sdwan    config    edge_device_templates
+Default Tags    sdwan   config   edge_device_templates
 Resource        ../sdwan_common.resource
 
 {% if sdwan.edge_device_templates is defined%}

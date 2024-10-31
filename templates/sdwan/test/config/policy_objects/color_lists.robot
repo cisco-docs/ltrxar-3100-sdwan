@@ -2,7 +2,7 @@
 Documentation   Verify Color Lists
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process   Logout SDWAN Manager
-Default Tags    sdwan  config  color_lists
+Default Tags    sdwan   config  classic_policy_objects
 Resource        ../../sdwan_common.resource
 
 {% if sdwan.policy_objects.color_lists is defined %}

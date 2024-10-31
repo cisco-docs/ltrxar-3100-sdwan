@@ -2,7 +2,7 @@
 Documentation   Verify BGP Feature Template Configuration
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    bgp_templates
+Default Tags    sdwan    config    feature_templates
 Resource        ../../sdwan_common.resource
 
 {% if sdwan.edge_feature_templates.bgp_templates is defined %}

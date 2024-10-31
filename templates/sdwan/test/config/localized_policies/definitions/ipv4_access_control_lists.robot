@@ -2,7 +2,7 @@
 Documentation   Verify IPv4 Access Control Lists
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process   Logout SDWAN Manager
-Default Tags    sdwan    config    ipv4_access_control_lists
+Default Tags    sdwan    config    localized_policies
 Resource        ../../../sdwan_common.resource
 
 {% if sdwan.localized_policies.definitions.ipv4_access_control_lists is defined%}

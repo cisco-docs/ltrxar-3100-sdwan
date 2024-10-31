@@ -2,7 +2,7 @@
 Documentation   Verify Device Access IPv6 ACL
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    ipv6_device_access_policies
+Default Tags    sdwan    config    localized_policies
 Resource        ../../../sdwan_common.resource
 
 {% if sdwan.localized_policies.definitions.ipv6_device_access_policies is defined %}
