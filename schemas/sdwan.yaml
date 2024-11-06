@@ -3123,7 +3123,7 @@ feature_profiles_system_banner:
   motd: str(min=1, max=2048, required=False)
   motd_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
 feature_profiles_system_basic:
-  name: regex('^[^&<>! \"]{1,128}$')
+  name: regex('^[^&<>! \"]{1,128}$', required=False)
   description: str(required=False)
   admin_tech_on_failure: bool(required=False)
   admin_tech_on_failure_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
@@ -3357,7 +3357,7 @@ feature_profiles_system_ntp_server:
   vpn_id: int(min=0, max=65530, required=False)
   vpn_id_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
 feature_profiles_system_omp:
-  name: regex('^[^&<>! \"]{1,128}$')
+  name: regex('^[^&<>! \"]{1,128}$', required=False)
   description: str(required=False)
   advertise_ipv4_bgp: bool(required=False)
   advertise_ipv4_bgp_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
@@ -3418,7 +3418,7 @@ feature_profiles_system_omp:
   transport_gateway: enum("prefer", "ecmp-with-direct-path", required=False)
   transport_gateway_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
 feature_profiles_system_performance_monitoring:
-  name: regex('^[^&<>! \"]{1,128}$')
+  name: regex('^[^&<>! \"]{1,128}$', required=False)
   description: str(required=False)
   app_perf_monitor_app_groups: list(enum("adp-group", "amazon-group", "aol-group", "apple-group", "apple-talk-group", "atlassian-group", "banyan-group", "bittorrent-group", "box-group", "capwap-group", "cisco-jabber-group", "cisco-phone-group", "concur-group", "corba-group", "dameware-group", "demandware-group", "dropbox-group", "edonkey-emule-group", "espn-group", "fasttrack-group", "flash-group", "fring-group", "ftp-group", "gnutella-group", "google-group", "gotomeeting-group", "hubspot-group", "icq-group", "imap-group", "intuit-group", "ipsec-group", "irc-group", "jive-group", "kakao-group", "kerberos-group", "ldap-group", "marketo-group", "ms-cloud-group", "msn-messenger-group", "netbios-group", "netsuite-group", "nntp-group", "npmp-group", "oracle-group", "pop3-group", "prm-group", "qq-group", "ringcentral-group", "salesforce-group", "sap-group", "servicenow-group", "smtp-group", "snmp-group", "sqlsvr-group", "stun-group", "sugar-crm-group", "telepresence-group", "tftp-group", "tiktok-group", "vmware-group", "vnc-group", "wap-group", "webex-group", "workday-group", "xns-xerox-group", "xunlei-group", "yahoo-group", "yahoo-messenger-group", "zendesk-group", "zoho-crm-group", "other"), required=False)
   app_perf_monitor_enabled: bool(required=False)
@@ -3427,7 +3427,7 @@ feature_profiles_system_performance_monitoring:
   monitoring_config_enabled: bool(required=False)
   monitoring_config_interval: enum(30, 60, required=False)
 feature_profiles_system_security:
-  name: regex('^[^&<>! \"]{1,128}$')
+  name: regex('^[^&<>! \"]{1,128}$', required=False)
   description: str(required=False)
   anti_replay_window: enum(64, 128, 256, 512, 1024, 2048, 4096, 8192, required=False)
   anti_replay_window_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
@@ -3471,7 +3471,7 @@ feature_profiles_system_security_key:
   send_life_time_local_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
   send_life_time_start_epoch: int()
 feature_profiles_system_snmp:
-  name: regex('^[^&<>! \"]{1,128}$')
+  name: regex('^[^&<>! \"]{1,128}$', required=False)
   description: str(required=False)
   communities: list(include("feature_profiles_system_snmp_community"), required=False)
   contact_person: str(min=1, max=255, required=False)
@@ -3589,7 +3589,7 @@ feature_profiles_transport_ipv6_tracker:
   tracker_name_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
   tracker_type: enum("endpoint", required=False)
 feature_profiles_transport_wan_vpn:
-  name: regex('^[^&<>! \"]{1,128}$')
+  name: regex('^[^&<>! \"]{1,128}$', required=False)
   description: str(required=False)
   enhance_ecmp_keying: bool(required=False)
   enhance_ecmp_keying_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
