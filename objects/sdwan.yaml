@@ -98,83 +98,83 @@ objects:
     paths: [sdwan.edge_device_templates]
   - name: App Probe Class
     template: app_probe_class
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.app_probe_classes]
   - name: Application List
     template: application_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.application_lists]
   - name: AS Path List
     template: as_path_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.as_path_lists]
   - name: Class Map
     template: class_map
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.class_maps]
   - name: Color List
     template: color_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.color_lists]
   - name: Expanded Community List
     template: expanded_community_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.expanded_community_lists]
   - name: Extended Community List
     template: extended_community_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.extended_community_lists]
   - name: IPv4 Data Prefix List
     template: ipv4_data_prefix_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.ipv4_data_prefix_lists]
   - name: IPv4 Prefix List
     template: ipv4_prefix_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.ipv4_prefix_lists]
   - name: IPv6 Data Prefix List
     template: ipv6_data_prefix_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.ipv6_data_prefix_lists]
   - name: IPv6 Prefix List
     template: ipv6_prefix_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.ipv6_prefix_lists]
   - name: Mirror List
     template: mirror_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.mirror_lists]
   - name: Policer
     template: policer
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.policers]
   - name: Preferred Color Group
     template: preferred_color_group
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.preferred_color_groups]
   - name: Region List
     template: region_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.region_lists]
   - name: Site List
     template: site_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.site_lists]
   - name: SLA Class
     template: sla_class
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.sla_classes]
   - name: Standard Community List
     template: standard_community_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.standard_community_lists]
   - name: TLOC List
     template: tloc_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.tloc_lists]
   - name: VPN List
     template: vpn_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.vpn_lists]
   - name: IPv4 Access Control List Definition
     template: ipv4_access_control_list_definition
@@ -289,15 +289,15 @@ objects:
     paths: [sdwan.security_policies.feature_policies]
   - name: Zone List
     template: zone_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.zones]
   - name: FQDN List
     template: fqdn_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.fqdn_lists]
   - name: Local Application List
     template: local_application_list
-    folder: policy_objects
+    folder: classic_policy_objects
     paths: [sdwan.policy_objects.local_application_lists]
   - name: Intrusion Prevention Definition
     template: intrusion_prevention_definition
@@ -317,6 +317,13 @@ objects:
       sdwan.feature_profiles.other_profiles.name,
       sdwan.feature_profiles.other_profiles.description,
       ]
+  - name: Policy Object Profile
+    template: policy_object
+    folder: feature_profiles
+    paths: [
+      sdwan.feature_profiles.policy_object_profile.name,
+      sdwan.feature_profiles.policy_object_profile.description,
+    ]
   - name: Service Profile
     template: service
     folder: feature_profiles
@@ -358,10 +365,22 @@ objects:
     template: bfd
     folder: features
     paths: [sdwan.feature_profiles.system_profiles.bfd]
+  - name: Class Map
+    template: class_map
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.class_maps]
   - name: CLI Config Feature
     template: cli_config
     folder: features
     paths: [sdwan.feature_profiles.cli_profiles.config]
+  - name: Expanded Community List
+    template: expanded_community_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.expanded_community_lists]
+  - name: Extended Community List
+    template: extended_community_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.extended_community_lists]
   - name: Flexible Port Speed Feature
     template: flexible_port_speed
     folder: features
@@ -370,6 +389,34 @@ objects:
     template: global
     folder: features
     paths: [sdwan.feature_profiles.system_profiles.global]
+  - name: IPv4 Data Prefix List
+    template: ipv4_data_prefix_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.ipv4_data_prefix_lists]
+  - name: IPv4 Prefix List
+    template: ipv4_prefix_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.ipv4_prefix_lists]
+  - name: IPv6 Data Prefix List
+    template: ipv6_data_prefix_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.ipv6_data_prefix_lists]
+  - name: IPv6 Prefix List
+    template: ipv6_prefix_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.ipv6_prefix_lists]
+  - name: Mirror List
+    template: mirror_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.mirror_lists]
+  - name: Policer
+    template: policer
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.policers]
+  - name: TLOC List
+    template: tloc_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.tloc_lists]
   - name: Logging Feature
     template: logging
     folder: features

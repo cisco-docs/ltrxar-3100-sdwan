@@ -8,9 +8,10 @@ Specify configuration for packet mirroring.
 
 ```yaml
 sdwan:
-  policy_objects:
-    mirror_lists:
-      - name: MIR1
-        remote_destination_ip: 10.0.0.1
-        source_ip: 192.168.1.100
+  feature_profiles:
+    policy_object_profile:
+      mirror_lists:
+        - name: mirror
+          remote_destination_ip: 10.0.0.1
+          source_ip: 192.168.1.100
 ```

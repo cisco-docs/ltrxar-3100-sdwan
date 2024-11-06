@@ -46,6 +46,90 @@ sdwan:
           static_proxy_host: 10.0.0.254
           static_proxy_port: 1000
           vpn_id: 0
+    policy_object_profile:
+      name: policy_object
+      description: basic policy object profile
+      class_maps:
+        - name: realtime
+          description: realtime class map
+          queue: 0
+        - name: transactional
+          description: rransactional class map
+          queue: 1
+        - name: default
+          description: default class map
+          queue: 2
+        - name: bulk
+          description: bulk class map
+          queue: 3
+      expanded_community_lists:
+        - name: community_legacy_wan
+          description: expanded community list
+          expanded_communities:
+            - 65001:101
+            - 65002:102
+            - 65003:103
+      extended_community_lists:
+        - name: ext_community_list
+          description: extended community list
+          extended_communities:
+            - soo 1:1
+            - rt 1:1
+      ipv4_data_prefix_lists:
+        - name: ipv4_dpl
+          description: ipv4 data prefix list
+          prefixes:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+      ipv4_prefix_lists:
+        - name: ipv4_pl_private
+          description: ipv4 prefix list
+          entries:
+            - prefix: 10.0.0.0/8
+            - prefix: 172.16.0.0/12
+              le: 30
+            - prefix: 192.168.0.0/16
+              ge: 24
+              le: 28
+      ipv6_data_prefix_lists:
+        - name: ipv6_dpl
+          description: ipv6 data prefix list
+          prefixes:
+            - fc00::/7
+            - fd00::/8
+      ipv6_prefix_lists:
+        - name: ipv6_pl_private
+          description: ipv6 prefix list
+          entries:
+            - prefix: fe40:5657:6df1:d34f::/64
+              le: 100
+            - prefix: fc00::/7
+              ge: 64
+              le: 120
+      mirror_lists:
+        - name: mirror
+          description: mirror list
+          remote_destination_ip: 10.0.0.1
+          source_ip: 192.168.1.100
+      policers:
+        - name: branch_policer
+          description: branch policer
+          burst_bytes: 2000000
+          exceed_action: remark
+          rate_bps: 250000000
+      tloc_lists:
+        - name: emea_hub_tlocs
+          description: emea hub tloc list
+          tlocs:
+            - color: custom1
+              encapsulation: ipsec
+              tloc_ip: 10.0.2.101
+              preference: 100
+            - color: custom2
+              encapsulation: ipsec
+              tloc_ip: 10.0.2.101
+              preference: 50
     service_profiles:
       - name: service1
       - name: service2

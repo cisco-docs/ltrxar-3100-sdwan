@@ -1,5 +1,5 @@
 class Rule:
-    id = "406"
+    id = "407"
     description = "Validate performance monitoring configuration feature"
     severity = "HIGH"
 

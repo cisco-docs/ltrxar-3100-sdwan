@@ -2937,6 +2937,7 @@ security_policy_intrusion_prevention:
 feature_profiles:
   cli_profiles: list(include("feature_profiles_cli"), required=False)
   other_profiles: list(include("feature_profiles_other"), required=False)
+  policy_object_profile: include("feature_profiles_policy_object", required=False)
   service_profiles: list(include("feature_profiles_service"), required=False)
   system_profiles: list(include("feature_profiles_system"), required=False)
   transport_profiles: list(include("feature_profiles_transport"), required=False)
@@ -2976,6 +2977,75 @@ feature_profiles_other_thousandeyes:
   static_proxy_port_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
   vpn_id: int(min=0, max=65530, required=False)
   vpn_id_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
+feature_profiles_policy_object:
+  name: regex('^[^&<>! \"]{1,128}$', required=False) # set to "Policy_Profile_Global" in TF module if not specified by user
+  description: str(required=False)
+  class_maps: list(include("feature_profiles_policy_object_class_map"), required=False)
+  expanded_community_lists: list(include("feature_profiles_policy_object_expanded_community_list"), required=False)
+  extended_community_lists: list(include("feature_profiles_policy_object_extended_community_list"), required=False)
+  ipv4_data_prefix_lists: list(include("feature_profiles_policy_object_ipv4_data_prefix_list"), required=False)
+  ipv4_prefix_lists: list(include("feature_profiles_policy_object_ipv4_prefix_list"), required=False)
+  ipv6_data_prefix_lists: list(include("feature_profiles_policy_object_ipv6_data_prefix_list"), required=False)
+  ipv6_prefix_lists: list(include("feature_profiles_policy_object_ipv6_prefix_list"), required=False)
+  mirror_lists: list(include("feature_profiles_policy_object_mirror_list"), required=False)
+  policers: list(include("feature_profiles_policy_object_policer"), required=False)
+  tloc_lists: list(include("feature_profiles_policy_object_tloc_list"), required=False)
+feature_profiles_policy_object_class_map:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  queue: int(min=0, max=7)
+feature_profiles_policy_object_expanded_community_list:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  expanded_communities: list(str(), min=1)
+feature_profiles_policy_object_extended_community_list:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  extended_communities: list(regex('^(rt|soo)\s([\d\.]+):(\d+)$'), min=1)
+feature_profiles_policy_object_ipv4_data_prefix_list:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  prefixes: list(ip(version=4), required=False)
+feature_profiles_policy_object_ipv4_prefix_list:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  entries: list(include("feature_profiles_policy_object_ipv4_prefix_list_entry"), min=1)
+feature_profiles_policy_object_ipv4_prefix_list_entry:
+  prefix: ip(version=4)
+  le: int(min=1, max=32, required=False)
+  ge: int(min=1, max=32, required=False)
+feature_profiles_policy_object_ipv6_data_prefix_list:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  prefixes: list(ip(version=6), required=False)
+feature_profiles_policy_object_ipv6_prefix_list:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  entries: list(include("feature_profiles_policy_object_ipv6_prefix_list_entry"), min=1)
+feature_profiles_policy_object_ipv6_prefix_list_entry:
+  prefix: ip(version=6)
+  le: int(min=1, max=128, required=False)
+  ge: int(min=1, max=128, required=False)
+feature_profiles_policy_object_mirror_list:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  remote_destination_ip: ip()
+  source_ip: ip()
+feature_profiles_policy_object_policer:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  burst_bytes: int(min=15000, max=10000000)
+  exceed_action: enum("drop", "remark")
+  rate_bps: int(min=8, max=100000000000)
+feature_profiles_policy_object_tloc_list:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  tlocs: list(include("feature_profiles_policy_object_tloc_list_tloc"), min=1)
+feature_profiles_policy_object_tloc_list_tloc:
+  color: enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6")
+  encapsulation: enum("ipsec", "gre")
+  tloc_ip: ip(version=4)
+  preference: int(min=0, max=4294967295, required=False)
 feature_profiles_service:
   name: regex('^[^&<>! \"]{1,128}$')
   description: str(required=False)

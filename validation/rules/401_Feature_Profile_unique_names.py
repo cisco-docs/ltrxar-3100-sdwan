@@ -9,6 +9,8 @@ class Rule:
     def match(cls, inventory):
         results = []
         profile_names = []
+        if inventory.get('sdwan', {}).get('feature_profiles', {}).get("policy_object_profile", None):
+            profile_names.append(inventory.get('sdwan', {}).get('feature_profiles', {}).get("policy_object_profile", {}).get("name", "Policy_Profile_Global"))
         for profile_type in cls.feature_profile_types:
             for profile in inventory.get('sdwan', {}).get('feature_profiles', {}).get(profile_type, []):
                 profile_names.append(profile['name'])

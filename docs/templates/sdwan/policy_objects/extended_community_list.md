@@ -8,10 +8,13 @@ Configure extended BGP community lists.
 
 ```yaml
 sdwan:
-  policy_objects:
-    extended_community_lists:
-      - name: EXTCOMMUNITY-LEGACY-WAN
-        extended_communities:
-          - soo 1:1
-          - rt 1:1
+  feature_profiles:
+    policy_object_profile:
+      name: policy_object
+      description: basic policy object profile
+      extended_community_lists:
+        - name: ext_community_list
+          extended_communities:
+            - soo 1:1
+            - rt 1:1
 ```

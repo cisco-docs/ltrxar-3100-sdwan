@@ -1,5 +1,5 @@
 class Rule:
-    id = "409"
+    id = "410"
     description = "Validate wan vpn configuration feature"
     severity = "HIGH"
 

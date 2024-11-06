@@ -2,7 +2,7 @@ import jmespath
 import ruamel.yaml
 
 class Rule:
-    id = "402"
+    id = "403"
     description = "Features required parameters"
     severity = "HIGH"
 

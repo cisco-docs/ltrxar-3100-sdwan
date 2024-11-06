@@ -1,5 +1,5 @@
 class Rule:
-    id = "410"
+    id = "411"
     description = "Validate thousandeyes configuration feature"
     severity = "HIGH"
 

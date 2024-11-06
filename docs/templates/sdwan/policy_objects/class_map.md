@@ -8,10 +8,12 @@ Configure QoS class maps.
 
 ```yaml
 sdwan:
-  policy_objects:
-    class_maps:
-      - name: CLASS-REALTIME
-        queue: 0
-      - name: TRANSACTIONAL
-        queue: 1
+  feature_profiles:
+    policy_object_profile:
+      class_maps:
+        - name: realtime
+          queue: 0
+        - name: transactional
+          description: priority transactional traffic
+          queue: 1
 ```
