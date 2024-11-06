@@ -54,7 +54,7 @@ sdwan:
           description: realtime class map
           queue: 0
         - name: transactional
-          description: rransactional class map
+          description: transactional class map
           queue: 1
         - name: default
           description: default class map
