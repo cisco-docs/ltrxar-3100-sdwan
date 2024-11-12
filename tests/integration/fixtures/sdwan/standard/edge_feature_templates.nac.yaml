@@ -820,3 +820,8 @@ sdwan:
         nat: true
         download_url_database_on_device: false
         resource_profile: low
+      - name: FT-CEDGE-CONTAINER-PROFILE-02
+        description: utd production profile 2
+        nat_variable: utd_nat_var_1
+        download_url_database_on_device_variable: utd_url_var_1
+        resource_profile_variable: utd_rp_1
