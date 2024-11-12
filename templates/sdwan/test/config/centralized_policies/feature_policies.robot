@@ -47,13 +47,22 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
     ${cct_ids_length}=    Get Length    ${cct_ids_list}
     Should Be Equal As Integers    ${cct_ids_length}    {{ fp.custom_control_topology | default([]) | length }}    msg=custom control topology length
 
+    ${cct_dict}=    Create Dictionary
+{% for cctt_index in range(fp.custom_control_topology | default([]) | length()) %}
+    ${cctt_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/definition/control/${cct_ids_list[{{ cctt_index }}]}
+    ${cct_name}=    Get Value From Json    ${cctt_id.json()}    $..name
+    ${cct_dict}[${cct_name[0]}]=    Set Variable    ${cct_ids_list[{{ cctt_index }}]}
+
+{% endfor %}
+
 {% for cct_index in range(fp.custom_control_topology | default([]) | length()) %}
 
-    ${cct_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/definition/control/${cct_ids_list[{{ cct_index }}]}
+    ${cct_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/definition/control/${cct_dict["{{ fp.custom_control_topology[cct_index].policy_definition }}"]}
     Should Be Equal Value Json String    ${cct_id.json()}    $..name    {{ fp.custom_control_topology[cct_index].policy_definition }}    msg=custom control topology name
 
-    ${cct_sl_in_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_ids_list[{{ cct_index }}]}")].entries[?(@.direction=="in")].siteLists
+    ${cct_sl_in_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ fp.custom_control_topology[cct_index].policy_definition }}"]}")].entries[?(@.direction=="in")].siteLists
     ${exp_site_in_list}=    Create List    {{ fp.custom_control_topology[cct_index].site_region.site_lists_in | default([]) | join('   ') }}
+    Log    ${exp_site_in_list}
     IF    ${cct_sl_in_list} == []
         Should Be Equal Value Json List    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control")].entries[?(@.direction=="in")].siteLists    ${exp_site_in_list}    msg=custom control topology site lists in
     ELSE
@@ -69,14 +78,13 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
         Lists Should Be Equal    ${temp_res_sl_in_list}    ${exp_site_in_list}    ignore_order=True    msg=custom control topology site lists in name
     END
 
-    ${cct_sl_out_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_ids_list[{{ cct_index }}]}")].entries[?(@.direction=="out")].siteLists
+    ${cct_sl_out_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ fp.custom_control_topology[cct_index].policy_definition }}"]}")].entries[?(@.direction=="out")].siteLists
     ${exp_site_out_list}=    Create List    {{ fp.custom_control_topology[cct_index].site_region.site_lists_out | default([]) | join('   ') }}
     IF    ${cct_sl_out_list} == []
         Should Be Equal Value Json List    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control")].entries[?(@.direction=="out")].siteLists    ${exp_site_out_list}    msg=custom control topology site lists out
     ELSE
         ${cct_sl_out_ids_length}=    Get Length    ${cct_sl_out_list[0]}
         Should Be Equal As Integers    ${cct_sl_out_ids_length}    {{ fp.custom_control_topology[cct_index].site_region.site_lists_out | default([]) | length }}    msg=custom control topology site lists out length
-
         ${temp_res_sl_out_list}=    Create List
         FOR    ${id}    IN    @{cct_sl_out_list[0]}
             ${site_list_out_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/site/${id}
@@ -86,7 +94,7 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
         Lists Should Be Equal    ${temp_res_sl_out_list}    ${exp_site_out_list}    ignore_order=True    msg=custom control topology site lists out name
     END
 
-    ${cct_rl_in_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_ids_list[{{ cct_index }}]}")].entries[?(@.direction=="in")].regionLists
+    ${cct_rl_in_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ fp.custom_control_topology[cct_index].policy_definition }}"]}")].entries[?(@.direction=="in")].regionLists
     ${exp_region_in_list}=    Create List    {{ fp.custom_control_topology[cct_index].site_region.region_lists_in | default([]) | join('   ') }}
     IF    ${cct_rl_in_list} == []
         Should Be Equal Value Json List    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control")].entries[?(@.direction=="in")].regionLists    ${exp_region_in_list}    msg=custom control topology region lists in
@@ -103,7 +111,7 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
         Lists Should Be Equal    ${temp_res_rl_in_list}    ${exp_region_in_list}    ignore_order=True    msg=custom control topology region lists in name
     END
 
-    ${cct_rl_out_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_ids_list[{{ cct_index }}]}")].entries[?(@.direction=="out")].regionLists
+    ${cct_rl_out_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ fp.custom_control_topology[cct_index].policy_definition }}"]}")].entries[?(@.direction=="out")].regionLists
     ${exp_region_out_list}=    Create List    {{ fp.custom_control_topology[cct_index].site_region.region_lists_out | default([]) | join('   ') }}
     IF    ${cct_rl_out_list} == []
         Should Be Equal Value Json List    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control")].entries[?(@.direction=="out")].regionLists    ${exp_region_out_list}    msg=custom control topology region lists out
