@@ -15,7 +15,7 @@ Get CLI Feature template
 
 {% for cli in sdwan.edge_feature_templates.cli_templates | default([]) %}
 
-Verify Edge Feature Template Secure Internet Gateway Feature template {{ cli.name }}
+Verify Edge Feature Template CLI Add-on template {{ cli.name }}
     ${cli_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{cli.name }}")]
     Should Be Equal Value Json String    ${cli_id}    $..templateName    {{ cli.name }}    msg=name
     Should Be Equal Value Json String    ${cli_id}    $..templateDescription    {{ cli.description }}    msg=description
