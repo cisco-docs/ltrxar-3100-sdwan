@@ -2826,14 +2826,14 @@ centralized_policy_data_traffic_data_custom_action_tloc_value:
 centralized_policy_data_cflowd:
   name: regex('^[A-Za-z0-9\-_]{1,127}$')
   description: str()
-  active_flow_timeout: int(min=30, max=3600)
-  inactive_flow_timeout: int(min=1, max=3600)
-  sampling_interval: int(min=1, max=65536)
-  flow_refresh: int(min=60, max=86400)
-  protocol: enum("ipv4","ipv6","both")
-  tos: bool()
-  remarked_dscp: bool()
-  collectors: list(include("centralized_policy_data_cflowd_collectors", required=False))
+  active_flow_timeout: int(min=30, max=3600, required=False)
+  inactive_flow_timeout: int(min=1, max=3600, required=False)
+  sampling_interval: int(min=1, max=65536, required=False)
+  flow_refresh: int(min=60, max=86400, required=False)
+  protocol: enum("ipv4","ipv6","both", required=False)
+  tos: bool(required=False)
+  remarked_dscp: bool(required=False)
+  collectors: list(include("centralized_policy_data_cflowd_collectors"), required=False)
 centralized_policy_data_cflowd_collectors:
   vpn: int(min=0, max=65527) # 512 should be excluded, not supported on cEdge
   ip_address: ip(version=4)
