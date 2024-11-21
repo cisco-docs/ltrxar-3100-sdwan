@@ -1,4 +1,6 @@
 import jmespath
+import ruamel.yaml
+
 class Rule:
     id = "103"
     description = "Verify if any mutually exclusive variables are defined"
@@ -175,10 +177,34 @@ class Rule:
         },
     ]
 
+
+    @classmethod
+    def check_parameters(cls, data, path=""):
+        # This function checks if the any parameter is defined as global and variable at the same time
+        results = []
+        if isinstance(data, dict):
+            for key, value in data.items():
+                new_path = f"{path}.{key}" if path else key
+                if key.endswith("_variable") and key[:-9] in data:
+                    results.append(f'Mutually exclusive parameters {key[:-9]} and {key} are defined in the {path}')
+                results.extend(cls.check_parameters(value, new_path))
+        elif isinstance(data, list):
+            for index, value in enumerate(data):
+                if isinstance(value, dict) or isinstance(value, ruamel.yaml.comments.CommentedMap):
+                    path_extenstion = value.get("name", index)
+                else:
+                    path_extenstion = index
+                new_path = f"{path}[{path_extenstion}]"
+                results.extend(cls.check_parameters(value, new_path))
+        return results
+    
+
     # Loop through the mutually_exclusive_variables_list and check if the mutually exclusive variables are defined
     @classmethod
     def match(cls, inventory):
         results = []
+        # Loop over all parameters and report if the same parameter is defined as global and variable at the same time
+        results.extend(cls.check_parameters(inventory.get("sdwan", {}).get("edge_feature_templates", {})))
         # Loop through the mutually_exclusive_variables_list
         for each_exclusion_item in cls.mutually_exclusive_variables_list:
             try:
