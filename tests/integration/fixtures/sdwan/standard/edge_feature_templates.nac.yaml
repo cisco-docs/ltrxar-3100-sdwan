@@ -447,6 +447,20 @@ sdwan:
       - name: FT-CEDGE-SECURITY-01
         description: Base SD-WAN data-plane security
         rekey_interval: 172800
+      - name: FT-CEDGE-SECURITY-02
+        description: WAN Edge Security Template
+        authentication_types:
+          - ip-udp-esp
+          - esp
+        extended_anti_replay_window: 256
+        rekey_interval: 345600
+        replay_window: 4096
+      - name: FT-CEDGE-SECURITY-03
+        description: WAN Edge Security Template
+        authentication_types_variable: authentication_types_var1
+        extended_anti_replay_window: 256
+        rekey_interval: 345600
+        replay_window: 4096
     snmp_templates:
       - name: FT-CEDGE-SNMPV3-01
         description: SNMPv3 template

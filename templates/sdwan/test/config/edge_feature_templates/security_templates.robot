@@ -36,10 +36,16 @@ Verify Edge Feature Template Security Feature template {{ security_template.name
 
     Should Be Equal Value Json List Length    ${r_id.json()}    $..["ipsec"].authentication-type.vipValue    {{ security_template.authentication_types | default([]) | length }}    msg=authentication types length
 
-{% set exp_auth_type = ({"esp":"sha1-hmac", "ip-udp-esp":"ah-sha1-hmac", "ip-udp-esp-no-id":"ah-no-id", "none":"none"}) %}
-{% for item_auth in security_template.authentication_types | default([]) %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..["ipsec"].authentication-type.vipValue[{{loop.index0}}]    {{ exp_auth_type[item_auth] }}    msg=authentication types
-{% endfor %}
+    {% set lookup_auth_type = ({"esp":"sha1-hmac", "ip-udp-esp":"ah-sha1-hmac", "ip-udp-esp-no-id":"ah-no-id", "none":"none"}) %}
+    {% set auth_type_list_local = [] %}
+    {% for item in security_template.authentication_types | default([]) %}
+        {% set _ = auth_type_list_local.append(lookup_auth_type.get(item, "not_defined")) %}
+    {% endfor %}
+    ${auth_type_list_local}=   Create List   {{ auth_type_list_local | join('   ') }}
+    ${auth_type_list_remote}=    Get Value From Json    ${r_id.json()}    $..["ipsec"].authentication-type.vipValue
+    ${not_defined_list}=    Create List
+    ${auth_type_list_remote}=    Set Variable If    ${auth_type_list_remote} == []    ${not_defined_list}    ${auth_type_list_remote}[0]
+    Lists Should Be Equal    ${auth_type_list_remote}    ${auth_type_list_local}    ignore_order=True    msg=authentication types
 
     Should Be Equal Value Json String    ${r_id.json()}    $..["ipsec"].authentication-type.vipVariableName    {{ security_template.authentication_types_variable | default("not_defined") }}    msg=authentication types variable
     Should Be Equal Value Json String    ${r_id.json()}    $..["ipsec"].extended-ar-window.vipValue    {{ security_template.extended_anti_replay_window | default("not_defined") }}    msg=extended anti replay window
