@@ -93,14 +93,14 @@ sdwan:
           default_action_type: pass
           rules:
             - id: 1
-              name: Rule_1
+              name: Rule 1
               base_action: inspect
               match_criterias:
                 protocols:
                   - 1
                   - 50
             - id: 2
-              name: Rule_2
+              name: Rule 2
               base_action: drop
           zone_pairs:
             - source_zone: self_zone

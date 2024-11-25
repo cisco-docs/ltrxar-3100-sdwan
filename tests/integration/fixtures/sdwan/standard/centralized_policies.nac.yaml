@@ -61,6 +61,22 @@ sdwan:
                 actions:
                   omp_tag: 89
                   preference: 49
+          - name: CCT_DEFINITION_TEST2
+            description: CCT_DEFINITION_TEST2
+            default_action_type: accept
+            sequences:
+              - id: 1
+                base_action: accept
+                name: rule1
+                ip_type: ipv4
+                type: route
+              - base_action: accept
+                id: 2
+                name: rule2
+                ip_type: ipv4
+                type: tloc
+                actions:
+                  omp_tag: 89
         hub_and_spoke_topology:
           - name: HST_DEFINITION_TEST1
             description: HST_DEFINITION_TEST1
@@ -161,7 +177,7 @@ sdwan:
               sla_class_list: default
             sequences:
               - id: 1
-                name: aar_rule
+                name: App Route
                 ip_type: ipv4
                 type: app_route
                 match_criterias:
