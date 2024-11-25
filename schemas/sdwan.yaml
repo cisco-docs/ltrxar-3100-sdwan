@@ -2840,7 +2840,7 @@ centralized_policy_data_cflowd_collectors:
   port: int(min=1024, max=65535)
   transport: enum("transport_tcp","transport_udp")
   source_interface: str()
-  export_spreading: enum("enable","disable")
+  export_spreading: enum("enable","disable", required=False)
 # Security Policy Tree
 security_policies:
   definitions: include("security_policy_definitions", required=False)
@@ -3699,9 +3699,9 @@ feature_profiles_transport_wan_vpn_ipv4_static_route_next_hop:
   administrative_distance: int(min=1, max=255, required=False)
   administrative_distance_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
 feature_profiles_transport_wan_vpn_ipv6_static_route:
+  gateway: enum("nextHop", "nat", "null0", required=False)
   nat: enum("NAT64", "NAT66", required=False)
   next_hops: list(include("feature_profiles_transport_wan_vpn_ipv6_static_route_next_hop"), required=False)
-  null0: bool(required=False)
   prefix: regex('((^\\s*((([0-9A-Fa-f]{1,4}:){7}([0-9A-Fa-f]{1,4}|:))|(([0-9A-Fa-f]{1,4}:){6}(:[0-9A-Fa-f]{1,4}|((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){5}(((:[0-9A-Fa-f]{1,4}){1,2})|:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3})|:))|(([0-9A-Fa-f]{1,4}:){4}(((:[0-9A-Fa-f]{1,4}){1,3})|((:[0-9A-Fa-f]{1,4})?:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){3}(((:[0-9A-Fa-f]{1,4}){1,4})|((:[0-9A-Fa-f]{1,4}){0,2}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){2}(((:[0-9A-Fa-f]{1,4}){1,5})|((:[0-9A-Fa-f]{1,4}){0,3}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(([0-9A-Fa-f]{1,4}:){1}(((:[0-9A-Fa-f]{1,4}){1,6})|((:[0-9A-Fa-f]{1,4}){0,4}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:))|(:(((:[0-9A-Fa-f]{1,4}){1,7})|((:[0-9A-Fa-f]{1,4}){0,5}:((25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)(\\.(25[0-5]|2[0-4]\\d|1\\d\\d|[1-9]?\\d)){3}))|:)))(%.+)?\\s*(\\/)(\\b([0-9]{1,2}|1[01][0-9]|12[0-8])\\b)$))', required=False)
   prefix_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
 feature_profiles_transport_wan_vpn_ipv6_static_route_next_hop:

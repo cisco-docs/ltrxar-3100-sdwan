@@ -16,4 +16,11 @@ class Rule:
                     results.append(f"administrative_distance is defined but gateway is not null0 in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv4_static_routes[{index}]")
                 if route.get("gateway", "nextHop") != "nextHop" and "next_hops" in route:
                     results.append(f"next_hops list is present but gateway is set to {route.get('gateway', 'nextHop')} in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv4_static_routes[{index}]")
+            for index, route in enumerate(wan_vpn_feature.get("ipv6_static_routes", {})):
+                if route.get("gateway", "nextHop") != "nat" and route.get("nat"):
+                    results.append(f"nat option is defined but gateway is not set to nat in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv6_static_routes[{index}]")
+                if route.get("gateway", "nextHop") == "nat" and not route.get("nat"):
+                    results.append(f"gateway is set to nat but nat option is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv6_static_routes[{index}]")
+                if route.get("gateway", "nextHop") != "nextHop" and "next_hops" in route:
+                    results.append(f"next_hops list is present but gateway is set to {route.get('gateway', 'nextHop')} in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv6_static_routes[{index}]")
         return results

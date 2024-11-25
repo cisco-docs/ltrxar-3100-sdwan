@@ -634,13 +634,15 @@ sdwan:
           ipv6_secondary_dns_address: 2001:4860:4860::8844
           ipv6_static_routes:
             - prefix: ::/0
+              gateway: nextHop
               next_hops:
                 - address: 2001:db8:2::1
                   administrative_distance: 1
             - prefix: fc01::0/64
+              gateway: nat
               nat: NAT66
             - prefix: fc02::0/64
-              null0: true
+              gateway: null0
           nat_64_v4_pools:
             - name: natpool1
               overload: true
