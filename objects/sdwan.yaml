@@ -447,7 +447,7 @@ objects:
   - name: Transport Management VPN Ethernet Interface Feature
     template: transport_management_vpn_ethernet_interface
     folder: features_transport
-    paths: [sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interface]
+    paths: [sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces]
   - name: Transport WAN VPN Feature
     template: transport_wan_vpn
     folder: features_transport
