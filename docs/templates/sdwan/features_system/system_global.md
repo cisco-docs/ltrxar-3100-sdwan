@@ -1,4 +1,4 @@
-# Global Feature
+# System Global Feature
 
 Configure global settings like SSH version, services, etc.
 

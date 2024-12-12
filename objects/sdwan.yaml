@@ -278,7 +278,6 @@ objects:
       [
         sdwan.centralized_policies.definitions.data_policy.application_aware_routing,
       ]
-
   - name: Zone-Based Firewall Definition
     template: zone_based_firewall_definition
     folder: security_policies
@@ -345,34 +344,118 @@ objects:
       sdwan.feature_profiles.transport_profiles.name,
       sdwan.feature_profiles.transport_profiles.description,
     ]
-  - name: ThousandEyes Feature
-    template: thousandeyes
-    folder: features
+  - name: CLI Config Feature
+    template: cli_config
+    folder: features_cli
+    paths: [sdwan.feature_profiles.cli_profiles.config]
+  - name: Other ThousandEyes Feature
+    template: other_thousandeyes
+    folder: features_other
     paths: [sdwan.feature_profiles.other_profiles.thousandeyes]
-  - name: AAA Feature
-    template: aaa
-    folder: features
+  - name: Other UCSE Feature
+    template: other_ucse
+    folder: features_other
+    paths: [sdwan.feature_profiles.other_profiles.ucse]
+  - name: Service IPv4 Tracker Group Feature
+    template: service_ipv4_tracker_group
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.ipv4_tracker_groups]
+  - name: Service IPv4 Tracker Feature
+    template: service_ipv4_tracker
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.ipv4_trackers]
+  - name: Service Object Tracker Group Feature
+    template: service_object_tracker_group
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.object_tracker_groups]
+  - name: Service Object Tracker Feature
+    template: service_object_tracker
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.object_trackers]
+  - name: System AAA Feature
+    template: system_aaa
+    folder: features_system
     paths: [sdwan.feature_profiles.system_profiles.aaa]
-  - name: Banner Feature
-    template: banner
-    folder: features
+  - name: System Banner Feature
+    template: system_banner
+    folder: features_system
     paths: [sdwan.feature_profiles.system_profiles.banner]
-  - name: Basic Feature
-    template: basic
-    folder: features
+  - name: System Basic Feature
+    template: system_basic
+    folder: features_system
     paths: [sdwan.feature_profiles.system_profiles.basic]
-  - name: BFD Feature
-    template: bfd
-    folder: features
+  - name: System BFD Feature
+    template: system_bfd
+    folder: features_system
     paths: [sdwan.feature_profiles.system_profiles.bfd]
+  - name: System Flexible Port Speed Feature
+    template: system_flexible_port_speed
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.flexible_port_speed]
+  - name: System Global Feature
+    template: system_global
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.global]
+  - name: System Logging Feature
+    template: system_logging
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.logging]
+  - name: System Multi-Region Fabric Feature
+    template: system_mrf
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.mrf]
+  - name: System NTP Feature
+    template: system_ntp
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.ntp]
+  - name: System OMP Feature
+    template: system_omp
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.omp]
+  - name: System Performance Monitoring Feature
+    template: system_performance_monitoring
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.performance_monitoring]
+  - name: System Security Feature
+    template: system_security
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.security]
+  - name: System SNMP Feature
+    template: system_snmp
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.snmp]
+  - name: Transport IPv4 Tracker Group Feature
+    template: transport_ipv4_tracker_group
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ipv4_tracker_groups]
+  - name: Transport IPv4 Tracker Feature
+    template: transport_ipv4_tracker
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ipv4_trackers]
+  - name: Transport IPv6 Tracker Group Feature
+    template: transport_ipv6_tracker_group
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ipv6_tracker_groups]
+  - name: Transport IPv6 Tracker Feature
+    template: transport_ipv6_tracker
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ipv6_trackers]
+  - name: Transport Management VPN Feature
+    template: transport_management_vpn
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.management_vpn]
+  - name: Transport Management VPN Ethernet Interface Feature
+    template: transport_management_vpn_ethernet_interface
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interface]
+  - name: Transport WAN VPN Feature
+    template: transport_wan_vpn
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.wan_vpn]
   - name: Class Map
     template: class_map
     folder: policy_objects
     paths: [sdwan.feature_profiles.policy_object_profile.class_maps]
-  - name: CLI Config Feature
-    template: cli_config
-    folder: features
-    paths: [sdwan.feature_profiles.cli_profiles.config]
   - name: Expanded Community List
     template: expanded_community_list
     folder: policy_objects
@@ -381,14 +464,6 @@ objects:
     template: extended_community_list
     folder: policy_objects
     paths: [sdwan.feature_profiles.policy_object_profile.extended_community_lists]
-  - name: Flexible Port Speed Feature
-    template: flexible_port_speed
-    folder: features
-    paths: [sdwan.feature_profiles.system_profiles.flexible_port_speed]
-  - name: Global Feature
-    template: global
-    folder: features
-    paths: [sdwan.feature_profiles.system_profiles.global]
   - name: IPv4 Data Prefix List
     template: ipv4_data_prefix_list
     folder: policy_objects
@@ -417,67 +492,3 @@ objects:
     template: tloc_list
     folder: policy_objects
     paths: [sdwan.feature_profiles.policy_object_profile.tloc_lists]
-  - name: Logging Feature
-    template: logging
-    folder: features
-    paths: [sdwan.feature_profiles.system_profiles.logging]
-  - name: Multi-Region Fabric Feature
-    template: mrf
-    folder: features
-    paths: [sdwan.feature_profiles.system_profiles.mrf]
-  - name: NTP Feature
-    template: ntp
-    folder: features
-    paths: [sdwan.feature_profiles.system_profiles.ntp]
-  - name: OMP Feature
-    template: omp
-    folder: features
-    paths: [sdwan.feature_profiles.system_profiles.omp]
-  - name: Performance Monitoring Feature
-    template: performance_monitoring
-    folder: features
-    paths: [sdwan.feature_profiles.system_profiles.performance_monitoring]
-  - name: Security Feature
-    template: security
-    folder: features
-    paths: [sdwan.feature_profiles.system_profiles.security]
-  - name: Service IPv4 Tracker Group Feature
-    template: service_ipv4_tracker_group
-    folder: features
-    paths: [sdwan.feature_profiles.service_profiles.ipv4_tracker_groups]
-  - name: Service IPv4 Tracker Feature
-    template: service_ipv4_tracker
-    folder: features
-    paths: [sdwan.feature_profiles.service_profiles.ipv4_trackers]
-  - name: Service Object Tracker Group Feature
-    template: service_object_tracker_group
-    folder: features
-    paths: [sdwan.feature_profiles.service_profiles.object_tracker_groups]
-  - name: Service Object Tracker Feature
-    template: service_object_tracker
-    folder: features
-    paths: [sdwan.feature_profiles.service_profiles.object_trackers]
-  - name: SNMP Feature
-    template: snmp
-    folder: features
-    paths: [sdwan.feature_profiles.system_profiles.snmp]
-  - name: Transport IPv4 Tracker Group Feature
-    template: transport_ipv4_tracker_group
-    folder: features
-    paths: [sdwan.feature_profiles.transport_profiles.ipv4_tracker_groups]
-  - name: Transport IPv4 Tracker Feature
-    template: transport_ipv4_tracker
-    folder: features
-    paths: [sdwan.feature_profiles.transport_profiles.ipv4_trackers]
-  - name: Transport IPv6 Tracker Group Feature
-    template: transport_ipv6_tracker_group
-    folder: features
-    paths: [sdwan.feature_profiles.transport_profiles.ipv6_tracker_groups]
-  - name: Transport IPv6 Tracker Feature
-    template: transport_ipv6_tracker
-    folder: features
-    paths: [sdwan.feature_profiles.transport_profiles.ipv6_trackers]
-  - name: WAN VPN Feature
-    template: wan_vpn
-    folder: features
-    paths: [sdwan.feature_profiles.transport_profiles.wan_vpn]

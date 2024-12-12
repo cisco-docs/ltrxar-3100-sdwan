@@ -31,6 +31,20 @@ sdwan:
           proxy_type: pac
           pac_proxy_url: https://pac.example.com
           vpn_id: 0
+        ucse:
+          name: ucse-dedicated
+          description: ucse feature
+          bay: 1
+          slot: 2
+          cimc_access_port_dedicated: true
+          cimc_ipv4_address_variable: imc_ip_mask
+          cimc_default_gateway_variable: imc_gw
+          cimc_vlan_id: 100
+          cimc_assign_priority: 5
+          interfaces:
+            - interface_name: ucse1
+              vpn_id: 1
+              ipv4_address_variable: ucse1_ip_mask
       - name: other2
         description: full profile
         thousandeyes:
@@ -46,6 +60,22 @@ sdwan:
           static_proxy_host: 10.0.0.254
           static_proxy_port: 1000
           vpn_id: 0
+        ucse:
+          name: ucse-shared
+          description: ucse feature
+          bay: 1
+          slot: 2
+          cimc_access_port_dedicated: false
+          cimc_access_port_shared_failover_type: ge2
+          cimc_access_port_shared_type: failover
+          cimc_ipv4_address_variable: imc_ip_mask
+          cimc_default_gateway_variable: imc_gw
+          cimc_vlan_id: 100
+          cimc_assign_priority: 5
+          interfaces:
+            - interface_name: ucse1
+              vpn_id: 1
+              ipv4_address_variable: ucse1_ip_mask
     policy_object_profile:
       name: policy_object
       description: basic policy object profile
@@ -545,6 +575,14 @@ sdwan:
                   id: 1.3.6.1
     transport_profiles:
       - name: transport1
+        management_vpn:
+          name: management_vpn
+          ethernet_interfaces:
+            - name: management_interface
+              interface_name: GigabitEthernet6
+              ipv4_configuration_type: dynamic
+              ipv4_dhcp_distance: 1
+              ipv6_configuration_type: dynamic
       - name: transport2
         description: full profile
         ipv4_tracker_groups:
@@ -604,6 +642,74 @@ sdwan:
             multiplier: 1
             endpoint_api_url: https://api.example.com
             tracker_name: transport_ipv6_dns_tracker
+        management_vpn:
+          name: management_vpn
+          description: management vpn 512
+          ethernet_interfaces:
+            - name: management_interface
+              description: management interface
+              arp_entries:
+                - ip_address: 192.168.100.1
+                  mac_address: 00:00:00:00:00:01
+              arp_timeout: 300
+              auto_detect_bandwidth: false
+              autonegotiate: true
+              duplex: full
+              icmp_redirect_disable: false
+              interface_description: management interface
+              interface_mtu: 1500
+              interface_name: GigabitEthernet6
+              ip_directed_broadcast: false
+              ip_mtu: 1500
+              iperf_server: ping.online.net
+              ipv4_address_variable: vpn512_mgmt_int_ip
+              ipv4_configuration_type: static
+              ipv4_dhcp_helpers:
+                - 192.168.100.2
+                - 192.168.100.3
+              ipv4_secondary_addresses:
+                - address: 192.168.100.101
+                  subnet_mask: 255.255.255.0
+              ipv4_subnet_mask_variable: vpn512_mgmt_int_mask
+              ipv6_configuration_type: static
+              ipv6_address_variable: vpn512_mgmt_int_ipv6
+              load_interval: 30
+              mac_address: 00:00:00:00:00:02
+              media_type: auto-select
+              shutdown: false
+              speed: 10000
+              tcp_mss: 1460
+          host_mappings:
+            - hostname: server1
+              ips:
+                - 192.168.1.1
+                - 192.168.1.2
+          ipv4_primary_dns_address: 1.1.1.1
+          ipv4_secondary_dns_address: 1.0.0.1
+          ipv4_static_routes:
+            - gateway: nextHop
+              network_address: 192.168.100.0
+              next_hops:
+                - address: 192.168.1.1
+                  administrative_distance: 10
+              subnet_mask: 255.255.255.0
+            - administrative_distance: 10
+              gateway: null0
+              network_address: 192.168.254.254
+              subnet_mask: 255.255.255.255
+          ipv6_primary_dns_address: 2001:4860:4860::8888
+          ipv6_secondary_dns_address: 2001:4860:4860::8844
+          ipv6_static_routes:
+            - nat: NAT66
+              gateway: nat
+              prefix: fc01::/64
+            - prefix: fc03::/64
+              gateway: null0
+            - prefix: fc04::/64
+              next_hops:
+                - address: fd01::1
+                  administrative_distance: 11
+          vpn_description: management vpn 512
         wan_vpn:
           name: wan_vpn
           description: VPN 0 configuration

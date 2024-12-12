@@ -1,4 +1,4 @@
-# ThousandEyes Feature
+# Other ThousandEyes Feature
 
 Configure the Cisco ThousandEyes Agent parameters to deploy on WAN Edge routers.
 

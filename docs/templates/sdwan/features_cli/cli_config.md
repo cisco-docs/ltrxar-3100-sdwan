@@ -1,4 +1,4 @@
-# CLI Feature
+# CLI Config Feature
 
 Configure additional CLI commands on the device.
 

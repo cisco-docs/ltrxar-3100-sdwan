@@ -1,4 +1,4 @@
-# NTP Feature
+# System NTP Feature
 
 Configure NTP servers and authentication if required.
 

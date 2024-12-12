@@ -1,6 +1,6 @@
 class Rule:
-    id = "411"
-    description = "Validate thousandeyes configuration feature"
+    id = "405"
+    description = "Validate other features"
     severity = "HIGH"
 
     @classmethod
@@ -42,5 +42,21 @@ class Rule:
                 for parameter in not_allowed_parameters:
                     if parameter in thousendeyes_feature:
                         results.append(f"proxy_type is pac but {parameter} is defined in the sdwan.feature_profiles.other_profiles[{feature_profile['name']}].thousandeyes")
+
+            ucse_feature = feature_profile.get("ucse", {})
+            if ucse_feature:
+                cimc_access_port_dedicated = ucse_feature.get("cimc_access_port_dedicated", False)
+                if cimc_access_port_dedicated:
+                    # When access port is dedicated then shared access port options should not be configured
+                    if ucse_feature.get("cimc_access_port_shared_type"):
+                        results.append(f"access_port_dedicated is set to true but cimc_access_port_shared_type is also defined in the sdwan.feature_profiles.other_profiles[{feature_profile['name']}].ucse")
+                    if ucse_feature.get("cimc_access_port_shared_failover_type"):
+                        results.append(f"access_port_dedicated is set to true but cimc_access_port_shared_failover_type is also defined in the sdwan.feature_profiles.other_profiles[{feature_profile['name']}].ucse")
+                else:
+                    # When access port is not dedicated then shared access port options should be configured
+                    if not ucse_feature.get("cimc_access_port_shared_type"):
+                        results.append(f"access_port_dedicated is set to false but cimc_access_port_shared_type is not defined in the sdwan.feature_profiles.other_profiles[{feature_profile['name']}].ucse")
+                    if ucse_feature.get("cimc_access_port_shared_type") == "failover" and not ucse_feature.get("cimc_access_port_shared_failover_type"):
+                        results.append(f"cimc_access_port_shared_type is set to failover but cimc_access_port_shared_failover_type is not defined in the sdwan.feature_profiles.other_profiles[{feature_profile['name']}].ucse")
 
         return results

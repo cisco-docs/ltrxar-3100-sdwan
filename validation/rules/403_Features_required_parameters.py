@@ -1,219 +1,98 @@
-import jmespath
-import ruamel.yaml
-
 class Rule:
     id = "403"
     description = "Features required parameters"
     severity = "HIGH"
 
-
     #########################################################################################################################################
     # In UX 2.0 features, some parameters have no default value and are required to be set as global or as variable.
     # This rule checks if the required parameters are set in the features.
-    # For any additional parameters where the validation is required, add the required parameters data to the below list
-    # No additional code changes should be required
-    # The required parameters are defined in the list with the following details:
-    # 1. feature_profile_type: Type of feature profile, for example transport, service, system, etc.
-    # 2. feature_type: Type of feature in the feature profile, for example ipv4_trackers, ipv6_trackers, aaa, bfd, etc.
-    # 3. parameter_path: Path to the Flattened data of the feature in the Data Model, where the required parameters should be defined.
-    #    Define only if the parameter is not at the root level of the feature
-    # 4. parameter names: The list of the parameter names which are required to be set (always write the global parameter name as the variable parameter "<global>_variable" is checked automatically)
-    # For example, the below list will check if the parameter 'tracker_name' or "tracker_name_variable" is defined in each service ipv4 tracker
-    # required_parameters_data = [
-    #     {
-    #         "feature_profile_type": "service",
-    #         "feature_type": "ipv4_trackers",
-    #         "parameter_path": "",
-    #         "parameter_names" : ["tracker_name"],
-    #     },
-    # ]    
-    
+    # For any additional parameters where this validation is required, add the path to the required parameter in the paths
+    # (use global value as variable value is automatically checked). No additional code changes should be required
     #########################################################################################################################################
 
-    required_parameters_data = [
-        {
-            "feature_profile_type": "other",
-            "feature_type": "thousandeyes",
-            "parameter_path": "",
-            "parameter_names" : ["account_group_token"],
-        },
-        {
-            "feature_profile_type": "service",
-            "feature_type": "ipv4_trackers",
-            "parameter_path": "",
-            "parameter_names" : ["tracker_name"],
-        },
-        {
-            "feature_profile_type": "service",
-            "feature_type": "object_tracker_groups",
-            "parameter_path": "",
-            "parameter_names" : ["id"],
-        },
-        {
-            "feature_profile_type": "service",
-            "feature_type": "object_trackers",
-            "parameter_path": "",
-            "parameter_names" : ["id"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "aaa",
-            "parameter_path": "users[]",
-            "parameter_names" : ["name", "password"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "bfd",
-            "parameter_path": "colors[]",
-            "parameter_names" : ["color"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "logging",
-            "parameter_path": "ipv4_servers[]",
-            "parameter_names" : ["hostname_ip"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "logging",
-            "parameter_path": "ipv6_servers[]",
-            "parameter_names" : ["hostname_ip"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "logging",
-            "parameter_path": "tls_profiles[]",
-            "parameter_names" : ["name"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "ntp",
-            "parameter_path": "authentication_keys[]",
-            "parameter_names" : ["id", "md5_value"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "ntp",
-            "parameter_path": "servers[]",
-            "parameter_names" : ["hostname_ip"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "security",
-            "parameter_path": "",
-            "parameter_names": ["integrity_types"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "security",
-            "parameter_path": "keys[]",
-            "parameter_names": ["key_string", "receiver_id", "send_id"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "snmp",
-            "parameter_path": "communities[]",
-            "parameter_names": ["authorization", "view"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "snmp",
-            "parameter_path": "groups[]",
-            "parameter_names": ["view"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "snmp",
-            "parameter_path": "trap_target_servers[]",
-            "parameter_names": ["ip", "port", "source_interface", "vpn_id"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "snmp",
-            "parameter_path": "users[]",
-            "parameter_names": ["group"],
-        },
-        {
-            "feature_profile_type": "system",
-            "feature_type": "snmp",
-            "parameter_path": "views[].oids[]",
-            "parameter_names": ["id"],
-        },
-        {
-            "feature_profile_type": "transport",
-            "feature_type": "ipv4_trackers",
-            "parameter_path": "",
-            "parameter_names" : ["tracker_name"],
-        },
-        {
-            "feature_profile_type": "transport",
-            "feature_type": "ipv6_tracker_groups",
-            "parameter_path": "",
-            "parameter_names" : ["tracker_name"],
-        },
-        {
-            "feature_profile_type": "transport",
-            "feature_type": "ipv6_trackers",
-            "parameter_path": "",
-            "parameter_names" : ["tracker_name"],
-        },
-        {
-            "feature_profile_type": "transport",
-            "feature_type": "wan_vpn",
-            "parameter_path": "host_mappings[]",
-            "parameter_names" : ["hostname", "ips"],
-        },
-        {
-            "feature_profile_type": "transport",
-            "feature_type": "wan_vpn",
-            "parameter_path": "ipv4_static_routes[]",
-            "parameter_names" : ["network_address", "subnet_mask"],
-        },
-        {
-            "feature_profile_type": "transport",
-            "feature_type": "wan_vpn",
-            "parameter_path": "ipv4_static_routes[].next_hops[]",
-            "parameter_names" : ["address"],
-        },
-        {
-            "feature_profile_type": "transport",
-            "feature_type": "wan_vpn",
-            "parameter_path": "ipv6_static_routes[]",
-            "parameter_names" : ["prefix"],
-        },
-        {
-            "feature_profile_type": "transport",
-            "feature_type": "wan_vpn",
-            "parameter_path": "ipv6_static_routes[].next_hops[]",
-            "parameter_names" : ["address"],
-        },
-        {
-            "feature_profile_type": "transport",
-            "feature_type": "wan_vpn",
-            "parameter_path": "nat_64_v4_pools[]",
-            "parameter_names" : ["name", "range_start", "range_end"],
-        },
+    paths = [
+        "sdwan.feature_profiles.other_profiles.thousandeyes.account_group_token",
+        "sdwan.feature_profiles.other_profiles.ucse.cimc_ipv4_address",
+        "sdwan.feature_profiles.other_profiles.ucse.interfaces.ipv4_address",
+        "sdwan.feature_profiles.service_profiles.ipv4_trackers.tracker_name",
+        "sdwan.feature_profiles.service_profiles.object_tracker_groups.id",
+        "sdwan.feature_profiles.service_profiles.object_trackers.id",
+        "sdwan.feature_profiles.system_profiles.aaa.users.name",
+        "sdwan.feature_profiles.system_profiles.aaa.users.password",
+        "sdwan.feature_profiles.system_profiles.bfd.colors.color",
+        "sdwan.feature_profiles.system_profiles.logging.ipv4_servers.hostname_ip",
+        "sdwan.feature_profiles.system_profiles.logging.ipv6_servers.hostname_ip",
+        "sdwan.feature_profiles.system_profiles.logging.tls_profiles.name",
+        "sdwan.feature_profiles.system_profiles.ntp.authentication_keys.id",
+        "sdwan.feature_profiles.system_profiles.ntp.authentication_keys.md5_value",
+        "sdwan.feature_profiles.system_profiles.ntp.servers.hostname_ip",
+        "sdwan.feature_profiles.system_profiles.security.integrity_types",
+        "sdwan.feature_profiles.system_profiles.security.keys.key_string",
+        "sdwan.feature_profiles.system_profiles.security.keys.receiver_id",
+        "sdwan.feature_profiles.system_profiles.security.keys.send_id",
+        "sdwan.feature_profiles.system_profiles.snmp.communities.authorization",
+        "sdwan.feature_profiles.system_profiles.snmp.communities.view",
+        "sdwan.feature_profiles.system_profiles.snmp.groups.view",
+        "sdwan.feature_profiles.system_profiles.snmp.trap_target_servers.ip",
+        "sdwan.feature_profiles.system_profiles.snmp.trap_target_servers.port",
+        "sdwan.feature_profiles.system_profiles.snmp.trap_target_servers.source_interface",
+        "sdwan.feature_profiles.system_profiles.snmp.trap_target_servers.vpn_id",
+        "sdwan.feature_profiles.system_profiles.snmp.users.group",
+        "sdwan.feature_profiles.system_profiles.snmp.views.oids.id",
+        "sdwan.feature_profiles.transport_profiles.ipv4_trackers.tracker_name",
+        "sdwan.feature_profiles.transport_profiles.ipv6_tracker_groups.tracker_name",
+        "sdwan.feature_profiles.transport_profiles.ipv6_trackers.tracker_name",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.arp_entries.ip_address",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.arp_entries.mac_address",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.interface_name",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.ipv4_secondary_addresses.address",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.ipv4_secondary_addresses.subnet_mask",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.host_mappings.hostname",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.host_mappings.ips",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.ipv4_static_routes.network_address",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.ipv4_static_routes.subnet_mask",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.ipv4_static_routes.next_hops.address",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.ipv6_static_routes.prefix",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.ipv6_static_routes.next_hops.address",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.host_mappings.hostname",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.host_mappings.ips",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ipv4_static_routes.network_address",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ipv4_static_routes.subnet_mask",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ipv4_static_routes.next_hops.address",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ipv6_static_routes.prefix",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ipv6_static_routes.next_hops.address",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.nat_64_v4_pools.name",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.nat_64_v4_pools.range_start",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.nat_64_v4_pools.range_end",
     ]
+
+    @classmethod
+    def match_path(cls, inventory, full_path, search_path):
+        results = []
+        path_elements = search_path.split(".")
+        inv_element = inventory
+        if len(path_elements) == 1:
+            # Verify if element or element_variable exists in the path
+            global_value = path_elements[0]
+            variable_value = global_value + "_variable"
+            if global_value not in inv_element and variable_value not in inv_element:
+                results.append(f"Required parameter {global_value} or {variable_value} is not defined in the {full_path}")
+        else:
+            for idx, path_element in enumerate(path_elements):
+                if isinstance(inv_element, dict):
+                    inv_element = inv_element.get(path_element)
+                    full_path += path_element if not full_path else "." + path_element
+                elif isinstance(inv_element, list):
+                    for idx2, i in enumerate(inv_element):
+                        r = cls.match_path(i, full_path + f"[{i['name']}]" if isinstance(i, dict) and "name" in i else full_path + f"[{idx2}]", ".".join(path_elements[idx:]))
+                        results.extend(r)
+                    return results
+        return results
 
     @classmethod
     def match(cls, inventory):
         results = []
-        # Loop through the required parameters data
-        for parameter_data in cls.required_parameters_data:
-            for feature_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get(parameter_data["feature_profile_type"] + "_profiles", []):
-                features = feature_profile.get(parameter_data["feature_type"], [])
-                if isinstance(features, ruamel.yaml.comments.CommentedMap):
-                    features = [features]
-                for feature in features:
-                    for parameter_name in parameter_data["parameter_names"]:
-                        # Check if the parameter is defined in the feature
-                        if parameter_data.get('parameter_path') == "":
-                            if not jmespath.search(parameter_name, feature) and not jmespath.search(parameter_name + "_variable", feature):
-                                results.append(f"Required parameter {parameter_name} or {parameter_name}_variable is not defined in the sdwan.feature_profiles.{parameter_data['feature_profile_type']}_profiles[{feature_profile['name']}].{parameter_data['feature_type']}[{feature.get('name', parameter_data['feature_type'])}]")
-                        else:
-                            search_result = jmespath.search(parameter_data.get('parameter_path'), feature)
-                            if isinstance(search_result, list):
-                                for index, element in enumerate(search_result):
-                                    if not jmespath.search(parameter_name, element) and not jmespath.search(parameter_name + "_variable", element):
-                                        results.append(f"Required parameter {parameter_name} or {parameter_name}_variable is not defined in the sdwan.feature_profiles.{parameter_data['feature_profile_type']}_profiles[{feature_profile['name']}].{parameter_data['feature_type']}[{feature.get('name', parameter_data['feature_type'])}].{parameter_data['parameter_path'][:-2]}[{index}]")
+        for path in cls.paths:
+            r = cls.match_path(inventory, '', path)
+            results.extend(r)
         return results

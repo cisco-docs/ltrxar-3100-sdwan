@@ -1,4 +1,4 @@
-# WAN VPN Feature
+# Transport WAN VPN Feature
 
 Add WAN VPN configuration, including DNS servers, NAT, IPv4 or IPv6 static routes and service routes.
 

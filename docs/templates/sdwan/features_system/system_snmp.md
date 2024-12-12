@@ -1,4 +1,4 @@
-# SNMP Feature
+# System SNMP Feature
 
 Configure SNMP parameters, including SNMP device name and location, SNMP version, views, and communities, and trap groups.
 

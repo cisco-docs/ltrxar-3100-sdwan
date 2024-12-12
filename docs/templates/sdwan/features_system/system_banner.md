@@ -1,4 +1,4 @@
-# Banner Feature
+# System Banner Feature
 
 Configure the login banner or message-of-the-day banner.
 
