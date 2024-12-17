@@ -38,6 +38,21 @@ class Rule:
     #         'variable2' : ['tloc_list'],
     #     },
     # ]
+    # 2. Mutually exclusive value and set of variables at different paths of the Data Model 
+    #  Checks if a specific parameter is configured and variables (mutually exclusive) are defined in the provided object path
+    #  The mutually exclusive value and set of variables are defined in the same list 'mutually_exclusive_variables_list' with the following details:
+    #       object_jmes_path: Path to the Flattened data of the feature in the Data Model, where the mutually exclusive value and variables could be defined with addition of a filter for value.
+    #       example below checks if sequence type of control policy is set as 'route' (defined in the jmes filter: ?type=='route') then match criterias defined in the 'variables' are not allowed.
+    #       variables_jmes_path: Path to the variables in the Data Model. Leave empty if the variable is at the root level
+    # mutually_exclusive_variables_list = [
+    #     {
+    #        'object_jmes_path': "sdwan.centralized_policies.definitions.control_policy.custom_control_topology[*].sequences[?type=='route'] | []",
+    #        'variables_jmes_path' : 'match_criterias', 
+    #        'variables' : ['group_id','domain_id'],
+    #        'type': 'mut_exclusive_value'
+    #     },
+    # ]
+    # 
     #########################################################################################################################################
     
 
@@ -175,6 +190,74 @@ class Rule:
             'variable2_jmes_path' : 'match_criterias',
             'variable2' : ['site_id', 'site_list','region_id'],
         },
+                {
+            'object_jmes_path': 'sdwan.centralized_policies.feature_policies[*].traffic_data[].site_region_vpn[]',
+            'variable1_jmes_path' : '', 
+            'variable1' : ['site_lists'],
+            'variable2_jmes_path' : '',
+            'variable2' : ['region_list','region'],
+        },
+                {
+            'object_jmes_path': 'sdwan.centralized_policies.feature_policies[*].traffic_data[].site_region_vpn[]',
+            'variable1_jmes_path' : '', 
+            'variable1' : ['region_list'],
+            'variable2_jmes_path' : '',
+            'variable2' : ['region'],
+        },
+                {
+            'object_jmes_path': "sdwan.centralized_policies.definitions.control_policy.custom_control_topology[*].sequences[?type=='route'] | []",
+            'variables_jmes_path' : 'match_criterias', 
+            'variables' : ['group_id','domain_id'],
+            'type': 'mut_exclusive_value'
+        },    
+                {
+            'object_jmes_path': "sdwan.centralized_policies.definitions.control_policy.custom_control_topology[*].sequences[?type=='tloc'] | []",
+            'variables_jmes_path' : 'match_criterias', 
+            'variables' : ['community','community_additive','origin','path_type','vpn_list','vpn','ipv4_prefix_list'],
+            'type': 'mut_exclusive_value'
+        },   
+                {
+            'object_jmes_path': "sdwan.centralized_policies.definitions.control_policy.custom_control_topology[*].sequences[?type=='tloc'] | []",
+            'variables_jmes_path' : 'actions', 
+            'variables' : ['community_list','expanded_community_list','tloc','tloc_list','tloc_action','service','export_to_vpn_list'],
+            'type': 'mut_exclusive_value'
+        },
+                {
+            'object_jmes_path': "sdwan.centralized_policies.definitions.control_policy.custom_control_topology[*].sequences[?ip_type=='all' && type=='route'] | []",
+            'variables_jmes_path' : 'match_criterias', 
+            'variables' : ['ipv4_prefix_list'],
+            'type': 'mut_exclusive_value'
+        }, 
+                {
+            'object_jmes_path': "sdwan.centralized_policies.definitions.data_policy.traffic_data[*].sequences[?type=='application_firewall' || type=='qos' || type=='service_chaining' || type=='traffic_engineering'] | []",
+            'variables_jmes_path' : 'match_criterias', 
+            'variables' : ['dns_application_list','dns','traffic_to','destination_region'],
+            'type': 'mut_exclusive_value'
+        },
+                {
+            'object_jmes_path': "sdwan.centralized_policies.definitions.data_policy.traffic_data[*].sequences[?type=='application_firewall'] | []",
+            'variables_jmes_path' : 'actions', 
+            'variables' : ['cflowd','sig','redirect_dns','loss_correction','nat_pool','nat_vpn','appqoe_optimization','dscp','forwarding_class','local_tloc_list','next_hop','preferred_color_group','policer_list','service','tloc','tloc_list','vpn'],
+            'type': 'mut_exclusive_value'
+        },
+                {
+            'object_jmes_path': "sdwan.centralized_policies.definitions.data_policy.traffic_data[*].sequences[?type=='qos'] | []",
+            'variables_jmes_path' : 'actions', 
+            'variables' : ['cflowd','sig','redirect_dns','nat_pool','nat_vpn','appqoe_optimization','local_tloc_list','next_hop','preferred_color_group','service','tloc','tloc_list','vpn'],
+            'type': 'mut_exclusive_value'
+        },
+                {
+            'object_jmes_path': "sdwan.centralized_policies.definitions.data_policy.traffic_data[*].sequences[?type=='service_chaining'] | []",
+            'variables_jmes_path' : 'actions', 
+            'variables' : ['cflowd','sig','redirect_dns','loss_correction','nat_pool','nat_vpn','appqoe_optimization','dscp','forwarding_class','local_tloc_list','next_hop','preferred_color_group','policer_list'],
+            'type': 'mut_exclusive_value'
+        },
+                {
+            'object_jmes_path': "sdwan.centralized_policies.definitions.data_policy.traffic_data[*].sequences[?type=='traffic_engineering'] | []",
+            'variables_jmes_path' : 'actions', 
+            'variables' : ['cflowd','sig','redirect_dns','loss_correction','nat_pool','nat_vpn','appqoe_optimization','dscp','forwarding_class','preferred_color_group','policer_list','service'],
+            'type': 'mut_exclusive_value'
+        },                                      
     ]
 
 
@@ -208,30 +291,48 @@ class Rule:
         # Loop through the mutually_exclusive_variables_list
         for each_exclusion_item in cls.mutually_exclusive_variables_list:
             try:
-                # Extract the data from the Data Model using the object_jmes_path
                 data = jmespath.search(each_exclusion_item.get('object_jmes_path', "*"), inventory)
-                if data is not None:
-                    # Loop through the data
-                    if type(data) is dict:
-                        data = [data]
-                    for each_data in data:
-                        # Extract the primary data further only if variable1_jmes_path is defined. Else use the data as is
-                        if each_exclusion_item.get('variable1_jmes_path') == "":
-                            primary_data = each_data
-                        else:
-                            primary_data = jmespath.search(each_exclusion_item.get('variable1_jmes_path'), each_data)
-                        # Extract the secondary data further only if variable2_jmes_path is defined. Else use the data as is
-                        if each_exclusion_item.get('variable2_jmes_path') == "":
-                            secondary_data = each_data
-                        else:
-                            secondary_data = jmespath.search(each_exclusion_item.get('variable2_jmes_path'), each_data)
-                        # Check if the primary and secondary data are not None
-                        if primary_data is not None and secondary_data is not None:
-                            # Loop through the primary and secondary variable list and check if the variables are defined in primary and secondary data
-                            for each_pri_var in each_exclusion_item.get('variable1', []):
-                                for each_sec_var in each_exclusion_item.get('variable2', []):
-                                    if each_pri_var in primary_data and each_sec_var in secondary_data:
-                                        results.append('Mutually exclusive variables defined at ' + each_exclusion_item.get('object_jmes_path', "*") + ' .Only one is allowed. ' + str(each_pri_var) + ":" +  str(primary_data[each_pri_var]) + ' or ' +  str(each_sec_var) + ":" + str(secondary_data[each_sec_var])) 
+                if each_exclusion_item.get('type') == 'mut_exclusive_value':
+                    # Extract the data from the Data Model using the object_jmes_path
+                    if data is not None:
+                        # Loop through the data
+                        if type(data) is dict:
+                            data = [data] 
+                        for each_data in data:
+                            # Process data for the exclusive parameter use-case with filter
+                                if each_exclusion_item.get('variables_jmes_path') == "":
+                                    model_data = each_data
+                                else:
+                                    model_data = jmespath.search(each_exclusion_item.get('variables_jmes_path'), each_data)
+                                if model_data is not None:
+                                    for test_var in each_exclusion_item.get('variables', []):
+                                        if test_var in model_data:
+
+                                            results.append('Mutually exclusive parameter setting and variable defined at ' + each_exclusion_item.get('object_jmes_path', "*" ) + ' ' + test_var + ' not allowed')
+                else:            
+                # Extract the data from the Data Model using the object_jmes_path
+                    if data is not None:
+                        # Loop through the data
+                        if type(data) is dict:
+                            data = [data]
+                        for each_data in data:
+                            # Extract the primary data further only if variable1_jmes_path is defined. Else use the data as is
+                            if each_exclusion_item.get('variable1_jmes_path') == "":
+                                primary_data = each_data
+                            else:
+                                primary_data = jmespath.search(each_exclusion_item.get('variable1_jmes_path'), each_data)
+                            # Extract the secondary data further only if variable2_jmes_path is defined. Else use the data as is
+                            if each_exclusion_item.get('variable2_jmes_path') == "":
+                                secondary_data = each_data
+                            else:
+                                secondary_data = jmespath.search(each_exclusion_item.get('variable2_jmes_path'), each_data)
+                            # Check if the primary and secondary data are not None
+                            if primary_data is not None and secondary_data is not None:
+                                # Loop through the primary and secondary variable list and check if the variables are defined in primary and secondary data
+                                for each_pri_var in each_exclusion_item.get('variable1', []):
+                                    for each_sec_var in each_exclusion_item.get('variable2', []):
+                                        if each_pri_var in primary_data and each_sec_var in secondary_data:
+                                            results.append('Mutually exclusive variables defined at ' + each_exclusion_item.get('object_jmes_path', "*") + ' .Only one is allowed. ' + str(each_pri_var) + ":" +  str(primary_data[each_pri_var]) + ' or ' +  str(each_sec_var) + ":" + str(secondary_data[each_sec_var])) 
             except KeyError:
                 pass
         return results
