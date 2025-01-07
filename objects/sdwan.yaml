@@ -452,6 +452,10 @@ objects:
     template: transport_wan_vpn
     folder: features_transport
     paths: [sdwan.feature_profiles.transport_profiles.wan_vpn]
+  - name: Transport WAN VPN Ethernet Interface Feature
+    template: transport_wan_vpn_ethernet_interface
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces]
   - name: Class Map
     template: class_map
     folder: policy_objects

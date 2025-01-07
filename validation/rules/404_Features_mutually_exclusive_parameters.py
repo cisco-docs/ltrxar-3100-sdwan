@@ -49,6 +49,14 @@ class Rule:
         {
             "path": "sdwan.feature_profiles.transport_profiles.ipv6_trackers",
             "parameter_names" : ["endpoint_ip", "endpoint_api_url", "endpoint_dns_name"],
+        },
+        {
+            "path": "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces",
+            "parameter_names" : ["ipv4_tracker", "ipv4_tracker_group"],
+        },
+        {
+            "path": "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces",
+            "parameter_names" : ["ipv6_tracker", "ipv6_tracker_group"],
         }
     ]
 

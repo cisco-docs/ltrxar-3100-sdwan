@@ -54,6 +54,21 @@ class Rule:
         "sdwan.feature_profiles.transport_profiles.management_vpn.ipv4_static_routes.next_hops.address",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ipv6_static_routes.prefix",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ipv6_static_routes.next_hops.address",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.adaptive_qos_shaping_rate_downstream.default",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.adaptive_qos_shaping_rate_downstream.maximum",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.adaptive_qos_shaping_rate_downstream.minimum",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.adaptive_qos_shaping_rate_upstream.default",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.adaptive_qos_shaping_rate_upstream.maximum",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.adaptive_qos_shaping_rate_upstream.minimum",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.arp_entries.ip_address",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.arp_entries.mac_address",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.interface_name",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_nat_static_entries.source_ip",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_nat_static_entries.translate_ip",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_secondary_addresses.address",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_secondary_addresses.subnet_mask",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv6_nat66_static_entries.source_prefix",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv6_nat66_static_entries.translate_prefix",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.host_mappings.hostname",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.host_mappings.ips",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ipv4_static_routes.network_address",
@@ -79,7 +94,13 @@ class Rule:
                 results.append(f"Required parameter {global_value} or {variable_value} is not defined in the {full_path}")
         else:
             for idx, path_element in enumerate(path_elements):
-                if isinstance(inv_element, dict):
+                if isinstance(inv_element, dict) and idx + 1 == len(path_elements):
+                    # Since this is last path element, verify if element or element_variable exists in the path
+                    global_value = path_element
+                    variable_value = global_value + "_variable"
+                    if global_value not in inv_element and variable_value not in inv_element:
+                        results.append(f"Required parameter {global_value} or {variable_value} is not defined in the {full_path}")
+                elif isinstance(inv_element, dict):
                     inv_element = inv_element.get(path_element)
                     full_path += path_element if not full_path else "." + path_element
                 elif isinstance(inv_element, list):
