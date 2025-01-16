@@ -36,7 +36,7 @@ class Rule:
 
     @classmethod
     def get_device_feature_templates_policies(cls, object, inventory='none'):
-        feature_template_types_in_device_template = ["aaa_template", "banner_template", "bfd_template", "bgp_template", "cli_template", "dhcp_server_template", "ethernet_interface_templates", "global_settings_template", "ipsec_interface_templates", "logging_template", "ntp_template", "omp_template", "ospf_template", "secure_internet_gateway_template", "security_template", "sig_credentials_template", "snmp_template", "svi_interface_templates", "switchport_templates", "system_template", "thousandeyes_template", "vpn_0_template", "vpn_512_template", "vpn_service_templates"]
+        feature_template_types_in_device_template = ["aaa_template", "banner_template", "bfd_template", "bgp_template", "cli_template", "dhcp_server_template", "ethernet_interface_templates", "global_settings_template", "ipsec_interface_templates", "logging_template", "ntp_template", "omp_template", "ospf_template", "secure_internet_gateway_template", "security_template", "sig_credentials_template", "snmp_template", "svi_interface_templates", "switchport_templates", "system_template", "thousandeyes_template", "vpn_0_template", "vpn_512_template", "vpn_service_templates", "gre_interface_templates", "cellular_interface_templates", "cellular_controller_templates", "cellular_profile_templates"]
         feature_policy_types_in_device_template = ["security_policy"]
         definitions_in_feature_policy = ["firewall_policies"]
         results = []

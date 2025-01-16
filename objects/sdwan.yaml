@@ -92,6 +92,22 @@ objects:
     template: secure_app_hosting
     folder: edge_feature_templates
     paths: [sdwan.edge_feature_templates.secure_app_hosting_templates]
+  - name: Edge VPN Interface GRE
+    template: gre_interface
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.gre_interface_templates]
+  - name: Edge VPN Interface Cellular
+    template: cellular_interface
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.cellular_interface_templates]
+  - name: Edge Cellular Controller
+    template: cellular_controller
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.cellular_controller_templates]
+  - name: Edge Cellular Profile
+    template: cellular_profile
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.cellular_profile_templates]
   - name: Device Template
     template: device_template
     folder: edge_device_templates

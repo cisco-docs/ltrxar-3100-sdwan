@@ -252,6 +252,7 @@ sdwan:
             - RM-SITE-BGP-TO-OMP-STANDBY
           ipv4_access_control_lists:
             - ACL-NETCONF830-DROP
+            - ACL-TLOCEXT-DSCP
           ipv4_device_access_policies:
             - ACL-DEVICEACCESSPOLICY-01
       - name: LOCAL-POLICY-TEMPLATE-02

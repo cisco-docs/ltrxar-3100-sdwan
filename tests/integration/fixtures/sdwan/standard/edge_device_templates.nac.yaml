@@ -24,6 +24,8 @@ sdwan:
         ethernet_interface_templates:
           - name: FT-CEDGE-WAN-TLOC1-STATIC
           - name: FT-CEDGE-WAN-TLOC2-STATIC
+        gre_interface_templates:
+          - name: FT-CEDGE-GRE_INTF101-V01
       vpn_service_templates:
         - name: FT-CEDGE-VPN1-ACTIVE-01
           bgp_template: FT-CEDGE-BGP-VPN1-ACTIVE
@@ -113,6 +115,10 @@ sdwan:
       ntp_template: FT-CEDGE-NTP-01
       omp_template: FT-CEDGE-OMP-01
       security_template: FT-CEDGE-SECURITY-01
+      cellular_controller_templates:
+        - name: FT-CEDGE-CELL_CNTRL101-V01
+          cellular_profile_templates:
+            - name: FT-CEDGE-CELL_PROF101-V01
       security_policy:
         name: SECURITY-POLICY-TEMPLATE-02
         container_profile: FT-CEDGE-CONTAINER-PROFILE-01
@@ -123,6 +129,8 @@ sdwan:
         ethernet_interface_templates:
           - name: FT-CEDGE-WAN-TLOC1-STATIC
           - name: FT-CEDGE-WAN-TLOC2-STATIC
+        cellular_interface_templates:
+          - name: FT-CEDGE-CELL_INTF101-V01
       vpn_service_templates:
         - name: FT-CEDGE-VPN1-ACTIVE-01
           bgp_template: FT-CEDGE-BGP-VPN1-ACTIVE

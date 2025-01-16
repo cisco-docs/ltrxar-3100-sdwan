@@ -148,7 +148,7 @@ class Rule:
             'variable2_jmes_path' : 'match_criterias',
             'variable2' : ['destination_data_prefix_list'],
         },
-                {
+        {
             'object_jmes_path': 'sdwan.centralized_policies.definitions.data_policy.traffic_data[*].sequences[]',
             'variable1_jmes_path' : 'match_criterias', 
             'variable1' : ['source_data_prefix'],
@@ -169,26 +169,54 @@ class Rule:
             'variable2_jmes_path' : 'match_criterias',
             'variable2' : ['site_list','region_id', 'region_list'],
         },
-                {
+        {
             'object_jmes_path': 'sdwan.centralized_policies.definitions.control_policy.custom_control_topology[*].sequences[]',
             'variable1_jmes_path' : 'match_criterias', 
             'variable1' : ['site_list'],
             'variable2_jmes_path' : 'match_criterias',
             'variable2' : ['site_id', 'region_id', 'region_list'],
         },
-                {
+        {
             'object_jmes_path': 'sdwan.centralized_policies.definitions.control_policy.custom_control_topology[*].sequences[]',
             'variable1_jmes_path' : 'match_criterias', 
             'variable1' : ['region_id'],
             'variable2_jmes_path' : 'match_criterias',
             'variable2' : ['site_id', 'site_list','region_list'],
         },
-                {
+        {
             'object_jmes_path': 'sdwan.centralized_policies.definitions.control_policy.custom_control_topology[*].sequences[]',
             'variable1_jmes_path' : 'match_criterias', 
             'variable1' : ['region_list'],
             'variable2_jmes_path' : 'match_criterias',
             'variable2' : ['site_id', 'site_list','region_id'],
+        },
+        {
+            'object_jmes_path': 'sdwan.edge_feature_templates.gre_interface_templates',
+            'variable1_jmes_path' : '', 
+            'variable1' : ['tunnel_source_interface'],
+            'variable2_jmes_path' : '',
+            'variable2' : ['tunnel_source_interface_variable', 'tunnel_source_ip','tunnel_source_ip_variable'],
+        },
+        {
+            'object_jmes_path': 'sdwan.edge_feature_templates.gre_interface_templates',
+            'variable1_jmes_path' : '', 
+            'variable1' : ['tunnel_source_interface_variable'],
+            'variable2_jmes_path' : '',
+            'variable2' : ['tunnel_source_interface', 'tunnel_source_ip','tunnel_source_ip_variable'],
+        },
+        {
+            'object_jmes_path': 'sdwan.edge_feature_templates.gre_interface_templates',
+            'variable1_jmes_path' : '', 
+            'variable1' : ['tunnel_source_ip'],
+            'variable2_jmes_path' : '',
+            'variable2' : ['tunnel_source_interface', 'tunnel_source_interface_variable','tunnel_source_ip_variable'],
+        },
+        {
+            'object_jmes_path': 'sdwan.edge_feature_templates.gre_interface_templates',
+            'variable1_jmes_path' : '', 
+            'variable1' : ['tunnel_source_ip_variable'],
+            'variable2_jmes_path' : '',
+            'variable2' : ['tunnel_source_interface', 'tunnel_source_interface_variable','tunnel_source_ip'],
         },
                 {
             'object_jmes_path': 'sdwan.centralized_policies.feature_policies[*].traffic_data[].site_region_vpn[]',

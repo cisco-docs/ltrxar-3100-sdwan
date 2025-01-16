@@ -69,4 +69,28 @@ Should Be Equal Value Json List Length
    END
    Run Keyword If   "${value}" != "${None}"  Should Be Equal As Integers    ${r_length}    ${value}    msg=${msg}
 
-   
+# This keyword is used to extract the right vip value from Feature Template based on vipType
+Should Be Equal Value Json String FT
+   [Arguments]   ${json}    ${json_path}   ${value}=${EMPTY}  ${msg}=${EMPTY}
+   Log    ${json_path}.vipType
+   ${r_value_viptype}=   Get Value From Json   ${json}    ${json_path}.vipType
+   IF    ${r_value_viptype} != []
+      ${r_value_vipvalue}=   Get Value From Json   ${json}    ${json_path}.vipValue
+      ${r_value_vipvariable}=   Get Value From Json   ${json}    ${json_path}.vipVariableName
+      IF    "${r_value_viptype}[0]"=="constant"
+         ${r_value_vip}=   Set Variable    ${r_value_vipvalue}
+         ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
+      ELSE IF    "${r_value_viptype}[0]"=="variableName"
+         ${r_value_vip}=  Set Variable    ${r_value_vipvariable}
+         ${r_value_msg_suffix}=  Set Variable    variable
+      ELSE
+         ${r_value_vip}=  Set Variable    [${EMPTY}]
+            ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
+      END
+      ${r_value}=   Set Variable If    ${r_value_vip} == []    not_defined    ${r_value_vip[0]}
+   ELSE
+      ${r_value}=   Set Variable    not_defined
+      ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
+   END
+   Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg} ${r_value_msg_suffix}
+

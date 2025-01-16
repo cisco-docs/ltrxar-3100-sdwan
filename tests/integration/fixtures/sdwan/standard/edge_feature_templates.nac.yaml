@@ -520,6 +520,10 @@ sdwan:
         on_demand_tunnel_idle_timeout_variable: ondemand_tunnel_idle_timeout
         site_id_variable: site_id
         system_ip_variable: system_ip
+        endpoint_trackers:
+          - name: tracker1
+            endpoint_api_url: http://test.com
+            type: interface
       - name: FT-CEDGE-SYSTEM-02
         description: Tracker example configs
         console_baud_rate: 9600
@@ -839,3 +843,178 @@ sdwan:
         nat_variable: utd_nat_var_1
         download_url_database_on_device_variable: utd_url_var_1
         resource_profile_variable: utd_rp_1
+    cellular_controller_templates:
+      - name: FT-CEDGE-CELL_CNTRL101-V01
+        description: "Cellular Controller #1"
+        cellular_interface_id: 0/1/0
+        primary_sim_slot: 1
+        sim_failover_retries: 3
+        sim_failover_timeout: 4
+      - name: FT-CEDGE-CELL_CNTRL101-V02
+        description: "Cellular Controller #2"
+        cellular_interface_id_variable: cel_int_id_v02_var1
+        primary_sim_slot_variable: cel_pri_slot_v02_var1
+        sim_failover_retries_variable: cel_sim_fo_ret_v02_var1
+        sim_failover_timeout_variable: cel_sim_fo_to_v02_var1
+    cellular_profile_templates:
+      - name: FT-CEDGE-CELL_PROF101-V01
+        description: "Cellular Profile #1"
+        profile_id: 1
+        access_point_name: data4all
+        packet_data_network_type: ipv4
+        authentication_type: pap
+        profile_username: user1
+        profile_password: pass1
+      - name: FT-CEDGE-CELL_PROF101-V02
+        description: "Cellular Profile #2"
+        profile_id_variable: cel_prof_id_v02_var1
+        access_point_name_variable: cel_apn_v02_var1
+        packet_data_network_type_variable: cel_pkt_data_net_v02_var1
+        authentication_type_variable: cel_auth_type_v02_var1
+        profile_username_variable: cel_prof_user_v02_var1
+        profile_password_variable: cel_prof_pass_v02_var1
+    gre_interface_templates:
+      - name: FT-CEDGE-GRE_INTF101-V01
+        description: "GRE Interface #1"
+        interface_name: gre1
+        interface_description: "GRE Interface to Site ABC"
+        shutdown: false
+        tunnel_source_ip: 10.10.1.1
+        tunnel_destination: 10.10.2.1
+        ip_address: 10.10.33.1/30
+        ip_mtu: 1500
+        tcp_mss: 1400
+        clear_dont_fragment: true
+        rewrite_rule: REWRITE-RULE-MPLS
+        ipv4_egress_access_list: ACL-TLOCEXT-DSCP
+        ipv4_ingress_access_list: ACL-NETCONF830-DROP
+        tracker: tracker1
+        application: sig
+      - name: FT-CEDGE-GRE_INTF101-V02
+        description: "GRE Interface #2"
+        device_types:
+          - C8200L-1N-4T
+        interface_name_variable: gre_intf_name_v02_var1
+        interface_description_variable: gre_intf_desc_v02_var1
+        shutdown_variable: gre_intf_shut_v02_var1
+        tunnel_source_interface_variable: gre_tun_src_intf_v02_var1
+        tunnel_destination_variable: gre_tun_dest_ip_v02_var1
+        ip_address_variable: gre_ip_addr_v02_var1
+        ip_mtu_variable: gre_ip_mtu_v02_var1
+        tcp_mss_variable: gre_tcp_mss_v02_var1
+        clear_dont_fragment_variable: gre_clear_df_v02_var1
+        rewrite_rule_variable: gre_rew_rule_v02_var1
+        ipv4_egress_access_list_variable: gre_ipv4_egress_acl_v02_var1
+        ipv4_ingress_access_list_variable: gre_ipv4_ingress_acl_v02_var1
+        tracker_variable: gre_tracker_v02_var1
+        application_variable: gre_app_v02_var1
+    cellular_interface_templates:
+      - name: FT-CEDGE-CELL_INTF101-V01
+        description: "Cellular Interface #1"
+        interface_name: cellular0/1/0
+        interface_description: "Cellular Interface to Site ABC"
+        shutdown: false
+        dhcp_helpers:
+          - 10.3.3.3
+          - 10.7.3.3
+          - 10.10.2.4
+        bandwidth_downstream: 100000
+        bandwidth_upstream: 500000
+        ip_mtu: 1500
+        tunnel_interface:
+          per_tunnel_qos_mode: spoke
+          color: custom2
+          restrict: true
+          group: 10
+          border: true
+          max_control_connections: 5
+          vbond_as_stun_server: true
+          exclude_controller_groups:
+            - 1
+            - 2
+          vmanage_connection_preference: 5
+          port_hop: true
+          low_bandwidth_link: true
+          tcp_mss: 1300
+          clear_dont_fragment: false
+          network_broadcast: true
+          allow_service_bgp: false
+          allow_service_dhcp: true
+          allow_service_dns: true
+          allow_service_https: false
+          allow_service_icmp: true
+          allow_service_netconf: false
+          allow_service_ntp: true
+          allow_service_ospf: false
+          allow_service_snmp: false
+          allow_service_ssh: false
+          allow_service_stun: false
+          gre_encapsulation: true
+          gre_preference: 1
+          gre_weight: 5
+          ipsec_encapsulation: true
+          ipsec_preference: 2
+          ipsec_weight: 6
+          carrier: carrier1
+          bind_loopback_tunnel: Ge1/0
+          last_resort_circuit: true
+          nat_refresh_interval: 10
+          hello_interval: 100
+          hello_tolerance: 12
+        nat: true
+        nat_refresh_mode: outbound
+        nat_tcp_timeout: 10
+        nat_udp_timeout: 10
+        nat_block_icmp: true
+        nat_respond_to_ping: false
+        nat_port_forwarding_rules:
+          - port_range_start: 1000
+            port_range_end: 2000
+            protocol: tcp
+            vpn: 1
+            private_ip: 10.10.99.1
+          - port_range_start: 2000
+            port_range_end: 3000
+            protocol: udp
+            vpn: 2
+            private_ip: 10.10.99.2
+      - name: FT-CEDGE-CELL_INTF101-V02
+        description: "Cellular Interface #2"
+        interface_name: cellular0/2/0
+        interface_description: "Cellular Interface to Site DEF"
+        shutdown: false
+        dhcp_helpers:
+          - 10.3.3.3
+          - 10.7.3.3
+        bandwidth_downstream: 100000
+        bandwidth_upstream: 500000
+        ip_mtu: 1500
+        adaptive_qos_period: 60
+        adaptive_qos_shaping_rate_downstream:
+          default: 100000
+          maximum: 200000
+          minimum: 50000
+        adaptive_qos_shaping_rate_upstream:
+          default: 500000
+          maximum: 1000000
+          minimum: 250000
+        shaping_rate: 100000
+        qos_map: QOS-MAP-1P4Q
+        rewrite_rule: REWRITE-RULE-MPLS
+        ipv4_egress_access_list: ACL-TLOCEXT-DSCP
+        ipv4_ingress_access_list: ACL-NETCONF830-DROP
+        ingress_policer_name: POLICER-TD-TEST1
+        egress_policer_name: POLICER-TD-TEST2
+        static_arps:
+          - ip_address: 10.10.77.3
+            mac_address: 00:00:00:00:00:03
+          - ip_address: 10.10.77.4
+            mac_address: 00:00:00:00:00:04
+        path_mtu_discovery: true
+        tcp_mss: 1400
+        clear_dont_fragment: true
+        static_ingress_qos: 4
+        autonegotiate: true
+        tloc_extension: mpls
+        tracker: tracker1
+        ip_directed_broadcast: true
