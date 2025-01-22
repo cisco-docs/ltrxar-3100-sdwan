@@ -7,6 +7,15 @@ class Rule:
     def match(cls, inventory):
         results = []
         for feature_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get("system_profiles", []):
+            aaa_feature = feature_profile.get("aaa", {})
+            if aaa_feature:
+                # Check if the same server address is used in multiple groups
+                # as this is not allowed by the Manager API
+                for server_type in ["tacacs", "radius"]:
+                    servers = [server.get("address") for group in aaa_feature.get(f'{server_type}_groups', []) for server in group.get("servers", [])]
+                    duplicates = {address for address in servers if servers.count(address) > 1}
+                    if duplicates:
+                        results.append(f"Duplicate {server_type.upper()} server addresses found: {', '.join(duplicates)} in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].aaa.{server_type}_groups")
             basic_feature = feature_profile.get("basic", {})
             if basic_feature:
                 if ("geo_fencing_enable" not in basic_feature or basic_feature["geo_fencing_enable"] is False) and "geo_fencing_range" in basic_feature:
