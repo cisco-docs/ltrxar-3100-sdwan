@@ -472,6 +472,10 @@ objects:
     template: transport_wan_vpn_ethernet_interface
     folder: features_transport
     paths: [sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces]
+  - name: AS Path List
+    template: as_path_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.as_path_lists]
   - name: Class Map
     template: class_map
     folder: policy_objects
@@ -508,6 +512,10 @@ objects:
     template: policer
     folder: policy_objects
     paths: [sdwan.feature_profiles.policy_object_profile.policers]
+  - name: Standard Community List
+    template: standard_community_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.standard_community_lists]
   - name: TLOC List
     template: tloc_list
     folder: policy_objects

@@ -79,6 +79,12 @@ sdwan:
     policy_object_profile:
       name: policy_object
       description: basic policy object profile
+      as_path_lists:
+        - name: aspath_list10
+          id: 10
+          as_paths:
+            - ^65100
+            - ^65101
       class_maps:
         - name: realtime
           description: realtime class map
@@ -148,6 +154,12 @@ sdwan:
           burst_bytes: 2000000
           exceed_action: remark
           rate_bps: 250000000
+      standard_community_lists:
+        - name: standard_community_list
+          standard_communities:
+            - no-export
+            - 1000:1000
+            - 1000:1002
       tloc_lists:
         - name: emea_hub_tlocs
           description: emea hub tloc list

@@ -3066,6 +3066,7 @@ feature_profiles_other_ucse_interface:
 feature_profiles_policy_object:
   name: regex('^[^&<>! \"]{1,128}$', required=False) # set to "Policy_Profile_Global" in TF module if not specified by user
   description: str(required=False)
+  as_path_lists: list(include("feature_profiles_policy_object_as_path_list"), required=False)
   class_maps: list(include("feature_profiles_policy_object_class_map"), required=False)
   expanded_community_lists: list(include("feature_profiles_policy_object_expanded_community_list"), required=False)
   extended_community_lists: list(include("feature_profiles_policy_object_extended_community_list"), required=False)
@@ -3075,7 +3076,13 @@ feature_profiles_policy_object:
   ipv6_prefix_lists: list(include("feature_profiles_policy_object_ipv6_prefix_list"), required=False)
   mirror_lists: list(include("feature_profiles_policy_object_mirror_list"), required=False)
   policers: list(include("feature_profiles_policy_object_policer"), required=False)
+  standard_community_lists: list(include("feature_profiles_policy_object_standard_community_list"), required=False)
   tloc_lists: list(include("feature_profiles_policy_object_tloc_list"), required=False)
+feature_profiles_policy_object_as_path_list:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  id: int(min=1, max=500)
+  as_paths: list(str(), min=1)
 feature_profiles_policy_object_class_map:
   name: regex('^[^&<>! \"]{1,128}$')
   description: str(required=False)
@@ -3123,6 +3130,10 @@ feature_profiles_policy_object_policer:
   burst_bytes: int(min=15000, max=10000000)
   exceed_action: enum("drop", "remark")
   rate_bps: int(min=8, max=100000000000)
+feature_profiles_policy_object_standard_community_list:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  standard_communities: list(any(enum("internet", "local-AS", "no-advertise", "no-export"), regex('^(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5]):(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])$')), min=1)
 feature_profiles_policy_object_tloc_list:
   name: regex('^[^&<>! \"]{1,128}$')
   description: str(required=False)
