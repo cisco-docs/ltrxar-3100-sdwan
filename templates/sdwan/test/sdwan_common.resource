@@ -51,12 +51,12 @@ Should Be Equal Value Json String
    [Arguments]   ${json}    ${json_path}   ${value}=${EMPTY}  ${msg}=${EMPTY}
    ${r_value}=   Get Value From Json   ${json}   ${json_path}
    ${r_value}=   Set Variable If    ${r_value} == []    not_defined    ${r_value[0]}
-   Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg}
+   Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    values=False    msg=${msg} expected: '${value}' and got: '${r_value}'  
 
 Should Be Equal Value Json List
    [Arguments]   ${json}   ${json_path}   ${value}=${None}   ${msg}=${EMPTY}
    ${r_value}=   Get Value From Json   ${json}   ${json_path}
-   Run Keyword If   "${value}" != "${None}"   Lists Should Be Equal   ${r_value}   ${value}   ignore_order=True   msg=${msg}
+   Run Keyword If   "${value}" != "${None}"   Lists Should Be Equal   ${r_value}   ${value}   ignore_order=True    values=False    msg=${msg} expected: '${value}' and got: '${r_value}'    
 
 Should Be Equal Value Json List Length
    [Arguments]   ${json}   ${json_path}   ${value}=${None}   ${msg}=${EMPTY}
@@ -67,7 +67,7 @@ Should Be Equal Value Json List Length
    ELSE
        ${r_length}=    Get Length     ${r_value}
    END
-   Run Keyword If   "${value}" != "${None}"  Should Be Equal As Integers    ${r_length}    ${value}    msg=${msg}
+   Run Keyword If   "${value}" != "${None}"  Should Be Equal As Integers    ${r_length}    ${value}  values=False  msg=${msg} expected '${value}' items and got: '${r_length}' 
 
 # This keyword is used to extract the right vip value from Feature Template based on vipType
 Should Be Equal Value Json String FT
@@ -93,4 +93,24 @@ Should Be Equal Value Json String FT
       ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
    END
    Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg} ${r_value_msg_suffix}
+Should Be Equal Value Json Yaml
+    [Arguments]    ${json}    ${json_path}    ${value}    ${var_value}    ${msg}    ${var_msg}
+    ${opt_type}=    Get Value From Json    ${json}    ${json_path}.optionType
+    IF    ${opt_type} == ['global']
+        ${type_check}=    Evaluate    type($value).__name__
+        IF    '${type_check}' == 'list'
+            ${dt_list}=    Get Value From Json    ${json}    ${json_path}.value
+            ${r_dt_list}=    Evaluate    [str(element) for element in ${dt_list}[0]]
+            Lists Should Be Equal    ${r_dt_list}    ${value}    ignore_order=True    values=False    msg=${msg} expected: '${value}' and got: '${r_dt_list}'
+        ELSE
+            Should Be Equal Value Json String    ${json}    ${json_path}.value    ${value}    msg=${msg}
+        END 
+    ELSE IF    ${opt_type} == ['variable']
+        ${r_value}=    Get Value From Json    ${json}    ${json_path}.value
+        ${r_value}=    Evaluate    '${r_value[0]}'.replace("{", "").replace("}", "")
+        Should Be Equal As Strings    ${var_value}    ${r_value}    values=False    msg=${var_msg} expected: '${var_value}' and got: '${r_value}'
+    ELSE
+        Should Be Equal As Strings    not_defined    ${value}    values=False    msg=${msg} expected: '${value}' and got: 'not_defined'    
+        Should Be Equal As Strings    not_defined    ${var_value}    values=False    msg=${var_msg} expected: '${var_value}' and got: 'not_defined'
+    END
 
