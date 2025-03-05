@@ -107,8 +107,20 @@ sdwan:
     banner_templates:
       - name: FT-CEDGE-BANNER-01
         description: Base banner template; support carrier returns
-        login: "login banner: new\n"
-        motd: "motd banner:\r\nNo message today\n"
+        login: 'login banner: new\n'
+        motd: 'motd banner:\r\nNo message today\n'
+      - name: FT-CEDGE-BANNER-02
+        description: Base banner template v2
+        login: 'login banner: new\ttest\n'
+        motd: 'motd banner:\r\nNo message today\n'
+      - name: FT-CEDGE-BANNER-03
+        description: Base banner template v3
+        login: "login banner plain text"
+        motd: "motd banner plain text"
+      - name: FT-CEDGE-BANNER-04
+        description: Base banner template; support carrier returns
+        login_variable: login_banner_variable1
+        motd_variable: motd_banner_variable1
     bfd_templates:
       - name: FT-CEDGE-BFD-01
         description: BFD base template
@@ -382,6 +394,212 @@ sdwan:
         shutdown_variable: vpn512_int1_if_shutdown
         ipv4_address_dhcp: true
         dhcp_distance: 1
+      - name: FT-CEDGE-ETH-SAMPLE1
+        description: "Ethernet Interface Template"
+        device_types:
+          - ASR-1002-X
+        vpn_qos_map_variable: qosmapvar1
+        shaping_rate: 1000
+        static_sgt: 11
+        ipv6_address: 2000::1/64
+        ipv6_dhcp_helpers:
+          - address: 2001::2
+            vpn_id: 1
+          - address: 2001::3
+            vpn_id_variable: ipv6dhcpvar1
+        ipv6_secondary_addresses:
+          - address: 2002::4/64
+          - address_variable: ipv6secaddvar1
+        ipv6_vrrp_groups:
+          - id: 2
+            global_prefix: 2000::3/64
+            link_local_address: fe80::1
+            priority: 101
+            timer: 500
+            track_prefix_list: tracklist1
+          - id: 1
+            global_prefix: 2000::4/64
+            link_local_address: fe80::2
+            priority: 103
+            timer: 400
+            track_omp: true
+            optional: true
+        interface_description: Ethernet1/0 description
+        interface_name: GigabitEthernet0/1
+        ipv4_address_dhcp: false
+        ipv4_address: 192.168.1.2/24
+        ipv4_dhcp_helpers:
+          - 172.16.18.1
+        block_non_source_ip: true
+        bandwidth_upstream: 2000
+        bandwidth_downstream: 2000
+        bandwidth_auto_detect: true
+        iperf_server: 10.1.1.1
+        ipv4_nat: true
+        ipv4_nat_overload: true
+        ipv4_nat_pool_prefix_length: 16
+        ipv4_nat_pool_range_end: 10.10.10.100
+        ipv4_nat_pool_range_start: 10.10.10.1
+        ipv4_nat_type: pool
+        ipv4_nat_udp_timeout: 200
+        ipv4_nat_tcp_timeout: 200
+        ipv4_static_nat_rules:
+          - optional: false
+            source_ip: 10.1.1.1
+            translate_ip: 10.2.2.2
+            source_vpn_id: 2
+          - source_ip: 10.0.0.1
+            translate_ip: 10.0.0.3
+            source_vpn_id: 1
+        ipv4_port_forwarding_rules:
+          - protocol: udp
+            source_ip: 10.1.1.11
+            source_port: 20
+            translate_ip: 20.1.1.1
+            translate_port: 2020
+            source_vpn_id: 2
+          - optional: false
+            protocol: udp
+            source_ip: 10.1.1.1
+            source_port: 20
+            translate_ip: 20.1.1.1
+            translate_port: 2020
+            source_vpn_id: 2
+        ipv4_secondary_addresses:
+          - address: 10.10.45.67/24
+          - address: 10.10.54.76/24
+          - address_variable: ipv4secaddvar1
+        mtu: 1500
+        arp_timeout: 1200
+        load_interval: 30
+        icmp_redirect_disable: true
+        shutdown_variable: vpn0_tloc01_if_shutdown
+        adaptive_qos: true
+        adaptive_qos_period: 60
+        adaptive_qos_shaping_rate_downstream:
+          default: 19
+          maximum: 22
+          minimum: 16
+        adaptive_qos_shaping_rate_upstream:
+          default: 19
+          maximum: 22
+          minimum: 16
+        rewrite_rule: rule1
+        ipv4_egress_access_list: egress1
+        ipv4_ingress_access_list: ingress1
+        ipv6_egress_access_list: ip6egress1
+        ipv6_ingress_access_list: ip6ingress1
+        enable_sgt: true
+        sgt_propagation: true
+        sgt_enforcement_tag: 3
+        sgt_trusted: true
+        sgt_enforcement: true
+        duplex: auto
+        mac_address: 8d:d5:e6:25:5c:44
+        tcp_mss: 1400
+        speed: 1000
+        autonegotiate: true
+        media_type: sfp
+        tloc_extension: test-tloc
+        tracker: test-tracker
+        gre_tunnel_source_ip: 10.3.1.2
+        gre_tunnel_xconnect: xconnect-test
+        ip_directed_broadcast: true
+        tunnel_interface:
+          allow_service_all: false
+          allow_service_bgp: false
+          allow_service_dhcp: true
+          allow_service_dns: true
+          allow_service_https: true
+          allow_service_icmp: true
+          allow_service_netconf: false
+          allow_service_ntp: true
+          allow_service_ospf: false
+          allow_service_snmp: false
+          allow_service_ssh: false
+          allow_service_stun: false
+          border: true
+          clear_dont_fragment: true
+          color: custom1
+          restrict: true
+          gre_encapsulation: true
+          gre_preference: 2
+          gre_weight: 3
+          ipsec_encapsulation: true
+          ipsec_preference: 3
+          ipsec_weight: 4
+          max_control_connections: 2
+          network_broadcast: true
+          hello_interval: 1000
+          hello_tolerance: 12
+          low_bandwidth_link: true
+          propagate_sgt: true
+          tcp_mss: 1400
+          vbond_as_stun_server: true
+          vmanage_connection_preference: 5
+          port_hop: true
+          carrier: carrier1
+          bind_loopback_tunnel: loop1
+          last_resort_circuit: true
+          nat_refresh_interval: 5
+          gre_tunnel_destination_ip: 20.2.2.2
+        static_arps:
+          - optional: false
+            ip_address: 10.3.3.3
+            mac_address: 16:7f:d9:b4:01:d7
+          - optional: false
+            ip_address: 10.4.4.4
+            mac_address: 16:7f:d9:b4:01:d8
+      - name: FT-CEDGE-ETH-SAMPLE2
+        description: "Ethernet Interface Template 2"
+        device_types:
+          - ASR-1002-X
+        vpn_qos_map_variable: qosmapvar1
+        shaping_rate: 1000
+        ipv6_address: 2000::1/64
+        ipv6_vrrp_groups:
+          - id: 2
+            global_prefix: 2000::3/64
+            link_local_address: fe80::1
+            priority: 101
+            timer: 500
+            track_prefix_list: tracklist1
+          - id: 1
+            global_prefix: 2000::4/64
+            link_local_address: fe80::2
+            priority: 103
+            timer: 400
+            track_omp: true
+            optional: true
+        interface_description: Ethernet1/0 description
+        interface_name: GigabitEthernet0/1
+        ipv4_address: 192.168.1.2/24
+        ipv4_dhcp_helpers:
+          - 172.16.18.1
+        ipv4_vrrp_groups:
+          - id: 2
+            priority: 101
+            timer: 500
+            track_omp: true
+            address: 10.1.1.2
+            tloc_preference_change: true
+            tloc_preference_change_value: 10000
+            tracking_objects:
+              - action: decrement
+                decrement_value: 2
+                id: 2
+              - action: shutdown
+                id: 1
+          - id: 1
+            priority: 103
+            timer: 400
+            track_omp: true
+            address: 10.0.1.3
+            tloc_preference_change: false
+            secondary_addresses:
+              - address: 10.10.45.67/24
+              - address: 10.10.54.76/24
+              - address_variable: ipv4secaddvar1
     global_settings_templates:
       - name: FT-CEDGE-GLOBAL-01
         description: Base cEdge Global Settings
