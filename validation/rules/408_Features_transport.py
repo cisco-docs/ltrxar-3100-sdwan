@@ -70,21 +70,21 @@ class Rule:
                 for interface in wan_vpn_feature.get("ethernet_interfaces", []):
                     if interface.get("ipv4_configuration_type", "static") == "static":
                         if "ipv4_address" not in interface and "ipv4_address_variable" not in interface:
-                            results.append(f"ipv4_configuration type is static but ipv4_address is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn[{management_vpn_feature.get('name', 'management_vpn')}].ethernet_interfaces[{interface.get('name')}]")
+                            results.append(f"ipv4_configuration type is static but ipv4_address is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ethernet_interfaces[{interface.get('name')}]")
                         if "ipv4_subnet_mask" not in interface and "ipv4_subnet_mask_variable" not in interface:
-                            results.append(f"ipv4_configuration type is static but ipv4_subnet_mask is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn[{management_vpn_feature.get('name', 'management_vpn')}].ethernet_interfaces[{interface.get('name')}]")
+                            results.append(f"ipv4_configuration type is static but ipv4_subnet_mask is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ethernet_interfaces[{interface.get('name')}]")
                         if "ipv4_dhcp_distance" in interface or "ipv4_dhcp_distance_variable" in interface:
-                            results.append(f"ipv4_configuration type is static but ipv4_dhcp_distance is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn[{management_vpn_feature.get('name', 'management_vpn')}].ethernet_interfaces[{interface.get('name')}]")
+                            results.append(f"ipv4_configuration type is static but ipv4_dhcp_distance is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ethernet_interfaces[{interface.get('name')}]")
                     elif interface.get("ipv4_configuration_type", "static") == "dynamic":
                         if "ipv4_address" in interface or "ipv4_address_variable" in interface:
-                            results.append(f"ipv4_configuration type is dynamic but static ipv4_address is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn[{management_vpn_feature.get('name', 'management_vpn')}].ethernet_interfaces[{interface.get('name')}]")
+                            results.append(f"ipv4_configuration type is dynamic but static ipv4_address is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ethernet_interfaces[{interface.get('name')}]")
                         if "ipv4_subnet_mask" in interface or "ipv4_subnet_mask_variable" in interface:
-                            results.append(f"ipv4_configuration type is dynamic but static ipv4_subnet_mask is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn[{management_vpn_feature.get('name', 'management_vpn')}].ethernet_interfaces[{interface.get('name')}]")
+                            results.append(f"ipv4_configuration type is dynamic but static ipv4_subnet_mask is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ethernet_interfaces[{interface.get('name')}]")
                     if "ipv4_secondary_addresses" in interface and interface.get("ipv4_configuration_type", "static") != "static":
-                            results.append(f"ipv4_secondary_addresses is defined but ipv4_configuration type is not static in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn[{management_vpn_feature.get('name', 'management_vpn')}].ethernet_interfaces[{interface.get('name')}]")
+                            results.append(f"ipv4_secondary_addresses is defined but ipv4_configuration type is not static in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ethernet_interfaces[{interface.get('name')}]")
                     if interface.get("ipv6_configuration_type", "none") == "static":
                         if "ipv6_address" not in interface and "ipv6_address_variable" not in interface:
-                            results.append(f"ipv6_configuration type is static but ipv6_address is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn[{management_vpn_feature.get('name', 'management_vpn')}].ethernet_interfaces[{interface.get('name')}]")
+                            results.append(f"ipv6_configuration type is static but ipv6_address is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ethernet_interfaces[{interface.get('name')}]")
                     if interface.get("adaptive_qos", False) == False:
                         if interface.get("adaptive_qos_period") or interface.get("adaptive_qos_period_variable"):
                             results.append(f"adaptive_qos is false but adaptive_qos_period is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ethernet_interfaces[{interface.get('name')}]")
