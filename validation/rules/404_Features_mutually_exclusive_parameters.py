@@ -27,6 +27,22 @@ class Rule:
             "parameter_names" : ["endpoint_port", "endpoint_url"],
         },
         {
+            "path": "sdwan.feature_profiles.system_profiles.ipv4_device_access_policy.sequences.match_entries",
+            "parameter_names": ["destination_data_prefix_list", "destination_data_prefixes"],
+        },
+        {
+            "path": "sdwan.feature_profiles.system_profiles.ipv4_device_access_policy.sequences.match_entries",
+            "parameter_names": ["source_data_prefix_list", "source_data_prefixes"],
+        },
+        {
+            "path": "sdwan.feature_profiles.system_profiles.ipv6_device_access_policy.sequences.match_entries",
+            "parameter_names": ["destination_data_prefix_list", "destination_data_prefixes"],
+        },
+        {
+            "path": "sdwan.feature_profiles.system_profiles.ipv6_device_access_policy.sequences.match_entries",
+            "parameter_names": ["source_data_prefix_list", "source_data_prefixes"],
+        },
+        {
             "path": "sdwan.feature_profiles.system_profiles.security.keys",
             "parameter_names": ["accept_life_time_duration", "accept_life_time_exact", "accept_life_time_infinite"],
         },
@@ -72,7 +88,7 @@ class Rule:
                 results.extend(cls.check_parameters(value, new_path))
         elif isinstance(data, list):
             for index, value in enumerate(data):
-                if isinstance(value, dict) or isinstance(value, ruamel.yaml.comments.CommentedMap):
+                if isinstance(value, dict) or isinstance(value, ruamel.yaml.comments.CommentedMap) and "base_action" not in value:
                     path_extenstion = value.get("name", index)
                 else:
                     path_extenstion = index
@@ -99,12 +115,24 @@ class Rule:
                 results.append(f"Mutually exclusive parameters {detected_parameters} are defined in the {full_path}")
         else:
             for idx, path_element in enumerate(path_elements):
+                if isinstance(inv_element, dict) and idx + 1 == len(path_elements):
+                    # Verify if mutually exclusive parameters are defined in the path
+                    parameter_names = []
+                    for parameter_name in global_parameter_names:
+                        parameter_names.append(parameter_name)
+                        parameter_names.append(parameter_name + "_variable")
+                    detected_parameters = []
+                    for parameter_name in parameter_names:
+                        if parameter_name in inv_element:
+                            detected_parameters.append(parameter_name)
+                    if len(detected_parameters) > 1:
+                        results.append(f"Mutually exclusive parameters {detected_parameters} are defined in the {full_path}")      
                 if isinstance(inv_element, dict):
                     inv_element = inv_element.get(path_element)
                     full_path += path_element if not full_path else "." + path_element
                 elif isinstance(inv_element, list):
                     for idx2, i in enumerate(inv_element):
-                        r = cls.match_path(i, full_path + f"[{i['name']}]" if isinstance(i, dict) and "name" in i else full_path + f"[{idx2}]", ".".join(path_elements[idx:]), global_parameter_names)
+                        r = cls.match_path(i, full_path + f"[{i['name']}]" if isinstance(i, dict) and "name" in i and "base_action" not in i else full_path + f"[{idx2}]", ".".join(path_elements[idx:]), global_parameter_names)
                         results.extend(r)
                     return results
         return results

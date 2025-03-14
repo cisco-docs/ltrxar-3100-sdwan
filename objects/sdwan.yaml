@@ -412,6 +412,14 @@ objects:
     template: system_global
     folder: features_system
     paths: [sdwan.feature_profiles.system_profiles.global]
+  - name: System IPv4 Device Access Policy Feature
+    template: system_ipv4_device_access_policy
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.ipv4_device_access_policy]
+  - name: System IPv6 Device Access Policy Feature
+    template: system_ipv6_device_access_policy
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.ipv6_device_access_policy]
   - name: System Logging Feature
     template: system_logging
     folder: features_system

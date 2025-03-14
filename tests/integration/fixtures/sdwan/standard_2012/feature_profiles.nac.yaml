@@ -428,6 +428,64 @@ sdwan:
           telnet_outbound: false
           udp_small_servers: true
           vty_logging: true
+        ipv4_device_access_policy:
+          name: ipv4_device_access_policy
+          description: "Device access policy"
+          default_action: accept
+          sequences:
+            - base_action: drop
+              name: acl-sequence
+              match_entries:
+                destination_data_prefix_list: ipv4_dpl
+                destination_port: 22
+                source_data_prefix_list: ipv4_dpl
+                source_ports:
+                  - 2001
+                  - 2002
+            - base_action: accept
+              name: acl-sequence
+              match_entries:
+                destination_data_prefixes:
+                  - 192.168.1.0/24
+                  - 192.168.2.0/24
+                destination_port: 22
+                source_data_prefixes:
+                  - 192.168.3.0/24
+                  - 192.168.4.0/24
+            - base_action: accept
+              name: acl-sequence
+              match_entries:
+                destination_data_prefixes_variable: device_access_destination_prefixes
+                destination_port: 22
+                source_data_prefixes_variable: device_access_source_prefixes
+            - base_action: accept
+              name: acl-sequence
+              match_entries:
+                destination_port: 161
+        ipv6_device_access_policy:
+          name: ipv6_device_access_policy
+          description: "Device access policy"
+          default_action: accept
+          sequences:
+            - base_action: drop
+              name: acl-sequence
+              match_entries:
+                destination_data_prefix_list: ipv6_dpl
+                destination_port: 22
+                source_data_prefix_list: ipv6_dpl
+                source_ports:
+                  - 2001
+                  - 2002
+            - base_action: accept
+              name: acl-sequence
+              match_entries:
+                destination_data_prefixes:
+                  - fc01::/64
+                  - fc02::/64
+                destination_port: 161
+                source_data_prefixes:
+                  - fc03::/64
+                  - fc04::/64
         logging:
           name: logging_full
           description: logging feature with full configuration

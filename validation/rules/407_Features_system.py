@@ -24,6 +24,15 @@ class Rule:
                     results.append(f"geo_fencing_sms_enable parameter is configured, but geo_fencing_enable is not true in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].basic[{basic_feature.get('name', 'basic')}]")
                 if ("geo_fencing_sms_enable" not in basic_feature or basic_feature["geo_fencing_sms_enable"] is False) and "geo_fencing_sms_mobile_numbers" in basic_feature:
                     results.append(f"geo_fencing_sms_mobile_numbers parameter is configured, but geo_fencing_sms_enable is not true in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].basic[{basic_feature.get('name', 'basic')}]")
+            ipv4_device_access_policy_feature = feature_profile.get("ipv4_device_access_policy", {})
+            if ipv4_device_access_policy_feature:
+                for index, sequence in enumerate(ipv4_device_access_policy_feature.get("sequences", [])):
+                    match_entries = sequence.get("match_entries", {})
+                    if match_entries.get("destination_port") == 161:
+                        not_allowed_entries = ["source_ports", "destination_data_prefix_list", "destination_data_prefixes", "destination_data_prefixes_variable"]
+                        for entry in not_allowed_entries:
+                            if entry in match_entries:
+                                results.append(f"{entry} parameter is configured, but destination_port is 161 in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].ipv4_device_access_policy.sequences[{index}].match_entries")
             logging_feature = feature_profile.get("logging", {})
             if logging_feature:
               for index, server in enumerate(logging_feature.get("ipv4_servers", [])):
