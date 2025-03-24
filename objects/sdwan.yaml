@@ -372,6 +372,10 @@ objects:
     template: other_ucse
     folder: features_other
     paths: [sdwan.feature_profiles.other_profiles.ucse]
+  - name: Service DHCP Server Feature
+    template: service_dhcp_server
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.dhcp_servers]
   - name: Service IPv4 Tracker Group Feature
     template: service_ipv4_tracker_group
     folder: features_service

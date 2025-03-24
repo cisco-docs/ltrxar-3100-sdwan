@@ -19,6 +19,10 @@ class Rule:
 
     mutually_exclusive_parameters_data = [
         {
+            "path": "sdwan.feature_profiles.service_profiles.dhcp_servers.options",
+            "parameter_names" : ["hex", "ascii", "ip_addresses"],
+        },
+        {
             "path": "sdwan.feature_profiles.service_profiles.ipv4_trackers",
             "parameter_names" : ["endpoint_ip", "endpoint_url"],
         },

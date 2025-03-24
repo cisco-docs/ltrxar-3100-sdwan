@@ -176,6 +176,37 @@ sdwan:
       - name: service1
       - name: service2
         description: full profile
+        dhcp_servers:
+          - name: dhcp-server-vpn11
+            description: LAN DHCP Server VPN 11
+            pool_network_address: 10.10.10.0
+            pool_subnet_mask: "255.255.255.0"
+            default_gateway: 10.10.10.1
+            dns_servers:
+              - 1.1.1.1
+              - 9.9.9.9
+            domain_name: "test.com"
+            lease_time: 6000
+            interface_mtu: 1500
+            tftp_servers:
+              - 10.11.11.11
+            exclude_addresses:
+              - 10.10.10.100
+              - 10.10.10.1-10.10.10.5
+              - 10.10.10.10-10.10.10.15
+            static_leases:
+              - mac_address_variable: vpn10_static_lease_mac1
+                ip_address_variable: vpn10_static_lease_ip1
+              - mac_address: 52:54:00:04:ce:de
+                ip_address: 10.10.10.100
+            options:
+              - code: 43
+                hex: f305ac10011802
+              - code: 60
+                ascii: test.com
+              - code: 240
+                ip_addresses:
+                  - 10.10.11.11
         ipv4_tracker_groups:
           - name: ipv4_tracker_group
             tracker_boolean: or
