@@ -6,6 +6,8 @@ FQDN list specifies one or more FQDN or pattern.
 
 ### Examples
 
+Example-1: This example shows the configuration for the FQDN list matching exact URL 'cisco.com' OR any URL that finishes with '.service-now.com' OR any URL that finishes with '.demo.acme.net'
+
 ```yaml
 sdwan:
   policy_objects:
