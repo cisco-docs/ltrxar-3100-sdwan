@@ -6,6 +6,8 @@ Activation controls which one Centralized Policy (out of the many that could be 
 
 ### Examples
 
+Example-1: Activate the centralized policy named CP1 in the system.  
+
 ```yaml
 sdwan:
   centralized_policies:
