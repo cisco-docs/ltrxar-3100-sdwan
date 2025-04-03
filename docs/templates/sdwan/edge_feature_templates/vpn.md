@@ -1,36 +1,55 @@
 # VPN Feature Template
 
-Change the ECMP hash, add DNS servers, advertise protocols (BGP, static, connected, OSPF external) from the VPN into OMP, and add IPv4 or v6 static routes, service routes, and GRE routes.
+The example below show the configuations of VPN template for transport and service
 
 {{ doc_gen }}
 
 ### Examples
 
+Example-1 : In the below example , VPN template for transport VPN is configured.
+vpn_id should always be set 0 since its this template is applicable to transport side and variables are configured for two dns servers. There is a host-mapping for vbond which has been configured globally.
+Static route is configured along with variables for nexthops.
+
 ```yaml
 sdwan:
   edge_feature_templates:
     vpn_templates:
-      - name: FT-CEDGE-VPN0-01
-        description: "EDGE VPN0 with static IP settings"
+      - name: TRANSPORT_VPN
+        description: Transport VPN Template
         ipv4_primary_dns_server_variable: vpn0_dns_primary
         ipv4_secondary_dns_server_variable: vpn0_dns_secondary
-        enhance_ecmp_keying: true
-        ipv4_static_routes:
-          - prefix: 0.0.0.0/0
-            next_hops:
-              - address_variable: vpn0_ipv4_default_route_nexthop1_ip
-              - address_variable: vpn0_ipv4_default_route_nexthop2_ip
-        vpn_name: VPN0
+        vpn_name: TRANSPORT_VPN
         vpn_id: 0
-      - name: FT-CEDGE-VPN1-01
-        description: "EDGE VPN1 with DIA"
-        ipv4_primary_dns_server: 1.1.1.1
-        ipv4_secondary_dns_server: 1.0.0.1
+        ipv4_dns_hosts:
+          - hostname: vbond.cisco.com
+            ips: 
+              - 1.1.1.1
+              - 2.2.2.2
         ipv4_static_routes:
           - prefix: 0.0.0.0/0
-            next_hop_dia: true
-        vpn_name: VPN1
-        vpn_id: 1
-        services:
-          - service_type: TE
+            optional: false
+            next_hops:
+              - address_variable: vpn0_ipv4_route1_nexthop1_ip
+                distance_variable: vpn0_ipv4_route1_nexthop1_distance
+              - address_variable: vpn0_ipv4_route1_nexthop2_ip
+                distance_variable: vpn0_ipv4_route1_nexthop2_distance
 ```
+
+Example-2 : In the below example , VPN template for Service VPN is configured.
+vpn_id is set to 10 and variables are configured for two dns servers within service vpn. OMP routes are advertised to BGP as part of below configuration.
+
+```yaml
+sdwan:
+  edge_feature_templates:
+    vpn_templates:
+      - name: SERVICE_VPN10
+        description: Service VPN10 Template
+        ipv4_primary_dns_server_variable: vpn0_dns_primary
+        ipv4_secondary_dns_server_variable: vpn0_dns_secondary
+        vpn_name: SERVICE_VPN10
+        vpn_id: 10
+        omp_advertise_ipv4_routes:
+          - protocol: bgp
+```
+
+
