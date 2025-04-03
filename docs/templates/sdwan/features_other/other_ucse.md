@@ -6,7 +6,7 @@ Configure the UCSE feature to connect a UCS-E interface with a UCS-E server.
 
 ### Examples
 
-This example shows how to configure UCSE feature with CIMC IP and gateway configured as variable, dedicated access port and single interface in VPN 1.
+Example-1: This example shows how to configure UCSE feature with CIMC IP and gateway configured as variable, dedicated access port and single interface in VPN 1.
 
 ```yaml
 sdwan:

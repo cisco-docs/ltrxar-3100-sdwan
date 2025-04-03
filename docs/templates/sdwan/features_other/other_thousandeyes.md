@@ -6,6 +6,8 @@ Configure the Cisco ThousandEyes Agent parameters to deploy on WAN Edge routers.
 
 ### Examples
 
+Example-1: This example demonstrates how to configure a ThousandEyes feature under the other feature profile. The account group token is configured as a variable, while the agent default gateway, management IP, subnet mask, and VPN ID are configured as global values. The proxy type is set to static, and the static proxy host and port are specified.
+
 ```yaml
 sdwan:
   feature_profiles:

@@ -6,6 +6,8 @@ Using an other profile, you can specify configuration for other SD-WAN features 
 
 ### Examples
 
+Example-1: This example demonstrates how to configure an other feature profile with a name (which is mandatory) and a description (which is optional).
+
 ```yaml
 sdwan:
   feature_profiles:

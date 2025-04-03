@@ -6,6 +6,8 @@ Add WAN VPN configuration, including DNS servers, NAT, IPv4 or IPv6 static route
 
 ### Examples
 
+Example-1: This example demonstrates how to configure a WAN VPN feature under a transport profile. It configures the static host mapping for the "vbond.local" FQDN and maps it to two IP addresses. It also specifies the IPv4 primary and secondary addresses as variables (these will need to be filled when deploying the configuration to a device that uses the configuration group with this profile). It defines a static default route with two next hops configured as variables. Additionally, it enables enhanced ECMP keying and the Traffic Engineering (TE) service.
+
 ```yaml
 sdwan:
   feature_profiles:

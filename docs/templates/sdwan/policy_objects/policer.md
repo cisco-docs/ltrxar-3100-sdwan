@@ -6,6 +6,8 @@ Configure policers to control the maximum rate of traffic sent or received on an
 
 ### Examples
 
+Example-1: This examples demonstrates how to configure a policer with burst bytes, policer rate and exceed_action remark.
+
 ```yaml
 sdwan:
   feature_profiles:

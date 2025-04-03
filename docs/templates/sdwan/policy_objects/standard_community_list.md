@@ -6,7 +6,7 @@ A community list is used to create groups of communities to use in a match claus
 
 ### Examples
 
-The example below demonstrates how to configure the standard community list matching communities no-export, 1000:1000 and/or 1000:1002 (the end/or criteria can be selected when assigning community list inside route policy).
+Example-1: The example below demonstrates how to configure the standard community list matching communities no-export, 1000:1000 and/or 1000:1002 (the end/or criteria can be selected when assigning community list inside route policy).
 
 ```yaml
 sdwan:

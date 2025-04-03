@@ -703,7 +703,7 @@ sdwan:
             threshold: 300
             interval: 20
             multiplier: 1
-            endpoint_api_url: https://api.example.com
+            endpoint_dns_name: example.com
             tracker_name: transport_ipv4_dns_tracker
         ipv6_tracker_groups:
           - name: ipv6_tracker_group
@@ -732,7 +732,7 @@ sdwan:
             threshold: 300
             interval: 20
             multiplier: 1
-            endpoint_api_url: https://api.example.com
+            endpoint_dns_name: example.com
             tracker_name: transport_ipv6_dns_tracker
         management_vpn:
           name: management_vpn

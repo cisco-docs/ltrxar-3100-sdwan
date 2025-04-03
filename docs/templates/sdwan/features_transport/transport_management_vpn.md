@@ -6,7 +6,7 @@ Configure out of band management VPN (VPN 512) and its' settings.
 
 ### Examples
 
-The example below demonstrates how to configure the management_vpn feature within a transport profile. It sets DNS addresses as global values, meaning they will be the same for all devices attached to a configuration group that contains this profile. Additionally, it includes one IPv4 static default route, where the next hop is defined as a variable. The value for this variable will be provided when a device is attached to a configuration group that contains this profile.
+Example-1: The example below demonstrates how to configure the management_vpn feature within a transport profile. It sets DNS addresses as global values, meaning they will be the same for all devices attached to a configuration group that contains this profile. Additionally, it includes one IPv4 static default route, where the next hop is defined as a variable. The value for this variable will be provided when a device is attached to a configuration group that contains this profile.
 
 ```yaml
 sdwan:

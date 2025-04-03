@@ -6,6 +6,8 @@ Configure IPv6 prefix lists.
 
 ### Examples
 
+Example-1: This example demonstrates how to configure an IPv6 prefix list that matches the "fe40:5657:6df1:d34f::/64" prefix (strict), all prefixes within the "fc00::/7" range with a subnet mask length greater than or equal to 100, and less than or equal to 120.
+
 ```yaml
 sdwan:
   feature_profiles:
@@ -15,5 +17,6 @@ sdwan:
           entries:
             - prefix: fe40:5657:6df1:d34f::/64
             - prefix: fc00::/7
-              ge: 120
+              ge: 100
+              le: 120
 ```

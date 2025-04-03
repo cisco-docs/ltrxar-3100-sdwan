@@ -6,6 +6,8 @@ Specify configuration for packet mirroring.
 
 ### Examples
 
+Example-1: This example demonstrates how to configure a mirror policy object with remote destination IP and source IP.
+
 ```yaml
 sdwan:
   feature_profiles:

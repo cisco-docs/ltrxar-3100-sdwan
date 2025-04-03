@@ -6,6 +6,8 @@ Using an policy object profile, you can configure objects like prefix-lists, col
 
 ### Examples
 
+Example-1: This example demonstrates how to configure a policy object feature profile with a name (which is mandatory) and a description (which is optional).
+
 ```yaml
 sdwan:
   feature_profiles:

@@ -6,6 +6,8 @@ Configure expanded BGP community lists.
 
 ### Examples
 
+Example-1: This example demonstrates how to configure an expanded community list with three communities.
+
 ```yaml
 sdwan:
   feature_profiles:

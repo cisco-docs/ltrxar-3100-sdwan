@@ -6,7 +6,7 @@ Configure out of band management VPN (VPN 512) Ethernet interface and its' setti
 
 ### Examples
 
-The example below demonstrates how to configure the management interface feature under management_vpn feature within a transport profile with static ipv4 address settings.
+Example-1: The example below demonstrates how to configure the management interface feature under management_vpn feature within a transport profile with static ipv4 address settings and shutdown set to false.
 
 ```yaml
 sdwan:
@@ -20,9 +20,10 @@ sdwan:
               interface_name: GigabitEthernet8
               ipv4_address_variable: mgmt_intf_ip
               ipv4_subnet_mask_variable: mgmt_intf_mask
+              shutdown: false
 ```
 
-The example below demonstrates how to configure the management interface feature under management_vpn feature within a transport profile with dynamic ipv4 and ipv6 address settings.
+Example-2: The example below demonstrates how to configure the management interface feature under management_vpn feature within a transport profile with dynamic ipv4 and ipv6 address settings and shutdown set to false.
 
 ```yaml
 sdwan:
@@ -36,4 +37,5 @@ sdwan:
               interface_name: GigabitEthernet8
               ipv4_configuration_type: dynamic
               ipv6_configuration_type: dynamic
+              shutdown: false
 ```

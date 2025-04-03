@@ -6,6 +6,8 @@ Configure QoS class maps.
 
 ### Examples
 
+Example-1: This example demonstrates how to configure two class maps: one named "realtime" assigned to queue 0 and one named "transactional" assigned to queue 1. Note that the description is optional.
+
 ```yaml
 sdwan:
   feature_profiles:

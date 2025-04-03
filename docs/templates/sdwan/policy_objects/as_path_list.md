@@ -6,7 +6,7 @@ AS Path list specifies one or more BGP AS paths.
 
 ### Examples
 
-The example below demonstrates how to configure an AS Path List with ID 10 that matches AS paths starting with 65100 or 65101 AS numbers.
+Example-1: The example below demonstrates how to configure an AS Path List with ID 10 that matches AS paths starting with 65100 or 65101 AS numbers.
 
 ```yaml
 sdwan:

@@ -6,6 +6,8 @@ A TLOC list contains a list of SD-WAN TLOCs, where each TLOC is identified by th
 
 ### Examples
 
+Example-1: This example demonstrates how to configure a TLOC list containing two TLOCs. Each TLOC needs to have TLOC IP (system-ip), color and encapsulation defined. The TLOC preference is optional.
+
 ```yaml
 sdwan:
   feature_profiles:

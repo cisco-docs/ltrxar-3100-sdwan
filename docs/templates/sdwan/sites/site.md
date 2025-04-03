@@ -74,7 +74,7 @@ sdwan:
             vpn512_mgmt_int_ipv6: fd02::1/64
 ```
 
-Example 3: The example below shows how to assign router to a device template and list all the variables required for template assignement.
+Example-3: The example below shows how to assign router to a device template and list all the variables required for template assignement.
 
 ```yaml
 sdwan:
