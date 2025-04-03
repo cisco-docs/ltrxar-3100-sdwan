@@ -6,12 +6,49 @@ A community list is used to create groups of communities to use in a match claus
 
 ### Examples
 
+Example-1: This example shows configuration of a Standard community list including a single community.
+
 ```yaml
 sdwan:
   policy_objects:
     standard_community_lists:
-      - name: COMMUNITY-REGION1
+      - name: COMMUNITY_LIST_REGION_1
         standard_communities:
-          - 1000:1000
-          - 1000:1002
+          - 100:100
 ```
+
+Example-2: This example shows configuration of a Standard community list including two different communities.
+
+```yaml
+sdwan:
+  policy_objects:
+    standard_community_lists:
+      - name: COMMUNITY_LIST_REGION_1_2
+        standard_communities:
+          - 100:100
+          - 200:200
+```
+
+Example-3: This example shows configuration of a Standard community list including a well-known community.
+
+```yaml
+sdwan:
+  policy_objects:
+    standard_community_lists:
+      - name: COMMUNITY_LIST_NO_ADVERTISE
+        standard_communities:
+          - no-advertise
+```
+
+Example-4: This example shows configuration of a Standard community list including a well-known community.
+
+```yaml
+sdwan:
+  policy_objects:
+    standard_community_lists:
+      - name: COMMUNITY_LIST_REGIO_1_NO_EXPORT
+        standard_communities:
+          - 100:200
+          - no-export
+```
+
