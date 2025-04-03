@@ -1,25 +1,23 @@
 # Application List
 
-Application list specifies one or more NBAR applications or applications families.
+A `application list` groups one or more applications or application familes into a named application list which can be used in centralized policies.
 
 {{ doc_gen }}
 
 ### Examples
 
+Example-1: Create a Application List
+This example demonstrates how to create a Application List named Social-Media that groups facebook, twitter, youtube, instagram and linkedin.
+
 ```yaml
 sdwan:
   policy_objects:
     application_lists:
-      - name: amazon_aws_apps
+      - name: Social-Media
         applications:
-          - amazon
-          - amazon-web-services
-          - amazon-instant-video
-          - amazon-cloudfront
-          - amazon-ec2
-          - amazon-s3
-      - name: scavenger_apps
-        application_families:
-          - game
-          - instant-messaging
+          - facebook
+          - twitter
+          - youtube
+          - instagram
+          - linkedin
 ```
