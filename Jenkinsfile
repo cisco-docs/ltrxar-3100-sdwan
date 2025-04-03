@@ -51,8 +51,12 @@ pipeline {
             }
             steps {
                 sh "pip install cisco-sdwan"
-                sh 'VMANAGE_IP=10.50.202.8 sdwan --verbose delete --not-regex "(_basic)|(umbrellaTokenList)" all'
-                sh 'VMANAGE_IP=10.50.202.6 sdwan --verbose delete --not-regex "(_basic)|(umbrellaTokenList)|(Policy_Profile_Global)" all'
+                lock(resource: 'nac-ci-sdwan1') {
+                    sh 'VMANAGE_IP=10.50.202.8 sdwan --verbose delete --not-regex "(_basic)|(umbrellaTokenList)" all'
+                }
+                lock(resource: 'nac-ci-sdwan2') {
+                    sh 'VMANAGE_IP=10.50.202.6 sdwan --verbose delete --not-regex "(_basic)|(umbrellaTokenList)|(Policy_Profile_Global)" all'
+                }
             }
         }
         stage('Test') {
