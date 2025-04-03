@@ -1,5 +1,5 @@
 class Rule:
-    id = "401"
+    id = "402"
     description = "Verify Feature Profile unique names"
     severity = "HIGH"
 

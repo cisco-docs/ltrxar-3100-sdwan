@@ -200,9 +200,10 @@ class Rule:
                                     entry["required_policy_definitions"][cls.ft_fields_with_local_policy_reference[reference_type]] = []
                                 for site in inventory.get('sdwan', {}).get('sites', {}):
                                     for router in site['routers']:
-                                        if router['device_template'] in device_template["name"]:
-                                            if router['device_variables'].get(reference_value) and router['device_variables'].get(reference_value) not in entry["required_policy_definitions"][cls.ft_fields_with_local_policy_reference[reference_type]]:
-                                                entry["required_policy_definitions"][cls.ft_fields_with_local_policy_reference[reference_type]].append(router['device_variables'].get(reference_value))
+                                        if router.get('device_template'):
+                                            if router['device_template'] in device_template["name"]:
+                                                if router['device_variables'].get(reference_value) and router['device_variables'].get(reference_value) not in entry["required_policy_definitions"][cls.ft_fields_with_local_policy_reference[reference_type]]:
+                                                    entry["required_policy_definitions"][cls.ft_fields_with_local_policy_reference[reference_type]].append(router['device_variables'].get(reference_value))
 
                             else:
                                 # If it's not variable, add global value to reference list

@@ -2,80 +2,32 @@
 # SD-WAN Sites
 sdwan:
   sites:
-#     - id: 100
-#       routers:
-#         - chassis_id: C8K-40C0CCFD-9EA8-2B2E-E73B-32C5924EC79B
-#           model: C8000V
-#           device_template: DT-C8000V-SINGLECPE
-#           device_variables:
-#             site_id: 100
-#             system_ip: 10.0.0.1
-#             system_hostname: SD-DC-C8KV-01
-#             logging_server_source_interface: Loopback511
-#             ntp_server_source_interface: Loopback511
-#             global_cdp_enable: true
-#             global_lldp_enable: false
-#             global_ip_domain_lookup_enable: true
-#             snmp_shutdown: false
-#             snmp_trap_source_interface: Loopback511
-#             snmp_contact: contact@acme.com
-#             snmp_location: Location 2101
-#             system_location: Site2101
-#             system_description: Site 2101 C8KV01
-#             timezone: UTC
-#             system_latitude: 38.1
-#             system_longitude: -1.9
-#             ondemand_tunnel_enable: false
-#             ondemand_tunnel_idle_timeout: 10
-#             vpn0_nexthop1_ip: 172.16.1.254
-#             vpn0_nexthop2_ip: 172.16.2.254
-#             vpn0_dns_primary: 172.16.1.254
-#             vpn0_dns_secondary: 172.16.2.254
-#             vpn0_layer4_ecmp_enable: true
-#             vpn0_tloc01_if_name: GigabitEthernet1
-#             vpn0_tloc01_if_description: INET-1
-#             vpn0_tloc01_if_shutdown: false
-#             vpn0_tloc01_if_ipv4_address: 172.16.1.1/24
-#             vpn0_tloc01_shaping_rate: 1000000
-#             vpn0_tloc01_tunnel_ipsec_preference: 1
-#             vpn0_tloc01_tunnel_weight: 1
-#             vpn0_tloc01_tunnel_color: custom1
-#             vpn0_tloc01_tunnel_group: 100
-#             vpn0_tloc01_tunnel_restrict: false
-#             vpn0_tloc01_tunnel_vmanage_connection_preference: 5
-#             vpn0_tloc02_if_name: GigabitEthernet2
-#             vpn0_tloc02_if_description: MPLS-1
-#             vpn0_tloc02_if_shutdown: false
-#             vpn0_tloc02_if_ipv4_address: 172.16.2.1/24
-#             vpn0_tloc02_shaping_rate: 1000000
-#             vpn0_tloc02_tunnel_ipsec_preference: 1
-#             vpn0_tloc02_tunnel_weight: 1
-#             vpn0_tloc02_tunnel_color: private1
-#             vpn0_tloc02_tunnel_group: 200
-#             vpn0_tloc02_tunnel_restrict: false
-#             vpn0_tloc02_tunnel_vmanage_connection_preference: 5
-#             vpn1_int1_if_name: GigabitEthernet6
-#             vpn1_int1_if_description: VPN1 LAN1
-#             vpn1_int1_if_shutdown: false
-#             vpn1_int1_if_ipv4_address: 10.0.111.1/24
-#             vpn1_bgp_as_number: 64555
-#             vpn1_bgp_shutdown: false
-#             vpn1_bgp_ipv4_maximum_paths: 2
-#             vpn1_bgp_ipv4_neighbor1_address: 10.0.111.13
-#             vpn1_bgp_ipv4_neighbor1_shutdown: false
-#             vpn1_bgp_ipv4_neighbor1_remote_as: 65100
-#             vpn1_bgp_ipv4_neighbor1_password: cisco123
-#             vpn1_bgp_ipv4_neighbor2_address: TEMPLATE_IGNORE
-#             vpn1_bgp_ipv4_neighbor2_shutdown: TEMPLATE_IGNORE
-#             vpn1_bgp_ipv4_neighbor2_remote_as: TEMPLATE_IGNORE
-#             vpn1_bgp_ipv4_neighbor2_password: TEMPLATE_IGNORE
-#             vpn511_int1_if_name: Loopback511
-#             vpn511_int1_if_description: Inband-mgmt
-#             vpn511_int1_if_shutdown: false
-#             vpn511_int1_if_ipv4_address: 10.255.254.101/32
-#             vpn512_int1_if_name: GigabitEthernet3
-#             vpn512_int1_if_description: OOB-mgmt
-#             vpn512_int1_if_shutdown: false
+    - id: 100
+      routers:
+        - chassis_id: C8K-40C0CCFD-9EA8-2B2E-E73B-32C5924EC79B
+          configuration_group: cg1
+          configuration_group_deploy: true
+          tags:
+            - primary-router
+          device_variables:
+            system_ip: 10.0.0.1
+            site_id: 100
+            host_name: SD-DC-C8KV-01
+            pseudo_commit_timer: 300
+            vpn0_inet_ip: 172.16.1.1
+            vpn0_inet_mask: 255.255.255.0
+            vpn0_inet_ipv6: 2001:db8::1/64
+            vpn0_ipv6_sec1_ip: 2001:db8:1::1/64
+            motd_banner: this is motd banner
+            device_access_destination_prefixes:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+            device_access_source_prefixes:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+            vpn512_mgmt_int_ip: 192.168.254.1
+            vpn512_mgmt_int_mask: 255.255.255.0
+            vpn512_mgmt_int_ipv6: fd02::1/64
     - id: 200
       routers:
         - chassis_id: C8K-B5EE117E-1210-C396-EC41-D3DA64D6A51A

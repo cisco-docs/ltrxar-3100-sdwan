@@ -16,6 +16,8 @@ Get Device Template Configuration Apply
 
 {% for router in site.routers | default([]) %}
 
+{% if router.device_template is defined%}
+
 Verify Device Template Configuration Apply {{ router.device_template }} With Chassis Id {{ router.chassis_id }}
 
     ${dt_id}=    Get Value From Json    ${r.json()}    $..data[?(@.templateName=="{{ router.device_template }}")].templateId
@@ -31,6 +33,8 @@ Verify Device Template Configuration Apply {{ router.device_template }} With Cha
     Should Be Equal As Strings    ${r_value[0]}    {{ router.device_variables[key] }}    ignore_case=${True}    msg={{ key }}
 
 {% endfor %}
+
+{% endif %}
 
 {% endfor %}
 

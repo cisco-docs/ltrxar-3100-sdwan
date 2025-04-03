@@ -6,6 +6,76 @@ This includes site and device specific configuration including device variables.
 
 ### Examples
 
+Example-1: The example below shows how to assign router to a single device configuration group, list variables for device-specific fields in features under this configuration group and specify configuration should not be deployed to the device.
+
+```yaml
+sdwan:
+  sites:
+    - id: 1
+      routers:
+        - chassis_id: C8K-3D1A8960-6E76-532C-DA93-50626FC5797E
+          configuration_group: branch_type1
+          configuration_group_deploy: false
+          device_variables:
+            system_ip: 10.0.0.1
+            site_id: 1
+            host_name: Edge1
+            pseudo_commit_timer: 300
+            vpn0_inet_ip: 172.16.1.1
+            vpn0_inet_mask: 255.255.255.0
+            vpn0_inet_sec1_ip: 172.16.1.191
+            vpn0_inet_sec1_mask: 255.255.255.0
+            vpn0_inet_ipv6: 2001:db8::1/64
+            vpn0_ipv6_sec1_ip: 2001:db8:1::1/64
+            motd_banner: this is motd banner
+            device_access_destination_prefixes:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+            device_access_source_prefixes:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+            vpn512_mgmt_int_ip: 192.168.254.1
+            vpn512_mgmt_int_mask: 255.255.255.0
+            vpn512_mgmt_int_ipv6: fd02::1/64
+```
+
+Example-2: The example below shows how to assign router to a dual device configuration group, assign the tag required for dual device configuration group, list variables for device-specific fields in features under this configuration group and specify configuration should be deployed to the device.
+
+```yaml
+sdwan:
+  sites:
+    - id: 1
+      routers:
+        - chassis_id: C8K-3D1A8960-6E76-532C-DA93-50626FC5797E
+          configuration_group: branch_type2
+          configuration_group_deploy: true
+          tags:
+            - primary_router
+          device_variables:
+            system_ip: 10.0.0.1
+            site_id: 1
+            host_name: Edge1
+            pseudo_commit_timer: 300
+            vpn0_inet_ip: 172.16.1.1
+            vpn0_inet_mask: 255.255.255.0
+            vpn0_inet_sec1_ip: 172.16.1.191
+            vpn0_inet_sec1_mask: 255.255.255.0
+            vpn0_inet_ipv6: 2001:db8::1/64
+            vpn0_ipv6_sec1_ip: 2001:db8:1::1/64
+            motd_banner: this is motd banner
+            device_access_destination_prefixes:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+            device_access_source_prefixes:
+              - 10.0.0.0/8
+              - 172.16.0.0/12
+            vpn512_mgmt_int_ip: 192.168.254.1
+            vpn512_mgmt_int_mask: 255.255.255.0
+            vpn512_mgmt_int_ipv6: fd02::1/64
+```
+
+Example 3: The example below shows how to assign router to a device template and list all the variables required for template assignement.
+
 ```yaml
 sdwan:
   sites:

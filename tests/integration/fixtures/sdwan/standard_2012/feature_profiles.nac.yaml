@@ -5,7 +5,6 @@ sdwan:
         config:
           cli_configuration: |
             logging discriminator auth mnemonics drops AUTH_PASSED
-            logging console discriminator auth
       - name: cli2
         description: test cli profile with bgp configuration
         config:
@@ -19,33 +18,6 @@ sdwan:
             !
     other_profiles:
       - name: other1
-        thousandeyes:
-          name: thousandeyes-pac
-          description: thousandeyes feature
-          account_group_token_variable: te_token
-          agent_default_gateway: 10.0.0.1
-          hostname: te-hostname
-          management_ip: 10.0.0.2
-          management_subnet_mask: 255.255.255.252
-          name_server_ip: 1.1.1.1
-          proxy_type: pac
-          pac_proxy_url: https://pac.example.com
-          vpn_id: 0
-        ucse:
-          name: ucse-dedicated
-          description: ucse feature
-          bay: 1
-          slot: 2
-          cimc_access_port_dedicated: true
-          cimc_ipv4_address_variable: imc_ip_mask
-          cimc_default_gateway_variable: imc_gw
-          cimc_vlan_id: 100
-          cimc_assign_priority: 5
-          interfaces:
-            - interface_name: ucse1
-              vpn_id: 1
-              ipv4_address_variable: ucse1_ip_mask
-      - name: other2
         description: full profile
         thousandeyes:
           name: thousandeyes-static
@@ -76,8 +48,35 @@ sdwan:
             - interface_name: ucse1
               vpn_id: 1
               ipv4_address_variable: ucse1_ip_mask
+      - name: other2
+        thousandeyes:
+          name: thousandeyes-pac
+          description: thousandeyes feature
+          account_group_token_variable: te_token
+          agent_default_gateway: 10.0.0.1
+          hostname: te-hostname
+          management_ip: 10.0.0.2
+          management_subnet_mask: 255.255.255.252
+          name_server_ip: 1.1.1.1
+          proxy_type: pac
+          pac_proxy_url: https://pac.example.com
+          vpn_id: 0
+        ucse:
+          name: ucse-dedicated
+          description: ucse feature
+          bay: 1
+          slot: 2
+          cimc_access_port_dedicated: true
+          cimc_ipv4_address_variable: imc_ip_mask
+          cimc_default_gateway_variable: imc_gw
+          cimc_vlan_id: 100
+          cimc_assign_priority: 5
+          interfaces:
+            - interface_name: ucse1
+              vpn_id: 1
+              ipv4_address_variable: ucse1_ip_mask
     policy_object_profile:
-      name: policy_object
+      name: policy_objects
       description: basic policy object profile
       as_path_lists:
         - name: aspath_list10
@@ -143,9 +142,9 @@ sdwan:
             - prefix: fc00::/7
               ge: 64
               le: 120
-      mirror_lists:
+      mirrors:
         - name: mirror
-          description: mirror list
+          description: mirror
           remote_destination_ip: 10.0.0.1
           source_ip: 192.168.1.100
       policers:
@@ -174,7 +173,6 @@ sdwan:
               preference: 50
     service_profiles:
       - name: service1
-      - name: service2
         description: full profile
         dhcp_servers:
           - name: dhcp-server-vpn11
@@ -208,7 +206,7 @@ sdwan:
                 ip_addresses:
                   - 10.10.11.11
         ipv4_tracker_groups:
-          - name: ipv4_tracker_group
+          - name: service_ipv4_tracker_group
             tracker_boolean: or
             trackers:
               - static_route_ip_tracker
@@ -262,53 +260,9 @@ sdwan:
             route_ip: 10.0.0.0
             route_mask: 255.0.0.0
             vpn_id: 1
+      - name: service2
     system_profiles:
       - name: system1
-        aaa:
-          users:
-            - name: admin
-              password: $6$Oz2ydqNXLLDIsPSG$LhogoactFVb9eJgqgv/O/Zb.FHg74drK4maijc.Q9q/KhyDcPfwrHx9Vy6G9hY7oKWbyas4XKms7f7Znl/ndF.
-        banner:
-          login: "simple login banner"
-        basic:
-          name: basic
-        bfd:
-          name: bfd
-        global:
-          name: global
-        logging:
-          name: logging
-        omp:
-          name: omp
-        performance_monitoring:
-          name: perfmonitor
-        security:
-          name: security
-          integrity_types:
-            - esp
-            - ip-udp-esp
-        snmp:
-          name: snmpv2
-          communities:
-            - authorization: read-only
-              name: JpKWRdzbvLeN9NE
-              user_label: com1
-              view: test_view
-          contact_person: person1
-          location: test location
-          shutdown: false
-          trap_target_servers:
-            - ip: 10.1.1.1
-              port: 9999
-              source_interface: Loopback0
-              user_label: com1
-              vpn_id: 1
-          views:
-            - name: test_view
-              oids:
-                - exclude: false
-                  id: 1.3.6.1
-      - name: system2
         description: full profile
         aaa:
           name: aaa_full
@@ -339,7 +293,7 @@ sdwan:
                 - accounting_port: 1000
                   address: 10.0.0.1
                   authentication_port: 1001
-                  key: $CRYPT_CLUSTER$jq34CKAzT5KGdEjIpYarKg==$MZkY/AdOWzm/kiLHOsKHJg==
+                  key: xafmir-tanfeT-6zusty
                   key_type: key
                   retransmit: 50
                   secret_key: 070c285f4d06485744
@@ -352,7 +306,7 @@ sdwan:
               servers:
                 - address: 10.1.1.1
                   port: 49
-                  key: $CRYPT_CLUSTER$jq34CKAzT5KGdEjIpYarKg==$MZkY/AdOWzm/kiLHOsKHJg==
+                  key: xafmir-tanfeT-6zusty
                   secret_key: 070c285f4d06485744
                   timeout: 200
           users:
@@ -416,12 +370,12 @@ sdwan:
           track_default_gateway: true
           track_interface_tag: 11
           track_transport: true
-          transport_gateway: true
+          transport_gateway: false
         bfd:
           name: bfd_full
           description: BFD feature with full configuration
           colors:
-            - color: biz-internet
+            - color: custom1
               default_dscp: 0
               hello_interval: 100000
               multiplier: 3
@@ -525,19 +479,19 @@ sdwan:
           ipv4_servers:
             - hostname_ip: 10.0.0.1
               severity: informational
-              source_interface: Loopback0
+              # source_interface: GigabitEthernet1  ! uncomment when lan/vpn supported
               tls_enable: true
               tls_properties_custom_profile: true
               tls_properties_profile: tls1
-              vpn_id: 511
+              # vpn_id: 0 ! uncomment when lan/vpn supported
           ipv6_servers:
             - hostname_ip: fc00::1
               severity: error
-              source_interface: Loopback0
+              # source_interface: GigabitEthernet1 ! uncomment when lan/vpn supported
               tls_enable: true
               tls_properties_custom_profile: true
               tls_properties_profile: tls1
-              vpn_id: 511
+              # vpn_id: 0 ! uncomment when lan/vpn supported
           tls_profiles:
             - cipher_suites:
                 - aes-128-cbc-sha
@@ -545,29 +499,22 @@ sdwan:
                 - rsa-aes-cbc-sha2
               name: tls1
               tls_version: TLSv1.2
-        mrf:
-          name: mrf_full
-          description: multi-region fabric feature with full configuration
-          migration_to_mrf: enabled
-          migration_bgp_community: 65000
-          role: edge-router
-          secondary_region_id_variable: secondary_region_id
         ntp:
           name: ntp_full
           description: NTP feature with full configuration
-          authentication_keys:
-            - id: 1
-              md5_value_variable: ntp_key
+          # authentication_keys: ! uncomment when encrypted strings are handled properly in the provider
+          #   - id: 1
+          #     md5_value: jYbmu7-honpyq-gamtyk
           authoritative_ntp_server: true
-          authoritative_ntp_server_source_interface: Loopback0
+          # authoritative_ntp_server_source_interface: Loopback0 ! uncomment when lan/vpn supported
           authoritative_ntp_server_stratum: 5
           servers:
             - authentication_key: 1
               hostname_ip: 10.0.0.1
               prefer: true
-              source_interface: Loopback0
+              # source_interface: Loopback0 ! uncomment when lan/vpn supported
               ntp_version: 4
-              vpn_id: 511
+              # vpn_id: 511 ! uncomment when lan/vpn supported
           trusted_keys:
             - 1
         omp:
@@ -659,9 +606,9 @@ sdwan:
           trap_target_servers:
             - ip: 10.1.1.1
               port: 9999
-              source_interface: Loopback0
+              source_interface: GigabitEthernet1
               user: user1
-              vpn_id: 1
+              vpn_id: 0
           users:
             - authentication_password: 31CMd8v0LZZXgmfmB
               authentication_protocol: sha
@@ -674,65 +621,61 @@ sdwan:
               oids:
                 - exclude: false
                   id: 1.3.6.1
+      - name: system2
+        aaa:
+          users:
+            - name: admin
+              password: $6$Oz2ydqNXLLDIsPSG$LhogoactFVb9eJgqgv/O/Zb.FHg74drK4maijc.Q9q/KhyDcPfwrHx9Vy6G9hY7oKWbyas4XKms7f7Znl/ndF.
+        banner:
+          login: "simple login banner"
+        basic:
+          name: basic
+        bfd:
+          name: bfd
+        global:
+          name: global
+        logging:
+          name: logging
+        # Cannot be tested when MRF is disabled in settings
+        # mrf:
+        #   name: mrf_full
+        #   description: multi-region fabric feature with full configuration
+        #   migration_to_mrf: enabled
+        #   migration_bgp_community: 65000
+        #   role: edge-router
+        #   secondary_region_id_variable: secondary_region_id
+        omp:
+          name: omp
+        performance_monitoring:
+          name: perfmonitor
+        security:
+          name: security
+          integrity_types:
+            - esp
+            - ip-udp-esp
+        snmp:
+          name: snmpv2
+          communities:
+            - authorization: read-only
+              name: JpKWRdzbvLeN9NE
+              user_label: com1
+              view: test_view
+          contact_person: person1
+          location: test location
+          shutdown: false
+          trap_target_servers:
+            - ip: 10.1.1.1
+              port: 9999
+              source_interface: Loopback0
+              user_label: com1
+              vpn_id: 1
+          views:
+            - name: test_view
+              oids:
+                - exclude: false
+                  id: 1.3.6.1
     transport_profiles:
       - name: transport1
-        ipv4_trackers:
-          - name: ipv4_ip_tracker
-            description: IP Tracker
-            endpoint_ip: 10.0.0.1
-            interval: 60
-            multiplier: 2
-            threshold: 500
-            tracker_name: transport_ipv4_ip_tracker
-        ipv6_trackers:
-          - name: ipv6_ip_tracker
-            description: IP Tracker
-            endpoint_ip: fc00::1
-            interval: 60
-            multiplier: 2
-            threshold: 500
-            tracker_name: transport_ipv6_ip_tracker
-        management_vpn:
-          name: management_vpn
-          ethernet_interfaces:
-            - name: management_interface
-              interface_name: GigabitEthernet6
-              ipv4_configuration_type: dynamic
-              ipv4_dhcp_distance: 1
-              ipv6_configuration_type: dynamic
-        wan_vpn:
-          ethernet_interfaces:
-            - name: inet_tloc_with_nat_loopback
-              interface_name: GigabitEthernet1
-              ipv4_configuration_type: dynamic
-              ipv4_dhcp_distance: 1
-              ipv4_nat: true
-              ipv4_nat_type: loopback
-              ipv4_nat_loopback_interface: Loopback0
-              ipv4_tracker: ipv4_ip_tracker
-              ipv6_configuration_type: dynamic
-              ipv6_secondary_addresses:
-                - address_variable: vpn0_ipv6_sec1_ip
-              ipv6_nat: true
-              ipv6_nat_type: nat64
-              ipv6_tracker: ipv6_ip_tracker
-              shaping_rate: 1000000
-              tloc_extension: GigabitEthernet2
-              tunnel_interface:
-                per_tunnel_qos: true
-                per_tunnel_qos_bandwidth_percent: 50
-                per_tunnel_qos_mode: hub
-            - name: inet_tloc_with_nat_pool
-              interface_name: GigabitEthernet2
-              ipv4_configuration_type: dynamic
-              ipv4_dhcp_distance: 1
-              ipv4_nat: true
-              ipv4_nat_type: pool
-              ipv4_nat_pool_overload: true
-              ipv4_nat_pool_prefix_length_variable: ipv4_nat_pool_pfx_len
-              ipv4_nat_pool_range_end_variable: ipv4_nat_pool_range_end
-              ipv4_nat_pool_range_start_variable: ipv4_nat_pool_range_start
-      - name: transport2
         description: full profile
         ipv4_tracker_groups:
           - name: ipv4_tracker_group
@@ -802,15 +745,14 @@ sdwan:
                   mac_address: 00:00:00:00:00:01
               arp_timeout: 300
               auto_detect_bandwidth: false
-              autonegotiate: true
-              duplex: full
+              autonegotiate: false
               icmp_redirect_disable: false
               interface_description: management interface
               interface_mtu: 1500
               interface_name: GigabitEthernet6
               ip_directed_broadcast: false
               ip_mtu: 1500
-              iperf_server: ping.online.net
+              iperf_server: 51.158.1.21
               ipv4_address_variable: vpn512_mgmt_int_ip
               ipv4_configuration_type: static
               ipv4_dhcp_helpers:
@@ -824,7 +766,6 @@ sdwan:
               ipv6_address_variable: vpn512_mgmt_int_ipv6
               load_interval: 30
               mac_address: 00:00:00:00:00:02
-              media_type: auto-select
               shutdown: false
               speed: 10000
               tcp_mss: 1460
@@ -885,9 +826,6 @@ sdwan:
               bandwidth_downstream: 1000000
               bandwidth_upstream: 1000000
               block_non_source_ip: false
-              duplex: full
-              gre_tloc_extension_source_ip_variable: gi1_gre_tloc_ext_src_ip
-              gre_tloc_extension_xconnect_variable: gi1_gre_tloc_ext_xconnect
               icmp_redirect_disable: false
               interface_mtu: 1500
               interface_name: GigabitEthernet1
@@ -900,41 +838,29 @@ sdwan:
               ipv4_dhcp_helpers:
                 - 172.16.1.254
                 - 172.16.1.253
-              ipv4_egress_acl: vpn0_ipv4_acl_out
-              ipv4_ingress_acl: vpn0_ipv4_acl_in
+              # ipv4_egress_acl: vpn0_ipv4_acl_out ! uncomment when acl supported
+              # ipv4_ingress_acl: vpn0_ipv4_acl_in ! uncomment when acl supported
               ipv4_nat: true
               ipv4_nat_type: interface
               ipv4_nat_tcp_timeout: 1200
               ipv4_nat_udp_timeout: 1200
-              ipv4_secondary_addresses:
-                - address_variable: vpn0_inet_sec1_ip
-                  subnet_mask_variable: vpn0_inet_sec1_mask
-              ipv4_nat_static_entries:
-                - direction: inside
-                  source_ip_variable: vpn0_ipv4_nat_source_ip
-                  source_vpn_id: 10
-                  translate_ip_variable: vpn0_ipv4_nat_translate_ip
+              # ipv4_nat_static_entries: ! uncomment when lan/vpn supported
+              #   - direction: inside
+              #     source_ip_variable: vpn0_ipv4_nat_source_ip
+              #     source_vpn_id: 10
+              #     translate_ip_variable: vpn0_ipv4_nat_translate_ip
               ipv4_tracker_group: ipv4_tracker_group
               ipv4_subnet_mask_variable: vpn0_inet_mask
               ipv6_configuration_type: static
               ipv6_address_variable: vpn0_inet_ipv6
               ipv6_egress_acl: vpn0_ipv6_acl_out
               ipv6_ingress_acl: vpn0_ipv6_acl_in
-              ipv6_nat: true
-              ipv6_nat_type: nat66
-              ipv6_nat66_static_entries:
-                - source_prefix_variable: vpn0_ipv6_nat66_source_prefix
-                  source_vpn_id: 10
-                  translate_prefix_variable: vpn0_ipv6_nat66_translate_prefix
               ipv6_secondary_addresses:
                 - address_variable: vpn0_ipv6_sec1_ip
               ipv6_tracker_group: ipv6_tracker_group
               load_interval: 30
-              mac_address: 00:00:00:00:00:22
-              media_type: auto-select
               service_provider: sp1
               shutdown: false
-              speed: 1000
               tcp_mss: 1460
               tunnel_interface:
                 allow_service_all: false
@@ -950,18 +876,16 @@ sdwan:
                 allow_service_snmp: false
                 allow_service_ssh: false
                 allow_service_stun: false
-                bind_loopback_tunnel: Loopback1
                 border: false
                 carrier: default
                 clear_dont_fragment: false
-                color: biz-internet
+                color: custom1
                 cts_sgt_propagation: false
                 exclude_controller_groups:
                   - 1
                   - 2
                 gre_encapsulation: true
                 gre_preference: 200
-                gre_tunnel_destination_ip_variable: vpn0_gre_tunnel_dest_ip
                 gre_weight: 200
                 group: 1
                 hello_interval: 1000
@@ -979,13 +903,18 @@ sdwan:
                 tcp_mss: 1460
                 vbond_as_stun_server: false
                 vmanage_connection_preference: 5
+            - name: mpls_tloc
+              description: MPLS TLOC
+              interface_name: GigabitEthernet2
+              ipv4_address_variable: vpn0_mpls_ip
+              ipv4_subnet_mask_variable: vpn0_mpls_mask
           host_mappings:
-            - hostname: vbond.local
+            - hostname: vbond-tmp.local
               ips:
                 - 10.0.0.1
                 - 10.0.0.2
-          ipv4_primary_dns_address: 1.1.1.1
-          ipv4_secondary_dns_address: 1.0.0.1
+          ipv4_primary_dns_address: 172.16.1.254
+          ipv4_secondary_dns_address: 172.16.2.254
           ipv4_static_routes:
             - gateway: nextHop
               network_address: 0.0.0.0
@@ -1009,9 +938,6 @@ sdwan:
               next_hops:
                 - address: 2001:db8:2::1
                   administrative_distance: 1
-            - prefix: fc01::0/64
-              gateway: nat
-              nat: NAT66
             - prefix: fc02::0/64
               gateway: null0
           nat_64_v4_pools:
@@ -1019,3 +945,84 @@ sdwan:
               overload: true
               range_end: 192.168.100.100
               range_start: 192.168.100.1
+      - name: transport2
+        ipv4_trackers:
+          - name: ipv4_ip_tracker
+            description: IP Tracker
+            endpoint_ip: 10.0.0.1
+            interval: 60
+            multiplier: 2
+            threshold: 500
+            tracker_name: transport_ipv4_ip_tracker
+        ipv6_trackers:
+          - name: ipv6_ip_tracker
+            description: IP Tracker
+            endpoint_ip: fc00::1
+            interval: 60
+            multiplier: 2
+            threshold: 500
+            tracker_name: transport_ipv6_ip_tracker
+        management_vpn:
+          name: management_vpn
+          ethernet_interfaces:
+            - name: management_interface
+              duplex: full
+              interface_name: GigabitEthernet6
+              ipv4_configuration_type: dynamic
+              ipv4_dhcp_distance: 1
+              ipv6_configuration_type: dynamic
+              media_type: auto-select
+        wan_vpn:
+          ethernet_interfaces:
+            - name: inet_tloc_with_nat_loopback
+              duplex: full
+              interface_name: GigabitEthernet1
+              ipv4_configuration_type: dynamic
+              ipv4_dhcp_distance: 1
+              ipv4_nat: true
+              ipv4_nat_type: loopback
+              ipv4_nat_loopback_interface: Loopback0
+              ipv4_tracker: ipv4_ip_tracker
+              ipv6_configuration_type: dynamic
+              ipv6_secondary_addresses:
+                - address_variable: vpn0_ipv6_sec1_ip
+              ipv6_nat: true
+              ipv6_nat_type: nat64
+              ipv6_tracker: ipv6_ip_tracker
+              mac_address: 00:00:00:00:00:22
+              media_type: auto-select
+              shaping_rate: 1000000
+              tloc_extension: GigabitEthernet2
+              tunnel_interface:
+                bind_loopback_tunnel: Loopback1
+                gre_tunnel_destination_ip_variable: vpn0_gre_tunnel_dest_ip
+                per_tunnel_qos: true
+                per_tunnel_qos_bandwidth_percent: 50
+                per_tunnel_qos_mode: hub
+            - name: inet_tloc_with_nat_pool
+              interface_name: GigabitEthernet2
+              gre_tloc_extension_source_ip_variable: gi1_gre_tloc_ext_src_ip
+              gre_tloc_extension_xconnect_variable: gi1_gre_tloc_ext_xconnect
+              ipv4_configuration_type: static
+              ipv4_address_variable: vpn0_inet_ip
+              ipv4_subnet_mask_variable: vpn0_inet_mask
+              ipv4_nat: true
+              ipv4_nat_type: pool
+              ipv4_nat_pool_overload: true
+              ipv4_nat_pool_prefix_length_variable: ipv4_nat_pool_pfx_len
+              ipv4_nat_pool_range_end_variable: ipv4_nat_pool_range_end
+              ipv4_nat_pool_range_start_variable: ipv4_nat_pool_range_start
+              ipv4_secondary_addresses:
+                - address_variable: vpn0_inet_sec1_ip
+                  subnet_mask_variable: vpn0_inet_sec1_mask
+              ipv6_nat: true
+              ipv6_nat_type: nat66
+              ipv6_nat66_static_entries:
+                - source_prefix_variable: vpn0_ipv6_nat66_source_prefix
+                  source_vpn_id: 10
+                  translate_prefix_variable: vpn0_ipv6_nat66_translate_prefix
+              speed: 1000
+          ipv6_static_routes:
+            - prefix: fc01::0/64
+              gateway: nat
+              nat: NAT66

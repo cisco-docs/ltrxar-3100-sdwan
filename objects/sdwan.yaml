@@ -318,6 +318,10 @@ objects:
     template: intrusion_prevention_definition
     folder: security_policies
     paths: [sdwan.security_policies.definitions.intrusion_prevention]
+  - name: Configuration Group
+    template: configuration_group
+    folder: configuration_groups
+    paths: [sdwan.configuration_groups]
   - name: CLI Profile
     template: cli
     folder: feature_profiles
@@ -516,10 +520,10 @@ objects:
     template: ipv6_prefix_list
     folder: policy_objects
     paths: [sdwan.feature_profiles.policy_object_profile.ipv6_prefix_lists]
-  - name: Mirror List
-    template: mirror_list
+  - name: Mirror
+    template: mirror
     folder: policy_objects
-    paths: [sdwan.feature_profiles.policy_object_profile.mirror_lists]
+    paths: [sdwan.feature_profiles.policy_object_profile.mirrors]
   - name: Policer
     template: policer
     folder: policy_objects

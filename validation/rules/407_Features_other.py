@@ -1,5 +1,5 @@
 class Rule:
-    id = "406"
+    id = "407"
     description = "Validate other features"
     severity = "HIGH"
 

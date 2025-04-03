@@ -46,6 +46,8 @@ class Rule:
                     if interface.get("ipv6_configuration_type", "none") == "static":
                         if "ipv6_address" not in interface and "ipv6_address_variable" not in interface:
                             results.append(f"ipv6_configuration type is static but ipv6_address is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn[{management_vpn_feature.get('name', 'management_vpn')}].ethernet_interfaces[{interface.get('name')}]")
+                    if interface.get("autonegotiate") and interface.get("speed"):
+                        results.append(f"autonegotiate is true but speed is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn[{management_vpn_feature.get('name', 'management_vpn')}].ethernet_interfaces[{interface.get('name')}]")
             # Validate wan_vpn feature
             wan_vpn_feature = feature_profile.get("wan_vpn", {})
             if wan_vpn_feature:
@@ -107,6 +109,8 @@ class Rule:
                         for key in interface.keys():
                             if key.startswith("ipv6_nat") or key.startswith("ipv6_nat66"):
                                 results.append(f"ipv6_nat is false but {key} is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ethernet_interfaces[{interface.get('name')}]")
+                    if interface.get("autonegotiate") and interface.get("speed"):
+                        results.append(f"autonegotiate is true but speed is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ethernet_interfaces[{interface.get('name')}]")
                     tunnel_interface = interface.get("tunnel_interface", {})
                     if tunnel_interface:
                         if tunnel_interface.get("gre_encapsulation", False) == False:

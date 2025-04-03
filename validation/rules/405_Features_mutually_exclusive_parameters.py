@@ -1,7 +1,7 @@
 import ruamel.yaml
 
 class Rule:
-    id = "404"
+    id = "405"
     description = "Features mutually exclusive parameters"
     severity = "HIGH"
 

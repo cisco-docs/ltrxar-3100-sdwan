@@ -24,6 +24,7 @@ class Rule:
         "sdwan.security_policies.feature_policies.name",
         "sdwan.security_policies.definitions.zone_based_firewall.name",
         "sdwan.security_policies.definitions.intrusion_prevention.name",
+        "sdwan.configuration_groups.name"
     ]
 
     # Verify unique feature template names per type

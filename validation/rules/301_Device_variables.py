@@ -104,16 +104,19 @@ class Rule:
         for site in inventory.get('sdwan', {}).get('sites', {}):
             for router in site['routers']:
                 # Verify missing vars in the router
-                if router['device_template'] in device_template_var_dict:
-                    for var in device_template_var_dict[router['device_template']]:
-                        if var not in router['device_variables']:
-                            results.append(router['chassis_id'] + " - " + router['device_template'] + " - missing variable: " + var)
-                    # Verify if the router has unnecessary vars - can the severity be set to warning or minor?
-                    for var in router['device_variables']:
-                        if var not in device_template_var_dict[router['device_template']]:
-                            results.append(router['chassis_id'] + " - " + router['device_template'] + " - unnecessary variable: " + var)
-                else:
-                    results.append("Router device template not found: " + router['device_template'])
+                if 'device_template' in router:
+                    if "model" not in router:
+                        results.append(router['chassis_id'] + " - missing model")
+                    if router['device_template'] in device_template_var_dict:
+                        for var in device_template_var_dict[router['device_template']]:
+                            if var not in router['device_variables']:
+                                results.append(router['chassis_id'] + " - " + router['device_template'] + " - missing variable: " + var)
+                        # Verify if the router has unnecessary vars - can the severity be set to warning or minor?
+                        for var in router['device_variables']:
+                            if var not in device_template_var_dict[router['device_template']]:
+                                results.append(router['chassis_id'] + " - " + router['device_template'] + " - unnecessary variable: " + var)
+                    else:
+                        results.append("Router device template not found: " + router['device_template'])
         return results
 
     @classmethod

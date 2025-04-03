@@ -1,4 +1,4 @@
-# Mirror Lists
+# Mirror
 
 Specify configuration for packet mirroring.
 
@@ -10,7 +10,7 @@ Specify configuration for packet mirroring.
 sdwan:
   feature_profiles:
     policy_object_profile:
-      mirror_lists:
+      mirrors:
         - name: mirror
           remote_destination_ip: 10.0.0.1
           source_ip: 192.168.1.100
