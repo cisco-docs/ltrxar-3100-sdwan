@@ -8,72 +8,94 @@ For example, a custom sequence in a data policy might include rules to identify 
 
 ### Examples
 
+Example-1: This example demonstrates how to configure Traffic Data policy, which matching traffic based on Application Group (VOICE-APPS and BUSINESS-APPS, etc) and applying Quality of Service (QoS) action (defining forwarding class and DSCP value), and for the low priority applications steering traffic to specific transport with restrict option enabled. Each sequence has also counter configured.
+
 ```yaml
 sdwan:
   centralized_policies:
     definitions:
-      data_policy:
-        traffic_data:
-          - name: Uplink_Selection_for_DIA
-            description: Prefer Particular Uplink for Direct Internet Access
-            default_action_type: reject
+          - name: DP-VPN10-01
+            description: DP-VPN10-01
+            default_action_type: accept
             sequences:
               - base_action: accept
-                id: 5
-                name: rule5
+                id: 1
+                name: TRAFFIC-QOS
                 ip_type: ipv4
                 type: custom
                 match_criterias:
-                  application_list: APP-LIST-TD-TEST2
-                  dns_application_list: APP-LIST-TD-TEST2
-                  dns: request
-                  dscp: 54
-                  packet_length: 1150
-                  plp: high
-                  protocols:
-                    - 89
-                    - 90
-                    - 91
-                  source_data_prefix_list: PREFIX-LIST-TD-TEST2
-                  source_data_prefix: 10.2.1.0/24
-                  source_ports:
-                    - 676
-                    - 53
-                  source_port_ranges:
-                    - from: 1001
-                      to: 2000
-                    - from: 3001
-                      to: 4000
-                  destination_data_prefix_list: PREFIX-LIST-TD-TEST1
-                  destination_data_prefix: 10.1.1.0/24
-                  destination_ports:
-                    - 676
-                    - 53
-                  destination_port_ranges:
-                    - from: 1001
-                      to: 2000
-                    - from: 3001
-                      to: 4000
-                  tcp: 'syn'
-                  traffic_to: access
+                  application_list: VOICE-APPS
                 actions:
-                  nat_vpn: 
-                    vpn_id: 0
-                    nat_vpn_fallback: false
-                  redirect_dns:
-                    type: ipAddress
-                    ip_address: 8.2.2.2
-                  appqoe_optimization:
-                    tcp: true
-                    dre: true
-                    service_node_group: SNG-APPQOE21
-                  dscp: 42
-                  forwarding_class: video_live
-                  local_tloc_list: 
-                    restrict: true
-                    colors:
-                      - custom1
-                      - custom2
-                    encaps:
+                  counter_name: DP-VOICE-APPS
+                  forwarding_class: CLASS-REALTIME
+                  dscp: 46
+              - base_action: accept
+                id: 2
+                name: TRAFFIC-QOS
+                ip_type: ipv4
+                type: custom
+                match_criterias:
+                  application_list: BUSINESS-APPS
+                actions:
+                  counter_name: DP-BUSINESS
+                  forwarding_class: CLASS-BUSINESS
+                  dscp: 26
+              - base_action: accept
+                id: 3
+                name: TRAFFIC-QOS
+                ip_type: ipv4
+                type: custom
+                match_criterias:
+                  application_list: BULK-APPS
+                actions:
+                  counter_name: DP-BULK
+                  forwarding_class: CLASS-BULK
+                  dscp: 10
+              - base_action: accept
+                id: 4
+                name: LOW-Priority-TLOC
+                ip_type: ipv4
+                type: custom
+                match_criterias:
+                  application_list: LOW-PRIORITY-APPS
+                actions:
+                  counter_name: DP-LOW-PRIORITY
+                  forwarding_class: CLASS-LOW-PRIORITY
+                  dscp: 8
+                  local_tloc_list:
+                    colors: 
+                      - "biz-internet"
+                    encaps: 
                       - ipsec
+                    restrict: true
+```
+
+Example-2: This example demonstrates how to configure Traffic Data policy for Direct internet access usecase (Guest VPN). It is matching on data prefix list to drop traffic to spesific destinations and in another sequence steering traffic to the VPN 0 with nat_vpn action.
+
+```yaml
+          - name: DP-VPN-02
+            description: DP-VPN-GUEST
+            default_action_type: accept
+            sequences:
+              - base_action: drop
+                id: 1
+                name: BOGON DROP
+                ip_type: ipv4
+                type: custom
+                match_criterias:
+                  destination_data_prefix_list: DPL-BOGON-ADDR
+                actions:
+                  counter_name: DPL-BOGON-ADDR-DROP
+              - base_action: accept
+                id: 10
+                name: DIA
+                ip_type: ipv4
+                type: custom
+                match_criterias:
+                  source_data_prefix: 0.0.0.0/0
+                actions:
+                  counter_name: DPL-DIA
+                  nat_vpn:
+                    vpn_id: 0
+
 ```

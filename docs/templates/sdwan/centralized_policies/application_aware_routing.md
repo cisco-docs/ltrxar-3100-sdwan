@@ -1,10 +1,12 @@
 # Traffic Data - Application Aware Routing
 
-Application Aware Routing Definition define the matching conditions and Actions to configure Application Aware Routing
+Application Aware Routing Definitions configure sequences of match-action pairs for dynamic traffic steering based on path characteristics of the data plane tunnels.
 
 {{ doc_gen }}
 
 ### Examples
+
+Example-1: This example demonstrates how to configure Application Aware Routing policy, which matching traffic based on Application Group (VOICE-APPS and BUSINESS-APPS, etc) and as an actions applying target SLA classes together with preferred color (or color group) with option of fallback to the best path (transport) in case SLA is not met. Each sequence has counter enabled.
 
 ```yaml
 sdwan:
@@ -12,39 +14,68 @@ sdwan:
     definitions:
       data_policy:
         application_aware_routing:
-          - name: Test_application_aware_routing_number2
-            description: Test_application_aware_routing_number2
+          - name: AAR-Policy-v01
+            description: General AAR policy
             default_action_type:
               sla_class_list: default
             sequences:
               - id: 1
-                name: aar_rule
+                name: AAR-VOICE
                 ip_type: ipv4
                 type: app_route
                 match_criterias:
-                  application_list: APP-LIST-TD-TEST3
-                  cloud_saas_application_list: APP-LIST-TD-TEST3
-                  dns_application_list: APP-LIST-TD-TEST3
-                  dns: request
-                  dscp: 54
-                  plp: high
-                  protocols:
-                    - 6
-                  source_data_prefix_list: PREFIX-LIST-AAR-TEST3
-                  source_data_prefix: 10.1.1.0/24
-                  source_ports:
-                    - 676
-                  destination_data_prefix_list: PREFIX-LIST-AAR-TEST4
-                  destination_data_prefix: 10.2.1.0/24
-                  destination_ports:
-                    - 676
-                  traffic_to: core
-                  destination_region: primary-region
+                  application_list: VOICE-APPS
                 actions:
-                  counter_name: abc
-                  log: true
+                  counter_name: AAR-VOICE-APP
                   sla_class_list:
-                    sla_class_list: Best-Effort-AAR
-                    preferred_color_group: test_pref_color_group_2
-                  cloud_sla: true
+                    sla_class_list: SLA-VOICE
+                    preferred_colors:
+                      - "mpls"
+                    when_sla_not_met: fallback_to_best_path
+              - id: 2
+                name: BUSINES-APPS
+                ip_type: ipv4
+                type: app_route
+                match_criterias:
+                  application_list: BUSINESS-APPS
+                actions:
+                  counter_name: AAR-BUSINESS-APPS
+                  sla_class_list:
+                    sla_class_list: SLA-BUSINESS
+                    preferred_color_group: MPLS-BIZ
+                    when_sla_not_met: fallback_to_best_path
+              - id: 3
+                name: BULK-APPS
+                ip_type: ipv4
+                type: app_route
+                match_criterias:
+                  application_list: BULK-APPS
+                actions:
+                  counter_name: AAR-BULK-APPS
+                  sla_class_list:
+                    sla_class_list: SLA-BULK
+                    preferred_colors:
+                      - "biz-internet"
+                    when_sla_not_met: fallback_to_best_path
+              - id: 4
+                name: SLA-LOW-PRIORITY
+                ip_type: ipv4
+                type: app_route
+                match_criterias:
+                  application_list: LOW-PRIORITY-APPS
+                actions:
+                  counter_name: AAR-LOW-PRIORITY
+              - id: 5
+                name: Default
+                ip_type: ipv4
+                type: app_route
+                match_criterias:
+                  source_data_prefix: 0.0.0.0/0
+                actions:
+                  counter_name: AAR-Default
+                  sla_class_list:
+                    sla_class_list: SLA-DEFAULT
+                    preferred_colors:
+                      - "biz-internet"
+                    when_sla_not_met: fallback_to_best_path    
 ```
