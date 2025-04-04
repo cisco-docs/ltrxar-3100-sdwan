@@ -1,10 +1,18 @@
 # Banner Feature Template
 
 Configure the login banner or message-of-the-day banner.
+The purpose of a "Message of the Day" (MOTD) banner is to display a temporary message to all users connecting to a device before they authenticate, often used for legal notices, security warnings, or system status updates
+
+The purpose of a Login banners is to display a message to users attempting to log in, often used for security warnings or legal notices
+* Name and description fields are mandatory, both fields are string type.
+* Device_type is used to limit the devices this template can be applied to. Field type is enum.
+* login and motd fields contains the message and must be enclosed by single quotes.
 
 {{ doc_gen }}
 
+
 ### Examples
+Examples-1: Use single quoted YAML strings when the login or motd banner contains escape sequences like \r , \t, \n etc.
 
 ```yaml
 sdwan:
@@ -30,4 +38,20 @@ sdwan:
         motd_variable: motd_banner_variable1
 ```
 
-Note: use single quoted YAML strings when the login or motd banner contains escape sequences like \r , \t, \n etc.
+
+
+Examples-2: Use ASCII Hex to add line feed and carriage return. ASCII Hex \x0A Line feed, ASCII Hex \x0D Carriage return.
+
+```yaml
+sdwan:
+  edge_feature_templates:
+    banner_templates:
+      - name: Customer_Banner
+        description: Customer Banner
+        device_types:
+          - C8000V
+          - ISR-4331
+        login: 'Login**********************************************************************\\x0d\\x0aLogin next line'
+        motd: 'MOTD***************************************************************\\x0d\\x0aMOTD next line'  
+```
+
