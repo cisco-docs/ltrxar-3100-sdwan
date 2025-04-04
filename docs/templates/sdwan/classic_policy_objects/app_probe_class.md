@@ -6,15 +6,18 @@ An application probe class (app-probe-class) defines the forwarding class and DS
 
 ### Examples
 
+Example-1 : The below example shows an app_probe_class configured for REALTIME applications.
+forwarding_class has been referenced to CLASS-REALTIME class map which has been already defined as a policy object.
+The color of the tloc is public-internet and dscp marking has been set to 46.
+
 ```yaml
 sdwan:
   policy_objects:
     app_probe_classes:
-      - name: low-latency-data-probe
-        forwarding_class: transactional-data
-        mappings:
-          - color: custom1
-            dscp: 0
-          - color: private1
-            dscp: 41
+      - name: REALTIME_PROBE
+        forwarding_class: CLASS-REALTIME
+        mappings: 
+          - color: public-internet
+            dscp: 46
+        
 ```
