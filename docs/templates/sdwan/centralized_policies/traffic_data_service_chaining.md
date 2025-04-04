@@ -1,64 +1,30 @@
 # Traffic Data - Service Chaining Definition
 
-Service Chaining Definition define the matching conditions and Actions to configure Service Chaining
+Service Chaining Definition define the matching conditions and Actions to configure Service Chaining. Example usage is traffic between branch sides is force via FW that is connected to hub or regional firewall. It requires that service chaining is defined in respective VPN template for device that connect to external entity (firewall or IDS). 
 
 {{ doc_gen }}
 
 ### Examples
-
+ 
+Example-1: A simple data policy that matches all traffic from VPN 20 and forces it via FW service insertion.
 ```yaml
 sdwan:
   centralized_policies:
     definitions:
       data_policy:
         traffic_data:
-          - name: Test_control_number1
-            description: Test_control_number1
+          - name: NAC-DATA-POLICY-BRANCH-VPN20-v1
+            description: Data policy for branch VPN 20
             default_action_type: accept
             sequences:
               - base_action: accept
-                id: 2
-                name: rule2
+                id: 11
+                name: Default
                 ip_type: ipv4
                 type: service_chaining
-                match_criterias:
-                  application_list: APP-LIST-TD-TEST2
-                  dscp: 54
-                  packet_length: 1150
-                  plp: high
-                  protocols:
-                    - 89
-                    - 90
-                    - 91
-                  source_data_prefix_list: PREFIX-LIST-TD-TEST2
-                  source_data_prefix: 10.2.1.0/24
-                  source_ports:
-                    - 676
-                    - 53
-                  source_port_ranges:
-                    - from: 1001
-                      to: 2000
-                    - from: 3001
-                      to: 4000
-                  destination_data_prefix_list: PREFIX-LIST-TD-TEST1
-                  destination_data_prefix: 10.1.1.0/24
-                  destination_ports:
-                    - 676
-                    - 53
-                  destination_port_ranges:
-                    - from: 1001
-                      to: 2000
-                    - from: 3001
-                      to: 4000
-                  tcp: 'syn'
                 actions:
-                  log: true
-                  counter_name: LOGGER-TD-TEST2
+                  counter_name: ServiceInsertion
                   service:
                     type: FW
-                    vpn: 62
-                    tloc:
-                      ip: 10.59.160.1
-                      color: custom1
-                      encap: ipsec 
+                    vpn: 20
 ```
