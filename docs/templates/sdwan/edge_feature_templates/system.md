@@ -6,6 +6,14 @@ Configure basic system information, such as site ID, system IP, time zone, hostn
 
 ### Examples
 
+Example-1 : SD-WAN Edge System Template: Base Configuration for CEDGE
+
+The system_templates section within edge_feature_templates defines foundational system settings for SD-WAN edge devices. These templates provide standardized configurations that can be applied across multiple edge devices, ensuring consistency and automation in deployment.
+
+The template, named FT-CEDGE-SYSTEM-01, acts as a base system template for configuring Cisco Edge (CEDGE) devices with essential system-level parameters. It includes settings for timezone, system descriptions, location-based variables (latitude & longitude), hostname, system IP, and idle timeouts. Additionally, it enables on-demand tunnels with an idle timeout configuration, ensuring that resources are optimized when tunnels are not actively used.
+
+Furthermore, the template includes an endpoint tracker for monitoring static routes, which helps maintain network resiliency by tracking predefined endpoints. The static route tracker operates with a 300ms threshold, a 20-second interval, and a multiplier of 1, ensuring that the system detects failures and adapts accordingly.
+
 ```yaml
 sdwan:
   edge_feature_templates:
