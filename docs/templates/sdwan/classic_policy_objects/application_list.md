@@ -1,6 +1,6 @@
 # Application List
 
-A `application list` groups one or more applications or application familes into a named application list which can be used in centralized policies.
+An `application list` groups one or more applications or application familes into a named application list which can be used in centralized policies.
 
 {{ doc_gen }}
 
