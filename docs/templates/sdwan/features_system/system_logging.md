@@ -6,6 +6,7 @@ Configure logging to disk and/or to a remote logging server.
 
 ### Examples
 
+Example-1: This example is showing a basic logging to two Syslog servers. It is logging informational level and below. It is using in-band management VPN and a loopback interface as a source.
 ```yaml
 sdwan:
   feature_profiles:
@@ -17,11 +18,11 @@ sdwan:
           description: "Base Logging template; no TLS"
           ipv4_servers:
             - hostname_ip: 172.16.0.11
-              severity: warn
-              source_interface_variable: logging_server_source_interface
-              vpn_id_variable: logging_vpn_id
+              severity: information
+              source_interface: Loopback511
+              vpn_id: 511
             - hostname_ip: 172.16.0.12
-              severity: warn
-              source_interface: Loopback0
+              severity: information
+              source_interface: Loopback511
               vpn_id: 511
 ```
