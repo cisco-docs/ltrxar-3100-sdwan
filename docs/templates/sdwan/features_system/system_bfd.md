@@ -5,6 +5,7 @@ Specify the BFD app-route multiplier and poll interval and specify the hello and
 {{ doc_gen }}
 
 ### Examples
+Example-1: This example shows how to configure BFD feature with multiplier, poll interval and two colors—one with a default DSCP value and the other with a hello interval.
 
 ```yaml
 sdwan:
