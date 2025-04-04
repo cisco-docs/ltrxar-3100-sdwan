@@ -1,12 +1,13 @@
 # Cflowd Definition
 
-Cflowd monitors traffic flowing through Cisco IOS XE SD-WAN devices in the overlay network and exports flow information to a collector.
-
-A Cflowd policy defines a configuration template used to define settings and parameters for collecting flow data from network traffic. A data policy that defines traffic match parameters and that includes the action "cflowd" is required to effectively export flow information based on the parameters defined by the Cflowd template.
+The example below shows definition of cflowd policy definition.
 
 {{ doc_gen }}
 
 ### Examples
+
+Example-1: In the below example , cflows policy has been defined to use timeouts for active,inactive flows in seconds.The sampling rate has been set to 30 seconds and flow refresh to 60seconds.
+There are two collectors defined one in each of service vpn 112 and 101 respectively.For each of the collector , IP address , port number and source_interface has been defined.
 
 ```yaml
 sdwan:
