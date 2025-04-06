@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Documentation     Verify fqdn lits
 Suite Setup       Login SDWAN Manager
 Suite Teardown    Run On Last Process   Logout SDWAN Manager

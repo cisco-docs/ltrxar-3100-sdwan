@@ -1,4 +1,4 @@
-*** Setting ***
+*** Settings ***
 Documentation     Verify the Intrusion Prevention Policies
 Suite Setup       Login SDWAN Manager
 Suite Teardown    Run On Last Process   Logout SDWAN Manager
