@@ -6,58 +6,33 @@ QOS Definition define the matching conditions and Actions to configure QOS polic
 
 ### Examples
 
+Example-1: Prioritizing VoIP Traffic with DSCP Tagging and Forwarding Class Assignment.
+
+A healthcare organization uses cloud-based VoIP applications for internal and patient-related communications. To ensure voice traffic always receives the highest quality of service (QoS), the organization wants to implement a centralized data policy that matches VoIP traffic based on DSCP marking and forwards it using a high-priority forwarding class.This is done by defining a traffic data policy that includes a sequence matching DSCP-marked packets for VoIP (e.g., EF = DSCP 46), and taking actions to assign a high-priority forwarding class (voice), along with enabling flow logging for troubleshooting and analytics.
+
+The YAML defines a centralized data policy named Voice_Traffic_QoS, aimed at prioritizing voice traffic. It includes a description highlighting its QoS intent and sets the default action to drop to strictly filter unmatched traffic. Within the policy, a single sequence with ID 100 is defined, specifically targeting QoS handling. The match criteria focus on packets marked with DSCP value 46, typically used for VoIP. Upon a match, the policy triggers actions to enable logging, preserve the DSCP marking, and assign the traffic to the “voice” forwarding class, ensuring it receives low-latency, high-priority treatment across the network.
+
+By deploying this configuration, the healthcare provider guarantees reliable VoIP performance, even during high network utilization, ensuring critical communication isn’t delayed or dropped.
+
 ```yaml
 sdwan:
   centralized_policies:
     definitions:
       data_policy:
         traffic_data:
-          - name: data_policy_qos1
-            description: data_policy_qos1
-            default_action_type: accept
+          - name: Voice_Traffic_QoS
+            description: "Ensure high priority treatment for VoIP traffic"
+            default_action_type: drop
             sequences:
-              - base_action: accept
-                id: 1
-                name: rule1
+              - id: 100
+                name: "Match_DSCP_EF_VoIP"
+                base_action: accept
                 ip_type: ipv4
                 type: qos
                 match_criterias:
-                  application_list: APP-LIST-TD-TEST1
-                  dscp: 54
-                  packet_length: 1150
-                  plp: high
-                  protocols:
-                    - 6
-                    - 7
-                    - 8
-                  source_data_prefix_list: PREFIX-LIST-TD-TEST1
-                  source_data_prefix: 10.1.1.0/24
-                  source_ports:
-                    - 676
-                    - 53
-                  source_port_ranges:
-                    - from: 1001
-                      to: 2000
-                    - from: 3001
-                      to: 4000
-                  destination_data_prefix_list: PREFIX-LIST-TD-TEST2
-                  destination_data_prefix: 10.2.1.0/24
-                  destination_ports:
-                    - 676
-                    - 53
-                  destination_port_ranges:
-                    - from: 1001
-                      to: 2000
-                    - from: 3001
-                      to: 4000
-                  tcp: 'syn'
+                  dscp: 46
                 actions:
                   log: true
-                  counter_name: LOGGER-TD-TEST1
-                  dscp: 42
-                  forwarding_class: video_live
-                  policer_list: POLICER-TD-TEST1
-                  loss_correction:
-                    type: fecAlways
-                    loss_threshold_percentage: 3
+                  dscp: 46
+                  forwarding_class: "voice"
 ```
