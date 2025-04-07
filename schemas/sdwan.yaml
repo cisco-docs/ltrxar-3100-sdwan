@@ -2962,7 +2962,7 @@ security_policy_zone_based_firewall_zone_pairs:
 security_policy_feature_policies:
   name: regex('^[A-Za-z0-9\-_]{1,32}$')
   description: str()
-  use_case: enum("custom", "compliance", "guest_access", "direct_cloud_access", "direct_internet_access", "app_qoe")
+  use_case: enum("custom")
   firewall_policies: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)
   intrusion_prevention_policy: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
   # url_filtering_policy: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # Wait for URL Filtering Policy Definition
