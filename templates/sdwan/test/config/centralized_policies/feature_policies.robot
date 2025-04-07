@@ -272,31 +272,35 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
 
 {% endfor %}
 
-    ${cflowd_ids_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="cflowd")].definitionId
-    ${cflowd_ids_length}=    Get Length    ${cflowd_ids_list}
-    Should Be Equal As Integers    ${cflowd_ids_length}    {{ fp.cflowd | default([]) | length }}    msg=cflowd length
-
-{% for cflowd_index in range(fp.cflowd | default([]) | length()) %}
-
-    ${cflowd_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/definition/cflowd/${cflowd_ids_list[{{ cflowd_index }}]}
-    Should Be Equal Value Json String    ${cflowd_id.json()}    $..name    {{ fp.cflowd[cflowd_index].policy_definition }}    msg=cflowd name
-
-    ${cflowd_sl_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="cflowd")].entries..siteLists
-    ${exp_cflowd_site_list}=    Create List    {{ fp.cflowd[cflowd_index].site_lists | default([]) | join('   ') }}
-    IF    ${cflowd_sl_list} == []
-        Should Be Equal Value Json List    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="cflowd")].entries..siteLists    ${exp_cflowd_site_list}    msg=cflowd site lists
-    ELSE
-        ${cflowd_sl_ids_length}=    Get Length    ${cflowd_sl_list[0]}
-        Should Be Equal As Integers    ${cflowd_sl_ids_length}    {{ fp.cflowd[cflowd_index].site_lists | default([]) | length }}    msg=cflowd site lists length
-
-        ${temp_cflowd_site_list}=    Create List
-        FOR    ${id}    IN    @{cflowd_sl_list[0]}
-            ${cflowd_sl_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/site/${id}
-            ${cflowd_sl_name}=    Get Value From Json    ${cflowd_sl_id.json()}    $.name
-            Append To List    ${temp_cflowd_site_list}    ${cflowd_sl_name[0]}
-        END
-        Lists Should Be Equal    ${temp_cflowd_site_list}    ${exp_cflowd_site_list}    ignore_order=True    msg=cflowd site lists name
+    ${cflowd_ids_list_js}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="cflowd")].definitionId
+    ${cflowd_ids_length_js}=    Get Length    ${cflowd_ids_list_js}
+    Should Be Equal As Integers    ${cflowd_ids_length_js}    {{ fp.cflowd | default([]) | length }}    msg=cflowd length
+    ${cflowd_def_js}=   GET On Session    sdwan_manager    /dataservice/template/policy/definition/cflowd/
+    @{cflowd_names_js}=    Create List
+    FOR    ${entry}    IN    @{cflowd_ids_list_js} 
+        ${cflowd_id_name_js}=    Get Value From Json    ${cflowd_def_js.json()}    $..data[?(@.definitionId=="${entry}")].name
+        Append To List   ${cflowd_names_js}    ${cflowd_id_name_js[0]}
     END
+    
+{% for cflow in fp.cflowd %}
+    ${cflowd_id}=      Get Value From Json    ${cflowd_def_js.json()}    $.data[?(@.name=="{{ cflow.policy_definition }}")].definitionId
+    IF  ${cflowd_id} == []
+        Should Not Be Empty   ${cflowd_id}    msg= {{ cflow.policy_definition }} not present on the Manager
+    ELSE
+       Log   {{ cflow.policy_definition }} present on the Manager
+    END
+    List Should Contain Value    ${cflowd_ids_list_js}    ${cflowd_id[0]}    msg= Expected policy definition {{ cflow.policy_definition }} in the list of applied on Manager ${cflowd_names_js} 
+    
+    ${cflowd_site_list}=     Get Value From Json     ${r_id.json()}       $.policyDefinition.assembly[?(@.definitionId=="${cflowd_id[0]}")].entries[*].siteLists
+    ${cflowd_site_list_id_flat}=    Evaluate    [item for sublist in ${cflowd_site_list} for item in sublist]
+    ${site_list_name_js}=    Create List
+    FOR   ${id}    IN    @{cflowd_site_list_id_flat}
+        ${site_list_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/site/${id}
+        ${site_name}=    Get Value From Json    ${site_list_id.json()}    $.name
+        Append To List    ${site_list_name_js}    ${site_name[0]}
+    END
+    ${exp_cflowd_site_list}=    Create List    {{ cflow.site_lists | default([]) | join('   ') }}
+    Lists Should Be Equal    ${site_list_name_js}    ${exp_cflowd_site_list}    ignore_order=True    msg=cflowd site lists for policy definition {{ cflow.policy_definition }} expected ${exp_cflowd_site_list} and got ${site_list_name_js}
 
 {% endfor %}
 
