@@ -64,7 +64,7 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
     ${exp_site_in_list}=    Create List    {{ fp.custom_control_topology[cct_index].site_region.site_lists_in | default([]) | join('   ') }}
     Log    ${exp_site_in_list}
     IF    ${cct_sl_in_list} == []
-        Should Be Equal Value Json List    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control")].entries[?(@.direction=="in")].siteLists    ${exp_site_in_list}    msg=custom control topology site lists in
+        Should Be Equal Value Json List    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ fp.custom_control_topology[cct_index].policy_definition }}"]}")].entries[?(@.direction=="in")].siteLists    ${exp_site_in_list}    msg=custom control topology site lists in
     ELSE
         ${cct_sl_in_ids_length}=    Get Length    ${cct_sl_in_list[0]}
         Should Be Equal As Integers    ${cct_sl_in_ids_length}    {{ fp.custom_control_topology[cct_index].site_region.site_lists_in | default([]) | length }}    msg=custom control topology site lists in length
@@ -81,7 +81,7 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
     ${cct_sl_out_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ fp.custom_control_topology[cct_index].policy_definition }}"]}")].entries[?(@.direction=="out")].siteLists
     ${exp_site_out_list}=    Create List    {{ fp.custom_control_topology[cct_index].site_region.site_lists_out | default([]) | join('   ') }}
     IF    ${cct_sl_out_list} == []
-        Should Be Equal Value Json List    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control")].entries[?(@.direction=="out")].siteLists    ${exp_site_out_list}    msg=custom control topology site lists out
+        Should Be Equal Value Json List    ${r_id.json()}     $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ fp.custom_control_topology[cct_index].policy_definition }}"]}")].entries[?(@.direction=="out")].siteLists    ${exp_site_out_list}    msg=custom control topology site lists out
     ELSE
         ${cct_sl_out_ids_length}=    Get Length    ${cct_sl_out_list[0]}
         Should Be Equal As Integers    ${cct_sl_out_ids_length}    {{ fp.custom_control_topology[cct_index].site_region.site_lists_out | default([]) | length }}    msg=custom control topology site lists out length
@@ -97,7 +97,7 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
     ${cct_rl_in_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ fp.custom_control_topology[cct_index].policy_definition }}"]}")].entries[?(@.direction=="in")].regionLists
     ${exp_region_in_list}=    Create List    {{ fp.custom_control_topology[cct_index].site_region.region_lists_in | default([]) | join('   ') }}
     IF    ${cct_rl_in_list} == []
-        Should Be Equal Value Json List    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control")].entries[?(@.direction=="in")].regionLists    ${exp_region_in_list}    msg=custom control topology region lists in
+        Should Be Equal Value Json List    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ fp.custom_control_topology[cct_index].policy_definition }}"]}")].entries[?(@.direction=="in")].regionLists    ${exp_region_in_list}    msg=custom control topology region lists in
     ELSE
         ${cct_rl_in_ids_length}=    Get Length    ${cct_rl_in_list[0]}
         Should Be Equal As Integers    ${cct_rl_in_ids_length}    {{ fp.custom_control_topology[cct_index].site_region.region_lists_in | default([]) | length }}    msg=custom control topology region lists in length
@@ -114,7 +114,7 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
     ${cct_rl_out_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ fp.custom_control_topology[cct_index].policy_definition }}"]}")].entries[?(@.direction=="out")].regionLists
     ${exp_region_out_list}=    Create List    {{ fp.custom_control_topology[cct_index].site_region.region_lists_out | default([]) | join('   ') }}
     IF    ${cct_rl_out_list} == []
-        Should Be Equal Value Json List    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control")].entries[?(@.direction=="out")].regionLists    ${exp_region_out_list}    msg=custom control topology region lists out
+        Should Be Equal Value Json List    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ fp.custom_control_topology[cct_index].policy_definition }}"]}")].entries[?(@.direction=="out")].regionLists    ${exp_region_out_list}    msg=custom control topology region lists out
     ELSE
         ${cct_rl_out_ids_length}=    Get Length    ${cct_rl_out_list[0]}
         Should Be Equal As Integers    ${cct_rl_out_ids_length}    {{ fp.custom_control_topology[cct_index].site_region.region_lists_out | default([]) | length }}    msg=custom control topology region lists out length
