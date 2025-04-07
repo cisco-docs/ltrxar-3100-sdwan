@@ -2228,7 +2228,7 @@ policy_objects_sla_class:
   fallback_best_tunnel_loss: int(min=1, max=100, required=False)
 policy_objects_standard_community_list:
   name: regex('^[A-Za-z0-9-_]{1,128}$')
-  standard_communities: list(regex('^[0-9]{1,5}(:)[0-9]{1,5}$'))
+  standard_communities: list(any(enum("internet", "local-AS", "no-advertise", "no-export"), regex('^(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5]):(0|[1-9]\\d{0,3}|[1-5]\\d{4}|6[0-4]\\d{3}|65[0-4]\\d{2}|655[0-2]\\d|6553[0-5])$')), min=1)
 policy_objects_tloc_list:
   name: regex('^[A-Za-z0-9-_]{1,128}$')
   tlocs: list(include("policy_list_tloc_list_tloc"))
