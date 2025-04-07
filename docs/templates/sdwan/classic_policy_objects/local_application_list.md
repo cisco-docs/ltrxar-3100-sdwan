@@ -1,30 +1,24 @@
 # Local Application List
 
-Local Application list specifies one or more NBAR applications or applications families for use in Security Policies.
+A `Local Application list` specifies one or more applications or applications families for use in `Security Policies`.
 Application names should be provided in the format accepted by the API.
 
 {{ doc_gen }}
 
 ### Examples
 
+Example-1: Create a Application List
+This example demonstrates how to create a Application List named Social-Media that groups facebook, twitter, youtube, instagram and linkedin for use in `Security Policies`.
+
 ```yaml
 sdwan:
   policy_objects:
     local_application_lists:
-      - name: office_apps
+      - name: Social-Media
         applications:
-          - ftps-data
-          - concur
-          - ms-teams-audio
-          - ms-teams-media
-          - ms-teams-video
-      - name: scavenger_apps
-        application_families:
-          - mail
-          - thin-client
-      - name: critical_apps
-        applications:
-          - ms-teams-audio
-        application_families:
-          - mail
+          - facebook
+          - twitter
+          - youtube
+          - instagram
+          - linkedin
 ```

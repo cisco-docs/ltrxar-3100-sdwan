@@ -1,6 +1,7 @@
 # Application List
 
 An `application list` groups one or more applications or application familes into a named application list which can be used in centralized policies.
+Application names should be provided in the format accepted by the API.
 
 {{ doc_gen }}
 
