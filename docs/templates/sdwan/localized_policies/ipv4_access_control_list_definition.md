@@ -5,7 +5,8 @@ Access lists configured through localized data policy are called explicit ACLs. 
 {{ doc_gen }}
 
 ### Examples
-Example-1:This example show how to classify traffic based on DSCP marking.
+
+Example-1: This example show how to classify traffic based on DSCP marking.
 
 ```yaml
 sdwan:
@@ -50,7 +51,7 @@ sdwan:
                 counter_name: 40-CLASS-BULK
 ```
 
-Example-2: This example show how to secure interface where traffic from Guest users is received.
+Example-2: This example shows how to secure interface where traffic from Guest users is received.
 
 ```yaml
 sdwan:

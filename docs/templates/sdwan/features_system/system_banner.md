@@ -18,6 +18,7 @@ sdwan:
         This is line 2 of banner.
       motd_variable: This is a sample MOTD banner.
 ```
+
 Example-2: This example is showing a multi line login banner with special field to provide identification of device one is connecting to.
 ```yaml
 sdwan:
