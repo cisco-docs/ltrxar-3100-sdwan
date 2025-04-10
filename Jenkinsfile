@@ -45,17 +45,13 @@ pipeline {
             }
         }
         stage('Prepare') {
-            environment {
-                VMANAGE_USER = credentials('SDWAN_USERNAME')
-                VMANAGE_PASSWORD = credentials('SDWAN_PASSWORD')
-            }
             steps {
                 sh "pip install cisco-sdwan"
                 lock(resource: 'nac-ci-sdwan1') {
-                    sh 'VMANAGE_IP=10.50.202.8 sdwan --verbose delete --not-regex "(_basic)|(umbrellaTokenList)" all'
+                    sh 'python3 scripts/sdwan_lab_cleanup.py https://10.50.202.8'
                 }
                 lock(resource: 'nac-ci-sdwan2') {
-                    sh 'VMANAGE_IP=10.50.202.6 sdwan --verbose delete --not-regex "(_basic)|(umbrellaTokenList)|(Policy_Profile_Global)" all'
+                    sh 'python3 scripts/sdwan_lab_cleanup.py https://10.50.202.6'
                 }
             }
         }
