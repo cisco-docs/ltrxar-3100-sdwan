@@ -4,7 +4,6 @@ Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_templates    banner_templates
 Resource        ../../sdwan_common.resource
-Library         ../../myutils.py
 
 {% if sdwan.edge_feature_templates.banner_templates is defined %}
 
@@ -18,7 +17,7 @@ Get Banner Template (s)
 Verify Banner {{ banner.name }}
     ${banner_id}=  Get Value From Json   ${r.json()}   $..data[?(@..templateName=="{{ banner.name }}")].templateId
     Should Not be Empty   ${banner_id}   msg= {{ banner.name }} not present
-    Should Be Equal Value Json String   ${r.json()}   $..data[?(@..templateName=="{{ banner.name }}")].templateDescription   {{ banner.description }}  msg=description
+    Should Be Equal Value Json Special_String   ${r.json()}   $..data[?(@..templateName=="{{ banner.name }}")].templateDescription   {{ banner.description | normalize_special_string }}  msg=description
     ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/feature/definition/${banner_id[0]}
     Set Suite Variable   ${r_id}
 
@@ -31,34 +30,9 @@ Verify Banner {{ banner.name }}
     ${dt_list}=  Get Value From Json   ${r.json()}   $..data[?(@..templateName=="{{ banner.name }}")].deviceType
     ${dt_list_local}=   Create List   {{ dt_list_local | join('   ') }}
     Lists Should Be Equal    ${dt_list_local}    ${dt_list}[0]   ignore_order=True   msg={{ banner.name }}: device type
-
-    ${login_banner_1}=   Create List    {{ banner.login_variable | default(banner.login | default("not_defined")) }}
-    ${login_banner}=    replace escape characters    text=${login_banner_1}
-    ${motd_banner_1}=   Create List    {{ banner.motd_variable | default(banner.motd | default("not_defined")) }}
-    ${motd_banner}=    replace escape characters    text=${motd_banner_1}
     
-    ${banner_remote_str_1_vt}=  Get Value From Json   ${r_id.json()}   $..login.vipType
-    IF    "${banner_remote_str_1_vt}[0]" == "constant"
-        ${banner_remote_str_1}=  Get Value From Json   ${r_id.json()}   $..login.vipValue
-    ELSE IF    "${banner_remote_str_1_vt}[0]" == "variableName"
-        ${banner_remote_str_1}=  Get Value From Json   ${r_id.json()}   $..login.vipVariableName
-    ELSE
-        ${banner_remote_str_1}=  Set Variable    []
-    END
-    ${banner_remote_str}=   replace escape characters   ${banner_remote_str_1}
-
-    ${motd_remote_str_1_vt}=  Get Value From Json   ${r_id.json()}   $..motd.vipType
-    IF    "${motd_remote_str_1_vt}[0]" == "constant"
-        ${motd_remote_str_1}=  Get Value From Json   ${r_id.json()}   $..motd.vipValue
-    ELSE IF    "${motd_remote_str_1_vt}[0]" == "variableName"
-        ${motd_remote_str_1}=  Get Value From Json   ${r_id.json()}   $..motd.vipVariableName
-    ELSE
-        ${motd_remote_str_1}=  Set Variable    []
-    END
-    ${motd_remote_str}=    replace escape characters    text=${motd_remote_str_1}
-    
-    Lists Should Be Equal    ${banner_remote_str}   ${login_banner}    msg=banner login
-    Lists Should Be Equal    ${motd_remote_str}    ${motd_banner}    msg=banner motd
+    Should Be Equal Value Json Special_String FT   ${r_id.json()}   $..login    {{ banner.login_variable | default(banner.login | default("not_defined")) | normalize_special_string }}    msg=login banner
+    Should Be Equal Value Json Special_String FT   ${r_id.json()}   $..motd    {{ banner.motd_variable | default(banner.motd | default("not_defined")) | normalize_special_string }}    msg=motd banner
 
 {% endfor %}
 {% endif %}

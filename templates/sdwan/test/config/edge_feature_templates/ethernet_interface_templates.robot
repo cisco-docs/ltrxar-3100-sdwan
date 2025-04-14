@@ -18,7 +18,7 @@ Get Ethernet Feature template
 Verify Edge Feature Template Ethernet Feature template {{ eit.name }}
     ${eit_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ eit.name }}")]
     Should Be Equal Value Json String    ${eit_id}    $..templateName    {{ eit.name }}    msg=name
-    Should Be Equal Value Json String    ${eit_id}    $..templateDescription    {{ eit.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${eit_id}    $..templateDescription    {{ eit.description | normalize_special_string }}    msg=description
 
     {% set dt_list_local = [] %}
     {% for item in eit.device_types | default(defaults.sdwan.edge_feature_templates.ethernet_interface_templates.device_types) %}

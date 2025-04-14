@@ -19,7 +19,7 @@ Verify Edge Feature BGP Configuration Template {{ bgp.name }}
 
     ${bgp_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ bgp.name }}")]
     Should Be Equal Value Json String    ${bgp_id}    $..templateName    {{ bgp.name }}    msg=name
-    Should Be Equal Value Json String    ${bgp_id}    $..templateDescription    {{ bgp.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${bgp_id}    $..templateDescription    {{ bgp.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in bgp.device_types | default(defaults.sdwan.edge_feature_templates.bgp_templates.device_types) %}

@@ -106,21 +106,46 @@ sdwan:
             optional: false
     banner_templates:
       - name: FT-CEDGE-BANNER-01
-        description: Base banner template; support carrier returns
-        login: 'login banner: new\n'
-        motd: 'motd banner:\r\nNo message today\n'
+        description: Banner template with Carriage return, Line Feed
+        device_types:
+          - C8000V
+        login: "login banner: new\n"
+        motd: "motd banner:\r\nNo message today\n"
       - name: FT-CEDGE-BANNER-02
-        description: Base banner template v2
-        login: 'login banner: new\ttest\n'
-        motd: 'motd banner:\r\nNo message today\n'
+        description: Banner template with Carriage return, Line Feed and horizontal tab
+        login: "login banner: new\ttest\n"
+        motd: "motd banner:\r\nNo message today\n"
       - name: FT-CEDGE-BANNER-03
-        description: Base banner template v3
+        description: Banner template text only single line
         login: "login banner plain text"
         motd: "motd banner plain text"
       - name: FT-CEDGE-BANNER-04
-        description: Base banner template; support carrier returns
+        description: Banner template using variable references
         login_variable: login_banner_variable1
         motd_variable: motd_banner_variable1
+      - name: FT-CEDGE-BANNER-05
+        description: Typical Multiline banner using Carriage return, Line Feed
+        login: "*************************************************************\n*************************************************************\n**\n** UNAUTHORIZED USE PROHIBITED\n** UNAUTHORIZED ACCESS PROHIBITED\n **\n** Log out immediately\n** XXXXXXXXXX\n **\n*************************************************************\n*************************************************************"
+      - name: FT-CEDGE-BANNER-06
+        description: 'Multiline banner template example'
+        login: |
+          ***********************************************************
+          ***********************************************************
+          ** UNAUTHORIZED USE PROHIBITED
+          ** UNAUTHORIZED ACCESS PROHIBITED
+          **
+          ** MANAGED BY:
+          ** XXXXXXXXXX
+          **
+          ***********************************************************
+          ***********************************************************
+      - name: FT-CEDGE-BANNER-07
+        description: Banner template with ASCII Carriage return, Line Feed and horizontal tab
+        device_types:
+          - C8000V
+          - ISR-4331
+        login: "Login**********************************************************************\x0d\x0aLogin next line"
+        motd: "MOTD***************************************************************\x0D\x0AMOTD next\x09line"
     bfd_templates:
       - name: FT-CEDGE-BFD-01
         description: BFD base template
@@ -128,6 +153,11 @@ sdwan:
           - color: custom1
           - color: custom2
           - color: private1
+          - color: private2
+      - name: FT-CEDGE-BFD-02
+        description: BFD base  template double spaced description
+        colors:
+          - color: custom1
           - color: private2
     bgp_templates:
       - name: FT-CEDGE-BGP-VPN1-ACTIVE

@@ -18,7 +18,7 @@ Get OSPF Feature template
 Verify Edge Feature Template OSPF Feature template {{ ospf.name }}
     ${ospf_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ospf.name }}")]
     Should Be Equal Value Json String    ${ospf_id}    $..templateName    {{ ospf.name }}    msg=name
-    Should Be Equal Value Json String    ${ospf_id}    $..templateDescription    {{ ospf.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${ospf_id}    $..templateDescription    {{ ospf.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in ospf.device_types | default(defaults.sdwan.edge_feature_templates.ospf_templates.device_types) %}

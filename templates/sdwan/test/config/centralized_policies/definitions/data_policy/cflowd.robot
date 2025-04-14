@@ -28,7 +28,7 @@ Verify Centralized Policies Data Policy Cflowd {{ cflowd_name }}
     ${cflowd_id}=    Get Value From Json    ${r.json()}    $..data[?(@..name=="{{cflowd_name }}")].definitionId
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/definition/cflowd/${cflowd_id[0]}
     Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ cflowd_name }}    msg=cflowd name
-    Should Be Equal Value Json String    ${r_id.json()}    $..description    {{ cflowd_description }}    msg=cflowd description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $..description    {{ cflowd_description | normalize_special_string }}    msg=description
     Should Be Equal Value Json String    ${r_id.json()}    $..definition.flowActiveTimeout    {{ cflowd_active_flow_timeout }}    msg=cflowd active flow timeout
     Should Be Equal Value Json String    ${r_id.json()}    $..definition.flowInactiveTimeout    {{ cflowd_inactive_flow_timeout }}    msg=cflowd inactive flow timeout
     Should Be Equal Value Json String    ${r_id.json()}    $..definition.flowSamplingInterval    {{ cflowd_sampling_interval }}    msg=cflowd sampling interval

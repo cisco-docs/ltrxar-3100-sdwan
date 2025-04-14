@@ -18,7 +18,7 @@ Get Switchport Feature Template
 Verify Edge Feature Template Switchport Feature Template {{ switch_port.name }}
     ${switchport_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ switch_port.name }}")]
     Should Be Equal Value Json String    ${switchport_id}    $..templateName    {{ switch_port.name }}    msg=switchport template name
-    Should Be Equal Value Json String    ${switchport_id}    $..templateDescription    {{ switch_port.description }}    msg=switchport template description
+    Should Be Equal Value Json Special_String    ${switchport_id}    $..templateDescription    {{ switch_port.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in switch_port.device_types | default(defaults.sdwan.edge_feature_templates.switchport_templates.device_types) %}

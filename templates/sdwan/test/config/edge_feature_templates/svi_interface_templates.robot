@@ -18,7 +18,7 @@ Get SVI Feature template
 Verify Edge Feature Template SVI Feature template {{ svi.name }}
     ${svi_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{svi.name }}")]
     Should Be Equal Value Json String    ${svi_id}    $..templateName    {{ svi.name }}    msg=name
-    Should Be Equal Value Json String    ${svi_id}    $..templateDescription    {{ svi.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${svi_id}    $..templateDescription    {{ svi.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in svi.device_types | default(defaults.sdwan.edge_feature_templates.svi_interface_templates.device_types) %}

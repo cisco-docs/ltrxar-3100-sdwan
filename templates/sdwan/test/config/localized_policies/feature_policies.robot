@@ -19,7 +19,7 @@ Verify Localized Policies Feature Policies {{ feature_policy.name }}
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/vedge/definition/${policy_id[0]}
 
     Should Be Equal Value Json String    ${r_id.json()}    $.policyName    {{ feature_policy.name }}    msg=name
-    Should Be Equal Value Json String    ${r_id.json()}    $.policyDescription    {{ feature_policy.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $.policyDescription    {{ feature_policy.description | normalize_special_string }}    msg=description
     Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.implicitAclLogging    {{ feature_policy.implicit_acl_logging | default("True") }}    msg=implicit acl logging
     Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.appVisibility    {{ feature_policy.ipv4_application_visibility | default("True") }}    msg=ipv4 application visibility
     Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.flowVisibility    {{ feature_policy.ipv4_flow_visibility | default("True") }}    msg=ipv4 flow visibility

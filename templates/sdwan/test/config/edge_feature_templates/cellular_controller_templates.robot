@@ -18,7 +18,7 @@ Get Cellular Controller Feature template
 Verify Cellular Controller Feature template {{ cellular_controller_template.name }}
     ${cell_cont_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{cellular_controller_template.name}}")]
     Should Be Equal Value Json String    ${cell_cont_id}    $..templateName    {{ cellular_controller_template.name }}    msg=name
-    Should Be Equal Value Json String    ${cell_cont_id}    $..templateDescription    {{ cellular_controller_template.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${cell_cont_id}    $..templateDescription    {{ cellular_controller_template.description | normalize_special_string }}    msg=description
 
     {% set dt_list_local = [] %}
     {% for item in cellular_controller_template.device_types | default(defaults.sdwan.edge_feature_templates.cellular_controller_templates.device_types) %}

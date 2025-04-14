@@ -16,7 +16,7 @@ Get Thousandeyes Template(s)
 Verify Thousandeye {{ thousandeye.name }}
    ${eye_id}=  Get Value From Json   ${r.json()}   $..data[?(@..templateName=="{{ thousandeye.name }}")].templateId
    Should Not be Empty   ${eye_id}   msg= {{ thousandeye.name }} not present
-   Should Be Equal Value Json String   ${r.json()}   $..data[?(@..templateName=="{{ thousandeye.name }}")].templateDescription   {{ thousandeye_description }}  msg={{ thousandeye.name }}: Description
+   Should Be Equal Value Json Special_String   ${r.json()}   $..data[?(@..templateName=="{{ thousandeye.name }}")].templateDescription   {{ thousandeye.description | normalize_special_string }}  msg={{ thousandeye.name }}: Description
    ${r_template}=   GET On Session   sdwan_manager   /dataservice/template/feature/definition/${eye_id[0]}
    Set Suite Variable   ${r_template}
 

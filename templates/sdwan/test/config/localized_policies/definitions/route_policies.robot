@@ -18,7 +18,7 @@ Verify Localized Policies Route Policy {{ route_policy.name }}
     ${route_policy_id}=   Get Value From Json   ${r.json()}   $..data[?(@..name=="{{ route_policy.name }}")].definitionId
     ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/definition/vedgeroute/${route_policy_id[0]}
     Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ route_policy.name }}    msg=name
-    Should Be Equal Value Json String    ${r_id.json()}    $..description    {{ route_policy.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $..description    {{ route_policy.description | normalize_special_string }}    msg=description
     Should Be Equal Value Json String    ${r_id.json()}    $..defaultAction.type    {{ route_policy.default_action }}    msg=default action type
 
     Should Be Equal Value Json List Length    ${r_id.json()}    $.sequences    {{ route_policy.sequences | length }}    msg=sequences

@@ -18,7 +18,7 @@ Get Security Feature template
 Verify Edge Feature Template Security Feature template {{ security_template.name }}
     ${security_template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{security_template.name }}")]
     Should Be Equal Value Json String    ${security_template_id}    $..templateName    {{ security_template.name }}    msg=name
-    Should Be Equal Value Json String    ${security_template_id}    $..templateDescription    {{ security_template.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${security_template_id}    $..templateDescription    {{ security_template.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in security_template.device_types | default(defaults.sdwan.edge_feature_templates.security_templates.device_types) %}

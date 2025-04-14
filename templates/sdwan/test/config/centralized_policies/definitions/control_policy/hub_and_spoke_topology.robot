@@ -18,7 +18,7 @@ Verify Centralized Policies Color Hub and Spoke Topology {{ topology.name }}
    ${topo_id}=  Get Value From Json   ${r.json()}   $..data[?(@..name=="{{ topology.name }}")].definitionId
    ${topo}=   GET On Session   sdwan_manager   /dataservice/template/policy/definition/hubandspoke/${topo_id[0]}
    Should Be Equal Value Json String   ${topo.json()}   $..name   {{ topology.name }}    msg=Topology
-   Should Be Equal Value Json String   ${r.json()}   $..data[?(@..name=="{{ topology.name }}")].description   {{ topology.description }}  msg={{ topology.name }}: Description
+   Should Be Equal Value Json Special_String   ${r.json()}   $..data[?(@..name=="{{ topology.name }}")].description   {{ topology.description | normalize_special_string }}  msg={{ topology.name }}: Description
 
    ${vpn_list_id}=  Get Value From Json   ${topo.json()}   $..vpnList
    ${vpn_list}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/vpn/${vpn_list_id[0]}

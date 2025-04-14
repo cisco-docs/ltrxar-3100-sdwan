@@ -21,7 +21,7 @@ Verify Security Policy IPS List {{ ips_policy.name }}
    ${ips_policy_id}=   Get Value From Json   ${r.json()}   $..data[?(@..name=="{{ ips_policy.name }}")].definitionId
    ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/definition/intrusionprevention/${ips_policy_id[0]}
    Should Be Equal Value Json String   ${r_id.json()}   $..name   {{ ips_policy.name }}   msg=intrusion prevention name
-   Should Be Equal Value Json String   ${r_id.json()}   $..description   {{ ips_policy.description | default("not_defined") }}   msg=description
+   Should Be Equal Value Json Special_String   ${r_id.json()}   $..description   {{ ips_policy.description | normalize_special_string }}   msg=description
    Should Be Equal Value Json String   ${r_id.json()}   $..mode   security   msg=mode
    Should Be Equal Value Json String   ${r_id.json()}   $..definition.signatureSet   {{ ips_policy.signature_set }}   msg=signature set
    Should Be Equal Value Json String   ${r_id.json()}   $..definition.inspectionMode   {{ ips_policy.inspection_mode }}   msg=inspection mode

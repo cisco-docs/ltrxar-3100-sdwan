@@ -18,7 +18,7 @@ Get IPsec Interface Feature template
 Verify Edge Feature Template IPsec Interface Feature template {{ ipsec.name }}
     ${ipsec_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ipsec.name }}")]
     Should Be Equal Value Json String    ${ipsec_id}    $..templateName    {{ ipsec.name }}    msg=name
-    Should Be Equal Value Json String    ${ipsec_id}    $..templateDescription    {{ ipsec.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${ipsec_id}    $..templateDescription    {{ ipsec.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in ipsec.device_types | default(defaults.sdwan.edge_feature_templates.ipsec_interface_templates.device_types) %}

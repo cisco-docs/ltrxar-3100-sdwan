@@ -19,7 +19,7 @@ Verify Edge Feature Template System Feature template {{ system.name }}
 
     ${system_template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{system.name }}")]
     Should Be Equal Value Json String    ${system_template_id}    $..templateName    {{ system.name }}    msg=system template name
-    Should Be Equal Value Json String    ${system_template_id}    $..templateDescription    {{ system.description }}    msg=system template description
+    Should Be Equal Value Json Special_String    ${system_template_id}    $..templateDescription    {{ system.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in system.device_types | default(defaults.sdwan.edge_feature_templates.system_templates.device_types) %}

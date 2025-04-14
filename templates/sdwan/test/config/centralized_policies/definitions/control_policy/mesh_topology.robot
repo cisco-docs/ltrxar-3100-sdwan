@@ -19,7 +19,7 @@ Verify Centralized Policies Control Policy Mesh Topology {{ mesh.name }}
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/definition/mesh/${mesh_id[0]}
 
     Should Be Equal Value Json String    ${r_id.json()}    $.name    {{ mesh.name }}    msg=mesh name
-    Should Be Equal Value Json String    ${r_id.json()}    $.description    {{ mesh.description }}    msg=mesh description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $.description    {{ mesh.description | normalize_special_string }}    msg=description
 
     ${mesh_vpn_id}=    Get Value From Json    ${r_id.json()}    $.definition.vpnList
     ${vpn_data}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/vpn/${mesh_vpn_id[0]}

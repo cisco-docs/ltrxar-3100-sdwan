@@ -18,7 +18,7 @@ Get Cellular Interface Feature template
 Verify Edge Feature Template Cellular Interface Feature template {{ cellular.name }}
     ${cellular_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{cellular.name }}")]
     Should Be Equal Value Json String    ${cellular_id}    $..templateName    {{ cellular.name }}    msg=name
-    Should Be Equal Value Json String    ${cellular_id}    $..templateDescription    {{ cellular.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${cellular_id}    $..templateDescription    {{ cellular.description | normalize_special_string }}    msg=description
 
     {% set dt_list_local = [] %}
     {% for item in cellular.device_types | default(defaults.sdwan.edge_feature_templates.cellular_interface_templates.device_types) %}

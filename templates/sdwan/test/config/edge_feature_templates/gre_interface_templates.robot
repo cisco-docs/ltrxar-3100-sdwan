@@ -18,7 +18,7 @@ Get GRE Interface Feature template
 Verify Edge Feature Template GRE Interface Feature template {{ gre.name }}
     ${gre_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{gre.name }}")]
     Should Be Equal Value Json String    ${gre_id}    $..templateName    {{ gre.name }}    msg=name
-    Should Be Equal Value Json String    ${gre_id}    $..templateDescription    {{ gre.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${gre_id}    $..templateDescription    {{ gre.description | normalize_special_string }}    msg=description
 
     {% set dt_list_local = [] %}
     {% for item in gre.device_types | default(defaults.sdwan.edge_feature_templates.gre_interface_templates.device_types) %}

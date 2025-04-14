@@ -19,7 +19,7 @@ Verify Edge Feature Template NTP Feature template {{ ntp_template.name }}
 
     ${ntp_template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ntp_template.name }}")]
     Should Be Equal Value Json String    ${ntp_template_id}    $..templateName    {{ ntp_template.name }}    msg=ntp template name
-    Should Be Equal Value Json String    ${ntp_template_id}    $..templateDescription    {{ ntp_template.description }}    msg=ntp template description
+    Should Be Equal Value Json Special_String    ${ntp_template_id}    $..templateDescription    {{ ntp_template.description | normalize_special_string }}    msg=ntp template description
 
 {% set test_list = [] %}
 {% for item in ntp_template.device_types | default(defaults.sdwan.edge_feature_templates.ntp_templates.device_types) %}

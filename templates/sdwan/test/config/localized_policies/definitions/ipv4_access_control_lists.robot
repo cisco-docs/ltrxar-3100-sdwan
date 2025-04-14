@@ -18,7 +18,7 @@ Verify Localized Policies IPv4 Access Control Lists {{ ipv4_acl.name }}
     ${ipv4_acl_id}=   Get Value From Json   ${r.json()}   $..data[?(@..name=="{{ ipv4_acl.name }}")].definitionId
     ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/definition/acl/${ipv4_acl_id[0]}
     Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ ipv4_acl.name }}    msg=name
-    Should Be Equal Value Json String    ${r_id.json()}    $..description    {{ ipv4_acl.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $..description    {{ ipv4_acl.description | normalize_special_string }}    msg=description
     Should Be Equal Value Json String    ${r_id.json()}    $..defaultAction.type    {{ ipv4_acl.default_action }}    msg=default action type
 
     ${sequence_items}=    Get Value From Json    ${r_id.json()}    $.sequences

@@ -19,7 +19,7 @@ Verify Localized Policies Device Access IPv6 ACL {{ ipv6_device.name }}
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/definition/deviceaccesspolicyv6/${def_id[0]}
 
     Should Be Equal Value Json String    ${r_id.json()}    $.name    {{ ipv6_device.name }}    msg=name
-    Should Be Equal Value Json String    ${r_id.json()}    $.description    {{ ipv6_device.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $.description    {{ ipv6_device.description | normalize_special_string }}    msg=description
     Should Be Equal Value Json String    ${r_id.json()}    $.defaultAction.type    {{ ipv6_device.default_action }}     msg=default action
 
     ${sequence_items}=    Get Value From Json    ${r_id.json()}    $.sequences

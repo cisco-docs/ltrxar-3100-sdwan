@@ -18,7 +18,7 @@ Get Global Settings Feature template
 Verify Edge Feature Template Global Settings Feature template {{ gs_template.name }}
     ${gs_template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{gs_template.name }}")]
     Should Be Equal Value Json String    ${gs_template_id}    $..templateName    {{ gs_template.name }}    msg=name
-    Should Be Equal Value Json String    ${gs_template_id}    $..templateDescription    {{ gs_template.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${gs_template_id}    $..templateDescription    {{ gs_template.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in gs_template.device_types | default(defaults.sdwan.edge_feature_templates.global_settings_templates.device_types) %}

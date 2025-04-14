@@ -17,7 +17,7 @@ Verify Edge Device Templates {{ edt.name }}
     ${template_id}=    Get Value From Json    ${r.json()}    $..data[?(@.templateName=="{{ edt.name }}")].templateId
     ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/device/object/${template_id[0]}
     Should Be Equal Value Json String    ${r_id.json()}    $..templateName    {{ edt.name }}    msg=name
-    Should Be Equal Value Json String    ${r_id.json()}    $..templateDescription    {{ edt.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $..templateDescription    {{ edt.description | normalize_special_string }}    msg=description
 
 {% set device_model = "vedge-" ~ edt.device_model %}
     Should Be Equal Value Json String    ${r_id.json()}    $..deviceType    {{ device_model }}    msg=device model

@@ -18,7 +18,7 @@ Verify Centralized Policies Control Policy VPN Membership {{ vpn_membership.name
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/definition/vpnmembershipgroup/${vpn_membership_id[0]}
 
     Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ vpn_membership.name }}    msg=name
-    Should Be Equal Value Json String    ${r_id.json()}    $..description    {{ vpn_membership.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $..description    {{ vpn_membership.description | normalize_special_string }}    msg=description
 
     ${group_items}=   Get Value From Json   ${r_id.json()}   $..sites
     ${res_groups_length}=    Get Length     ${group_items[0]}

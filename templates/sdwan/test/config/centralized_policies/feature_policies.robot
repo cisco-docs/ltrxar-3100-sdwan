@@ -19,7 +19,7 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/vsmart/definition/${fp_id[0]}
 
     Should Be Equal Value Json String    ${r_id.json()}    $..policyName    {{ fp.name }}    msg=name
-    Should Be Equal Value Json String    ${r_id.json()}    $..policyDescription    {{ fp.description }}     msg=description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $..policyDescription    {{ fp.description | normalize_special_string }}    msg=description
 
     ${hs_ids_list}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="hubAndSpoke")].definitionId
     ${hs_ids_length}=    Get Length    ${hs_ids_list}

@@ -18,7 +18,7 @@ Get Secure App Hosting Feature template
 Verify Edge Feature Template Secure App Hosting Feature template {{ secure_app_hosting_template.name }}
     ${secure_app_hosting_template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{secure_app_hosting_template.name }}")]
     Should Be Equal Value Json String    ${secure_app_hosting_template_id}    $..templateName    {{ secure_app_hosting_template.name }}    msg=name
-    Should Be Equal Value Json String    ${secure_app_hosting_template_id}    $..templateDescription    {{ secure_app_hosting_template.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${secure_app_hosting_template_id}    $..templateDescription    {{ secure_app_hosting_template.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in secure_app_hosting_template.device_types | default(defaults.sdwan.edge_feature_templates.secure_app_hosting_templates.device_types) %}

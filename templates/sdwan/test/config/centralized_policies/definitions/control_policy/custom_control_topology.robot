@@ -18,7 +18,7 @@ Verify Centralized Policies Control Policy Custom Control Topology {{ cct.name }
     ${cct_id}=   Get Value From Json   ${r.json()}   $..data[?(@..name=="{{ cct.name }}")].definitionId
     ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/definition/control/${cct_id[0]}
     Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ cct.name }}    msg=name
-    Should Be Equal Value Json String    ${r_id.json()}    $..description    {{ cct.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $..description    {{ cct.description | normalize_special_string }}    msg=description
     Should Be Equal Value Json String    ${r_id.json()}    $..defaultAction.type    {{ cct.default_action_type }}    msg=default action type
 
     Should Be Equal Value Json List Length    ${r_id.json()}    $.sequences    {{ cct.sequences | default([]) | length }}    msg=sequences length

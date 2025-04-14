@@ -18,7 +18,7 @@ Get CLI Feature template
 Verify Edge Feature Template CLI Add-on template {{ cli.name }}
     ${cli_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{cli.name }}")]
     Should Be Equal Value Json String    ${cli_id}    $..templateName    {{ cli.name }}    msg=name
-    Should Be Equal Value Json String    ${cli_id}    $..templateDescription    {{ cli.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${cli_id}    $..templateDescription    {{ cli.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in cli.device_types | default(defaults.sdwan.edge_feature_templates.cli_templates.device_types) %}

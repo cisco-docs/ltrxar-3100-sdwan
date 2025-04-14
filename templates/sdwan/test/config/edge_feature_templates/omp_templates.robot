@@ -18,7 +18,7 @@ Get OMP Feature template
 Verify Edge Feature Template OMP Feature template {{ omp_template.name }}
     ${omp_template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{omp_template.name }}")]
     Should Be Equal Value Json String    ${omp_template_id}    $..templateName    {{ omp_template.name }}    msg=omp template name
-    Should Be Equal Value Json String    ${omp_template_id}    $..templateDescription    {{ omp_template.description }}    msg=omp template description
+    Should Be Equal Value Json Special_String    ${omp_template_id}    $..templateDescription    {{ omp_template.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in omp_template.device_types | default(defaults.sdwan.edge_feature_templates.omp_templates.device_types) %}

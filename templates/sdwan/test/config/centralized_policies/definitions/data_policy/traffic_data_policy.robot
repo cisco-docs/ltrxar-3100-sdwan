@@ -19,7 +19,7 @@ Verify Centralized Policy Data Policy Traffic Data {{ traffic_policy.name }}
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/definition/data/${traffic_data_policy_id[0]}
 
     Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ traffic_policy.name }}    msg=traffic data policy name
-    Should Be Equal Value Json String    ${r_id.json()}    $..description    {{ traffic_policy.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $..description    {{ traffic_policy.description | normalize_special_string }}    msg=description
     Should Be Equal Value Json String    ${r_id.json()}    $..defaultAction.type    {{ traffic_policy.default_action_type }}    msg=default action type
 
 {% for item in traffic_policy.sequences | default([]) %}

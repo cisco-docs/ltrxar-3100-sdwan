@@ -18,7 +18,7 @@ Get VPN Template(s)
 Verify Edge Feature Template VPN Feature Template {{ vpn.name }}
     ${vpn_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ vpn.name }}")]
     Should Be Equal Value Json String    ${vpn_id}    $..templateName    {{ vpn.name }}    msg=name
-    Should Be Equal Value Json String    ${vpn_id}    $..templateDescription    {{ vpn.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${vpn_id}    $..templateDescription    {{ vpn.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in vpn.device_types | default(defaults.sdwan.edge_feature_templates.vpn_templates.device_types) %}

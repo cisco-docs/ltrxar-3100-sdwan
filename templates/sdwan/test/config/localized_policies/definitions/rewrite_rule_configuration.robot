@@ -19,7 +19,7 @@ Verify Rewrite Rule Configuration {{ rewrite_rule.name }}
     ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/definition/rewriterule/${rewrite_rule_id[0]}
 
     Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ rewrite_rule.name }}    msg=name
-    Should Be Equal Value Json String    ${r_id.json()}    $..description    {{ rewrite_rule.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $..description    {{ rewrite_rule.description | normalize_special_string }}    msg=description
 
     Should Be Equal Value Json List Length   ${r_id.json()}    $..rules    {{ rewrite_rule.rules | length }}    msg=rewrite rule length
 

@@ -1,18 +1,13 @@
-# use this function to replace the escape characters in the text with __n__ or __r__ or __t__ or __s__
+# use this function to replace the escape characters like \\n , \\t , \\r , or consecutive 2 spaces and their ascii equivalents in the text with native Robot escaping syntax.
 import re
 
-def replace_escape_characters(text):
-        """Replaces occurrences of the pattern in the text with the replacement."""
-        results = []
+def normalize_escapes_spaces(text):
         try:
-                if re.search(r'(\\n|\\t|\\r)', text[0]): # check if the text contains \\n or \\t or \\r or space and replace them with  __n__ or __r__ or __t__
-                        sp_text = text[0].replace("\\n", "__n__").replace("\\r", "__r__").replace("\\t", "__t__").replace(" ","__s__")
-                        results.append(sp_text)
-                elif re.search(r'[\n\t\r]', text[0]):  # check if the text contains \n or \t or \r or space and replace them with __n__ or __r__ or __t__
-                        sp_text = text[0].replace("\n", "__n__").replace("\r", "__r__").replace("\t", "__t__").replace(" ","__s__")
-                        results.append(sp_text)
+                if isinstance(text, list):
+                        text = text[0]
+                if re.search(r'(\\n|\\t|\\r|  |\\x0[d,D]|\\x0[a,A]|\\x09)', text):
+                        return [text.replace("\\n", "\n").replace("\\r", "\r").replace("\\t", "\t").replace("  ","${SPACE}${SPACE}").replace("\\x0d", "\r").replace("\\x0a", "\n").replace("\\x09", "\t")]
                 else:
-                        results.append(text[0])
-        except:
-                pass
-        return results
+                        return [text]
+        except AttributeError:
+                return text

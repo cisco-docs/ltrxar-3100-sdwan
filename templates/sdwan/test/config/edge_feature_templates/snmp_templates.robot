@@ -18,7 +18,7 @@ Verify Edge Feature Template SNMP Feature template {{ snmp_template.name }}
 
     ${snmp_template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{snmp_template.name }}")]
     Should Be Equal Value Json String    ${snmp_template_id}    $..templateName    {{ snmp_template.name }}    msg=snmp template name
-    Should Be Equal Value Json String    ${snmp_template_id}    $..templateDescription    {{ snmp_template.description }}    msg=snmp template description
+    Should Be Equal Value Json Special_String    ${snmp_template_id}    $..templateDescription    {{ snmp_template.description | normalize_special_string }}    msg=snmp template description
 
 {% set test_list = [] %}
 {% for item in snmp_template.device_types | default(defaults.sdwan.edge_feature_templates.snmp_templates.device_types) %}

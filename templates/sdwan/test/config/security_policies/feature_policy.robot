@@ -20,7 +20,7 @@ Verify Feature Policy List {{ feature_policy.name }}
    ${feature_policy_id}=   Get Value From Json   ${r.json()}   $..data[?(@..policyName=="{{ feature_policy.name }}")].policyId
    ${r_id}=   GET On Session   sdwan_manager   dataservice/template/policy/security/definition/${feature_policy_id[0]}
    Should Be Equal Value Json String   ${r_id.json()}   $..policyName   {{ feature_policy.name }}   msg=feature policy name
-   Should Be Equal Value Json String   ${r_id.json()}   $..policyDescription   {{ feature_policy.description | default("not_defined") }}   msg=feature policy description
+   Should Be Equal Value Json Special_String   ${r_id.json()}   $..policyDescription   {{ feature_policy.description | default("not_defined") | normalize_special_string }}   msg=description
    Should Be Equal Value Json String   ${r_id.json()}   $..policyUseCase   {{ feature_policy.use_case}}   msg=use case
    Should Be Equal Value Json String   ${r_id.json()}   $..policyDefinition.settings.tcpSynFloodLimit   {{ feature_policy.additional_settings.firewall.tcp_syn_flood_limit }}   msg=tcp sync
    Should Be Equal Value Json String   ${r_id.json()}   $.policyDefinition.settings.highSpeedLogging.vrf   {{ feature_policy.additional_settings.firewall.high_speed_logging.vpn_id | default("not_defined") }}   msg=vpn id

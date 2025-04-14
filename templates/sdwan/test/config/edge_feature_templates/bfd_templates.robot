@@ -17,8 +17,8 @@ Get BFD Feature template
 
 Verify Edge Feature Template BFD Feature template {{ bfd_template.name }}
     ${bfd_template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{bfd_template.name }}")]
-    Should Be Equal Value Json String    ${bfd_template_id}    $..templateName    {{ bfd_template.name }}    msg=name
-    Should Be Equal Value Json String    ${bfd_template_id}    $..templateDescription    {{ bfd_template.description }}    msg=description
+    Should Be Equal Value Json String    ${bfd_template_id}    $..templateName    {{ bfd_template.name }}    msg=name    
+    Should Be Equal Value Json Special_String    ${bfd_template_id}    $..templateDescription    {{ bfd_template.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in bfd_template.device_types | default(defaults.sdwan.edge_feature_templates.bfd_templates.device_types) %}

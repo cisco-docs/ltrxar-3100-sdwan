@@ -6,6 +6,7 @@ Library   Collections
 Library   OperatingSystem
 Library   String
 Library   packaging.version
+Library   myutils.py
 
 *** Variables ***
 &{login_json}=   j_username=%{SDWAN_USERNAME}   j_password=%{SDWAN_PASSWORD}
@@ -92,6 +93,7 @@ Should Be Equal Value Json String FT
       ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
    END
    Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg} ${r_value_msg_suffix}
+
 Should Be Equal Value Json Yaml
     [Arguments]    ${json}    ${json_path}    ${value}    ${var_value}    ${msg}    ${var_msg}
     ${opt_type}=    Get Value From Json    ${json}    ${json_path}.optionType
@@ -113,3 +115,46 @@ Should Be Equal Value Json Yaml
         Should Be Equal As Strings    not_defined    ${var_value}    values=False    msg=${var_msg} expected: '${var_value}' and got: 'not_defined'
     END
 
+# This keyword is same as "Should Be Equal Value Json String" but it normalizes the special characters and spaces for robot evaluation
+Should Be Equal Value Json Special_String
+   [Arguments]   ${json}    ${json_path}   ${value}=${EMPTY}  ${msg}=${EMPTY}
+   ${r_value}=   Get Value From Json   ${json}   ${json_path}
+   TRY
+      ${r_value}=   Set Variable If    ${r_value} == []    not_defined    ${r_value}[0]
+   EXCEPT
+      ${r_value}=   Set Variable    not_defined
+   END
+   ${r_value}=   normalize escapes spaces    text=${r_value}
+   ${value}=   normalize escapes spaces    text=${value}
+   Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg} expected: '${value}' and got: '${r_value}'
+
+# This keyword is same as "Should Be Equal Value Json String FT" but it normalizes the special characters and spaces for robot evaluation
+Should Be Equal Value Json Special_String FT
+   [Arguments]   ${json}    ${json_path}   ${value}=${EMPTY}  ${msg}=${EMPTY}
+   ${r_value_viptype}=   Get Value From Json   ${json}    ${json_path}.vipType
+   IF    ${r_value_viptype} != []
+      ${r_value_vipvalue}=   Get Value From Json   ${json}    ${json_path}.vipValue
+      ${r_value_vipvariable}=   Get Value From Json   ${json}    ${json_path}.vipVariableName
+      IF    "${r_value_viptype}[0]"=="constant"
+         ${r_value_vip}=   Set Variable    ${r_value_vipvalue}
+         ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
+      ELSE IF    "${r_value_viptype}[0]"=="variableName"
+         ${r_value_vip}=  Set Variable    ${r_value_vipvariable}
+         ${r_value_msg_suffix}=  Set Variable    variable
+      ELSE
+         ${r_value_vip}=  Set Variable    [${EMPTY}]
+         ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
+      END
+      ${r_value}=   Set Variable If    ${r_value_vip} == []    not_defined    ${r_value_vip}
+   ELSE
+      ${r_value}=   Set Variable    not_defined
+      ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
+   END
+   TRY
+      ${r_value}=   Set Variable If    ${r_value} == []    not_defined    ${r_value}[0]
+   EXCEPT
+      ${r_value}=   Set Variable    not_defined
+   END
+   ${r_value}=   normalize escapes spaces    text=${r_value}
+   ${value}=   normalize escapes spaces    text=${value}
+   Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg} expected: '${value}' and got: '${r_value}'

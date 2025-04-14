@@ -18,7 +18,7 @@ Get DHCP Feature template
 Verify Edge Feature Template DHCP Feature template {{ dhcp_template.name }}
     ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ dhcp_template.name }}")]
     Should Be Equal Value Json String    ${template_id}    $..templateName    {{ dhcp_template.name }}    msg=name
-    Should Be Equal Value Json String    ${template_id}    $..templateDescription    {{ dhcp_template.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${template_id}    $..templateDescription    {{ dhcp_template.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in dhcp_template.device_types | default(defaults.sdwan.edge_feature_templates.dhcp_server_templates.device_types) %}
@@ -43,7 +43,7 @@ Verify Edge Feature Template DHCP Feature template {{ dhcp_template.name }}
 {% else %}
     ${rec_dns_servers}=    Get Value From Json    ${r_id.json()}    $..["dns-servers"].vipValue
     ${dns_servers_list}=    Create List    {{ dhcp_template.dns_servers | default(["not_defined"]) | join('   ') }}
-    Lists Should Be Equal    ${rec_dns_servers}    ${dns_servers_list}    ignore_order=True    msg=dns servers
+    Lists Should Be Equal    ${rec_dns_servers}[0]    ${dns_servers_list}    ignore_order=True    msg=dns servers
 {% endif %}
 
     Should Be Equal Value Json String    ${r_id.json()}    $..["dns-servers"].vipVariableName    {{ dhcp_template.dns_servers_variable | default("not_defined") }}    msg=dns servers variable

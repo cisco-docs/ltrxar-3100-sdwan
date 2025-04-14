@@ -18,7 +18,7 @@ Get Logging Feature template
 Verify Edge Feature Template Logging Feature template {{ logging.name }}
     ${logging_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{logging.name }}")]
     Should Be Equal Value Json String    ${logging_id}    $..templateName    {{ logging.name }}    msg=name
-    Should Be Equal Value Json String    ${logging_id}    $..templateDescription    {{ logging.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${logging_id}    $..templateDescription    {{ logging.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in logging.device_types | default(defaults.sdwan.edge_feature_templates.logging_templates.device_types) %}

@@ -18,7 +18,7 @@ Get Secure Internet Gateway Feature template
 Verify Edge Feature Template Secure Internet Gateway Feature template {{ sig.name }}
     ${sig_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{sig.name }}")]
     Should Be Equal Value Json String    ${sig_id}    $..templateName    {{ sig.name }}    msg=name
-    Should Be Equal Value Json String    ${sig_id}    $..templateDescription    {{ sig.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${sig_id}    $..templateDescription    {{ sig.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in sig.device_types | default(defaults.sdwan.edge_feature_templates.secure_internet_gateway_templates.device_types) %}

@@ -18,7 +18,7 @@ Verify Security Policies Zone Based Firewall {{ zbf.name }}
     ${zbf_id}=   Get Value From Json   ${r.json()}   $..data[?(@..name=="{{ zbf.name }}")].definitionId
     ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/definition/zonebasedfw/${zbf_id[0]}
     Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ zbf.name }}    msg=name
-    Should Be Equal Value Json String    ${r_id.json()}    $..description    {{ zbf.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $..description    {{ zbf.description | normalize_special_string }}    msg=description
     Should Be Equal Value Json String    ${r_id.json()}    $..defaultAction.type    {{ zbf.default_action_type }}    msg=default action type
 
 {% set rule_name = [] %}

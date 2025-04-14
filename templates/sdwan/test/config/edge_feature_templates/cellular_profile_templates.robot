@@ -18,7 +18,7 @@ Get Cellular Profile Feature template
 Verify Cellular Profile Feature template {{ cellular_profile_template.name }}
     ${cell_prof_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{cellular_profile_template.name}}")]
     Should Be Equal Value Json String    ${cell_prof_id}    $..templateName    {{ cellular_profile_template.name }}    msg=name
-    Should Be Equal Value Json String    ${cell_prof_id}    $..templateDescription    {{ cellular_profile_template.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${cell_prof_id}    $..templateDescription    {{ cellular_profile_template.description | normalize_special_string }}    msg=description
 
     {% set dt_list_local = [] %}
     {% for item in cellular_profile_template.device_types | default(defaults.sdwan.edge_feature_templates.cellular_profile_templates.device_types) %}

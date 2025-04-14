@@ -19,7 +19,7 @@ Verify Centralized Policies Data Policy Application Aware Routing {{ aar.name }}
     ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/definition/approute/${aar_id[0]}
     Set Suite Variable    ${r_id}
     Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ aar.name }}    msg=name
-    Should Be Equal Value Json String    ${r_id.json()}    $..description    {{ aar.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $..description    {{ aar.description | normalize_special_string }}    msg=description
 
     ${sequence_items}=    Get Value From Json    ${r_id.json()}    $.sequences
     ${sequence_length}=    Get Length    ${sequence_items[0]}

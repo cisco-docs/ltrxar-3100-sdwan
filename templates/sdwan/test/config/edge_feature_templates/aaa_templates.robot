@@ -18,7 +18,7 @@ Get AAA Feature Template
 Verify Edge Feature Template AAA Feature Template {{ aaa_template.name }}
     ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ aaa_template.name }}")]
     Should Be Equal Value Json String    ${template_id}    $..templateName    {{ aaa_template.name }}    msg=AAA template name
-    Should Be Equal Value Json String    ${template_id}    $..templateDescription    {{ aaa_template.description }}    msg=AAA template description
+    Should Be Equal Value Json Special_String    ${template_id}    $..templateDescription    {{ aaa_template.description | normalize_special_string }}    msg=description
 
 {% set test_list = [] %}
 {% for item in aaa_template.device_types | default(defaults.sdwan.edge_feature_templates.aaa_templates.device_types) %}

@@ -13,12 +13,15 @@ pytestmark = pytest.mark.sdwan
 
 error_handler = errorhandler.ErrorHandler()
 
+FILTERS_PATH = "jinja_filters/"
 SDWAN_TEST_TEMPLATES_PATH = "templates/sdwan/test/"
 
 
 def sdwan_render_run_tests(sdwan_url, data_paths, output_path):
     """Render SDWAN test suites and run them using iac-test"""
-    error = render_templates(data_paths, output_path, SDWAN_TEST_TEMPLATES_PATH)
+    error = render_templates(
+        data_paths, output_path, SDWAN_TEST_TEMPLATES_PATH, filters_path=FILTERS_PATH
+    )
     if error:
         pytest.fail(error)
     os.environ["SDWAN_URL"] = sdwan_url

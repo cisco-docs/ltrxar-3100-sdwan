@@ -19,7 +19,7 @@ Verify Localized Policies QoS Map {{ qos_map.name }}
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/definition/qosmap/${def_id[0]}
 
     Should Be Equal Value Json String    ${r_id.json()}    $.name    {{ qos_map.name }}    msg=name
-    Should Be Equal Value Json String    ${r_id.json()}    $.description    {{ qos_map.description }}    msg=description
+    Should Be Equal Value Json Special_String    ${r_id.json()}    $.description    {{ qos_map.description | normalize_special_string }}    msg=description
 
     ${qos_scheduler_items}=    Get Value From Json    ${r_id.json()}    $.definition.qosSchedulers
     ${qos_schedulers_length}=    Get Length    ${qos_scheduler_items[0]}
