@@ -586,6 +586,7 @@ class Rule:
                     # Verify missing vars in the router
                     cli_profile_variables = []
                     missing_variables = []
+                    unnecessary_variables = []
                     if (
                         "device_variables" not in router
                         and router.get("configuration_group_deploy", True) == True
@@ -657,7 +658,6 @@ class Rule:
                                         # missing_variables.append(var_name + f' (sdwan.feature_profiles.cli_profiles[{configuration_group["cli_profile"]}].config.cli_configuration)')
                                         missing_variables.append(var_name)
                         # Verify unnecessary variables
-                        unnecessary_variables = []
                         for variable in router["device_variables"]:
                             feature_profile_variables = [
                                 v["variable_name"] for v in required_variables
