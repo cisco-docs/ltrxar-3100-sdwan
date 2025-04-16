@@ -23,6 +23,10 @@ REPOS = [
                 "src": "../templates/sdwan/test",
                 "dst": "./tests/templates",
             },
+            {
+                "src": "../jinja_filters",
+                "dst": "./tests/filters",
+            },
         ],
         "files": [
             {
