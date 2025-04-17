@@ -39,7 +39,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} BFD Feature {{ profil
 
 # Loop over color lists
 {% if profile.bfd.colors is defined and profile.bfd.colors|length > 0 %}
-Verify Feature Profiles System Profiles {{ profile.name }} BFD Feature {{ profile.bfd.name | default("not_defined") }} Color List
+    Log   === Color list ===
 {% for color_entry in profile.bfd.colors | default([]) %}
 
     Should Be Equal Value Json Yaml    ${system_bfd[0]}    $.data.colors[{{ loop.index0 }}].color    {{ color_entry.color | default('not_defined') }}    {{ color_entry.color_variable | default('not_defined') }}    msg=color_entry_color    var_msg=color_entry_color_variable
