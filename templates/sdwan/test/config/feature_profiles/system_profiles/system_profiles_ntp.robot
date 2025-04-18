@@ -33,7 +33,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} NTP Feature {{ profil
     Set Suite Variable    ${system_ntp}
 
     Should Be Equal Value Json String    ${system_ntp[0]}    $..name    {{ profile.ntp.name | default(defaults.sdwan.feature_profiles.system_profiles.ntp.name) }}    msg=name
-    Should Be Equal Value Json String    ${system_ntp[0]}    $..description    {{ profile.ntp.description | default(defaults.sdwan.feature_profiles.system_profiles.ntp.description) }}    msg=description
+    Should Be Equal Value Json Special_String    ${system_ntp[0]}    $..description    {{ profile.ntp.description | default('not_defined') | normalize_special_string }}    msg=description
 
     Should Be Equal Value Json Yaml    ${system_ntp[0]}    $.data.leader.enable   {{ profile.ntp.authoritative_ntp_server | default("not_defined") }}    {{ profile.ntp.authoritative_ntp_server_variable| default('not_defined') }}     msg=authoritative_ntp_server    var_msg=authoritative_ntp_server_variable
     Should Be Equal Value Json Yaml    ${system_ntp[0]}    $.data.leader.stratum   {{ profile.ntp.authoritative_ntp_server_stratum | default("not_defined") }}    {{ profile.ntp.authoritative_ntp_server_stratum_variable| default('not_defined') }}     msg=authoritative_ntp_server_stratum    var_msg=authoritative_ntp_server_stratum_variable

@@ -33,7 +33,7 @@ Verify Feature Profiles Other Profiles {{ profile.name }} UCSE Feature {{ profil
     Set Suite Variable    ${other_ucse}
 
     Should Be Equal Value Json String    ${other_ucse[0]}    $.name    {{ profile.ucse.name | default(defaults.sdwan.feature_profiles.other_profiles.ucse.name) }}    msg=name
-    Should Be Equal Value Json String    ${other_ucse[0]}    $.description    {{ profile.ucse.description | default('not_defined') }}    msg=description
+    Should Be Equal Value Json Special_String    ${other_ucse[0]}    $.description    {{ profile.ucse.description | default('not_defined') | normalize_special_string }}    msg=description
     Should Be Equal Value Json String    ${other_ucse[0]}    $..bay.value    {{ profile.ucse.bay | default('not_defined') }}    msg=bay
     Should Be Equal Value Json String    ${other_ucse[0]}    $..slot.value    {{ profile.ucse.slot | default('not_defined') }}    msg=slot
     Should Be Equal Value Json String    ${other_ucse[0]}    $..imc.access-port.dedicated.value    {{ profile.ucse.cimc_access_port_dedicated | default('not_defined') }}    msg=access_port_dedicated

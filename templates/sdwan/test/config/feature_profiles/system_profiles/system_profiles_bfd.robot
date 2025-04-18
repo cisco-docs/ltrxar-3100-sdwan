@@ -31,7 +31,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} BFD Feature {{ profil
     ${system_bfd}=    Get Value From Json    ${system_bfd_res.json()}    $..payload
     Set Suite Variable    ${system_bfd}
     Should Be Equal Value Json String    ${system_bfd[0]}    $..name    {{ profile.bfd.name | default(defaults.sdwan.feature_profiles.system_profiles.bfd.name) }}    msg=name
-    Should Be Equal Value Json String    ${system_bfd[0]}    $..description    {{ profile.bfd.description | default(defaults.sdwan.feature_profiles.system_profiles.bfd.description) }}    msg=description
+    Should Be Equal Value Json Special_String    ${system_bfd[0]}    $..description    {{ profile.bfd.description | default('not_defined') | normalize_special_string }}    msg=description
 
     Should Be Equal Value Json Yaml    ${system_bfd[0]}    $.data.multiplier    {{ profile.bfd.multiplier | default('not_defined')  }}    {{ profile.bfd.multiplier_variable| default('not_defined') }}     msg=multiplier    var_msg=multiplier_variable
     Should Be Equal Value Json Yaml    ${system_bfd[0]}    $.data.defaultDscp   {{ profile.bfd.default_dscp | default("not_defined") }}    {{ profile.bfd.default_dscp_variable| default('not_defined') }}     msg=default_dscp    var_msg=default_dscp_variable

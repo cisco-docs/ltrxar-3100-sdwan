@@ -20,17 +20,16 @@ Verify Feature Profiles Other Profiles {{ profile.name }}
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
 
     Should Be Equal Value Json String    ${profile}    $..profileName    {{ profile.name }}    msg=name
-    ${profile_description_raw}=    Get Value From Json    ${profile}    $..description
-    ${profile_description}=    Set Variable If    ${profile_description_raw} == [""]    not_defined    ${profile_description_raw[0]}
-    Should Be Equal As Strings    ${profile_description}    {{ profile.description | default("not_defined") }}    msg=description
+    Should Be Equal Value Json Special_String    ${profile}    $..description    {{ profile.description | default('not_defined') | normalize_special_string }}    msg=description
     
  {% if 'strict_config_check' not in robot_exclude_tags | default() %}
     ${profile_features_res}=   GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/other/${profile_id}[0]
     ${profile_features}=   Get Value From Json    ${profile_features_res.json()}    $..associatedProfileParcels
     # Extract feature list in profile from the data model
     ${profile_features_data_model}=    Create List
-    Append To List    ${profile_features_data_model}    {{ profile.ucse.name }}
-    Append To List    ${profile_features_data_model}    {{ profile.thousandeyes.name }}
+    {% for key,value in profile.items() if key != 'name' and key != 'description' %}
+        Append To List    ${profile_features_data_model}    {{ value.name | default(key) }}
+    {% endfor %} 
     Log    ${profile_features_data_model}
     # Add multiple instances of the features of same type, where applicable
     # {% for tracker in profile.ipv4_trackers %}

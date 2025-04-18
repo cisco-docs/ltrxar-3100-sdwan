@@ -33,7 +33,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} OMP Feature {{ profil
     Set Suite Variable    ${system_omp}
 
     Should Be Equal Value Json String    ${system_omp[0]}    $..name    {{ profile.omp.name | default(defaults.sdwan.feature_profiles.system_profiles.omp.name) }}    msg=name
-    Should Be Equal Value Json String    ${system_omp[0]}    $..description    {{ profile.omp.description | default(defaults.sdwan.feature_profiles.system_profiles.omp.description) }}    msg=description
+    Should Be Equal Value Json Special_String    ${system_omp[0]}    $..description    {{ profile.omp.description | default('not_defined') | normalize_special_string }}    msg=description
 
     Should Be Equal Value Json Yaml    ${system_omp[0]}    $.data.gracefulRestart   {{ profile.omp.graceful_restart | default("not_defined") }}    {{ profile.omp.graceful_restart_variable| default('not_defined') }}     msg=graceful_restart    var_msg=graceful_restart_variable
     Should Be Equal Value Json Yaml    ${system_omp[0]}    $.data.overlayAs   {{ profile.omp.overlay_as | default("not_defined") }}    {{ profile.omp.overlay_as_variable| default('not_defined') }}     msg=overlay_as    var_msg=overlay_as_variable

@@ -19,9 +19,7 @@ Verify Feature Profiles CLI Profiles {{ profile.name }}
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
 
     Should Be Equal Value Json String    ${profile}    $..profileName    {{ profile.name }}    msg=name
-    ${profile_description_raw}=    Get Value From Json    ${profile}    $..description
-    ${profile_description}=    Set Variable If    ${profile_description_raw} == [""]    not_defined    ${profile_description_raw[0]}
-    Should Be Equal As Strings    ${profile_description}    {{ profile.description | default("not_defined") }}    msg=description
+    Should Be Equal Value Json Special_String   ${profile}    $..description    {{ profile.description | default('not_defined') | normalize_special_string }}    msg=description
 
     ${cli_config_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/cli/${profile_id}[0]/config
     ${cli_config}=    Get Value From Json    ${cli_config_res.json()}    $..payload
@@ -33,9 +31,7 @@ Verify Feature Profiles CLI Profiles {{ profile.name }} Config Feature {{ profil
 
     Should Be Equal Value Json String    ${cli_config[0]}    $.name    {{ profile.config.name | default(defaults.sdwan.feature_profiles.cli_profiles.config.name) }}    msg=name
 
-    ${cli_config_description_raw}=    Get Value From Json    ${cli_config[0]}    $..description
-    ${cli_config_description}=    Set Variable If    ${cli_config_description_raw} == [""]    not_defined    ${cli_config_description_raw[0]}
-    Should Be Equal As Strings    ${cli_config_description}    {{ profile.config.description | default("not_defined") }}    msg=description
+    Should Be Equal Value Json Special_String     ${cli_config[0]}    $..description    {{ profile.config.description | default('not_defined') | normalize_special_string }}    msg=description
 
     ${config}=    Get Value From Json    ${cli_config[0]}    $..config
     ${config_split}=    Split string    ${config[0]}    separator=\n

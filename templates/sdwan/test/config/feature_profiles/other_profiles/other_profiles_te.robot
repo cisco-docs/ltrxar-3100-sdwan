@@ -31,7 +31,7 @@ Verify Feature Profiles Other Profiles {{ profile.name }} Thousandeyes Feature {
     ${other_thousandeyes}=    Get Value From Json    ${other_thousandeyes_res.json()}    $..payload
     Set Suite Variable    ${other_thousandeyes}
     Should Be Equal Value Json String    ${other_thousandeyes[0]}    $.name    {{ profile.thousandeyes.name | default(defaults.sdwan.feature_profiles.other_profiles.thousandeyes.name) }}    msg=name
-    Should Be Equal Value Json String    ${other_thousandeyes[0]}    $.description    {{ profile.thousandeyes.description | default('not_defined') }}    msg=description
+    Should Be Equal Value Json Special_String    ${other_thousandeyes[0]}    $.description    {{ profile.thousandeyes.description | default('not_defined') | normalize_special_string }}    msg=description
     Should Be Equal Value Json Yaml    ${other_thousandeyes[0]}    $..token    {{ profile.thousandeyes.account_group_token | default('not_defined') }}    {{ profile.thousandeyes.account_group_token_variable | default('not_defined') }}    msg=account_group_token    var_msg=account_group_token_variable
     Should Be Equal Value Json Yaml    ${other_thousandeyes[0]}    $..vpn    {{ profile.thousandeyes.vpn_id | default('not_defined') }}    {{ profile.thousandeyes.vpn_id_variable | default('not_defined') }}    msg=vpn    var_msg=vpn_variable
     Should Be Equal Value Json Yaml    ${other_thousandeyes[0]}    $..teMgmtIp   {{ profile.thousandeyes.management_ip | default('not_defined') }}    {{ profile.thousandeyes.management_ip_variable | default('not_defined') }}    msg=management_ip    var_msg=management_ip_variable

@@ -120,7 +120,7 @@ Should Be Equal Value Json Special_String
    [Arguments]   ${json}    ${json_path}   ${value}=${EMPTY}  ${msg}=${EMPTY}
    ${r_value}=   Get Value From Json   ${json}   ${json_path}
    TRY
-      ${r_value}=   Set Variable If    ${r_value} == []    not_defined    ${r_value}[0]
+      ${r_value}=   Set Variable If    ${r_value} == [] or ${r_value} == ['']    not_defined    ${r_value}[0]
    EXCEPT
       ${r_value}=   Set Variable    not_defined
    END

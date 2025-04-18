@@ -31,7 +31,7 @@ Verify Feature Profiles System Profile {{ profile.name }} Logging Feature {{ pro
     ${system_logging}=    Get Value From Json    ${system_logging_res.json()}    $..payload
     Set Suite Variable    ${system_logging}
     Should Be Equal Value Json String    ${system_logging[0]}    $..name    {{ profile.logging.name | default(defaults.sdwan.feature_profiles.system_profiles.logging.name) }}    msg=name
-    Should Be Equal Value Json String    ${system_logging[0]}    $..description    {{ profile.logging.description | default(defaults.sdwan.feature_profiles.system_profiles.logging.description) }}    msg=description
+    Should Be Equal Value Json Special_String    ${system_logging[0]}    $..description    {{ profile.logging.description | default('not_defined') | normalize_special_string }}    msg=description
     Should Be Equal Value Json Yaml    ${system_logging[0]}    $..diskFileSize    {{ profile.logging.disk_file_size | default('not_defined') }}    {{ profile.logging.disk_file_size_variable | default('not_defined') }}    msg=logging disk_file_size    var_msg=logging disk_file_size variable
     Should Be Equal Value Json Yaml    ${system_logging[0]}    $..diskFileRotate    {{ profile.logging.disk_file_rotate | default('not_defined') }}    {{ profile.logging.disk_file_rotate_variable| default('not_defined') }}    msg=logging disk_file_rotate    var_msg=logging disk_file_rotate variable
 

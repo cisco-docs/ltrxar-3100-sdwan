@@ -21,9 +21,7 @@ Verify Feature Profiles System Profile {{ profile.name }}
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
 
     Should Be Equal Value Json String    ${profile}    $..profileName    {{ profile.name }}    msg=name
-    ${profile_description_raw}=    Get Value From Json    ${profile}    $..description
-    ${profile_description}=    Set Variable If    ${profile_description_raw} == [""]    not_defined    ${profile_description_raw[0]}
-    Should Be Equal As Strings    ${profile_description}    {{ profile.description | default("not_defined") }}    msg=description
+    Should Be Equal Value Json Special_String    ${profile}    $..description    {{ profile.description | default('not_defined') | normalize_special_string }}    msg=description
 
  {% if 'strict_config_check' not in robot_exclude_tags | default() %}
     ${profile_features_res}=   GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system/${profile_id}[0]
