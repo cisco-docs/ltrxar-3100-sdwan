@@ -1,11 +1,12 @@
 # System OMP Feature
+
 OMP template controls number of paths being advertised and installed, which protocols are by default redistributed into OMP, AS overlay number and also various timers: graceful restart, advertisment and hold.
 
 {{ doc_gen }}
 
 ### Examples
 
-Example-1: Basic OMP configuration is shown in example below. We want OMP only to advertise by default static and connected routes. Rest should be controlled by VPN template. Edges are allowed to advertise 16 paths and install 16 ECMP paths. Graceful restart is enabled with restart timer set to one day.
+Example-1: This example shows how to configure OMP feature which advertises IPv4 and IPv6 connected and OSPF routes into OMP, setting ECMP limit and send-path-limit to 16, enabling graceful restart and setting a greaceful restart timer.
 
 ```yaml
 sdwan:
@@ -13,17 +14,15 @@ sdwan:
     system_profiles:
       - name: system1
         description: Basic system profile
-        omp_templates:
-          - name: FT-EDGE-OMP-01
-            description: OMP base template
-            ipv4_advertise_protocols:
-              - ospf
-              - connected
-            ipv6_advertise_protocols:
-              - ospf
-              - connected
-            ecmp_limit: 16
-            send_path_limit: 16
-            graceful_restart: true
-            graceful_restart_timer: 86400
+        omp:
+          name: omp
+          description: OMP base template
+          advertise_ipv4_connected: true
+          advertise_ipv4_ospf: true
+          advertise_ipv6_connected: true
+          advertise_ipv6_ospf: true
+          ecmp_limit: 16
+          send_path_limit: 16
+          graceful_restart: true
+          graceful_restart_timer: 86400
 ```
