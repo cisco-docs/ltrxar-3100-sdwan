@@ -33,22 +33,12 @@ Verify Edge Feature Template DHCP Feature template {{ dhcp_template.name }}
     ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ dhcp_template.name }}")].templateId
     ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${template_id[0]}
 
-    Should Be Equal Value Json String    ${r_id.json()}    $..["address-pool"].vipValue    {{ dhcp_template.address_pool | default("not_defined") }}    msg=address pool
-    Should Be Equal Value Json String    ${r_id.json()}    $..["address-pool"].vipVariableName    {{ dhcp_template.address_pool_variable | default("not_defined") }}    msg=address pool variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["default-gateway"].vipValue    {{ dhcp_template.default_gateway | default("not_defined") }}    msg=default gateway
-    Should Be Equal Value Json String    ${r_id.json()}    $..["default-gateway"].vipVariableName    {{ dhcp_template.default_gateway_variable | default("not_defined") }}    msg=default gateway variable
-
-{% if dhcp_template.dns_servers | default("not_defined") == 'not_defined' %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..["dns-servers"].vipValue    {{ dhcp_template.dns_servers | default("not_defined") }}    msg=dns servers
-{% else %}
-    ${rec_dns_servers}=    Get Value From Json    ${r_id.json()}    $..["dns-servers"].vipValue
-    ${dns_servers_list}=    Create List    {{ dhcp_template.dns_servers | default(["not_defined"]) | join('   ') }}
-    Lists Should Be Equal    ${rec_dns_servers}[0]    ${dns_servers_list}    ignore_order=True    msg=dns servers
-{% endif %}
-
-    Should Be Equal Value Json String    ${r_id.json()}    $..["dns-servers"].vipVariableName    {{ dhcp_template.dns_servers_variable | default("not_defined") }}    msg=dns servers variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["domain-name"].vipValue    {{ dhcp_template.domain_name | default("not_defined") }}    msg=domain name
-    Should Be Equal Value Json String    ${r_id.json()}    $..["domain-name"].vipVariableName    {{ dhcp_template.domain_name_variable | default("not_defined") }}    msg=domain name variable
+    Should Be Equal Value Json String FT    ${r_id.json()}    $..["address-pool"]    {{ dhcp_template.address_pool_variable | default(dhcp_template.address_pool | default("not_defined")) }}    msg=address pool
+    Should Be Equal Value Json String FT    ${r_id.json()}    $..["default-gateway"]    {{ dhcp_template.default_gateway_variable | default(dhcp_template.default_gateway | default("not_defined")) }}    msg=default gateway
+    
+    ${dns_servers_value}=    Create List    {{ dhcp_template.dns_servers_variable | default(dhcp_template.dns_servers | default(["not_defined"]) | join('   ')) }}
+    Should Be Equal Value Json List FT    ${r_id.json()}    $..["dns-servers"]    ${dns_servers_value}    msg=dns servers
+    Should Be Equal Value Json String FT    ${r_id.json()}    $..["domain-name"]    {{ dhcp_template.domain_name_variable | default(dhcp_template.domain_name | default("not_defined")) }}    msg=domain name
 
 {% set exclude_addresses_range_list = [] %}
 {% for item in dhcp_template.exclude_addresses_ranges | default([]) %}
@@ -78,31 +68,18 @@ Verify Edge Feature Template DHCP Feature template {{ dhcp_template.name }}
 {% endif %}
 
     Should Be Equal Value Json String    ${r_id.json()}    $..["exclude"].vipVariableName    {{ dhcp_template.exclude_addresses_variable | default("not_defined") }}    msg=exclude addresses variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["interface-mtu"].vipValue    {{ dhcp_template.interface_mtu | default("not_defined") }}    msg=interface mtu
-    Should Be Equal Value Json String    ${r_id.json()}    $..["interface-mtu"].vipVariableName    {{ dhcp_template.interface_mtu_variable | default("not_defined") }}    msg=interface mtu variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["lease-time"].vipValue    {{ dhcp_template.lease_time | default("not_defined") }}    msg=lease time
-    Should Be Equal Value Json String    ${r_id.json()}    $..["lease-time"].vipVariableName    {{ dhcp_template.lease_time_variable | default("not_defined") }}    msg=lease time variable
+    Should Be Equal Value Json String FT    ${r_id.json()}    $..["interface-mtu"]    {{ dhcp_template.interface_mtu_variable | default(dhcp_template.interface_mtu | default("not_defined")) }}    msg=interface mtu
+    Should Be Equal Value Json String FT    ${r_id.json()}    $..["lease-time"]    {{ dhcp_template.lease_time_variable | default(dhcp_template.lease_time | default("not_defined")) }}    msg=lease time
 
     Should Be Equal Value Json List Length    ${r_id.json()}   $..["options"]["option-code"].vipValue    {{ dhcp_template.options | length }}    msg=options
 
 {% for option in dhcp_template.options | default([]) %}
 
-    Should Be Equal Value Json String    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].code.vipValue    {{ option.option_code | default("not_defined") }}    msg=option code
-    Should Be Equal Value Json String    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].code.vipVariableName    {{ option.option_code_variable | default("not_defined") }}    msg=option code variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].ascii.vipValue    {{ option.ascii | default("not_defined") }}    msg=ascii
-    Should Be Equal Value Json String    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].ascii.vipVariableName    {{ option.ascii_variable | default("not_defined") }}    msg=ascii variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].hex.vipValue    {{ option.hex | default("not_defined") }}    msg=hex
-    Should Be Equal Value Json String    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].hex.vipVariableName    {{ option.hex_variable | default("not_defined") }}    msg=hex variable
-
-{% if option.ip_addresses | default("not_defined") == 'not_defined' %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].ip.vipValue    {{ option.ip_addresses | default("not_defined") }}    msg=ip addresses
-{% else %}
-    ${rec_ip_addresses}=    Get Value From Json    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].ip.vipValue
-    ${exp_ip_addresses}=   Create List    {{ option.ip_addresses | default(["not_defined"]) | join('   ') }}
-    Lists Should Be Equal   ${rec_ip_addresses}   ${exp_ip_addresses}   ignore_order=True   msg=ip addresses
-{% endif %}
-
-    Should Be Equal Value Json String    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].ip.vipVariableName    {{ option.ip_addresses_variable | default("not_defined") }}    msg=ip addresses variable
+    Should Be Equal Value Json String FT    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].code    {{ option.option_code_variable | default(option.option_code | default("not_defined")) }}    msg=option code
+    Should Be Equal Value Json String FT    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].ascii    {{ option.ascii_variable | default(option.ascii | default("not_defined")) }}    msg=ascii
+    Should Be Equal Value Json String FT    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].hex    {{ option.hex_variable | default(option.hex | default("not_defined")) }}    msg=hex
+    ${option_ip_addresses_value}=    Create List    {{ option.ip_addresses_variable | default(option.ip_addresses | default(["not_defined"]) | join('   ')) }}
+    Should Be Equal Value Json List FT    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].ip    ${option_ip_addresses_value}    msg=option ip addresses
 
 {% endfor %}
 
@@ -110,25 +87,15 @@ Verify Edge Feature Template DHCP Feature template {{ dhcp_template.name }}
 
 {% for static_lease in dhcp_template.static_leases | default([]) %}
 
-    Should Be Equal Value Json String    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}].ip.vipValue    {{ static_lease.ip_address | default("not_defined") }}    msg=ip address
-    Should Be Equal Value Json String    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}].ip.vipVariableName    {{ static_lease.ip_address_variable | default("not_defined") }}    msg=ip address variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}]["mac-address"].vipValue    {{ static_lease.mac_address | default("not_defined") }}    msg=mac address
-    Should Be Equal Value Json String    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}]["mac-address"].vipVariableName    {{ static_lease.mac_address_variable | default("not_defined") }}    msg=mac address variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}]["host-name"].vipValue    {{ static_lease.hostname | default("not_defined") }}    msg=hostname
-    Should Be Equal Value Json String    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}]["host-name"].vipVariableName    {{ static_lease.hostname_variable | default("not_defined") }}    msg=hostname variable
+    Should Be Equal Value Json String FT    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}].ip    {{ static_lease.ip_address_variable | default(static_lease.ip_address | default("not_defined")) }}    msg=ip address
+    Should Be Equal Value Json String FT    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}]["mac-address"]    {{ static_lease.mac_address_variable | default(static_lease.mac_address | default("not_defined")) }}    msg=mac address
+    Should Be Equal Value Json String FT    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}]["host-name"]    {{ static_lease.hostname_variable | default(static_lease.hostname | default("not_defined")) }}    msg=hostname
     Should Be Equal Value Json String    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}]["vipOptional"]    {{ static_lease.optional | default("not_defined") }}    msg=optional
 
 {% endfor %}
 
-{% if dhcp_template.tftp_servers | default("not_defined") == 'not_defined' %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..["tftp-servers"].vipValue    {{ dhcp_template.tftp_servers | default("not_defined") }}    msg=tftp servers
-{% else %}
-    ${tftp_servers}=    Get Value From Json    ${r_id.json()}    $..["tftp-servers"].vipValue
-    ${exp_tftp_servers}=   Create List    {{ dhcp_template.tftp_servers | default(["not_defined"]) | join('   ') }}
-    Lists Should Be Equal   ${tftp_servers[0]}   ${exp_tftp_servers}   ignore_order=True   msg=tftp servers
-{% endif %}
-
-    Should Be Equal Value Json String    ${r_id.json()}    $..["tftp-servers"].vipVariableName    {{ dhcp_template.tftp_servers_variable | default("not_defined") }}    msg=tftp servers variable
+    ${tftp_servers_value}=    Create List    {{ dhcp_template.tftp_servers_variable | default(dhcp_template.tftp_servers | default(["not_defined"]) | join('   ')) }}
+    Should Be Equal Value Json List FT    ${r_id.json()}    $..["tftp-servers"]    ${tftp_servers_value}    msg=tftp servers
 
 {% endfor %}
 

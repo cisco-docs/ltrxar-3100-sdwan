@@ -94,6 +94,24 @@ Should Be Equal Value Json String FT
    END
    Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg} ${r_value_msg_suffix}
 
+# This keyword is used to retrieve the correct VIP value from the Feature Template based on the vipType when the value is provided as a list.
+Should Be Equal Value Json List FT
+   [Arguments]   ${json}    ${json_path}   ${value}=["not_defined"]  ${msg}=${EMPTY}
+   ${l_value_viptype}=    Get Value From Json    ${json}    ${json_path}.vipType
+   IF    ${l_value_viptype} != []
+      ${l_value}=    Get Value From Json    ${json}    ${json_path}.vipValue
+      ${l_value_variable}=    Get Value From Json    ${json}    ${json_path}.vipVariableName
+      IF    "${l_value_viptype}[0]"=="constant"
+         Lists Should Be Equal    ${l_value[0]}    ${value}    ignore_order=True    msg=${msg}
+      ELSE IF    "${l_value_viptype}[0]"=="variableName"
+         Should Be Equal As Strings    ${l_value_variable[0]}    ${value[0]}    msg=${msg} variable
+      ELSE
+         Should Be Equal As Strings    not_defined    ${value[0]}    msg=${msg}
+      END
+   ELSE
+      Should Be Equal As Strings    not_defined    ${value[0]}    msg=${msg}
+   END
+
 Should Be Equal Value Json Yaml
     [Arguments]    ${json}    ${json_path}    ${value}    ${var_value}    ${msg}    ${var_msg}
     ${opt_type}=    Get Value From Json    ${json}    ${json_path}.optionType
