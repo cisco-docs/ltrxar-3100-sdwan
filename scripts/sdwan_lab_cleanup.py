@@ -67,7 +67,7 @@ def delete_configuration(api):
   task = TaskDelete()
   task_args = DeleteArgs(
     tag="config_group",
-    not_regex="(_basic)|(umbrellaTokenList)|(Policy_Profile_Global)|(controller_system)",
+    not_regex="(_basic)|(umbrellaTokenList)|(Policy_Profile_Global)|(policy_objects)|(controller_system)",
   )
   task.runner(task_args, api)
 
@@ -75,17 +75,18 @@ def delete_configuration(api):
   for profile in profiles:
     if profile["profileType"] != "policy-object" and not any(
       excluded in profile.get("profileName", "")
-      for excluded in {"_basic", "umbrellaTokenList", "Policy_Profile_Global"}
+      for excluded in {"_basic", "umbrellaTokenList", "Policy_Profile_Global", "policy_objects"}
     ):
       api.delete(f"/v1/feature-profile/sdwan/{profile['profileType']}/{profile['profileId']}")
 
   # In some versions, policy-object profile cannot be removed
   # Instead, we just remove all objects under this profile
-  policy_objects_profile = next(
-    (profile for profile in profiles if profile["profileType"] == "policy-object"), 
+  policy_objects_profile_id = next(
+    (profile["profileId"] for profile in profiles if profile["profileType"] == "policy-object"),
     None
   )
-  if policy_objects_profile:
+  if policy_objects_profile_id:
+    policy_objects_profile = api.get(f"/v1/feature-profile/sdwan/policy-object/{policy_objects_profile_id}")
     for feature in policy_objects_profile.get("associatedProfileParcels", []):
       api.delete(
         f"/v1/feature-profile/sdwan/policy-object/{policy_objects_profile['profileId']}/{feature['parcelType']}/{feature['parcelId']}"
@@ -95,7 +96,7 @@ def delete_configuration(api):
   # Delete remaining configurations
   task_args = DeleteArgs(
     tag="all",
-    not_regex="(_basic)|(umbrellaTokenList)|(Policy_Profile_Global)|(controller_system)|(policy_objects)",
+    not_regex="(_basic)|(umbrellaTokenList)|(Policy_Profile_Global)|(policy_objects)|(controller_system)",
   )
   task.runner(task_args, api)
 
