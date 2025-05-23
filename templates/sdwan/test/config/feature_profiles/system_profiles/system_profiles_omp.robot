@@ -26,10 +26,12 @@ Get System Profiles
 
 Verify Feature Profiles System Profiles {{ profile.name }} OMP Feature {{ profile.omp.name | default(defaults.sdwan.feature_profiles.system_profiles.omp.name) }}
     ${profile}=    Get Value From Json    ${r.json()}    $[?(@.profileName=='{{ profile.name }}')]
+    Run Keyword If    ${profile} == []    Fail    Feature Profile '{{profile.name}}' should be present on the Manager
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
 
     ${system_omp_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system/${profile_id[0]}/omp
     ${system_omp}=    Get Value From Json    ${system_omp_res.json()}    $..payload
+    Run Keyword If    ${system_omp} == []    Fail    Feature '{{profile.omp.name}}' expected to be configured within the system profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${system_omp}
 
     Should Be Equal Value Json String    ${system_omp[0]}    $..name    {{ profile.omp.name | default(defaults.sdwan.feature_profiles.system_profiles.omp.name) }}    msg=name

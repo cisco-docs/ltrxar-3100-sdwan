@@ -26,17 +26,19 @@ Get System Profiles
 
 Verify Feature Profiles System Profile {{ profile.name }} Logging Feature {{ profile.logging.name | default(defaults.sdwan.feature_profiles.system_profiles.logging.name) }}
     ${profile}=    Get Value From Json    ${r.json()}    $[?(@.profileName=='{{ profile.name }}')]
+    Run Keyword If    ${profile} == []    Fail    Feature Profile '{{profile.name}}' should be present on the Manager
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
     ${system_logging_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system/${profile_id}[0]/logging
     ${system_logging}=    Get Value From Json    ${system_logging_res.json()}    $..payload
+    Run Keyword If    ${system_logging} == []    Fail    Feature '{{profile.logging.name}}' expected to be configured within the system profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${system_logging}
     Should Be Equal Value Json String    ${system_logging[0]}    $..name    {{ profile.logging.name | default(defaults.sdwan.feature_profiles.system_profiles.logging.name) }}    msg=name
     Should Be Equal Value Json Special_String    ${system_logging[0]}    $..description    {{ profile.logging.description | default('not_defined') | normalize_special_string }}    msg=description
     Should Be Equal Value Json Yaml    ${system_logging[0]}    $..diskFileSize    {{ profile.logging.disk_file_size | default('not_defined') }}    {{ profile.logging.disk_file_size_variable | default('not_defined') }}    msg=logging disk_file_size    var_msg=logging disk_file_size variable
     Should Be Equal Value Json Yaml    ${system_logging[0]}    $..diskFileRotate    {{ profile.logging.disk_file_rotate | default('not_defined') }}    {{ profile.logging.disk_file_rotate_variable| default('not_defined') }}    msg=logging disk_file_rotate    var_msg=logging disk_file_rotate variable
 
+    Should Be Equal Value Json List Length    ${system_logging[0]}    $.data.tlsProfile    {{ profile.logging.tls_profiles | length }}    msg=tls_profiles_count
 
-# Loop over TLS profiles
 {% if profile.logging.tls_profiles is defined and profile.logging.tls_profiles|length > 0 %}
 
     Log     === TLS profiles === 
@@ -54,8 +56,8 @@ Verify Feature Profiles System Profile {{ profile.name }} Logging Feature {{ pro
 
 {% endif %}
 
+    Should Be Equal Value Json List Length    ${system_logging[0]}    $.data..server    {{ profile.logging.ipv4_servers | length }}    msg=logging_ipv4_servers_count    
 
-# Loop over IPv4 Servers
 {% if profile.logging.ipv4_servers is defined and profile.logging.ipv4_servers|length > 0 %}
 
     Log     === Ipv4 Servers === 
@@ -71,7 +73,7 @@ Verify Feature Profiles System Profile {{ profile.name }} Logging Feature {{ pro
 {% endfor %}
 {% endif %}
 
-# Loop over IPv6 Servers
+    Should Be Equal Value Json List Length    ${system_logging[0]}    $.data..ipv6Server    {{ profile.logging.ipv6_servers | length }}    msg=logging_ipv6_servers_count
 {% if profile.logging.ipv6_servers is defined and profile.logging.ipv6_servers|length > 0 %}
 
     Log     === Ipv6 Servers === 

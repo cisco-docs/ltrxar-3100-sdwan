@@ -16,6 +16,7 @@ Get CLI Profiles
 
 Verify Feature Profiles CLI Profiles {{ profile.name }}
     ${profile}=    Get Value From Json    ${r.json()}    $[?(@.profileName=='{{ profile.name }}')]
+    Run Keyword If    ${profile} == []    Fail    Feature Profile '{{profile.name}}' should be present on the Manager
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
 
     Should Be Equal Value Json String    ${profile}    $..profileName    {{ profile.name }}    msg=name
@@ -28,7 +29,7 @@ Verify Feature Profiles CLI Profiles {{ profile.name }}
 {% if profile.config is defined %}
 
 Verify Feature Profiles CLI Profiles {{ profile.name }} Config Feature {{ profile.config.name | default(defaults.sdwan.feature_profiles.cli_profiles.config.name) }}
-
+    Run Keyword If    ${cli_config} == []    Fail    Feature '{{profile.config.name}}' expected to be configured within the cli profile '{{profile.name}}' on the Manager
     Should Be Equal Value Json String    ${cli_config[0]}    $.name    {{ profile.config.name | default(defaults.sdwan.feature_profiles.cli_profiles.config.name) }}    msg=name
 
     Should Be Equal Value Json Special_String     ${cli_config[0]}    $..description    {{ profile.config.description | default('not_defined') | normalize_special_string }}    msg=description

@@ -26,9 +26,11 @@ Get Other Profiles
 
 Verify Feature Profiles Other Profiles {{ profile.name }} Thousandeyes Feature {{ profile.thousandeyes.name | default(defaults.sdwan.feature_profiles.other_profiles.thousandeyes.name) }}
     ${profile}=    Get Value From Json    ${r.json()}    $[?(@.profileName=='{{ profile.name }}')]
+    Run Keyword If    ${profile} == []    Fail    Feature Profile '{{profile.name}}' should be present on the Manager
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
     ${other_thousandeyes_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/other/${profile_id}[0]/thousandeyes
     ${other_thousandeyes}=    Get Value From Json    ${other_thousandeyes_res.json()}    $..payload
+    Run Keyword If    ${other_thousandeyes} == []    Fail    Feature '{{profile.thousandeyes.name}}' expected to be configured within the other profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${other_thousandeyes}
     Should Be Equal Value Json String    ${other_thousandeyes[0]}    $.name    {{ profile.thousandeyes.name | default(defaults.sdwan.feature_profiles.other_profiles.thousandeyes.name) }}    msg=name
     Should Be Equal Value Json Special_String    ${other_thousandeyes[0]}    $.description    {{ profile.thousandeyes.description | default('not_defined') | normalize_special_string }}    msg=description

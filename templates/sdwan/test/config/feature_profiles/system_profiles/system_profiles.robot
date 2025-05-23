@@ -18,6 +18,7 @@ Get System Profiles
 
 Verify Feature Profiles System Profile {{ profile.name }}
     ${profile}=    Get Value From Json    ${r.json()}    $[?(@.profileName=='{{ profile.name }}')]
+    Run Keyword If    ${profile} == []    Fail    Feature Profile '{{profile.name}}' should be present on the Manager
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
 
     Should Be Equal Value Json String    ${profile}    $..profileName    {{ profile.name }}    msg=name
