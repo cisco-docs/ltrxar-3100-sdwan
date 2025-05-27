@@ -637,13 +637,13 @@ sdwan:
         logging:
           name: logging
         # Cannot be tested when MRF is disabled in settings
-        # mrf:
-        #   name: mrf_full
-        #   description: multi-region fabric feature with full configuration
-        #   migration_to_mrf: enabled
-        #   migration_bgp_community: 65000
-        #   role: edge-router
-        #   secondary_region_id_variable: secondary_region_id
+        mrf:
+          name: mrf_full
+          description: multi-region fabric feature with full configuration
+          migration_to_mrf: enabled
+          migration_bgp_community: 65000
+          role: edge-router
+          secondary_region_id_variable: secondary_region_id
         omp:
           name: omp
         performance_monitoring:
