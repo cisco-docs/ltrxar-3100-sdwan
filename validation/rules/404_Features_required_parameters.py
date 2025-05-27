@@ -44,6 +44,8 @@ class Rule:
         "sdwan.feature_profiles.system_profiles.snmp.trap_target_servers.vpn_id",
         "sdwan.feature_profiles.system_profiles.snmp.users.group",
         "sdwan.feature_profiles.system_profiles.snmp.views.oids.id",
+        "sdwan.feature_profiles.transport_profiles.cellular_profiles.access_point_name",
+        "sdwan.feature_profiles.transport_profiles.cellular_profiles.profile_id",
         "sdwan.feature_profiles.transport_profiles.ipv4_trackers.tracker_name",
         "sdwan.feature_profiles.transport_profiles.ipv6_tracker_groups.tracker_name",
         "sdwan.feature_profiles.transport_profiles.ipv6_trackers.tracker_name",

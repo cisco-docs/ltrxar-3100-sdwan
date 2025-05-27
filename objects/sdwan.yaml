@@ -456,6 +456,14 @@ objects:
     template: system_snmp
     folder: features_system
     paths: [sdwan.feature_profiles.system_profiles.snmp]
+  - name: Transport Cellular Profile Feature
+    template: transport_cellular_profile
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.cellular_profiles]
+  - name: Transport GPS
+    template: transport_gps
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.gps_features]
   - name: Transport IPv4 Tracker Group Feature
     template: transport_ipv4_tracker_group
     folder: features_transport

@@ -7,6 +7,29 @@ class Rule:
     def match(cls, inventory):
         results = []
         for feature_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get("transport_profiles", []):
+            # Validate cellular_profile feature
+            for cellular_profile in feature_profile.get("cellular_profiles", []):
+                # If authentication is Enabled: authentication_type, username, and password must be present
+                if cellular_profile.get("authentication_enable", False):
+                    if not cellular_profile.get("authentication_type"):
+                        results.append(f"authentication is enabled, but authentication_type is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].cellular_profiles[{cellular_profile['name']}]")
+                    if not cellular_profile.get("profile_username") and not cellular_profile.get("profile_username_variable"):
+                        results.append(f"authentication is enabled, but username is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].cellular_profiles[{cellular_profile['name']}]")
+                    if not cellular_profile.get("profile_password") and not cellular_profile.get("profile_password_variable"):
+                        results.append(f"authentication is enabled, but password is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].cellular_profiles[{cellular_profile['name']}]")
+                else:
+                    # If authentication is Disabled or not present: authentication_type, username, and password should not be present
+                    if cellular_profile.get("authentication_type"):
+                        results.append(f"authentication is disabled, but authentication_type is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].cellular_profiles[{cellular_profile['name']}]")
+                    if cellular_profile.get("profile_username") or cellular_profile.get("profile_username_variable"):
+                        results.append(f"authentication is disabled, but username is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].cellular_profiles[{cellular_profile['name']}]")
+                    if cellular_profile.get("profile_password") or cellular_profile.get("profile_password_variable"):
+                        results.append(f"authentication is disabled, but password is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].cellular_profiles[{cellular_profile['name']}]")
+            # Validate gps feature
+            for gps in feature_profile.get("gps_features", []):
+                if not gps.get("nmea_enable"):
+                    if gps.get("nmea_source_address") or gps.get("nmea_destination_address") or gps.get("nmea_destination_port"):
+                        results.append(f"nmea is disabled, but nmea_source_address, nmea_destination_address or nmea_destination_port is defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].gps[{gps['name']}]")
             # Validate management_vpn feature
             management_vpn_feature = feature_profile.get("management_vpn", {})
             if management_vpn_feature:

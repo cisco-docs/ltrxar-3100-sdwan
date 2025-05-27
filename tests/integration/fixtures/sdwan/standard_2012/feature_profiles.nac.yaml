@@ -677,6 +677,25 @@ sdwan:
     transport_profiles:
       - name: transport1
         description: full profile
+        cellular_profiles:
+          - name: cellular_profiles_with_auth
+            description: cellular profile
+            access_point_name: apn.com
+            authentication_enable: true
+            authentication_type: pap
+            profile_id: 2
+            profile_username: username
+            profile_password: pwd
+            packet_data_network_type: ipv4
+            no_overwrite: false
+        gps_features:
+          - name: gps1
+            gps_enable: true
+            gps_mode: standalone
+            nmea_enable: true
+            nmea_source_address: 10.10.10.1
+            nmea_destination_address: 10.10.10.100
+            nmea_destination_port: 12345
         ipv4_tracker_groups:
           - name: ipv4_tracker_group
             tracker_boolean: or
