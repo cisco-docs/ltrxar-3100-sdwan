@@ -3,7 +3,7 @@ Documentation   Verify System Feature Profile Configuration MRF
 Name            System Profiles MRF
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles     system_feature_profiles   mrf
+Default Tags    sdwan    config    feature_profiles     system_profiles   mrf
 Resource        ../../../sdwan_common.resource
 
 

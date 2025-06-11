@@ -2,7 +2,7 @@
 Documentation   Verify CLI Feature Profile Configuration
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process   Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles    cli_feature_profiles
+Default Tags    sdwan    config    feature_profiles    cli_profiles
 Resource        ../../sdwan_common.resource
 
 {% if sdwan.feature_profiles.cli_profiles is defined %}

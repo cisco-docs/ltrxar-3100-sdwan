@@ -3,7 +3,7 @@ Documentation   Verify System Feature Profile Configuration OMP
 Name            System Profiles OMP
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles     system_feature_profiles   omp
+Default Tags    sdwan    config    feature_profiles     system_profiles   omp
 Resource        ../../../sdwan_common.resource
 
 

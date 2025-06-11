@@ -3,7 +3,7 @@ Documentation   Verify Other Feature Profile Configuration TE
 Name            Other Profiles Thousandeyes
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process   Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles    other_feature_profiles   thousandeyes
+Default Tags    sdwan    config    feature_profiles    other_profiles   thousandeyes
 Resource        ../../../sdwan_common.resource
 
 

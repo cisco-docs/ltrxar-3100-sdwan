@@ -3,7 +3,7 @@ Documentation   Verify System Feature Profile Configuration NTP
 Name            System Profiles NTP
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles     system_feature_profiles   ntp
+Default Tags    sdwan    config    feature_profiles     system_profiles   ntp
 Resource        ../../../sdwan_common.resource
 
 

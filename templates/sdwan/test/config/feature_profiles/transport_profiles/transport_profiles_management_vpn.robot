@@ -3,7 +3,7 @@ Documentation   Verify Transport Profile Management VPN Profiles
 Name            Transport Management VPN Profiles
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles     transport_feature_profiles    management_vpn  
+Default Tags    sdwan    config    feature_profiles     transport_profiles    management_vpn  
 Resource        ../../../sdwan_common.resource
 
 {% set profile_management_vpn = [] %}

@@ -3,7 +3,7 @@ Documentation   Verify System Feature Profile Configuration Performance Monitori
 Name            System Profiles Performance Monitoring
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles     system_feature_profiles   performance_monitoring
+Default Tags    sdwan    config    feature_profiles     system_profiles   performance_monitoring
 Resource        ../../../sdwan_common.resource
 
 

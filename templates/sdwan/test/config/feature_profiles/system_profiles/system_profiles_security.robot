@@ -3,7 +3,7 @@ Documentation   Verify System Feature Profile Configuration Security
 Name            System Profiles Security
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles     system_feature_profiles   security
+Default Tags    sdwan    config    feature_profiles     system_profiles   security
 Resource        ../../../sdwan_common.resource
 
 

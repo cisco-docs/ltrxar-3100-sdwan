@@ -3,7 +3,7 @@ Documentation   Verify System Feature Profile Configuration BFD
 Name            System Profiles BFD
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles     system_feature_profiles   bfd
+Default Tags    sdwan    config    feature_profiles     system_profiles   bfd
 Resource        ../../../sdwan_common.resource
 
 

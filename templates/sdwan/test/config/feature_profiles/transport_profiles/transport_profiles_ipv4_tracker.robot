@@ -3,7 +3,7 @@ Documentation   Verify Transport Feature Profile Configuration IPv4 Tracker and 
 Name            Transport Profiles IPv4 Tracker and IPv4 Tracker Group
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles     transport_feature_profiles    ipv4_tracker    ipv4_tracker_group
+Default Tags    sdwan    config    feature_profiles     transport_profiles    ipv4_tracker    ipv4_tracker_group
 Resource        ../../../sdwan_common.resource
 
 
