@@ -16,6 +16,20 @@ class Rule:
                     duplicates = {address for address in servers if servers.count(address) > 1}
                     if duplicates:
                         results.append(f"Duplicate {server_type.upper()} server addresses found: {', '.join(duplicates)} in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].aaa.{server_type}_groups")
+            tacacs_vpn_ids = [f'tacacs-{group.get("vpn")}' for group in aaa_feature.get("tacacs_groups", [])]
+            radius_vpn_ids = [f'radius-{group.get("vpn")}' for group in aaa_feature.get("radius_groups", [])]
+            accounting_groups = [group for rule in aaa_feature.get("accounting_rules", []) for group in rule.get('groups', [])]
+            authorization_groups = [group for rule in aaa_feature.get("authorization_rules", []) for group in rule.get('groups', [])]
+            auth_order = aaa_feature.get("auth_order", [])
+            valid_server_vpn_ids = tacacs_vpn_ids + radius_vpn_ids + ['local']
+            for group_type, groups in [
+                ("Accounting Groups", accounting_groups),
+                ("Authorization Groups", authorization_groups),
+                ("Auth Order", auth_order),
+            ]:
+                invalid_server_vpn_ids = [vpn_id for vpn_id in groups if vpn_id not in valid_server_vpn_ids]
+                if invalid_server_vpn_ids:
+                    results.append(f"{group_type} contain invalid server vpn id: {', '.join(invalid_server_vpn_ids)} in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].aaa.{group_type.lower().replace(' ', '_')}")
             basic_feature = feature_profile.get("basic", {})
             if basic_feature:
                 if ("geo_fencing_enable" not in basic_feature or basic_feature["geo_fencing_enable"] is False) and "geo_fencing_range" in basic_feature:
