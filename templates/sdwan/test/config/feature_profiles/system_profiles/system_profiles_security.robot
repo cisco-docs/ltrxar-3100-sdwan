@@ -30,7 +30,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} Security Feature {{ p
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
     ${system_security_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system/${profile_id[0]}/security
     ${system_security}=    Get Value From Json    ${system_security_res.json()}    $..payload
-    Run Keyword If    ${system_security} == []    Fail    Feature '{{profile.security.name}}' expected to be configured within the system profile '{{profile.name}}' on the Manager
+    Run Keyword If    ${system_security} == []    Fail    Feature '{{profile.security.name | default(defaults.sdwan.feature_profiles.system_profiles.security.name) }}' expected to be configured within the system profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${system_security}
 
     Should Be Equal Value Json String    ${system_security[0]}    $..name    {{ profile.security.name | default(defaults.sdwan.feature_profiles.system_profiles.security.name) }}    msg=name
@@ -42,14 +42,14 @@ Verify Feature Profiles System Profiles {{ profile.name }} Security Feature {{ p
     Should Be Equal Value Json Yaml    ${system_security[0]}    $.data.rekey   {{ profile.security.rekey_time| default('not_defined') }}     {{ profile.security.rekey_time_variable| default('not_defined') }}     msg=rekey_time    var_msg=rekey_time variable
 
     # Re-interpret string as list
-    ${integrity_types_list}=    Create List    {{ profile.security.integrity_types | join('   ') }}
+    ${integrity_types_list}=    Create List    {{ profile.security.get('integrity_types', []) | join('   ') }}
     ${integrity_types_list}=    Set Variable If    ${integrity_types_list} == []    not_defined    ${integrity_types_list}
     Should Be Equal Value Json Yaml    ${system_security[0]}    $.data.integrityType   ${integrity_types_list}    {{ profile.security.integrity_types_variable| default('not_defined') }}     msg=integrity_types_list    var_msg=integrity_types_list variable
 
-    Should Be Equal Value Json List Length    ${system_security[0]}    $.data.keychain    {{ profile.security.key_chains | length }}    msg=keychains_count
+    Should Be Equal Value Json List Length    ${system_security[0]}    $.data.keychain    {{ profile.security.get('key_chains', []) | length }}    msg=key_chains_count
     
 # Loop over keychains list
-{% if profile.security.key_chains is defined and profile.security.key_chains|length > 0 %}
+{% if profile.security.key_chains is defined and profile.security.get('key_chains', [])|length > 0 %}
     Log    === Keychains List ===
 {% for keychain_entry in profile.security.key_chains | default([]) %}
 

@@ -30,7 +30,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} Global Feature {{ pro
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
     ${system_global_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system/${profile_id[0]}/global
     ${system_global}=    Get Value From Json    ${system_global_res.json()}    $..payload
-    Run Keyword If    ${system_global} == []    Fail    Feature '{{profile.global.name}}' expected to be configured within the system profile '{{profile.name}}' on the Manager
+    Run Keyword If    ${system_global} == []    Fail    Feature '{{ profile.global.name | default(defaults.sdwan.feature_profiles.system_profiles.global.name) }}' expected to be configured within the system profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${system_global}
 
     Should Be Equal Value Json String    ${system_global[0]}    $..name    {{ profile.global.name | default(defaults.sdwan.feature_profiles.system_profiles.global.name) }}    msg=name

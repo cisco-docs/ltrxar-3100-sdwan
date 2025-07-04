@@ -32,7 +32,7 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
 
     ${transport_mngt_vpn_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/transport/${profile_id[0]}/management/vpn
     ${transport_mngt_vpn}=    Get Value From Json    ${transport_mngt_vpn_res.json()}    $..payload
-    Run Keyword If    ${transport_mngt_vpn} == []    Fail    Feature '{{profile.management_vpn.name}}' expected to be configured within the transport profile '{{profile.name}}' on the Manager
+    Run Keyword If    ${transport_mngt_vpn} == []    Fail    Feature '{{ profile.management_vpn.name | default(defaults.sdwan.feature_profiles.transport_profiles.management_vpn.name) }}' expected to be configured within the transport profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${transport_mngt_vpn}
     log   ${transport_mngt_vpn}
     ${vpn_parcel_id}=    Get Value From Json   ${transport_mngt_vpn_res.json()}    $.data[0].parcelId
@@ -48,9 +48,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
     Should Be Equal Value Json Yaml   ${transport_mngt_vpn}     $..data.dnsIpv6.primaryDnsAddressIpv6   {{profile.management_vpn.ipv6_primary_dns_address| default('not_defined')}}    {{profile.management_vpn.ipv6_primary_dns_address| default('not_defined')}}   msg=management_vpn.ipv6_primary_dns_address  var_msg=management_vpn.ipv6_primary_dns_address_variable
     Should Be Equal Value Json Yaml   ${transport_mngt_vpn}    $..data.dnsIpv6.secondaryDnsAddressIpv6   {{profile.management_vpn.ipv6_secondary_dns_address| default('not_defined')}}    {{profile.management_vpn.ipv6_secondary_dns_address_variable| default('not_defined')}}   msg=management_vpn.ipv6_secondary_dns_address  var_msg=management_vpn.ipv6_secondary_dns_address_variable
 
-    Should Be Equal Value Json List Length   ${transport_mngt_vpn}  $..newHostMapping  {{ profile.management_vpn.host_mappings | length }}    msg=server length
+    Should Be Equal Value Json List Length   ${transport_mngt_vpn}  $..newHostMapping  {{ profile.management_vpn.get('host_mappings', []) | length }}    msg=host mappings length
 
-{% if profile.management_vpn.host_mappings is defined and profile.management_vpn.host_mappings|length > 0 %}
+{% if profile.management_vpn.host_mappings is defined and profile.management_vpn.get('host_mappings', [])|length > 0 %}
     
     Log   ======Host Mappings=======
         
@@ -63,9 +63,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
 
 {% endif %}
 
-    Should Be Equal Value Json List Length   ${transport_mngt_vpn}  $..[ipv4Route]  {{ profile.management_vpn.ipv4_static_routes | length }}    msg=ipv4 static routes length
+    Should Be Equal Value Json List Length   ${transport_mngt_vpn}  $..[ipv4Route]  {{ profile.management_vpn.get('ipv4_static_routes', []) | length }}    msg=ipv4 static routes length
 
-{% if profile.management_vpn.ipv4_static_routes is defined and profile.management_vpn.ipv4_static_routes|length > 0 %}
+{% if profile.management_vpn.ipv4_static_routes is defined and profile.management_vpn.get('ipv4_static_routes', [])|length > 0 %}
 
     Log   ======IPv4 Static Routes=======
 
@@ -78,9 +78,11 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
 
     ${outer_loop_index}=    Set Variable    {{ loop.index0 }}
 
-    Should Be Equal Value Json List Length   ${transport_mngt_vpn[0]}  $..ipv4Route[${outer_loop_index}].nextHop  {{ route_entry.next_hops | length }}    msg=next hops length
+    Should Be Equal Value Json List Length   ${transport_mngt_vpn[0]}  $..ipv4Route[${outer_loop_index}].nextHop  {{ route_entry.get('next_hops', []) | length }}    msg=transport_mngt_vpn wan_vpn next_hops length
     
-{% if route_entry.next_hops is defined and route_entry.next_hops|length > 0 %}
+{% if route_entry.next_hops is defined and route_entry.get('next_hops', []) | length > 0 %}
+    
+    Log   ======Next Hops=======
     
 {% for nh_entry in route_entry.next_hops | default([]) %}
     
@@ -95,9 +97,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
     
 {% endif %}  
 
-    Should Be Equal Value Json List Length   ${transport_mngt_vpn}  $..[ipv6Route]  {{ profile.management_vpn.ipv6_static_routes | length }}    msg=ipv6 static routes length
+    Should Be Equal Value Json List Length   ${transport_mngt_vpn}  $..[ipv6Route]  {{ profile.management_vpn.get('ipv6_static_routes', []) | length }}    msg=ipv6 static routes length
     
-{% if profile.management_vpn.ipv6_static_routes is defined and profile.management_vpn.ipv6_static_routes|length > 0 %}
+{% if profile.management_vpn.ipv6_static_routes is defined and profile.management_vpn.get('ipv6_static_routes', [])|length > 0 %}
 
     Log   ======IPv6 Static Routes=======
 
@@ -106,7 +108,7 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
     Should Be Equal Value Json Yaml    ${transport_mngt_vpn[0]}    $..ipv6Route[{{ loop.index0 }}].prefix   {{ ipv6_route.prefix| default('not_defined') }}     {{ ipv6_route.prefix_variable| default('not_defined') }}     msg=transport_mgnt_vpn route_entry.prefix     var_msg=transport_mngt_vpn route_entry.prefix variable
     ${outer_loop_index}=    Set Variable    {{ loop.index0 }}
 
-    Should Be Equal Value Json List Length   ${transport_mngt_vpn[0]}  $..ipv6Route[${outer_loop_index}].oneOfIpRoute.nextHopContainer.nextHop  {{ ipv6_route.next_hops | length }}    msg=ipv4 route next hops length
+    Should Be Equal Value Json List Length   ${transport_mngt_vpn[0]}  $..ipv6Route[${outer_loop_index}].oneOfIpRoute.nextHopContainer.nextHop  {{ ipv6_route.get('next_hops', []) | length }}    msg=transport_mngt_vpn ipv6 route next_hops length
 
 {% for hop in ipv6_route.next_hops %}
 
@@ -125,9 +127,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
     ${trans_mngt_vpn_intf_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/transport/${profile_id[0]}/management/vpn/${vpn_parcel_id}[0]/interface/ethernet
     ${trans_mngt_vpn_intf}=    Get Value From Json    ${trans_mngt_vpn_intf_res.json()}    $..payload
     Set Suite Variable    ${trans_mngt_vpn_intf}
-    Should Be Equal Value Json List Length   ${trans_mngt_vpn_intf}   $   {{ profile.management_vpn.ethernet_interfaces | length }}    msg=interfaces length
+    Should Be Equal Value Json List Length   ${trans_mngt_vpn_intf}   $   {{ profile.management_vpn.get('ethernet_interfaces', []) | length }}    msg=transport_mngt_vpn ethernet interfaces length
 
-{% if profile.management_vpn.ethernet_interfaces is defined and profile.management_vpn.ethernet_interfaces|length > 0 %}
+{% if profile.management_vpn.ethernet_interfaces is defined and profile.management_vpn.get('ethernet_interfaces', [])|length > 0 %}
 
     Log   ======Ethernet Interfaces=======
 
@@ -145,11 +147,11 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
     Should Be Equal Value Json Yaml    ${trans_mngt_vpn_intf[{{ loop.index0 }}]}    $..intfIpAddress.static.staticIpV4AddressPrimary.ipAddress   {{ intf_entry.ipv4_address| default('not_defined') }}     {{ intf_entry.ipv4_address_variable| default('not_defined') }}     msg=transport_mngt_vpn wan_vpn interface ipv4_address     var_msg=transport_mngt_vpn wan_vpn interface ipv4_address variable
     Should Be Equal Value Json Yaml    ${trans_mngt_vpn_intf[{{ loop.index0 }}]}    $..intfIpAddress.static.staticIpV4AddressPrimary.subnetMask   {{ intf_entry.ipv4_subnet_mask| default('not_defined') }}     {{ intf_entry.ipv4_subnet_mask_variable| default('not_defined') }}     msg=transport_mngt_vpn wan_vpn interface ipv4_subnet_mask     var_msg=transport_mngt_vpn wan_vpn interface ipv4_subnet_mask variable
 
-    Should Be Equal Value Json List Length   ${trans_mngt_vpn_intf[{{ loop.index0 }}]}  $..staticIpV4AddressSecondary  {{ intf_entry.ipv4_secondary_addresses | length }}    msg=ipv4 secondary addresses length
+    Should Be Equal Value Json List Length   ${trans_mngt_vpn_intf[{{ loop.index0 }}]}  $..staticIpV4AddressSecondary  {{ intf_entry.get('ipv4_secondary_addresses', []) | length }}    msg=transport_mngt_vpn wan_vpn interface ipv4_secondary_addresses length
 
     ${outer_loop_index}=    Set Variable    {{ loop.index0 }}
 
-{% for sec_addr in intf_entry.ipv4_secondary_addresses  | default([]) %}
+{% for sec_addr in intf_entry.ipv4_secondary_addresses | default([]) %}
 
     Should Be Equal Value Json Yaml     ${trans_mngt_vpn_intf[${outer_loop_index}]}    $..staticIpV4AddressSecondary[{{ loop.index0 }}].ipAddress   {{ sec_addr.address | default('not_defined') }}     {{ sec_addr.address_variable | default('not_defined') }}     msg=transport_mngt_vpn wan_vpn interface ipv4_secondary_address     var_msg=transport_mngt_vpn wan_vpn interface ipv4_secondary_address variable
     Should Be Equal Value Json Yaml     ${trans_mngt_vpn_intf[${outer_loop_index}]}   $..staticIpV4AddressSecondary[{{ loop.index0 }}].subnetMask   {{ sec_addr.subnet_mask | default('not_defined') }}     {{ sec_addr.subnet_mask_variable | default('not_defined') }}     msg=transport_mngt_vpn wan_vpn interface ipv4_secondary_subnet_mask     var_msg=transport_mngt_vpn wan_vpn interface ipv4_secondary_subnet_mask variable
@@ -162,9 +164,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
     Should Be Equal Value Json Yaml    ${trans_mngt_vpn_intf[{{ loop.index0 }}]}    $..autoDetectBandwidth   {{ intf_entry.auto_detect_bandwidth| default('not_defined') }}     {{ intf_entry.auto_detect_bandwidth_variable| default('not_defined') }}     msg=transport_mngt_vpn wan_vpn interface auto_detect_bandwidth     var_msg=transport_mngt_vpn wan_vpn interface auto_detect_bandwidth variable
     Should Be Equal Value Json Yaml    ${trans_mngt_vpn_intf[{{ loop.index0 }}]}    $..intfIpV6Address.static.primaryIpV6Address.address   {{ intf_entry.ipv6_address| default('not_defined') }}     {{ intf_entry.ipv6_address_variable| default('not_defined') }}     msg=transport_mngt_vpn wan_vpn interface ipv6_address     var_msg=transport_mngt_vpn wan_vpn interface ipv6_address variable
     
-    Should Be Equal Value Json List Length   ${trans_mngt_vpn_intf}    $..arp   {{ intf_entry.arp_entries | length }}    msg=arp entries length
+    Should Be Equal Value Json List Length   ${trans_mngt_vpn_intf}    $..arp   {{ intf_entry.get('arp_entries', []) | length }}    msg=transport_mngt_vpn wan_vpn interface arp entries length
   
-{% if intf_entry.arp_entries is defined and intf_entry.arp_entries|length > 0 %}
+{% if intf_entry.arp_entries is defined and intf_entry.get('arp_entries', [])|length > 0 %}
 
     Log      === Arp Entries ===
 

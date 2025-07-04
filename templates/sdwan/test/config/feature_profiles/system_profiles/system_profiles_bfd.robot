@@ -30,7 +30,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} BFD Feature {{ profil
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
     ${system_bfd_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system/${profile_id}[0]/bfd
     ${system_bfd}=    Get Value From Json    ${system_bfd_res.json()}    $..payload
-    Run Keyword If    ${system_bfd} == []    Fail    Feature '{{profile.bfd.name}}' expected to be configured within the system profile '{{profile.name}}' on the Manager
+    Run Keyword If    ${system_bfd} == []    Fail    Feature '{{ profile.bfd.name | default(defaults.sdwan.feature_profiles.system_profiles.bfd.name) }}' expected to be configured within the system profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${system_bfd}
     Should Be Equal Value Json String    ${system_bfd[0]}    $..name    {{ profile.bfd.name | default(defaults.sdwan.feature_profiles.system_profiles.bfd.name) }}    msg=name
     Should Be Equal Value Json Special_String    ${system_bfd[0]}    $..description    {{ profile.bfd.description | default('not_defined') | normalize_special_string }}    msg=description
@@ -39,8 +39,8 @@ Verify Feature Profiles System Profiles {{ profile.name }} BFD Feature {{ profil
     Should Be Equal Value Json Yaml    ${system_bfd[0]}    $.data.defaultDscp   {{ profile.bfd.default_dscp | default("not_defined") }}    {{ profile.bfd.default_dscp_variable| default('not_defined') }}     msg=default_dscp    var_msg=default_dscp_variable
     Should Be Equal Value Json Yaml    ${system_bfd[0]}    $.data.pollInterval   {{ profile.bfd.poll_interval | default("not_defined") }}    {{ profile.bfd.poll_interval_variable| default('not_defined') }}     msg=poll_interval    var_msg=poll_interval_variable
 
-    Should Be Equal Value Json List Length    ${system_bfd[0]}    $.data.colors    {{ profile.bfd.colors | length }}    msg=colors_count   
-{% if profile.bfd.colors is defined and profile.bfd.colors|length > 0 %}
+    Should Be Equal Value Json List Length    ${system_bfd[0]}    $.data.colors    {{ profile.bfd.get('colors', []) | length }}    msg=colors_count   
+{% if profile.bfd.colors is defined and profile.bfd.get('colors', [])|length > 0 %}
     Log   === Color list ===
 {% for color_entry in profile.bfd.colors | default([]) %}
 

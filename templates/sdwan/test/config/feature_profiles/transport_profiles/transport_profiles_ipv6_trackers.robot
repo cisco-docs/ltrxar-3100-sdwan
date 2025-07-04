@@ -36,7 +36,7 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} IPv6 Tracker Featu
     Run Keyword If    ${transport_ipv6_tracker} == []    Fail    IPv6 tracker feature(s) expected to be configured within the transport profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${transport_ipv6_tracker}
 
-{% for tracker in profile.ipv6_trackers %}
+{% for tracker in profile.ipv6_trackers | default([]) %}
     Log     === Tracker: {{ tracker.name }} ===
     
      # for each tracker find the corresponding one in the json and check parameters:
@@ -71,7 +71,7 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} IPv6 Tracker Group
     Run Keyword If    ${transport_tracker_grp} == []    Fail    IPv6 tracker group feature(s) expected to be configured within the transport profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${transport_tracker_grp}
 
-{% for tracker_grp in profile.ipv6_tracker_groups %}
+{% for tracker_grp in profile.ipv6_tracker_groups | default([]) %}
     Log     === Tracker Group: {{ tracker_grp.name }} ===
 
      # for each tracker_grp find the corresponding one in the json and check parameters:
@@ -87,11 +87,11 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} IPv6 Tracker Group
 # Configuration has tracker names, tracker_group in JSON returns UUIDs
 # Find UUID from tracker name in trackewr group configuration inside trackers API call
 # Compare with refId coming from tracker group API call
-    Should Be Equal Value Json List Length    ${json_tracker_grp}    $.data.trackerRefs    {{ tracker_grp.trackers | length }}    msg=trackers_count
+    Should Be Equal Value Json List Length    ${json_tracker_grp}    $.data.trackerRefs    {{ tracker_grp.get('trackers', []) | length }}    msg=trackers_count
 
     ${transport_tracker_data}=    Get Value From Json    ${transport_ipv6_tracker_res.json()}    $..data
     ${transport_tracker_data}     Set Variable     ${transport_tracker_data}[0]
-{% for tracker_name in tracker_grp.trackers %}
+{% for tracker_name in tracker_grp.trackers | default([]) %}
     # Find correct tracker details from tracker JSON based on name inside tracker group configuration
     ${tracker_json}=    Get Value From Json    ${transport_tracker_data}    $[?(@.payload.name=='{{ tracker_name }}')]
     Run Keyword If    ${tracker_json} == []    Fail    Tracker '{{ tracker_name }}' not found in the transport profile '{{profile.name}}' on the Manager

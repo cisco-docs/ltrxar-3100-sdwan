@@ -30,7 +30,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} Flexible Port Speed F
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
     ${flexible_port_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system/${profile_id[0]}/flexible-port-speed
     ${flexible_port}=    Get Value From Json    ${flexible_port_res.json()}    $..payload
-    Run Keyword If   ${flexible_port} == []    Fail    Feature '{{profile.flexible_port_speed.name}}' expected to be configured within the system profile '{{profile.name}}' on the Manager
+    Run Keyword If   ${flexible_port} == []    Fail    Feature '{{ profile.flexible_port_speed.name | default(defaults.sdwan.feature_profiles.system_profiles.flexible_port_speed.name) }}' expected to be configured within the system profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${flexible_port}
     Should Be Equal Value Json String    ${flexible_port[0]}    $..name    {{ profile.flexible_port_speed.name | default(defaults.sdwan.feature_profiles.system_profiles.flexible_port_speed.name) }}    msg=name
     Should Be Equal Value Json String    ${flexible_port[0]}    $..description    {{ profile.flexible_port_speed.description | default('not_defined') | normalize_special_string }}    msg=description

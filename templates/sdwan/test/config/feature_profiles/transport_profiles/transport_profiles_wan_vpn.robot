@@ -31,7 +31,7 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
     ${transport_wan_vpn_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/transport/${profile_id[0]}/wan/vpn
     ${transport_wan_vpn}=    Get Value From Json    ${transport_wan_vpn_res.json()}    $..payload
-    Run Keyword If    ${transport_wan_vpn} == []    Fail    Feature '{{profile.wan_vpn.name}}' expected to be configured within the transport profile '{{profile.name}}' on the Manager
+    Run Keyword If    ${transport_wan_vpn} == []    Fail    Feature '{{ profile.wan_vpn.name | default(defaults.sdwan.feature_profiles.transport_profiles.wan_vpn.name) }}' expected to be configured within the transport profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${transport_wan_vpn}
 
     Should Be Equal Value Json String    ${transport_wan_vpn[0]}    $..name    {{ profile.wan_vpn.name | default(defaults.sdwan.feature_profiles.transport_profiles.wan_vpn.name) }}    msg=transport_wan_vpn wan_vpn name
@@ -42,9 +42,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
     Should Be Equal Value Json Yaml    ${transport_wan_vpn[0]}    $..dnsIpv6.primaryDnsAddressIpv6   {{ profile.wan_vpn.ipv6_primary_dns_address| default('not_defined') }}     {{ profile.wan_vpn.ipv6_primary_dns_address_variable| default('not_defined') }}     msg=transport_wan_vpn ipv6_primary_dns_address     var_msg=transport_wan_vpn ipv6_primary_dns_address variable
     Should Be Equal Value Json Yaml    ${transport_wan_vpn[0]}    $..dnsIpv6.secondaryDnsAddressIpv6   {{ profile.wan_vpn.ipv6_secondary_dns_address| default('not_defined') }}     {{ profile.wan_vpn.ipv6_secondary_dns_address_variable| default('not_defined') }}     msg=transport_wan_vpn ipv6_secondary_dns_address     var_msg=transport_wan_vpn ipv6_secondary_dns_address variable
 
-    Should Be Equal Value Json List Length   ${transport_wan_vpn}  $..[newHostMapping]  {{ profile.wan_vpn.host_mappings | length }}    msg=host_mappings length
+    Should Be Equal Value Json List Length   ${transport_wan_vpn}  $..[newHostMapping]  {{ profile.wan_vpn.get('host_mappings', []) | length }}    msg=host mappings length
 
-{% if profile.wan_vpn.host_mappings is defined and profile.wan_vpn.host_mappings|length > 0 %}
+{% if profile.wan_vpn.host_mappings is defined and profile.wan_vpn.get('host_mappings', [])|length > 0 %}
 
     Log    =====Host Mappings=====
 
@@ -57,9 +57,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
 
 {% endif %}
 
-    Should Be Equal Value Json List Length   ${transport_wan_vpn}  $..ipv4Route  {{ profile.wan_vpn.ipv4_static_routes | length }}    msg=ipv4 static routes length
+    Should Be Equal Value Json List Length   ${transport_wan_vpn}  $..ipv4Route  {{ profile.wan_vpn.get('ipv4_static_routes', []) | length }}    msg=ipv4 static routes length
 
-{% if profile.wan_vpn.ipv4_static_routes is defined and profile.wan_vpn.ipv4_static_routes|length > 0 %}
+{% if profile.wan_vpn.ipv4_static_routes is defined and profile.wan_vpn.get('ipv4_static_routes', [])|length > 0 %}
 
     Log    =====IPv4 Routes=====
 
@@ -72,9 +72,11 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
 
     ${outer_loop_index}=    Set Variable    {{ loop.index0 }}
 
-    Should Be Equal Value Json List Length   ${transport_wan_vpn[0]}  $..ipv4Route[${outer_loop_index}].nextHop  {{ route_entry.next_hops | length }}    msg=transport_wan_vpn wan_vpn next_hops length
+    Should Be Equal Value Json List Length   ${transport_wan_vpn[0]}  $..ipv4Route[${outer_loop_index}].nextHop  {{ route_entry.get('next_hops', []) | length }}    msg=transport_wan_vpn wan_vpn next_hops length
 
-{% if route_entry.next_hops is defined and route_entry.next_hops|length > 0 %}
+{% if route_entry.next_hops is defined and route_entry.get('next_hops', []) | length > 0 %}
+
+    Log    =====Next Hops=====
 
 {% for nh_entry in route_entry.next_hops | default([]) %}
 
@@ -89,9 +91,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
 
 {% endif %}
 
-    Should Be Equal Value Json List Length   ${transport_wan_vpn}  $..ipv6Route  {{ profile.wan_vpn.ipv6_static_routes | length }}    msg=ipv6 static routes length
+    Should Be Equal Value Json List Length   ${transport_wan_vpn}  $..ipv6Route  {{ profile.wan_vpn.get('ipv6_static_routes', []) | length }}    msg=ipv6 static routes length
 
-{% if profile.wan_vpn.ipv6_static_routes is defined and profile.wan_vpn.ipv6_static_routes|length > 0 %}
+{% if profile.wan_vpn.ipv6_static_routes is defined and profile.wan_vpn.get('ipv6_static_routes', [])|length > 0 %}
 
     Log    =====IPv6 Routes=====
 
@@ -100,7 +102,7 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
     Should Be Equal Value Json Yaml    ${transport_wan_vpn[0]}    $..ipv6Route[{{ loop.index0 }}].prefix   {{ route_entry.prefix| default('not_defined') }}     {{ route_entry.prefix_variable| default('not_defined') }}     msg=transport_wan_vpn route_entry.prefix     var_msg=transport_wan_vpn route_entry.prefix variable
     ${outer_loop_index}=    Set Variable    {{ loop.index0 }}
 
-    Should Be Equal Value Json List Length   ${transport_wan_vpn[0]}  $..ipv6Route[${outer_loop_index}].oneOfIpRoute.nextHopContainer.nextHop  {{ route_entry.next_hops | length }}    msg=transport_wan_vpn wan_vpn next_hops length
+    Should Be Equal Value Json List Length   ${transport_wan_vpn[0]}  $..ipv6Route[${outer_loop_index}].oneOfIpRoute.nextHopContainer.nextHop  {{ route_entry.get('next_hops', []) | length }}    msg=transport_wan_vpn ipv6 route next_hops length
 
 {% for nh_entry in route_entry.next_hops | default([]) %}
 
@@ -116,9 +118,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
 
 {% endif %}
 
-    Should Be Equal Value Json List Length   ${transport_wan_vpn}  $..[nat64V4Pool]  {{ profile.wan_vpn.nat_64_v4_pools | length }}    msg=nat64 pool length
+    Should Be Equal Value Json List Length   ${transport_wan_vpn}  $..[nat64V4Pool]  {{ profile.wan_vpn.get('nat_64_v4_pools', []) | length }}    msg=nat pools length
 
-{% if profile.wan_vpn.nat_64_v4_pools is defined and profile.wan_vpn.nat_64_v4_pools |length > 0 %}
+{% if profile.wan_vpn.nat_64_v4_pools is defined and profile.wan_vpn.get('nat_64_v4_pools', [])|length > 0 %}
 
     Log    =====NAT pools=====
 
@@ -133,11 +135,11 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
 
 {% endif %}
 
-    Should Be Equal Value Json List Length   ${transport_wan_vpn}  $..service  {{ profile.wan_vpn.services | length }}    msg= service length
+    Should Be Equal Value Json List Length   ${transport_wan_vpn}  $..service  {{ profile.wan_vpn.get('services', []) | length }}    msg=services length
 
 {% if profile.wan_vpn.services is defined %}
 
-    ${services_list}=    Create List    {{ profile.wan_vpn.services | join('   ') }}
+    ${services_list}=    Create List    {{ profile.wan_vpn.get('services', []) | join('   ') }}
     @{r_services_list}=    Create List
 
 {% for services_entry in profile.wan_vpn.services | default([]) %}

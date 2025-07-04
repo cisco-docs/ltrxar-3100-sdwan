@@ -30,7 +30,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} Basic Feature {{ prof
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
     ${system_basic_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system/${profile_id[0]}/basic
     ${system_basic}=    Get Value From Json    ${system_basic_res.json()}    $..payload
-    Run Keyword If    ${system_basic} == []    Fail    Feature '{{profile.basic.name}}' expected to be configured within the system profile '{{profile.name}}' on the Manager
+    Run Keyword If    ${system_basic} == []    Fail    Feature '{{ profile.basic.name | default(defaults.sdwan.feature_profiles.system_profiles.basic.name) }}' expected to be configured within the system profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${system_basic}
 
     Should Be Equal Value Json String    ${system_basic[0]}    $..name    {{ profile.basic.name | default(defaults.sdwan.feature_profiles.system_profiles.basic.name) }}    msg=name
@@ -73,7 +73,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} Basic Feature {{ prof
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.portHop    {{ profile.basic.port_hopping | default('not_defined') }}    {{ profile.basic.port_hopping_variable | default('not_defined') }}    msg=basic port hopping    var_msg=basic port hopping variable
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.portOffset    {{ profile.basic.port_offset | default('not_defined') }}    {{ profile.basic.port_offset_variable | default('not_defined') }}    msg=basic port offset    var_msg=basic port offset variable
 
-    ${basic_site_types_list}=    Create List    {{ profile.basic.site_types | join('   ') }}
+    ${basic_site_types_list}=    Create List    {{ profile.basic.get('site_types', []) | join('   ') }}
     ${basic_site_types_list}=    Set Variable If    ${basic_site_types_list} == []    not_defined    ${basic_site_types_list}
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.siteType    ${basic_site_types_list}    {{ profile.basic.site_types_variable | default('not_defined') }}    msg=basic site types    var_msg=basic site types variable
 
@@ -84,7 +84,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} Basic Feature {{ prof
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.trackTransport    {{ profile.basic.track_transport | default('not_defined') }}    {{ profile.basic.track_transport_variable | default('not_defined') }}    msg=basic track transport    var_msg=basic track transport variable
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.transportGateway    {{ profile.basic.transport_gateway | default('not_defined') }}    {{ profile.basic.transport_gateway_variable | default('not_defined') }}    msg=basic transport gateway    var_msg=basic transport gateway variable
 
-    Should Be Equal Value Json List Length    ${system_basic[0]}    $.data.affinityPerVrf    {{ profile.basic.affinity_per_vrfs | length }}    msg=basic affinity per vrfs length
+    Should Be Equal Value Json List Length    ${system_basic[0]}    $.data.affinityPerVrf    {{ profile.basic.get('affinity_per_vrfs', []) | length }}    msg=basic affinity per vrfs length
 {% for basic_affinity_per_vrf in profile.basic.affinity_per_vrfs | default([]) %}
 
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.affinityPerVrf[{{ loop.index0 }}].affinityGroupNumber    {{ basic_affinity_per_vrf.affinity_group_number | default('not_defined') }}    {{ basic_affinity_per_vrf.affinity_group_number_variable | default('not_defined') }}    msg=basic affinity per vrfs affinity group number    var_msg=basic affinity per vrfs affinity group number variable
@@ -92,7 +92,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} Basic Feature {{ prof
     
 {% endfor %}
 
-    Should Be Equal Value Json List Length    ${system_basic[0]}    $.data.gpsLocation.geoFencing.sms.mobileNumber    {{ profile.basic.geo_fencing_sms_mobile_numbers | length }}    msg=basic geo fencing sms mobile numbers length
+    Should Be Equal Value Json List Length    ${system_basic[0]}    $.data.gpsLocation.geoFencing.sms.mobileNumber    {{ profile.basic.get('geo_fencing_sms_mobile_numbers', []) | length }}    msg=basic geo fencing sms mobile numbers length
 {% for basic_geo_fencing_sms_mobile_number in profile.basic.geo_fencing_sms_mobile_numbers | default([]) %}
 
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.gpsLocation.geoFencing.sms.mobileNumber[{{ loop.index0 }}].number    {{ basic_geo_fencing_sms_mobile_number.number | default('not_defined') }}    {{ basic_geo_fencing_sms_mobile_number.number_variable | default('not_defined') }}    msg=basic geo fencing sms mobile number    var_msg=basic geo fencing sms mobile number variable

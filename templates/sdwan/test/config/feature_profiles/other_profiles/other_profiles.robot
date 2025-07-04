@@ -32,10 +32,6 @@ Verify Feature Profiles Other Profiles {{ profile.name }}
         Append To List    ${profile_features_data_model}    {{ value.name | default(key) }}
     {% endfor %} 
     Log    ${profile_features_data_model}
-    # Add multiple instances of the features of same type, where applicable
-    # {% for tracker in profile.ipv4_trackers %}
-    # Append To List    ${profile_features_data_model}    {{ tracker.name }}
-    # {% endfor %}
     
      # Extract features from the JSON
     ${profile_features_js}=    Evaluate    [p['payload']['name'] for p in ${profile_features}[0]] 

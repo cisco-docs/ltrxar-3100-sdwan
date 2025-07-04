@@ -31,7 +31,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} OMP Feature {{ profil
 
     ${system_omp_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system/${profile_id[0]}/omp
     ${system_omp}=    Get Value From Json    ${system_omp_res.json()}    $..payload
-    Run Keyword If    ${system_omp} == []    Fail    Feature '{{profile.omp.name}}' expected to be configured within the system profile '{{profile.name}}' on the Manager
+    Run Keyword If    ${system_omp} == []    Fail    Feature '{{ profile.omp.name | default(defaults.sdwan.feature_profiles.system_profiles.omp.name) }}' expected to be configured within the system profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${system_omp}
 
     Should Be Equal Value Json String    ${system_omp[0]}    $..name    {{ profile.omp.name | default(defaults.sdwan.feature_profiles.system_profiles.omp.name) }}    msg=name
@@ -52,7 +52,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} OMP Feature {{ profil
     Should Be Equal Value Json Yaml    ${system_omp[0]}    $.data.ignoreRegionPathLength    {{ profile.omp.ignore_region_path_length | default('not_defined')  }}    {{ profile.omp.ignore_region_path_length_variable| default('not_defined') }}     msg=ignore_region_path_length    var_msg=ignore_region_path_length_variable
     Should Be Equal Value Json Yaml    ${system_omp[0]}    $.data.transportGateway    {{ profile.omp.transport_gateway | default('not_defined')  }}    {{ profile.omp.transport_gateway_variable| default('not_defined') }}     msg=transport_gateway    var_msg=transport_gateway_variable
 
-    ${site_types_list}=    Create List    {{ profile.omp.site_types | join('   ') }}
+    ${site_types_list}=    Create List    {{ profile.omp.get('site_types', []) | join('   ') }}
     ${site_types_list}=    Set Variable If    ${site_types_list} == []    not_defined    ${site_types_list}
     Should Be Equal Value Json Yaml    ${system_omp[0]}    $.data.siteTypes    ${site_types_list}    {{ profile.omp.site_types_variable| default('not_defined') }}     msg=site_types    var_msg=site_types_variable
 

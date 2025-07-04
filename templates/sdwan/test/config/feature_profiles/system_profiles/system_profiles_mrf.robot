@@ -30,7 +30,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} MRF Feature {{ profil
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
     ${system_mrf_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system/${profile_id[0]}/mrf
     ${system_mrf}=    Get Value From Json    ${system_mrf_res.json()}    $..payload
-    Run Keyword If    ${system_mrf} == []    Fail    Feature '{{profile.mrf.name}}' expected to be configured within the system profile '{{profile.name}}' on the Manager
+    Run Keyword If    ${system_mrf} == []    Fail    Feature '{{ profile.mrf.name | default(defaults.sdwan.feature_profiles.system_profiles.mrf.name) }}' expected to be configured within the system profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${system_mrf}
 
     Should Be Equal Value Json String    ${system_mrf[0]}    $..name    {{ profile.mrf.name | default(defaults.sdwan.feature_profiles.system_profiles.mrf.name) }}    msg=name

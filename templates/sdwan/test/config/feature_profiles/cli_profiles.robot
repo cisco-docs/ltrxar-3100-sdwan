@@ -29,7 +29,7 @@ Verify Feature Profiles CLI Profiles {{ profile.name }}
 {% if profile.config is defined %}
 
 Verify Feature Profiles CLI Profiles {{ profile.name }} Config Feature {{ profile.config.name | default(defaults.sdwan.feature_profiles.cli_profiles.config.name) }}
-    Run Keyword If    ${cli_config} == []    Fail    Feature '{{profile.config.name}}' expected to be configured within the cli profile '{{profile.name}}' on the Manager
+    Run Keyword If    ${cli_config} == []    Fail    Feature '{{ profile.config.name | default(defaults.sdwan.feature_profiles.cli_profiles.config.name) }}' expected to be configured within the cli profile '{{profile.name}}' on the Manager
     Should Be Equal Value Json String    ${cli_config[0]}    $.name    {{ profile.config.name | default(defaults.sdwan.feature_profiles.cli_profiles.config.name) }}    msg=name
 
     Should Be Equal Value Json Special_String     ${cli_config[0]}    $..description    {{ profile.config.description | default('not_defined') | normalize_special_string }}    msg=description
@@ -40,7 +40,7 @@ Verify Feature Profiles CLI Profiles {{ profile.name }} Config Feature {{ profil
 
     ${exp_config_list}=    Create list
 
-{% for line in profile.config.cli_configuration.split('\n') %}
+{% for line in profile.config.get('cli_configuration', '').split('\n') %}
     Append To List    ${exp_config_list}    {{ line }}
 {% endfor %}
 

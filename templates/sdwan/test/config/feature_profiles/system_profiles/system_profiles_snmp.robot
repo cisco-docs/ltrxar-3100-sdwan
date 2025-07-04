@@ -30,14 +30,14 @@ Verify Feature Profiles System Profiles {{ profile.name }} SNMP Feature {{ profi
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
     ${system_snmp_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system/${profile_id[0]}/snmp
     ${system_snmp}=    Get Value From Json    ${system_snmp_res.json()}    $..payload
-    Run Keyword If    ${system_snmp} == []    Fail    Feature '{{profile.snmp.name}}' expected to be configured within the system profile '{{profile.name}}' on the Manager
+    Run Keyword If    ${system_snmp} == []    Fail    Feature '{{ profile.snmp.name | default(defaults.sdwan.feature_profiles.system_profiles.snmp.name) }}' expected to be configured within the system profile '{{profile.name}}' on the Manager
     Set Suite Variable    ${system_snmp}
 
     Should Be Equal Value Json String    ${system_snmp[0]}    $..name    {{ profile.snmp.name | default(defaults.sdwan.feature_profiles.system_profiles.snmp.name) }}    msg=name
     Should Be Equal Value Json Special_String     ${system_snmp[0]}     $.description    {{ profile.snmp.description | default('not_defined') | normalize_special_string }}    msg=description
 
-    Should Be Equal Value Json List Length    ${system_snmp[0]}    $.data.community    {{ profile.snmp.communities | length }}    msg=communities length
-{% if profile.snmp.communities is defined and profile.snmp.communities | length > 0 %}
+    Should Be Equal Value Json List Length    ${system_snmp[0]}    $.data.community    {{ profile.snmp.get('communities', []) | length }}    msg=communities length
+{% if profile.snmp.communities is defined and profile.snmp.get('communities', []) | length > 0 %}
     Log     === Communities List ===
 {% for snmp_community in profile.snmp.communities | default([]) %}
 
@@ -53,8 +53,8 @@ Verify Feature Profiles System Profiles {{ profile.name }} SNMP Feature {{ profi
 
     Should Be Equal Value Json Yaml    ${system_snmp[0]}    $.data.contact    {{ profile.snmp.contact_person | default('not_defined') }}    {{ profile.snmp.contact_person_variable | default('not_defined') }}    msg=contact person    var_msg=contact person variable
     
-    Should Be Equal Value Json List Length    ${system_snmp[0]}    $.data.group    {{ profile.snmp.groups | length }}    msg=groups length
-{% if profile.snmp.groups is defined and profile.snmp.groups | length > 0 %}
+    Should Be Equal Value Json List Length    ${system_snmp[0]}    $.data.group    {{ profile.snmp.get('groups', []) | length }}    msg=groups length
+{% if profile.snmp.groups is defined and profile.snmp.get('groups', []) | length > 0 %}
     Log     === Groups List ===
 {% for snmp_group in profile.snmp.groups | default([]) %}
 
@@ -68,8 +68,8 @@ Verify Feature Profiles System Profiles {{ profile.name }} SNMP Feature {{ profi
     Should Be Equal Value Json Yaml    ${system_snmp[0]}    $.data.location    {{ profile.snmp.location | default('not_defined') }}    {{ profile.snmp.location_variable | default('not_defined') }}    msg=location    var_msg=location variable
     Should Be Equal Value Json Yaml    ${system_snmp[0]}    $.data.shutdown    {{ profile.snmp.shutdown | default('not_defined') }}    {{ profile.snmp.shutdown_variable | default('not_defined') }}    msg=shutdown    var_msg=shutdown variable
 
-    Should Be Equal Value Json List Length    ${system_snmp[0]}    $.data.target    {{ profile.snmp.trap_target_servers | length }}    msg=trap target servers length
-{% if profile.snmp.trap_target_servers is defined and profile.snmp.trap_target_servers | length > 0 %}
+    Should Be Equal Value Json List Length    ${system_snmp[0]}    $.data.target    {{ profile.snmp.get('trap_target_servers', []) | length }}    msg=trap target servers length
+{% if profile.snmp.trap_target_servers is defined and profile.snmp.get('trap_target_servers', []) | length > 0 %}
     Log     === Trap Target Servers List ===
 {% for snmp_target in profile.snmp.trap_target_servers | default([]) %}
 
@@ -83,8 +83,8 @@ Verify Feature Profiles System Profiles {{ profile.name }} SNMP Feature {{ profi
 {% endfor %}
 {% endif %}
 
-    Should Be Equal Value Json List Length    ${system_snmp[0]}    $.data.user    {{ profile.snmp.users | length }}    msg=users length
-{% if profile.snmp.users is defined and profile.snmp.users | length > 0 %}
+    Should Be Equal Value Json List Length    ${system_snmp[0]}    $.data.user    {{ profile.snmp.get('users', []) | length }}    msg=users length
+{% if profile.snmp.users is defined and profile.snmp.get('users', []) | length > 0 %}
     Log     === Users List ===
 {% for snmp_user in profile.snmp.users | default([]) %}
 
@@ -100,8 +100,8 @@ Verify Feature Profiles System Profiles {{ profile.name }} SNMP Feature {{ profi
 {% endfor %}
 {% endif %}
 
-    Should Be Equal Value Json List Length    ${system_snmp[0]}    $.data.view    {{ profile.snmp.views | length }}    msg=views length
-{% if profile.snmp.views is defined and profile.snmp.views | length > 0 %}
+    Should Be Equal Value Json List Length    ${system_snmp[0]}    $.data.view    {{ profile.snmp.get('views', []) | length }}    msg=views length
+{% if profile.snmp.views is defined and profile.snmp.get('views', []) | length > 0 %}
     Log     === Views List ===
 {% for snmp_view in profile.snmp.views | default([]) %}
 
