@@ -46,6 +46,32 @@ REPOS = [
             },
         ],
     },
+    {
+        "url": "https://{}@wwwin-github.cisco.com/netascode/onboarding-tool.git",
+        "type": "internal",
+        "update_release_only": True,
+        "commit_message": "Nac sdwan updates for onboarding tool",
+        "directories": [
+            {
+                "src": "../validation/rules",
+                "dst": "./onboarding-data/sdwan/repository-template/.rules",
+            },
+            {
+                "src": "../templates/sdwan/test",
+                "dst": "./onboarding-data/sdwan/repository-template/tests/templates",
+            },
+            {
+                "src": "../jinja_filters",
+                "dst": "./onboarding-data/sdwan/repository-template/tests/filters",
+            },
+        ],
+        "files": [
+            {
+                "src": "../schemas/sdwan.yaml",
+                "dst": "./onboarding-data/sdwan/repository-template/.schema.yaml",
+            },
+        ],
+    }
 ]
 
 
