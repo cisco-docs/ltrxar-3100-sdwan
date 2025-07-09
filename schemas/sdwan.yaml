@@ -2431,7 +2431,7 @@ localized_policies_definitions_route_policy_sequence_actions:
   aggregator: int(min=0, max=4294967295, required=False)
   aggregator_ip: ip(version=4, required=False)
   atomic_aggregate: bool(required=False)
-  communities: list(any(int(min=0, max=4294967295), regex('^[0-9]{1,5}(:)[0-9]{1,5}$'), enum("internet", "local-AS")), required=False)
+  communities: list(any(int(min=0, max=4294967295), regex('^[0-9]{1,5}(:)[0-9]{1,5}$'), enum("internet", "local-AS", "no-advertise", "no-export")), required=False)
   community_additive: bool(required=False)
   exclude_as_paths: list(int(min=0, max=4294967295), required=False)
   local_preference: int(min=0, max=4294967295, required=False)
