@@ -27,17 +27,11 @@ A concise description of what you expected to happen.
 
 Add any other context about the problem here.
 
-## Associated Customer if applicable
+## Associated customer if applicable
 
-## Associated Code Base
+Provide customer name and PID or deal ID.
 
-If applicable identify specific module or resource
+## Is this a customer of Services as Code (LCS)?
 
-## Associated Customer if applicable
-
-Please state customer associated with feature.
-
-## Is this a customer of Services as Code (LCS)
-
-- [ ] Yes
-- [ ] No
+- [] Yes
+- [] No
