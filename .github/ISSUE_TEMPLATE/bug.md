@@ -33,5 +33,5 @@ Provide customer name and PID or deal ID.
 
 ## Is this a customer of Services as Code (LCS)?
 
-- [] Yes
-- [] No
+- [ ] Yes
+- [ ] No
