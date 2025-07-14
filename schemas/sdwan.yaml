@@ -545,7 +545,7 @@ edge_feature_templates_ethernet_interface:
   mac_address_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
   media_type: enum("auto-select", "rj45", "sfp", required=False)
   media_type_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
-  mtu: int(min=576, max=9216, required=False)
+  mtu: int(min=1500, max=9216, required=False)
   mtu_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
   rewrite_rule: str(max=128, required=False)
   rewrite_rule_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
