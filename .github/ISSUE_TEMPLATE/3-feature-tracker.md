@@ -1,11 +1,10 @@
 ---
-name: Feature Tracker
+name: Feature Tracker (Maintainers Only)
 about: Create a main issue that outlines all subtasks (dependencies for feature) as checklist with checkboxes
-title: ''
-labels: 'feature'
-assignees: ''
+title: ""
+labels: "feature"
+assignees: ""
 ---
-
 
 ### Pre-requisites
 
@@ -15,7 +14,7 @@ Please update with the URL from terraform provider documentation for the tracked
 
 ### Development Progress
 
-Please point to the each of the below once you have an issue created simply by calling it out with # under respective section (edit). 
+Please point to the each of the below once you have an issue created simply by calling it out with # under respective section (edit).
 Individual items are then linked to the main issue.
 
 - [ ] Data Model
@@ -47,4 +46,3 @@ _Issue not opened, please [create](https://wwwin-github.cisco.com/netascode/nac-
 Please provide references to blockers (URLs or Notes) if any.
 
 - None
-
