@@ -55,6 +55,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} IPv4 Device Access Po
 {% for sequence in profile.ipv4_device_access_policy.sequences | default([]) %}
     Log     === {{ sequence.name }} ===
     Should Be Equal Value Json Yaml    ${system_ipv4_device_access_policy[0]}    $.data.sequences[{{ loop.index0 }}].baseAction    {{ sequence.base_action | default('not_defined') }}    not_defined    msg=base action    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${system_ipv4_device_access_policy[0]}    $.data.sequences[{{ loop.index0 }}].sequenceId    {{ sequence.id | default('not_defined') }}    not_defined    msg=id    var_msg=not_defined
     Should Be Equal Value Json Yaml    ${system_ipv4_device_access_policy[0]}    $.data.sequences[{{ loop.index0 }}].sequenceName    {{ sequence.name | default('not_defined') }}    not_defined    msg=name    var_msg=not_defined
 
     ${destination_data_prefixes_list}=    Create List    {{ sequence.match_entries.get('destination_data_prefixes', []) | join('   ') }}

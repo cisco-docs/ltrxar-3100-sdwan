@@ -20,7 +20,8 @@ sdwan:
           description: basic ipv6 device access policy
           default_action: drop
           sequences:
-            - base_action: accept
+            - id: 1
+              base_action: accept
               match_entries:
                 source_data_prefix_list: jumpservers
                 source_ports:

@@ -418,7 +418,8 @@ sdwan:
           description: "Device access policy"
           default_action: accept
           sequences:
-            - base_action: drop
+            - id: 1
+              base_action: drop
               name: acl-sequence1
               match_entries:
                 destination_data_prefix_list: ipv4_dpl
@@ -427,7 +428,8 @@ sdwan:
                 source_ports:
                   - 2001
                   - 2002
-            - base_action: accept
+            - id: 2
+              base_action: accept
               name: acl-sequence2
               match_entries:
                 destination_data_prefixes:
@@ -437,13 +439,15 @@ sdwan:
                 source_data_prefixes:
                   - 192.168.3.0/24
                   - 192.168.4.0/24
-            - base_action: accept
+            - id: 3
+              base_action: accept
               name: acl-sequence3
               match_entries:
                 destination_data_prefixes_variable: device_access_destination_prefixes
                 destination_port: 22
                 source_data_prefixes_variable: device_access_source_prefixes
-            - base_action: accept
+            - id: 4
+              base_action: accept
               name: acl-sequence4
               match_entries:
                 destination_port: 161
@@ -452,7 +456,8 @@ sdwan:
           description: "Device access policy"
           default_action: accept
           sequences:
-            - base_action: drop
+            - id: 1
+              base_action: drop
               name: acl-sequence1
               match_entries:
                 destination_data_prefix_list: ipv6_dpl
@@ -461,7 +466,8 @@ sdwan:
                 source_ports:
                   - 2001
                   - 2002
-            - base_action: accept
+            - id: 2
+              base_action: accept
               name: acl-sequence2
               match_entries:
                 destination_data_prefixes:
