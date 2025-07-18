@@ -171,7 +171,6 @@ sdwan:
           default_action: accept
           sequences:
             - id: 10
-              ip_type: ipv4
               base_action: accept
               match_criterias:
                 standard_community_lists:
@@ -206,7 +205,6 @@ sdwan:
           default_action: accept
           sequences:
             - id: 1
-              ip_type: ipv4
               base_action: accept
               actions:
                 metric: 200

@@ -33,9 +33,9 @@ Verify Centralized Policies Data Policy Cflowd {{ cflowd_name }}
     Should Be Equal Value Json String    ${r_id.json()}    $..definition.flowInactiveTimeout    {{ cflowd_inactive_flow_timeout }}    msg=cflowd inactive flow timeout
     Should Be Equal Value Json String    ${r_id.json()}    $..definition.flowSamplingInterval    {{ cflowd_sampling_interval }}    msg=cflowd sampling interval
     Should Be Equal Value Json String    ${r_id.json()}    $..definition.templateRefresh    {{ cflowd_flow_refresh }}    msg=cflowd flow refresh
-    Should Be Equal Value Json String    ${r_id.json()}    $..definition.protocol    {{ cflowd_protocol }}    msg=cflowd protocol
-    Should Be Equal Value Json String    ${r_id.json()}    $..definition.customizedIpv4RecordFields.collectTos    {{ cflowd_tos }}    msg=cflowd tos
-    Should Be Equal Value Json String    ${r_id.json()}    $..definition.customizedIpv4RecordFields.collectDscpOutput    {{ cflowd_remarked_dscp }}    msg=cflowd remarked dscp
+    Should Be Equal Value Json String    ${r_id.json()}    $..definition.protocol    {{ cflowd_protocol | default(defaults.sdwan.centralized_policies.definitions.data_policy.cflowd.protocol) }}    msg=cflowd protocol
+    Should Be Equal Value Json String    ${r_id.json()}    $..definition.customizedIpv4RecordFields.collectTos    {{ cflowd_tos | default(defaults.sdwan.centralized_policies.definitions.data_policy.cflowd.tos) }}    msg=cflowd tos
+    Should Be Equal Value Json String    ${r_id.json()}    $..definition.customizedIpv4RecordFields.collectDscpOutput    {{ cflowd_remarked_dscp | default(defaults.sdwan.centralized_policies.definitions.data_policy.cflowd.remarked_dscp) }}    msg=cflowd remarked dscp
 
 {% for collector in cflowd_collectors %}
     Should Be Equal Value Json String    ${r_id.json()}    $..definition.collectors[{{loop.index0}}].vpn    {{ collector.vpn }}    msg=cflowd collector vpn

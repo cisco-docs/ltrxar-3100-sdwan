@@ -2409,7 +2409,7 @@ localized_policies_definitions_route_policy:
 localized_policies_definitions_route_policy_sequence:
   id: int(min=1, max=65534)
   name: str(required=False)
-  ip_type: enum("ipv4", "ipv6", "both")
+  ip_type: enum("ipv4", "ipv6", "both", required=False)
   base_action: enum("accept", "reject")
   match_criterias: include("localized_policies_definitions_route_policy_sequence_match_criterias", required=False)
   actions: include("localized_policies_definitions_route_policy_sequence_actions", required=False)

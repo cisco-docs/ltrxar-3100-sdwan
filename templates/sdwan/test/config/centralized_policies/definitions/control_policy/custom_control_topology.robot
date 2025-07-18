@@ -30,7 +30,7 @@ Verify Centralized Policies Control Policy Custom Control Topology {{ cct.name }
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..baseAction    {{ sequence.base_action }}    msg=tloc base action
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..sequenceId    {{ sequence.id }}    msg=tloc id
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..sequenceName    {{ sequence.name }}    msg=tloc name
-    Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..sequenceIpType    {{ sequence.ip_type }}    msg=tloc ip type
+    Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..sequenceIpType    {{ sequence.ip_type | default(defaults.sdwan.centralized_policies.definitions.control_policy.custom_control_topology.sequences.ip_type) }}    msg=tloc ip type
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..sequenceType    {{ sequence.type }}    msg=tloc type
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..match.entries[?(@.field=="carrier")].value    {{ sequence.match_criterias.carrier | default("not_defined") }}    msg=tloc carrier
 

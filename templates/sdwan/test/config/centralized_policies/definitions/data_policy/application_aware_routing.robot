@@ -33,7 +33,7 @@ Verify Centralized Policies Data Policy Application Aware Routing {{ aar.name }}
 {% set type = ({"appRoute":"app_route"}) %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceType    {{ type[sequence.type] }}    msg=sequence type
 
-    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceIpType   {{ sequence.ip_type }}    msg=sequence ip type
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceIpType   {{ sequence.ip_type | default(defaults.sdwan.centralized_policies.definitions.data_policy.application_aware_routing.sequences.ip_type) }}    msg=sequence ip type
 
     ${application_list_ref_id}=    Get Value From Json    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="appList")].ref
     IF    ${application_list_ref_id} == []

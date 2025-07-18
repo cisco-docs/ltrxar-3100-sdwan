@@ -26,7 +26,7 @@ Verify Centralized Policy Data Policy Traffic Data {{ traffic_policy.name }}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceId   {{ item.id }}    msg=traffic data policy sequence id
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].baseAction   {{ item.base_action }}    msg=base action
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceName   {{ item.name }}    msg=sequence name
-    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceIpType   {{ item.ip_type }}    msg=sequence ip type
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceIpType   {{ item.ip_type | default(defaults.sdwan.centralized_policies.definitions.data_policy.traffic_data.sequences.ip_type) }}    msg=sequence ip type
 
 {% set type = ({"qos":"qos", "service_chaining":"serviceChaining", "traffic_engineering":"trafficEngineering", "application_firewall":"applicationFirewall", "custom":"data"}) %}
 
