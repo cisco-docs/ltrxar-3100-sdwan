@@ -111,6 +111,9 @@ class Rule:
                         for var in device_template_var_dict[router['device_template']]:
                             if var not in router['device_variables']:
                                 results.append(router['chassis_id'] + " - " + router['device_template'] + " - missing variable: " + var)
+                            # Verify empty vars in the router
+                            elif router['device_variables'].get(var) is None or str(router['device_variables'].get(var)).strip() == '':
+                                results.append(router['chassis_id'] + " - " + router['device_template'] + " - empty variable value: " + var)
                         # Verify if the router has unnecessary vars - can the severity be set to warning or minor?
                         for var in router['device_variables']:
                             if var not in device_template_var_dict[router['device_template']]:
