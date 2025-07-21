@@ -260,6 +260,61 @@ sdwan:
             route_ip: 10.0.0.0
             route_mask: 255.0.0.0
             vpn_id: 1
+        route_policies:
+          - name: service_rpl
+            description: service_rpl
+            default_action: accept
+            sequences:
+              - id: 1
+                name: route
+                base_action: accept
+                protocol: ipv4
+                match_entries:
+                  as_path_list: aspath_list10
+                  bgp_local_preference: 100
+                  extended_community_list: ext_community_list
+                  ipv4_address_prefix_list: ipv4_pl_private
+                  ipv4_next_hop_prefix_list: ipv4_pl_private
+                  metric: 100
+                  omp_tag: 100
+                  ospf_tag: 100
+                  standard_community_lists:
+                    - standard_community_list
+                  standard_community_lists_criteria: or
+                actions:
+                  communities:
+                    - internet
+                    - 65001:101
+                  communities_additive: true
+                  ipv4_next_hop: 192.168.1.1
+                  bgp_local_preference: 200
+                  metric: 200
+                  metric_type: type1
+                  omp_tag: 200
+                  origin: incomplete
+                  ospf_tag: 200
+                  prepend_as_paths:
+                    - 65100
+                    - 65101
+                  weight: 100
+              - id: 2
+                name: route
+                base_action: accept
+                protocol: ipv6
+                match_entries:
+                  expanded_community_list: community_legacy_wan
+                  ipv6_address_prefix_list: ipv6_pl_private
+                  ipv6_next_hop_prefix_list: ipv6_pl_private
+                actions:
+                  communities_variable: transport_rpl_communities
+                  communities_additive: false
+                  ipv6_next_hop: 2001:db8::1
+              - id: 3
+                name: route
+                base_action: reject
+                protocol: both
+                match_entries:
+                  ospf_tag: 300
       - name: service2
     system_profiles:
       - name: system1
@@ -825,6 +880,61 @@ sdwan:
                 - address: fd01::1
                   administrative_distance: 11
           vpn_description: management vpn 512
+        route_policies:
+          - name: transport_rpl
+            description: transport_rpl
+            default_action: accept
+            sequences:
+              - id: 1
+                name: route
+                base_action: accept
+                protocol: ipv4
+                match_entries:
+                  as_path_list: aspath_list10
+                  bgp_local_preference: 100
+                  extended_community_list: ext_community_list
+                  ipv4_address_prefix_list: ipv4_pl_private
+                  ipv4_next_hop_prefix_list: ipv4_pl_private
+                  metric: 100
+                  omp_tag: 100
+                  ospf_tag: 100
+                  standard_community_lists:
+                    - standard_community_list
+                  standard_community_lists_criteria: or
+                actions:
+                  bgp_local_preference: 200
+                  communities:
+                    - internet
+                    - 65001:101
+                  communities_additive: true
+                  ipv4_next_hop: 192.168.1.1
+                  metric: 200
+                  metric_type: type1
+                  omp_tag: 200
+                  origin: incomplete
+                  ospf_tag: 200
+                  prepend_as_paths:
+                    - 65100
+                    - 65101
+                  weight: 100
+              - id: 2
+                name: route
+                base_action: accept
+                protocol: ipv6
+                match_entries:
+                  expanded_community_list: community_legacy_wan
+                  ipv6_address_prefix_list: ipv6_pl_private
+                  ipv6_next_hop_prefix_list: ipv6_pl_private
+                actions:
+                  communities_variable: transport_rpl_communities
+                  communities_additive: false
+                  ipv6_next_hop: 2001:db8::1
+              - id: 3
+                name: route
+                base_action: reject
+                protocol: both
+                match_entries:
+                  ospf_tag: 300
         wan_vpn:
           name: wan_vpn
           description: VPN 0 configuration

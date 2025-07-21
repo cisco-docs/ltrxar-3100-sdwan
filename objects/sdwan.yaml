@@ -396,6 +396,10 @@ objects:
     template: service_object_tracker
     folder: features_service
     paths: [sdwan.feature_profiles.service_profiles.object_trackers]
+  - name: Service Route Policy Feature
+    template: service_route_policy
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.route_policies]
   - name: System AAA Feature
     template: system_aaa
     folder: features_system
@@ -488,6 +492,10 @@ objects:
     template: transport_management_vpn_ethernet_interface
     folder: features_transport
     paths: [sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces]
+  - name: Transport Route Policy Feature
+    template: transport_route_policy
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.route_policies]
   - name: Transport WAN VPN Feature
     template: transport_wan_vpn
     folder: features_transport

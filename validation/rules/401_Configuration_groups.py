@@ -211,6 +211,7 @@ class Rule:
         "ipv4_device_access_policy.sequences",
         "ipv6_device_access_policy.sequences",
         "logging.tls_profiles",
+        "route_policies.sequences",
         "snmp.communities",
         "snmp.views",
     ]
@@ -221,10 +222,11 @@ class Rule:
         # This returns a dict with feature name as key and list of paths where this name is used as value
         if isinstance(item, dict):
             for key, value in item.items():
+                flat_path = re.sub(r'\[.*?\]', '', path)
                 if (
                     key == "name"
                     and skip_key is False
-                    and not any(skip_path in path for skip_path in cls.skip_name_paths)
+                    and not any(skip_path in flat_path for skip_path in cls.skip_name_paths)
                 ):
                     if value in features:
                         features[value].append(path + ".name")

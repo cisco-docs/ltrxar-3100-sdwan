@@ -1,5 +1,5 @@
 class Rule:
-    id = "411"
+    id = "413"
     description = "Validate policy object references"
     severity = "HIGH"
 
@@ -15,6 +15,27 @@ class Rule:
 
     policy_object_references = [
         {
+            "type": "as_path_lists",
+            "paths": [
+                "sdwan.feature_profiles.service_profiles.route_policies.sequences.match_entries.as_path_list",
+                "sdwan.feature_profiles.transport_profiles.route_policies.sequences.match_entries.as_path_list",
+            ]
+        },
+        {
+            "type": "expanded_community_lists",
+            "paths": [
+                "sdwan.feature_profiles.service_profiles.route_policies.sequences.match_entries.expanded_community_list",
+                "sdwan.feature_profiles.transport_profiles.route_policies.sequences.match_entries.expanded_community_list",
+            ]
+        },
+        {
+            "type": "extended_community_lists",
+            "paths": [
+                "sdwan.feature_profiles.service_profiles.route_policies.sequences.match_entries.extended_community_list",
+                "sdwan.feature_profiles.transport_profiles.route_policies.sequences.match_entries.extended_community_list",
+            ]
+        },
+        {
             "type": "ipv4_data_prefix_lists",
             "paths": [
                 "sdwan.feature_profiles.system_profiles.ipv4_device_access_policy.sequences.match_entries.destination_data_prefix_list",
@@ -22,10 +43,35 @@ class Rule:
             ]
         },
         {
+            "type": "ipv4_prefix_lists",
+            "paths": [
+                "sdwan.feature_profiles.service_profiles.route_policies.sequences.match_entries.ipv4_address_prefix_list",
+                "sdwan.feature_profiles.service_profiles.route_policies.sequences.match_entries.ipv4_next_hop_prefix_list",
+                "sdwan.feature_profiles.transport_profiles.route_policies.sequences.match_entries.ipv4_address_prefix_list",
+                "sdwan.feature_profiles.transport_profiles.route_policies.sequences.match_entries.ipv4_next_hop_prefix_list",
+            ]
+        },
+        {
             "type": "ipv6_data_prefix_lists",
             "paths": [
                 "sdwan.feature_profiles.system_profiles.ipv6_device_access_policy.sequences.match_entries.destination_data_prefix_list",
                 "sdwan.feature_profiles.system_profiles.ipv6_device_access_policy.sequences.match_entries.source_data_prefix_list"
+            ]
+        },
+        {
+            "type": "ipv6_prefix_lists",
+            "paths": [
+                "sdwan.feature_profiles.service_profiles.route_policies.sequences.match_entries.ipv6_address_prefix_list",
+                "sdwan.feature_profiles.service_profiles.route_policies.sequences.match_entries.ipv6_next_hop_prefix_list",
+                "sdwan.feature_profiles.transport_profiles.route_policies.sequences.match_entries.ipv6_address_prefix_list",
+                "sdwan.feature_profiles.transport_profiles.route_policies.sequences.match_entries.ipv6_next_hop_prefix_list",
+            ]
+        },
+        {
+            "type": "standard_community_lists",
+            "paths": [
+                "sdwan.feature_profiles.service_profiles.route_policies.sequences.match_entries.standard_community_lists",
+                "sdwan.feature_profiles.transport_profiles.route_policies.sequences.match_entries.standard_community_lists",
             ]
         }
     ]
@@ -46,8 +92,14 @@ class Rule:
             if isinstance(inv_element, dict) and idx + 1 == len(path_elements):
                 # Verify if the required policy object is defined
                 required_policy_object = inv_element.get(path_element)
-                if required_policy_object and required_policy_object not in defined_policy_objects:
-                    results.append(f"{reference_type[:-1]} {required_policy_object} is referenced in {full_path}.{path_element}, but is not defined in sdwan.feature_profiles.policy_object_profile.{reference_type}")
+                if required_policy_object:
+                    if isinstance(required_policy_object, list):
+                        for obj in required_policy_object:
+                            if obj not in defined_policy_objects:
+                                results.append(f"{reference_type[:-1]} {obj} is referenced in {full_path}.{path_element}, but is not defined in sdwan.feature_profiles.policy_object_profile.{reference_type}")
+                    else:
+                        if required_policy_object not in defined_policy_objects:
+                            results.append(f"{reference_type[:-1]} {required_policy_object} is referenced in {full_path}.{path_element}, but is not defined in sdwan.feature_profiles.policy_object_profile.{reference_type}")
                 return results
             elif isinstance(inv_element, dict):
                 inv_element = inv_element.get(path_element)
