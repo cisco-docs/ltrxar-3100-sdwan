@@ -201,6 +201,15 @@ sdwan:
                   counter_name: abc
                   log: true
                   cloud_sla: true
+              - id: 2
+                name: App Route
+                ip_type: ipv4
+                type: app_route
+                match_criterias:
+                  dscp: 22 54
+                actions:
+                  counter_name: counter2
+                  log: true
         traffic_data:
           - name: TD_DEFINITION_TEST1
             description: TD_DEFINITION_TEST1
@@ -255,7 +264,7 @@ sdwan:
                 type: service_chaining
                 match_criterias:
                   application_list: APP-LIST-TD-TEST2
-                  dscp: 54
+                  dscp: 22 46
                   packet_length: 1150
                   plp: high
                   protocols:
