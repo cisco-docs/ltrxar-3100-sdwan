@@ -13,7 +13,38 @@ class Rule:
                 str("policy_templates.policy_definitions." + type)
             ]
         })
+    # Create mapping of definition matching fields to the object names
+    field_to_object_type = {
+        'prefix_list': 'ipv4_prefix_lists',
+        'standard_community_lists': 'standard_community_lists',
+        'expanded_community_list': 'expanded_community_lists',
+        'extended_community_list': 'extended_community_lists',
+        'as_path_list': 'as_path_lists',
+        }
+    
+    data_prefix_fields = ['destination_data_prefix_list', 'source_data_prefix_list']
 
+    @classmethod
+    def build_policy_object_name_dict(cls, inventory):
+        # Build a dictionary of all available policy object names by type
+        obj_dict = {}
+        policy_objects = inventory.get('sdwan', {}).get('policy_objects', {})
+        for obj_type, obj_list in policy_objects.items():
+            obj_dict[obj_type] = set()
+            if obj_list:
+                for obj in obj_list:
+                    if isinstance(obj, dict) and 'name' in obj:
+                        obj_dict[obj_type].add(obj['name'])
+        return obj_dict
+    
+    @classmethod
+    def get_data_prefix_obj_type(cls, def_type):
+        if def_type in ['ipv4_access_control_lists', 'ipv4_device_access_policies']:
+            return 'ipv4_data_prefix_lists'
+        elif def_type in ['ipv6_access_control_lists', 'ipv6_device_access_policies']:
+            return 'ipv6_data_prefix_lists'
+        return None
+        
     @classmethod
     def build_policy_feature_dict(cls, inventory):
         # Build the dictionary of per-type policy definitions in the localized policies
@@ -75,4 +106,39 @@ class Rule:
             for ref in path["references"]:
                 r = cls.match_path(policy_template_dict, ref, ref, keys)
                 results.extend(r)
+        # --- Policy object reference in definition check ---
+        obj_dict = cls.build_policy_object_name_dict(inventory)
+        definitions = inventory.get('sdwan', {}).get('localized_policies', {}).get('definitions', {})
+        for def_type, def_list in definitions.items():
+            for definition in def_list:
+                def_name = definition.get('name', f"<unnamed {def_type}>")
+                # Sequences for ACLs, device access policies, route policies
+                for seq in definition.get('sequences', []):
+                    match = seq.get('match_criterias', {})
+                    # Data prefix lists (IPv4/IPv6)
+                    for field in cls.data_prefix_fields:
+                        if field in match:
+                            obj_type = cls.get_data_prefix_obj_type(def_type)
+                            if obj_type:
+                                values = match[field] if isinstance(match[field], list) else [match[field]]
+                                defined_names = obj_dict.get(obj_type, set())
+                                for v in values:
+                                    if v not in defined_names:
+                                        results.append(f"policy_objects.{obj_type} missing referenced object: '{v}' in definition '{def_name}'")
+                    # Other reference fields
+                    for field, obj_type in cls.field_to_object_type.items():
+                        if field in match:
+                            values = match[field] if isinstance(match[field], list) else [match[field]]
+                            defined_names = obj_dict.get(obj_type, set())
+                            for v in values:
+                                if v not in defined_names:
+                                    results.append(f"policy_objects.{obj_type} missing referenced object: '{v}' in definition '{def_name}'")
+                # QoS maps: check qos_schedulers/class_map
+                if def_type == 'qos_maps' and 'qos_schedulers' in definition:
+                    for sched in definition['qos_schedulers']:
+                        if 'class_map' in sched:
+                            v = sched['class_map']
+                            defined_names = obj_dict.get('class_maps', set())
+                            if v not in defined_names:
+                                results.append(f"policy_objects.class_maps missing referenced object: '{v}' in definition '{def_name}'")
         return results
