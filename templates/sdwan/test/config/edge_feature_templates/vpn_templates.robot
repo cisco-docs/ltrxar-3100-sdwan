@@ -396,8 +396,10 @@ Verify Edge Feature Template VPN Feature Template {{ vpn.name }}
 {% for service in vpn.services | default([]) %}
 
     ${rec_add_list}=    Get Value From Json    ${r_id.json()}    $.service.vipValue[{{ loop.index0 }}].address.vipValue
+    ${rec_add_list}=    Run Keyword If    ${rec_add_list} == []    Create List    
+...                 ELSE    Set Variable    ${rec_add_list[0]}   
     ${exp_add_list}=    Create List    {{ service.addresses | default([]) | join('   ') }}
-    Lists Should Be Equal    ${rec_add_list[0]}    ${exp_add_list}    ignore_order=True    msg=service addresses
+    Lists Should Be Equal    ${rec_add_list}    ${exp_add_list}    ignore_order=True    msg=service addresses
 
     Should Be Equal Value Json String    ${r_id.json()}    $.service.vipValue[{{ loop.index0 }}].address.vipVariableName    {{ service.addresses_variable | default("not_defined") }}    msg=service addresses variable
     Should Be Equal Value Json String    ${r_id.json()}    $.service.vipValue[{{ loop.index0 }}]["svc-type"].vipValue    {{ service.service_type | default("not_defined") }}    msg=service type

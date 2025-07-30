@@ -214,6 +214,8 @@ sdwan:
               address_families:
                 - family_type: ipv4-unicast
                   maximum_prefixes: 1000
+                  route_policy_in: RM-SITE-BGP-OUT-STANDBY
+                  route_policy_out: RM-SITE-BGP-OUT-ACTIVE
               password_variable: vpn1_bgp_ipv4_neighbor2_password
               remote_as_variable: vpn1_bgp_ipv4_neighbor2_remote_as
               shutdown_variable: vpn1_bgp_ipv4_neighbor2_shutdown
@@ -890,6 +892,8 @@ sdwan:
             next_hops:
               - address_variable: vpn0_nexthop1_ip
               - address_variable: vpn0_nexthop2_ip
+        services:
+          - service_type: TE
       - name: FT-CEDGE-VPN0-03
         description: CEDGE VPN0 with static IP routes
         enhance_ecmp_keying_variable: vpn0_layer4_ecmp_enable
