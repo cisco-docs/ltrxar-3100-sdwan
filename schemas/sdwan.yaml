@@ -1801,7 +1801,7 @@ edge_feature_templates_vpn_port_forwarding_rule:
   translate_port: int(min=1, max=65535, required=False)
   translate_port_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
 edge_feature_templates_vpn_route_global_export:
-  protocol: enum("static", "connected", "bgp", "ospf", required=False)
+  protocol: enum("static", "connected", "bgp", "ospf", "eigrp", required=False)
   protocol_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
   route_policy: str(required=False)
   redistributes: list(include("edge_feature_templates_vpn_route_global_export_redistribute"), required=False)

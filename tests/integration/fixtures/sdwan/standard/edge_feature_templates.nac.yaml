@@ -127,7 +127,7 @@ sdwan:
         description: Typical Multiline banner using Carriage return, Line Feed
         login: "*************************************************************\n*************************************************************\n**\n** UNAUTHORIZED USE PROHIBITED\n** UNAUTHORIZED ACCESS PROHIBITED\n **\n** Log out immediately\n** XXXXXXXXXX\n **\n*************************************************************\n*************************************************************"
       - name: FT-CEDGE-BANNER-06
-        description: 'Multiline banner template example'
+        description: "Multiline banner template example"
         login: |
           ***********************************************************
           ***********************************************************
@@ -963,6 +963,8 @@ sdwan:
         ipv4_static_routes:
           - prefix: 0.0.0.0/0
             next_hop_dia: true
+        route_global_exports:
+          - protocol: eigrp
       - name: FT-CEDGE-VPN511-01
         description: CEDGE VPN511
         vpn_name: INBAND-MGMT
