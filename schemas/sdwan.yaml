@@ -2681,10 +2681,10 @@ centralized_policy_control_topology_customcontrol_sequences:
   match_criterias: include("centralized_policy_control_topology_customcontrol_match_criterias", required=False)
   actions: include("centralized_policy_control_topology_customcontrol_actions", required=False)
 centralized_policy_control_topology_customcontrol_match_criterias:
-  carrier: enum("default", "carrier1", "carrier2", "carrier3", "carrier4", "carrier5", "carrier6", "carrier7", "carrier8", required=False)  # available for tloc type sequence
+  carrier: enum("default", "carrier1", "carrier2", "carrier3", "carrier4", "carrier5", "carrier6", "carrier7", "carrier8", required=False) # available for tloc type sequence
   color_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
-  domain_id: int(min=1, max=4294967295, required=False)  # available for tloc type sequence
-  group_id: int(min=0, max=4294967295, required=False)  # available for tloc type sequence
+  domain_id: int(min=1, max=4294967295, required=False) # available for tloc type sequence
+  group_id: int(min=0, max=4294967295, required=False) # available for tloc type sequence
   omp_tag: int(min=0, max=4294967295, required=False)
   originator: ip(version=4, required=False)
   preference: int(min=0, max=4294967295, required=False)
@@ -2696,7 +2696,7 @@ centralized_policy_control_topology_customcontrol_match_criterias:
   tloc: include("centralized_policy_control_topology_customcontrol_match_tloc_value", required=False)
   community_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of Community list (available for route type sequence)
   expanded_community_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of Expanded Community list (available for route type sequence)
-  origin: enum("aggregrate","bgp","bgp-external","bgp-internal","connected","eigrp","ospf","ospf-inter-area","ospf-intra-area","ospf-external1","ospf-external2","rip","static","eigrp-summary","eigrp-internal","eigrp-external","lisp","nat-dia","natpool","isis","isis-level1","isis-level2", required=False)  # available for route type sequence
+  origin: enum("aggregrate","bgp","bgp-external","bgp-internal","connected","eigrp","ospf","ospf-inter-area","ospf-intra-area","ospf-external1","ospf-external2","rip","static","eigrp-summary","eigrp-internal","eigrp-external","lisp","nat-dia","natpool","isis","isis-level1","isis-level2", required=False) # available for route type sequence
   path_type: enum("hierarchical-path", "direct-path", "transport-gateway-path",required=False) # available for route type sequence
   vpn_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of VPN list (available for route type sequence)
   vpn: int(min=0, max=65536,required=False) # available for route type sequence
@@ -2709,12 +2709,12 @@ centralized_policy_control_topology_customcontrol_actions:
   omp_tag: int(min=0, max=4294967295, required=False)
   preference: int(min=0, max=4294967295, required=False)
   affinity: int(min=0, max=63, required=False)
-  community: any(regex('^[0-9]{1,5}(:)[0-9]{1,5}$'), enum("internet", "local-AS", "no-export", "no-advertise"), required=False)  # available for route type sequence
-  community_additive: bool(required=False)  # available for route type sequence
-  tloc: include("centralized_policy_control_topology_customcontrol_actions_set_tloc_value", required=False)  # available for route type sequence
+  community: any(regex('^[0-9]{1,5}(:)[0-9]{1,5}$'), enum("internet", "local-AS", "no-export", "no-advertise"), required=False) # available for route type sequence
+  community_additive: bool(required=False) # available for route type sequence
+  tloc: include("centralized_policy_control_topology_customcontrol_actions_set_tloc_value", required=False) # available for route type sequence
   tloc_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of site list (available for route type sequence)
-  tloc_action: enum("strict", "primary", "backup", "ecmp",required=False)  # available for route type sequence
-  service: include("centralized_policy_control_topology_customcontrol_actions_service", required=False)  # available for route type sequence
+  tloc_action: enum("strict", "primary", "backup", "ecmp",required=False) # available for route type sequence
+  service: include("centralized_policy_control_topology_customcontrol_actions_service", required=False) # available for route type sequence
   export_to_vpn_list: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # name of VPN list (available for route type sequence)
 centralized_policy_control_topology_customcontrol_actions_set_tloc_value:
   ip: ip(version=4)
@@ -2868,7 +2868,7 @@ centralized_policy_data_traffic_data_sequences_action_appqoe_optimization:
   service_node_group: str(required=False)
 centralized_policy_data_traffic_data_sequences_action_local_tloc_list_values:
   colors: list(enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6"))
-  encaps: list(enum("ipsec", "gre"))
+  encaps: list(enum("ipsec", "gre"), required=False)
   restrict: bool(required=False)
 centralized_policy_data_traffic_data_sequences_action_next_hop:
   ip_address: ip(version=4)

@@ -428,9 +428,6 @@ sdwan:
                     colors:
                       - custom1
                       - custom2
-                    encaps:
-                      - ipsec
-                      # - gre #
                   next_hop:
                     ip_address: 10.10.10.4
                     when_next_hop_is_not_available: route_table_entry
