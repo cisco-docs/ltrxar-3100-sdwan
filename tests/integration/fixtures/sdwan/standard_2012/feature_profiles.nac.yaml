@@ -78,6 +78,22 @@ sdwan:
     policy_object_profile:
       name: policy_objects
       description: basic policy object profile
+      application_lists:
+        - name: Social-Media
+          applications:
+            - facebook
+            - twitter
+            - youtube
+            - instagram
+            - linkedin
+        - name: APPF-CRITICALDATA
+          application_families:
+            - application-service
+            - database
+            - erp
+            - microsoft-office
+            - middleware
+            - network-management
       as_path_lists:
         - name: aspath_list10
           id: 10

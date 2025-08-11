@@ -504,6 +504,10 @@ objects:
     template: transport_wan_vpn_ethernet_interface
     folder: features_transport
     paths: [sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces]
+  - name: Application List
+    template: application_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.application_lists]
   - name: AS Path List
     template: as_path_list
     folder: policy_objects

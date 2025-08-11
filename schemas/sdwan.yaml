@@ -3083,6 +3083,7 @@ feature_profiles_other_ucse_interface:
 feature_profiles_policy_object:
   name: regex('^[^&<>! \"]{1,128}$', required=False)
   description: str(required=False)
+  application_lists: list(include("feature_profiles_policy_object_application_list"), required=False)
   as_path_lists: list(include("feature_profiles_policy_object_as_path_list"), required=False)
   class_maps: list(include("feature_profiles_policy_object_class_map"), required=False)
   expanded_community_lists: list(include("feature_profiles_policy_object_expanded_community_list"), required=False)
@@ -3095,6 +3096,10 @@ feature_profiles_policy_object:
   policers: list(include("feature_profiles_policy_object_policer"), required=False)
   standard_community_lists: list(include("feature_profiles_policy_object_standard_community_list"), required=False)
   tloc_lists: list(include("feature_profiles_policy_object_tloc_list"), required=False)
+feature_profiles_policy_object_application_list:
+  name: regex('^[^&<>! \"]{1,32}$')
+  applications: list(str(), required=False)
+  application_families: list(enum("application-service", "audio-video", "authentication", "behavioral", "database", "encrypted", "erp", "file-server", "file-transfer", "forum", "game", "instant-messaging", "mail", "microsoft-office", "middleware", "network-management", "network-service", "peer-to-peer", "printer", "routing", "security-service", "terminal", "thin-client", "tunneling", "web", "webmail"), required=False)
 feature_profiles_policy_object_as_path_list:
   name: regex('^[^&<>! \"]{1,128}$')
   description: str(required=False)
