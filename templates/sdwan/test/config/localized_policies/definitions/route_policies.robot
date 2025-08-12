@@ -47,6 +47,7 @@ Verify Localized Policies Route Policy {{ route_policy.name }}
         ${expanded_c_match_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/expandedcommunity/${expanded_c_id[0]}
         Should Be Equal Value Json String    ${expanded_c_match_id.json()}    $..name    {{ sequence.match_criterias.expanded_community_list | default("not_defined") }}    msg=expanded community list
     END
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="expandedCommunityInline")].vipVariableName    {{ sequence.match_criterias.expanded_community_list_variable | default("not_defined") }}    msg=expanded community list variable
 
     ${extended_c_id}=    Get Value From Json    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="extCommunity")].ref
     IF    ${extended_c_id} == []
@@ -107,6 +108,8 @@ Verify Localized Policies Route Policy {{ route_policy.name }}
     ${rec_com_list}=    Split String    ${community[0]}
     Lists Should Be Equal    ${rec_com_list}    ${com_list}    ignore_order=True    msg=communities
 {% endif %}
+
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@.type=="set")].parameter[?(@.field=="community")].vipVariableName    {{ sequence.actions.community_variable | default("not_defined") }}    msg=community variable
 
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@.type=="set")].parameter[?(@.field=="communityAdditive")].value    {{ sequence.actions.community_additive | lower }}    msg=community additive
 

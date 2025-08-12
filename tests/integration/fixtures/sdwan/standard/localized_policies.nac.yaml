@@ -12,7 +12,7 @@ sdwan:
               name: ACL
               base_action: accept
               match_criterias:
-                dscp: 46
+                dscp: 6
               actions:
                 class: CLASS-REALTIME
                 counter_name: 10-CLASS-REALTIME
@@ -50,7 +50,7 @@ sdwan:
               match_criterias:
                 destination_ports:
                   - 830
-                destination_ip_prefix: 10.1.1.1/32
+                destination_ip_prefix: 10.1.1.1/32 10.10.10.99/32
               actions:
                 counter_name: 10-DROP-NETCONF
         - name: ACL-GRE-DROP
@@ -60,6 +60,7 @@ sdwan:
             - id: 10
               base_action: drop
               match_criterias:
+                source_ip_prefix: 10.10.10.0/24 192.168.31.0/28
                 protocols:
                   - 47
                   - 94
@@ -88,8 +89,8 @@ sdwan:
             - id: 10
               base_action: accept
               match_criterias:
-                source_ip_prefix: 10.254.1.0/24
-                destination_ip_prefix: 10.253.7.0/24
+                source_ip_prefix: 10.254.1.0/24 10.253.1.0/24
+                destination_ip_prefix: 10.253.7.0/24 172.0.0.0/8
                 destination_port: 22
               counter_name: SEQ10-SSH
             - id: 15

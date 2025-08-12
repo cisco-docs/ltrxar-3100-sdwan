@@ -48,6 +48,7 @@ Verify Localized Policies IPv4 Access Control Lists {{ ipv4_acl.name }}
     END
 
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="destinationIp")].value    {{ sequence.match_criterias.destination_ip_prefix | default("not_defined") }}    msg=destination ip prefix
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="destinationIp")].vipVariableName    {{ sequence.match_criterias.destination_ip_prefix_variable | default("not_defined") }}    msg=destination ip prefix variable
 
 {% set destination_port_range_list = [] %}
 {% for item in sequence.match_criterias.destination_port_ranges | default([]) %}
@@ -101,6 +102,7 @@ Verify Localized Policies IPv4 Access Control Lists {{ ipv4_acl.name }}
     END
 
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="sourceIp")].value    {{ sequence.match_criterias.source_ip_prefix | default("not_defined") }}    msg=source ip prefix
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="sourceIp")].vipVariableName    {{ sequence.match_criterias.source_ip_prefix_variable | default("not_defined") }}    msg=source ip prefix variable
 
 {% set source_port_range_list = [] %}
 {% for item in sequence.match_criterias.source_port_ranges | default([]) %}

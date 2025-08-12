@@ -50,17 +50,19 @@ sdwan:
               name: Rule_2
               base_action: inspect
               match_criterias:
-                source_ip_prefix: 10.0.0.0/12
-                source_fqdn: cisco.com
-                destination_ip_prefix: 10.0.0.0/12
-                destination_fqdn: cisco.com
+                source_ip_prefix: 10.0.0.0/12 10.20.98.0/24
+                source_fqdn: example.com
+                destination_ip_prefix: 192.168.0.0/16 10.30.98.0/24
+                destination_fqdn: test.com
                 local_application_list: ZBFW_LAL_1_uni1
             - id: 3
               name: Rule_3
               base_action: drop
               match_criterias:
+                source_fqdn: cisco.com
                 source_ip_prefix: 10.10.98.0/24
                 destination_ip_prefix: 10.10.99.0/24
+                destination_fqdn: example.com
               actions:
                 log: true
             - id: 4

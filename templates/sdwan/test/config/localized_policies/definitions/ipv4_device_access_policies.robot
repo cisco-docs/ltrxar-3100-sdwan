@@ -42,6 +42,7 @@ Verify Localized Policies Device Access IPv4 ACL {{ ipv4_device.name }}
     END
 
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{ sequence_index }}].match.entries[?(@.field=="destinationIp")].value    {{ ipv4_device.sequences[sequence_index].match_criterias.destination_ip_prefix | default("not_defined") }}    msg=destination ip prefix
+    Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{ sequence_index }}].match.entries[?(@.field=="destinationIp")].vipVariableName    {{ ipv4_device.sequences[sequence_index].match_criterias.destination_ip_prefix_variable | default("not_defined") }}    msg=destination ip prefix variable
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{ sequence_index }}].match.entries[?(@.field=="destinationPort")].value    {{ ipv4_device.sequences[sequence_index].match_criterias.destination_port }}    msg=destination port
 
     ${src_data_prefix_id}=    Get Value From Json    ${r_id.json()}    $.sequences[{{ sequence_index }}].match.entries[?(@.field=="sourceDataPrefixList")].ref
@@ -53,6 +54,7 @@ Verify Localized Policies Device Access IPv4 ACL {{ ipv4_device.name }}
     END
 
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{ sequence_index }}].match.entries[?(@.field=="sourceIp")].value    {{ ipv4_device.sequences[sequence_index].match_criterias.source_ip_prefix | default("not_defined") }}    msg=source ip prefix
+    Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{ sequence_index }}].match.entries[?(@.field=="sourceIp")].vipVariableName    {{ ipv4_device.sequences[sequence_index].match_criterias.source_ip_prefix_variable | default("not_defined") }}    msg=source ip prefix variable
 
 {% set test_list = [] %}
 {% for item in ipv4_device.sequences[sequence_index].match_criterias.source_ports | default("not_defined") %}

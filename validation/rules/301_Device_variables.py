@@ -39,6 +39,7 @@ class Rule:
         feature_template_types_in_device_template = ["aaa_template", "banner_template", "bfd_template", "bgp_template", "cli_template", "dhcp_server_template", "ethernet_interface_templates", "global_settings_template", "ipsec_interface_templates", "logging_template", "ntp_template", "omp_template", "ospf_template", "secure_internet_gateway_template", "security_template", "sig_credentials_template", "snmp_template", "svi_interface_templates", "switchport_templates", "system_template", "thousandeyes_template", "vpn_0_template", "vpn_512_template", "vpn_service_templates", "gre_interface_templates", "cellular_interface_templates", "cellular_controller_templates", "cellular_profile_templates"]
         feature_policy_types_in_device_template = ["security_policy"]
         definitions_in_feature_policy = ["firewall_policies"]
+        definitions_in_localized_policy = ["ipv4_access_control_lists", "ipv4_device_access_policies", "ipv6_access_control_lists", "ipv6_device_access_policies", "rewrite_rules", "route_policies", "qos_maps"]
         results = []
         if isinstance(object, dict):
             if "name" in object and "description" not in object:
@@ -71,6 +72,17 @@ class Rule:
                                     for obj_entry in obj:
                                         if not obj_entry in results:
                                             results.append(obj_entry)
+                elif key == "localized_policy":
+                    for lp in inventory.get('sdwan', {}).get('localized_policies', {}).get('feature_policies', {}):
+                        for key, obj in lp.get('definitions', {}).items():
+                            if key in definitions_in_localized_policy:
+                                if isinstance(obj, str):
+                                    if not obj in results:
+                                        results.append(obj)
+                                elif isinstance(obj, list):
+                                    for obj_entry in obj:
+                                        if not obj_entry in results:
+                                            results.append(obj_entry)
         return(results)
 
     @classmethod
@@ -86,6 +98,10 @@ class Rule:
         # Get the list of variables per security policy definition
         for type in inventory.get('sdwan', {}).get('security_policies', {}).get('definitions', {}):
             for template in inventory['sdwan']['security_policies']['definitions'][type]:
+                template_vars = cls.get_feature_vars("", template)
+                feature_var_dict[template['name']] = template_vars
+        for type in inventory.get('sdwan', {}).get('localized_policies', {}).get('definitions', {}):
+            for template in inventory['sdwan']['localized_policies']['definitions'][type]:
                 template_vars = cls.get_feature_vars("", template)
                 feature_var_dict[template['name']] = template_vars
         # Determine the list of variables for each device template
