@@ -504,6 +504,10 @@ objects:
     template: transport_wan_vpn_ethernet_interface
     folder: features_transport
     paths: [sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces]
+  - name: App Probe Class
+    template: app_probe_class
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.app_probe_classes]
   - name: Application List
     template: application_list
     folder: policy_objects

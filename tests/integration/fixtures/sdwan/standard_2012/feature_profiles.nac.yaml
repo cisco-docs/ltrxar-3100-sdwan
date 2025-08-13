@@ -78,6 +78,16 @@ sdwan:
     policy_object_profile:
       name: policy_objects
       description: basic policy object profile
+      app_probe_classes:
+        - name: app_probe1
+          forwarding_class: bulk
+          mappings:
+            - color: blue
+              dscp: 46
+        - name: app_probe2
+          forwarding_class: realtime
+          mappings:
+            - color: mpls
       application_lists:
         - name: Social-Media
           applications:
