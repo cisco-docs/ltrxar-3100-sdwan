@@ -31,12 +31,11 @@ Verify Feature Profiles Policy Object Profile {{ sdwan.feature_profiles.policy_o
     ${standard_community_lists}=    Get Value From Json    ${standard_community_raw.json()}    $..data[?(@..name=='{{ standard_community_list.name }}')]..payload
     Run Keyword If    ${standard_community_lists} == []    Fail    Feature '{{ standard_community_list.name }}' expected to be configured within the policy object profile '{{ sdwan.feature_profiles.policy_object_profile.name }}' on the Manager
 
-    Should Be Equal Value Json String    ${standard_community_lists[0]}    $..name    {{ standard_community_list.name }}    msg=name
     Should Be Equal Value Json Special_String     ${standard_community_lists[0]}     $.description    {{ standard_community_list.description | default('not_defined') | normalize_special_string }}    msg=description
 
     ${standard_communities_list}=    Create List    {{ standard_community_list.get('standard_communities', []) | join('   ') }}
     # Extract features from the JSON
-    ${standard_communities_list_json}=    Evaluate    [ item['standardCommunity']['value'] for item in ${standard_community_lists[0]['data']['entries']} if 'standardCommunity' in item and 'value' in item['standardCommunity'] ]
+    ${standard_communities_list_json}=    Evaluate    [ item['standardCommunity']['value'].lower() for item in ${standard_community_lists[0]['data']['entries']} if 'standardCommunity' in item and 'value' in item['standardCommunity'] ]
     Lists Should Be Equal    ${standard_communities_list}    ${standard_communities_list_json}    ignore_order=True    msg=standard communities
 
 {% endfor %}

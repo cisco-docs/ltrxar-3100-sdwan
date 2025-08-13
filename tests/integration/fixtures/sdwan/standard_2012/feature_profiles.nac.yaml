@@ -183,6 +183,7 @@ sdwan:
         - name: standard_community_list
           standard_communities:
             - no-export
+            - local-as
             - 1000:1000
             - 1000:1002
       tloc_lists:
@@ -273,16 +274,16 @@ sdwan:
           - name: object_interface_tracker
             description: Interface Tracker
             id: 1
-            type: Interface
+            type: interface
             interface_name: GigabitEthernet1
           - name: object_sig_tracker
             description: SIG Tracker
             id: 2
-            type: SIG
+            type: sig
           - name: object_route_tracker
             description: Route Tracker
             id: 3
-            type: Route
+            type: route
             route_ip: 10.0.0.0
             route_mask: 255.0.0.0
             vpn_id: 1
@@ -648,8 +649,8 @@ sdwan:
           app_perf_monitor_enabled: true
           event_driven_config_enabled: true
           event_driven_events:
-            - SLA_CHANGE
-            - PMTU_CHANGE
+            - sla_change
+            - pmtu_change
           monitoring_config_enabled: true
           monitoring_config_interval: 60
         security:
@@ -883,7 +884,7 @@ sdwan:
           ipv4_primary_dns_address: 1.1.1.1
           ipv4_secondary_dns_address: 1.0.0.1
           ipv4_static_routes:
-            - gateway: nextHop
+            - gateway: nexthop
               network_address: 192.168.100.0
               next_hops:
                 - address: 192.168.1.1
@@ -896,7 +897,7 @@ sdwan:
           ipv6_primary_dns_address: 2001:4860:4860::8888
           ipv6_secondary_dns_address: 2001:4860:4860::8844
           ipv6_static_routes:
-            - nat: NAT66
+            - nat: nat66
               gateway: nat
               prefix: fc01::/64
             - prefix: fc03::/64
@@ -931,6 +932,7 @@ sdwan:
                   bgp_local_preference: 200
                   communities:
                     - internet
+                    - local-as
                     - 65001:101
                   communities_additive: true
                   ipv4_next_hop: 192.168.1.1
@@ -1077,7 +1079,7 @@ sdwan:
           ipv4_primary_dns_address: 172.16.1.254
           ipv4_secondary_dns_address: 172.16.2.254
           ipv4_static_routes:
-            - gateway: nextHop
+            - gateway: nexthop
               network_address: 0.0.0.0
               subnet_mask: 0.0.0.0
               next_hops:
@@ -1090,12 +1092,12 @@ sdwan:
               subnet_mask: "255.255.255.0"
               gateway: null0
           services:
-            - TE
+            - te
           ipv6_primary_dns_address: 2001:4860:4860::8888
           ipv6_secondary_dns_address: 2001:4860:4860::8844
           ipv6_static_routes:
             - prefix: ::/0
-              gateway: nextHop
+              gateway: nexthop
               next_hops:
                 - address: 2001:db8:2::1
                   administrative_distance: 1
@@ -1186,4 +1188,4 @@ sdwan:
           ipv6_static_routes:
             - prefix: fc01::0/64
               gateway: nat
-              nat: NAT66
+              nat: nat66

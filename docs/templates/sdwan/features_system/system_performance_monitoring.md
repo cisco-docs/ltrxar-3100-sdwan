@@ -21,7 +21,7 @@ sdwan:
             - box-group
           event_driven_config_enabled: true
           event_driven_events:
-            - SLA_CHANGE
+            - sla_change
           monitoring_config_enabled: true
           monitoring_config_interval: 60
 ```

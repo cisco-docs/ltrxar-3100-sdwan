@@ -45,6 +45,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} Performance Monitorin
     Should Be Equal Value Json String    ${system_perfmonitor[0]}    $..umtsConfig.eventDrivenConfig.enabled.value    {{ profile.performance_monitoring.event_driven_config_enabled | default('False') }}    msg=performance_monitoring event_driven_config_enabled
   
     ${perfmonitor_event_driven_events_list}=    Create List    {{ profile.performance_monitoring.get('event_driven_events', []) | join('   ') }}
+    ${perfmonitor_event_driven_events_list}=    Evaluate    [e.upper() for e in ${perfmonitor_event_driven_events_list}]
     ${perfmonitor_event_driven_events_list}=    Set Variable If    ${perfmonitor_event_driven_events_list} == []    not_defined    ${perfmonitor_event_driven_events_list}
     Should Be Equal Value Json Yaml    ${system_perfmonitor[0]}    $..umtsConfig.eventDrivenConfig.events    ${perfmonitor_event_driven_events_list}  not_defined    msg=performance_monitoring event_driven_events     var_msg=none
   

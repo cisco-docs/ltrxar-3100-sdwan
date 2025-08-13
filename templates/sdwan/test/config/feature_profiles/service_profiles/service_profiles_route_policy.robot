@@ -138,6 +138,8 @@ Verify Feature Profiles Service Profiles {{ profile.name }} Route Policy Feature
     Should Be Equal Value Json Yaml    ${sequence}    $.actions[0].accept.setLocalPreference    {{ sequence.actions.bgp_local_preference | default('not_defined') }}    not_defined    msg=route_policy.sequence.actions.bgp_local_preference    var_msg=not_defined
 
     ${community_list}=    Create List    {{ sequence.get('actions', {}).get('communities', []) | join('    ') }}
+    # Replace "local-as" with "local-AS" in the community_list
+    ${community_list}=    Evaluate    [item if item != "local-as" else "local-AS" for item in ${community_list}]
     ${community_list}=    Set Variable If    ${community_list} == []    not_defined    ${community_list}
     Should Be Equal Value Json Yaml    ${sequence}    $.actions[0].accept.setCommunity.community    ${community_list}    {{ sequence.actions.communities_variable | default('not_defined') }}    msg=route_policy.sequence.actions.communities    var_msg=route_policy.sequence.actions.communities_variable
 

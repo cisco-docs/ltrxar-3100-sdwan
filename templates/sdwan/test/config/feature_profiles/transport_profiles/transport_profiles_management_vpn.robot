@@ -73,7 +73,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
     
     Should Be Equal Value Json Yaml    ${transport_mngt_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].prefix.ipAddress   {{ route_entry.network_address| default('not_defined') }}     {{ route_entry.network_address_variable| default('not_defined') }}     msg=transport_mngt_vpn route_entry.network_address     var_msg=transport_mngt_vpn route_entry.network_address variable
     Should Be Equal Value Json Yaml    ${transport_mngt_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].prefix.subnetMask   {{ route_entry.subnet_mask| default('not_defined') }}     {{ route_entry.subnet_mask_variable| default('not_defined') }}     msg=transport_mngt_vpn route_entry.subnet_mask     var_msg=transport_mngt_vpn route_entry.subnet_mask variable
-    Should Be Equal Value Json String    ${transport_mngt_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].gateway.value   {{ route_entry.gateway| default(defaults.sdwan.feature_profiles.transport_profiles.management_vpn.ipv4_static_routes.gateway) }}     msg=transport_mngt_vpn route_entry.gateway
+    ${gateway_raw}=    Evaluate    "{{ route_entry.gateway | default(defaults.sdwan.feature_profiles.transport_profiles.management_vpn.ipv4_static_routes.gateway) }}"
+    ${gateway}=    Run Keyword If    '${gateway_raw}' == 'nexthop'    Set Variable    nextHop    ELSE    Set Variable    ${gateway_raw}
+    Should Be Equal Value Json String    ${transport_mngt_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].gateway.value   {{ gateway }}     msg=transport_mngt_vpn route_entry.gateway
     Should Be Equal Value Json Yaml    ${transport_mngt_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].distance  {{ route_entry.administrative_distance | default('not_defined') }}     {{ route_entry.administrative_distance_variable | default('not_defined') }}     msg=transport_mngt_vpn route_entry.admin_distance     var_msg=transport_mngt_vpn route_entry.admin_distance variable
 
     ${outer_loop_index}=    Set Variable    {{ loop.index0 }}
@@ -118,7 +120,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
 {% endfor %}
 
     Should Be Equal Value Json String    ${transport_mngt_vpn[0]}    $..ipv6Route[{{ loop.index0 }}].oneOfIpRoute.null0.value    {{ true if ipv6_route.gateway == 'null0' else 'not_defined' }}    msg=transport_mgnt_vpn nh6_entry.null0
-    Should Be Equal Value Json String    ${transport_mngt_vpn[0]}    $..ipv6Route[{{ loop.index0 }}].oneOfIpRoute.nat.value    {{ ipv6_route.nat | default('not_defined') }}    msg=transport_mgnt_vpn nh6_entry.nat
+    ${nat_value}=    Set Variable    {{ ipv6_route.nat | default('not_defined') }}
+    Run Keyword If    '${nat_value}' != 'not_defined'    Set Suite Variable    ${nat_value}    ${nat_value.upper()}
+    Should Be Equal Value Json String    ${transport_mngt_vpn[0]}    $..ipv6Route[{{ loop.index0 }}].oneOfIpRoute.nat.value    ${nat_value}    msg=transport_mgnt_vpn nh6_entry.nat
 
 {% endfor %}
 

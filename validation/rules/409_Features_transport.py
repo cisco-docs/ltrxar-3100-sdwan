@@ -36,21 +36,21 @@ class Rule:
                 if ("ipv4_primary_dns_address" not in management_vpn_feature and "ipv4_primary_dns_address_variable" not in management_vpn_feature) and ("ipv4_secondary_dns_address" in management_vpn_feature or "ipv4_secondary_dns_address_variable" in management_vpn_feature):
                     results.append(f"ipv4_secondary_dns_address is defined but ipv4_primary_dns_address is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn")
                 for index, route in enumerate(management_vpn_feature.get("ipv4_static_routes", {})):
-                    if route.get("gateway", "nextHop") != "null0" and "administrative_distance" in route or "administrative_distance_variable" in route:
+                    if route.get("gateway", "nexthop") != "null0" and "administrative_distance" in route or "administrative_distance_variable" in route:
                         results.append(f"administrative_distance is defined but gateway is not null0 in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn.ipv4_static_routes[{index}]")
-                    if route.get("gateway", "nextHop") != "nextHop" and "next_hops" in route:
+                    if route.get("gateway", "nexthop") != "nexthop" and "next_hops" in route:
                         results.append(f"next_hops list is present but gateway is set to {route.get('gateway', 'nextHop')} in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn.ipv4_static_routes[{index}]")
-                    if route.get("gateway", "nextHop") == "nextHop" and "next_hops" not in route:
-                        results.append(f"next_hops list is not present but gateway is set to nextHop in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn.ipv4_static_routes[{index}]")
+                    if route.get("gateway", "nexthop") == "nexthop" and "next_hops" not in route:
+                        results.append(f"next_hops list is not present but gateway is set to nexthop in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn.ipv4_static_routes[{index}]")
                 for index, route in enumerate(management_vpn_feature.get("ipv6_static_routes", {})):
-                    if route.get("gateway", "nextHop") != "nat" and route.get("nat"):
+                    if route.get("gateway", "nexthop") != "nat" and route.get("nat"):
                         results.append(f"nat option is defined but gateway is not set to nat in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn.ipv6_static_routes[{index}]")
-                    if route.get("gateway", "nextHop") == "nat" and not route.get("nat"):
+                    if route.get("gateway", "nexthop") == "nat" and not route.get("nat"):
                         results.append(f"gateway is set to nat but nat option is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn.ipv6_static_routes[{index}]")
-                    if route.get("gateway", "nextHop") != "nextHop" and "next_hops" in route:
+                    if route.get("gateway", "nexthop") != "nexthop" and "next_hops" in route:
                         results.append(f"next_hops list is present but gateway is set to {route.get('gateway', 'nextHop')} in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn.ipv6_static_routes[{index}]")
-                    if route.get("gateway", "nextHop") == "nextHop" and "next_hops" not in route:
-                        results.append(f"next_hops list is not present but gateway is set to nextHop in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn.ipv6_static_routes[{index}]")
+                    if route.get("gateway", "nexthop") == "nexthop" and "next_hops" not in route:
+                        results.append(f"next_hops list is not present but gateway is set to nexthop in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].management_vpn.ipv6_static_routes[{index}]")
                 for interface in management_vpn_feature.get("ethernet_interfaces", []):
                     if interface.get("ipv4_configuration_type", "static") == "static":
                         if "ipv4_address" not in interface and "ipv4_address_variable" not in interface:
@@ -77,21 +77,21 @@ class Rule:
                 if ("ipv4_primary_dns_address" not in wan_vpn_feature and "ipv4_primary_dns_address_variable" not in wan_vpn_feature) and ("ipv4_secondary_dns_address" in wan_vpn_feature or "ipv4_secondary_dns_address_variable" in wan_vpn_feature):
                     results.append(f"ipv4_secondary_dns_address is defined but ipv4_primary_dns_address is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn")
                 for index, route in enumerate(wan_vpn_feature.get("ipv4_static_routes", {})):
-                    if route.get("gateway", "nextHop") != "null0" and "administrative_distance" in route or "administrative_distance_variable" in route:
+                    if route.get("gateway", "nexthop") != "null0" and "administrative_distance" in route or "administrative_distance_variable" in route:
                         results.append(f"administrative_distance is defined but gateway is not null0 in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv4_static_routes[{index}]")
-                    if route.get("gateway", "nextHop") != "nextHop" and "next_hops" in route:
+                    if route.get("gateway", "nexthop") != "nexthop" and "next_hops" in route:
                         results.append(f"next_hops list is present but gateway is set to {route.get('gateway', 'nextHop')} in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv4_static_routes[{index}]")
-                    if route.get("gateway", "nextHop") == "nextHop" and "next_hops" not in route:
-                        results.append(f"next_hops list is not present but gateway is set to nextHop in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv4_static_routes[{index}]")
+                    if route.get("gateway", "nexthop") == "nexthop" and "next_hops" not in route:
+                        results.append(f"next_hops list is not present but gateway is set to nexthop in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv4_static_routes[{index}]")
                 for index, route in enumerate(wan_vpn_feature.get("ipv6_static_routes", {})):
-                    if route.get("gateway", "nextHop") != "nat" and route.get("nat"):
+                    if route.get("gateway", "nexthop") != "nat" and route.get("nat"):
                         results.append(f"nat option is defined but gateway is not set to nat in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv6_static_routes[{index}]")
-                    if route.get("gateway", "nextHop") == "nat" and not route.get("nat"):
+                    if route.get("gateway", "nexthop") == "nat" and not route.get("nat"):
                         results.append(f"gateway is set to nat but nat option is not defined in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv6_static_routes[{index}]")
-                    if route.get("gateway", "nextHop") != "nextHop" and "next_hops" in route:
+                    if route.get("gateway", "nexthop") != "nexthop" and "next_hops" in route:
                         results.append(f"next_hops list is present but gateway is set to {route.get('gateway', 'nextHop')} in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv6_static_routes[{index}]")
-                    if route.get("gateway", "nextHop") == "nextHop" and "next_hops" not in route:
-                        results.append(f"next_hops list is not present but gateway is set to nextHop in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv6_static_routes[{index}]")
+                    if route.get("gateway", "nexthop") == "nexthop" and "next_hops" not in route:
+                        results.append(f"next_hops list is not present but gateway is set to nexthop in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ipv6_static_routes[{index}]")
                 for interface in wan_vpn_feature.get("ethernet_interfaces", []):
                     if interface.get("ipv4_configuration_type", "static") == "static":
                         if "ipv4_address" not in interface and "ipv4_address_variable" not in interface:

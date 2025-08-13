@@ -67,7 +67,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
 
     Should Be Equal Value Json Yaml    ${transport_wan_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].prefix.ipAddress   {{ route_entry.network_address| default('not_defined') }}     {{ route_entry.network_address_variable| default('not_defined') }}     msg=transport_wan_vpn route_entry.network_address     var_msg=transport_wan_vpn route_entry.network_address variable
     Should Be Equal Value Json Yaml    ${transport_wan_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].prefix.subnetMask   {{ route_entry.subnet_mask| default('not_defined') }}     {{ route_entry.subnet_mask_variable| default('not_defined') }}     msg=transport_wan_vpn route_entry.subnet_mask     var_msg=transport_wan_vpn route_entry.subnet_mask variable
-    Should Be Equal Value Json String    ${transport_wan_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].gateway.value   {{ route_entry.gateway| default(defaults.sdwan.feature_profiles.transport_profiles.wan_vpn.ipv4_static_routes.gateway) }}     msg=transport_wan_vpn route_entry.gateway
+    ${gateway_raw}=    Evaluate    "{{ route_entry.gateway | default(defaults.sdwan.feature_profiles.transport_profiles.wan_vpn.ipv4_static_routes.gateway) }}"
+    ${gateway}=    Run Keyword If    '${gateway_raw}' == 'nexthop'    Set Variable    nextHop    ELSE    Set Variable    ${gateway_raw}
+    Should Be Equal Value Json String    ${transport_wan_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].gateway.value   {{ gateway }}     msg=transport_wan_vpn route_entry.gateway
     Should Be Equal Value Json Yaml    ${transport_wan_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].distance   {{ route_entry.administrative_distance| default('not_defined') }}     {{ route_entry.administrative_distance_variable| default('not_defined') }}     msg=transport_wan_vpn route_entry.admin_distance     var_msg=transport_wan_vpn route_entry.admin_distance variable
 
     ${outer_loop_index}=    Set Variable    {{ loop.index0 }}
@@ -112,7 +114,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
 {% endfor %}
 
     Should Be Equal Value Json String    ${transport_wan_vpn[0]}    $..ipv6Route[{{ loop.index0 }}].oneOfIpRoute.null0.value   {{ true if route_entry.gateway == 'null0' else 'not_defined' }}     msg=transport_wan_vpn wan_vpn nh6_entry.gateway
-    Should Be Equal Value Json String    ${transport_wan_vpn[0]}    $..ipv6Route[{{ loop.index0 }}].oneOfIpRoute.nat.value   {{ route_entry.nat | default('not_defined') }}     msg=transport_wan_vpn wan_vpn nh6_entry.nat
+    ${nat_value}=    Set Variable    {{ route_entry.nat | default('not_defined') }}
+    Run Keyword If    '${nat_value}' != 'not_defined'    Set Suite Variable    ${nat_value}    ${nat_value.upper()}
+    Should Be Equal Value Json String    ${transport_wan_vpn[0]}    $..ipv6Route[{{ loop.index0 }}].oneOfIpRoute.nat.value   ${nat_value}     msg=transport_wan_vpn wan_vpn nh6_entry.nat
 
 {% endfor %}
 
@@ -145,7 +149,7 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
 {% for services_entry in profile.wan_vpn.services | default([]) %}
 
     ${json_services}=   Get Value From Json   ${transport_wan_vpn[0]}   $.data..service[{{ loop.index0 }}].serviceType..value
-    Append To List  ${r_services_list}     ${json_services[0]}
+    Append To List  ${r_services_list}     ${json_services[0].lower()}
 
 {% endfor %}
 
