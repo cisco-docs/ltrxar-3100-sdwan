@@ -20,12 +20,12 @@ Verify Localized Policies Feature Policies {{ feature_policy.name }}
 
     Should Be Equal Value Json String    ${r_id.json()}    $.policyName    {{ feature_policy.name }}    msg=name
     Should Be Equal Value Json Special_String    ${r_id.json()}    $.policyDescription    {{ feature_policy.description | normalize_special_string }}    msg=description
-    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.implicitAclLogging    {{ feature_policy.implicit_acl_logging | default("not_defined") }}    msg=implicit acl logging
-    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.appVisibility    {{ feature_policy.ipv4_application_visibility | default("not_defined") }}    msg=ipv4 application visibility
-    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.flowVisibility    {{ feature_policy.ipv4_flow_visibility | default("not_defined") }}    msg=ipv4 flow visibility
+    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.implicitAclLogging    {{ feature_policy.implicit_acl_logging | default(defaults.sdwan.localized_policies.feature_policies.implicit_acl_logging) }}    msg=implicit acl logging
+    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.appVisibility    {{ feature_policy.ipv4_application_visibility | default(defaults.sdwan.localized_policies.feature_policies.ipv4_application_visibility) }}    msg=ipv4 application visibility
+    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.flowVisibility    {{ feature_policy.ipv4_flow_visibility | default(defaults.sdwan.localized_policies.feature_policies.ipv4_flow_visibility) }}    msg=ipv4 flow visibility
     Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.ipVisibilityCacheEntries    {{ feature_policy.ipv4_visibility_cache_entries | default("not_defined") }}    msg=ipv4 visibility cache entries
-    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.appVisibilityIPv6    {{ feature_policy.ipv6_application_visibility | default("not_defined") }}    msg=ipv6 application visibility
-    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.flowVisibilityIPv6    {{ feature_policy.ipv6_flow_visibility | default("not_defined") }}    msg=ipv6 flow visibility
+    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.appVisibilityIPv6    {{ feature_policy.ipv6_application_visibility | default(defaults.sdwan.localized_policies.feature_policies.ipv6_application_visibility) }}    msg=ipv6 application visibility
+    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.flowVisibilityIPv6    {{ feature_policy.ipv6_flow_visibility | default(defaults.sdwan.localized_policies.feature_policies.ipv6_flow_visibility) }}    msg=ipv6 flow visibility
     Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.ipV6VisibilityCacheEntries    {{ feature_policy.ipv6_visibility_cache_entries | default("not_defined") }}    msg=ipv6 visibility cache entries
     Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.settings.logFrequency    {{ feature_policy.log_frequency | default("not_defined") }}    msg=log frequency
 
