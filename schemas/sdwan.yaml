@@ -1565,6 +1565,8 @@ edge_feature_templates_system:
   track_transport_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
   transport_gateway: bool(required=False)
   transport_gateway_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
+  enhanced_app_aware_routing: enum("disabled", "aggressive", "moderate", "conservative", required=False)
+  # enhanced_app_aware_routing_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
 edge_feature_templates_system_geo_fencing_sms_phone_number:
   number: regex('[+][0-9]+', required=False)
   number_variable: regex('^[^"~`$&+,]{1,255}$', required=False)

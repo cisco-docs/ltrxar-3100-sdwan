@@ -28,9 +28,10 @@ sdwan:
         idle_timeout: 300
         location_variable: system_location
         on_demand_tunnel: true
-        on_demand_tunnel_idle_timeout: 3000
+        on_demand_tunnel_idle_timeout: 300
         site_id_variable: site_id
         system_ip_variable: system_ip
+        enhanced_app_aware_routing: conservative
         endpoint_trackers:
           - name: static_route_tracker
             threshold: 300

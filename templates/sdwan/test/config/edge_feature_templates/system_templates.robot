@@ -124,6 +124,8 @@ Verify Edge Feature Template System Feature template {{ system.name }}
     Should Be Equal Value Json String    ${r_id.json()}    $..["track-transport"].vipVariableName    {{ system.track_transport_variable | default("not_defined") }}    msg=track transport variable
     Should Be Equal Value Json String    ${r_id.json()}    $..["transport-gateway"].vipValue    {{ system.transport_gateway | default("not_defined") | lower() }}    msg=transport gateway
     Should Be Equal Value Json String    ${r_id.json()}    $..["transport-gateway"].vipVariableName    {{ system.transport_gateway_variable | default("not_defined") }}    msg=transport gateway variable
+    Should Be Equal Value Json String    ${r_id.json()}    $..["epfr"].vipValue    {{ system.enhanced_app_aware_routing | default("not_defined") }}    msg=enhanced app aware routing
+    # Should Be Equal Value Json String    ${r_id.json()}    $..["epfr"].vipVariableName    {{ system.enhanced_app_aware_routing_variable | default("not_defined") }}    msg=enhanced app aware routing variable
 
     Should Be Equal Value Json List Length    ${r_id.json()}    $..["geo-fencing"].sms.mobile-number.vipValue    {{ system.geo_fencing_sms_phone_numbers | length }}    msg=geo fencing phone number list length
 {% for system_geo_fencing in system.geo_fencing_sms_phone_numbers | default([]) %}
