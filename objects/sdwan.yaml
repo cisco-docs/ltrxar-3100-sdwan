@@ -28,6 +28,10 @@ objects:
     template: global_settings
     folder: edge_feature_templates
     paths: [sdwan.edge_feature_templates.global_settings_templates]
+  - name: Edge IGMP
+    template: igmp
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.igmp_templates]
   - name: Edge Logging
     template: logging
     folder: edge_feature_templates

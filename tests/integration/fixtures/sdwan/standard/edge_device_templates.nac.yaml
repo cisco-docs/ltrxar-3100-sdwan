@@ -31,6 +31,7 @@ sdwan:
           bgp_template: FT-CEDGE-BGP-VPN1-ACTIVE
           ethernet_interface_templates:
             - name: FT-CEDGE-VPN1-LAN1
+          igmp_template: FT-CEDGE-IGMP-01
         - name: FT-CEDGE-VPN511-01
           ethernet_interface_templates:
             - name: FT-CEDGE-VPN511-LOOPBACK511
@@ -63,6 +64,7 @@ sdwan:
           bgp_template: FT-CEDGE-BGP-VPN1-ACTIVE
           ethernet_interface_templates:
             - name: FT-CEDGE-VPN1-LAN1
+          igmp_template: FT-CEDGE-IGMP-01
         - name: FT-CEDGE-VPN511-01
           ethernet_interface_templates:
             - name: FT-CEDGE-VPN511-LOOPBACK511
@@ -95,6 +97,7 @@ sdwan:
           bgp_template: FT-CEDGE-BGP-VPN1-STANDBY
           ethernet_interface_templates:
             - name: FT-CEDGE-VPN1-LAN1
+          igmp_template: FT-CEDGE-IGMP-01
         - name: FT-CEDGE-VPN511-01
           ethernet_interface_templates:
             - name: FT-CEDGE-VPN511-LOOPBACK511
@@ -136,6 +139,7 @@ sdwan:
           bgp_template: FT-CEDGE-BGP-VPN1-ACTIVE
           ethernet_interface_templates:
             - name: FT-CEDGE-VPN1-LAN1
+          igmp_template: FT-CEDGE-IGMP-01
         - name: FT-CEDGE-VPN511-01
           ethernet_interface_templates:
             - name: FT-CEDGE-VPN511-LOOPBACK511
