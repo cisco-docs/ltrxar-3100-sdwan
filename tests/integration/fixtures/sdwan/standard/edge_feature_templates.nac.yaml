@@ -682,6 +682,40 @@ sdwan:
             logging_level: warn
             source_interface_variable: logging_server_source_interface
             vpn_id: 511
+    multicast_templates:
+      - name: FT-CEDGE-MULTICAST-01
+        description: Base Multicast template
+        device_types:
+          - C8000V
+          - C8200-1N-4T
+          - C8200L-1N-4T
+          - C8300-1N1S-4T2X
+          - C8300-1N1S-6T
+          - C8300-2N2S-4T2X
+          - C8300-2N2S-6T
+          - C8500-12X
+          - C8500-12X4QC
+          - C8500-20X6C
+          - C8500L-8S4X
+        local_replicator: true
+        threshold: 20
+      - name: FT-CEDGE-MULTICAST-02
+        description: Base Multicast template 02
+        device_types:
+          - C8000V
+          - C8200-1N-4T
+          - C8200L-1N-4T
+          - C8300-1N1S-4T2X
+          - C8300-1N1S-6T
+          - C8300-2N2S-4T2X
+          - C8300-2N2S-6T
+          - C8500-12X
+          - C8500-12X4QC
+          - C8500-20X6C
+          - C8500L-8S4X
+        spt_only: true
+        local_replicator_variable: vpn1_multicast_02_local
+        threshold_variable: vpn1_multicast_02_threshold
     ntp_templates:
       - name: FT-CEDGE-NTP-01
         description: Base NTP template; no auth key; no ntp master

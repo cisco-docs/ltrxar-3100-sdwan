@@ -65,9 +65,11 @@ sdwan:
           ethernet_interface_templates:
             - name: FT-CEDGE-VPN1-LAN1
           igmp_template: FT-CEDGE-IGMP-01
+          multicast_template: FT-CEDGE-MULTICAST-01
         - name: FT-CEDGE-VPN511-01
           ethernet_interface_templates:
             - name: FT-CEDGE-VPN511-LOOPBACK511
+          multicast_template: FT-CEDGE-MULTICAST-02
       vpn_512_template:
         name: FT-CEDGE-VPN512-01
         ethernet_interface_templates:

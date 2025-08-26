@@ -95,6 +95,8 @@ sdwan:
             vpn1_bgp_ipv4_neighbor2_shutdown: TEMPLATE_IGNORE
             vpn1_bgp_ipv4_neighbor2_remote_as: TEMPLATE_IGNORE
             vpn1_bgp_ipv4_neighbor2_password: TEMPLATE_IGNORE
+            vpn1_multicast_02_local: true
+            vpn1_multicast_02_threshold: 50
             vpn511_int1_if_name: Loopback511
             vpn511_int1_if_description: Inband-mgmt
             vpn511_int1_if_shutdown: false

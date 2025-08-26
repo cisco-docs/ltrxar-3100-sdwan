@@ -36,6 +36,10 @@ objects:
     template: logging
     folder: edge_feature_templates
     paths: [sdwan.edge_feature_templates.logging_templates]
+  - name: Edge Multicast
+    template: multicast
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.multicast_templates]
   - name: Edge NTP
     template: ntp
     folder: edge_feature_templates

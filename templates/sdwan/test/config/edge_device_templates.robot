@@ -176,11 +176,15 @@ Verify Edge Device Templates {{ edt.name }}
     END
 
 {% set rec_vpn0_bgp_template = [] %}
+{% if edt.vpn_0_template.bgp_template is defined %}
 {% set _ = rec_vpn0_bgp_template.append(edt.vpn_0_template.bgp_template) | default([]) %}
+{% endif %}
 {% set rec_vpn_service_bgp_template = [] %}
 {% for item in edt.vpn_service_templates | default([]) %}
 {% set test_list = [] %}
+{% if item.bgp_template is defined %}
 {% set _ = test_list.append(item.bgp_template) %}
+{% endif %}
 {% set vpn_service_bgp_templates_test = ','.join(test_list | map('string')) %}
 {% set _ = rec_vpn_service_bgp_template.append(vpn_service_bgp_templates_test) %}
 {% endfor %}
@@ -197,12 +201,43 @@ Verify Edge Device Templates {{ edt.name }}
     END
     Lists Should Be Equal    ${rec_bgp_temp_list}    ${bgp_temp_list}    ignore_order=True    msg=bgp templates
 
+
+
+{% set vpn_service_multicast_template = [] %}
+{% for item in edt.vpn_service_templates | default([]) %}
+{% set test_list = [] %}
+{% if item.multicast_template is defined %}
+{% set _ = test_list.append(item.multicast_template) %}
+{% endif %}
+{% set vpn_service_multicast_templates_test = ','.join(test_list | map('string')) %}
+{% set _ = vpn_service_multicast_template.append(vpn_service_multicast_templates_test) %}
+{% endfor %}
+
+{% set rec_multicast_templates = vpn_service_multicast_template %}
+    ${multicast_temp_list}=   Create List   {{ rec_multicast_templates | join('   ') }}
+    Set Suite Variable    ${multicast_temp_list}
+
+    ${rec_multicast_temp_list}=    Create List
+    ${multicast_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_vpn")]..subTemplates[?(@.templateType=="cedge_multicast")].templateId
+    FOR    ${id}    IN    @{multicast_temp_id}
+        ${rec_multicast_temp_name}=    Get Value From Json    ${templates_id.json()}    $..data[?(@.templateId=="${id}")].templateName
+        Append To List    ${rec_multicast_temp_list}    ${rec_multicast_temp_name[0]}
+    END
+    Log    From API:${rec_multicast_temp_list}
+    Log    From YAML:${multicast_temp_list}
+    Lists Should Be Equal    ${rec_multicast_temp_list}    ${multicast_temp_list}    ignore_order=True    msg=multicast templates
+    
+
 {% set rec_vpn0_ospf_template = [] %}
+{% if edt.vpn_0_template.ospf_template is defined %}
 {% set _ = rec_vpn0_ospf_template.append(edt.vpn_0_template.ospf_template) | default([]) %}
+{% endif %}
 {% set rec_vpn_service_ospf_template = [] %}
 {% for item in edt.vpn_service_templates | default([]) %}
 {% set test_list = [] %}
+{% if item.ospf_template is defined %}
 {% set _ = test_list.append(item.ospf_template) %}
+{% endif %}
 {% set vpn_service_ospf_templates_test = ','.join(test_list | map('string')) %}
 {% set _ = rec_vpn_service_ospf_template.append(vpn_service_ospf_templates_test) %}
 {% endfor %}
@@ -307,27 +342,35 @@ Verify Edge Device Templates {{ edt.name }}
 
 {% set rec_vpn0_dhcp_server_template = [] %}
 {% for item in edt.vpn_0_template.ipsec_interface_templates | default([]) %}
+{% if item.dhcp_server_template is defined %}
 {% set _ = rec_vpn0_dhcp_server_template.append(item.dhcp_server_template) %}
+{% endif %}
 {% endfor %}
 
 {% set rec_eit_dhcp_server_templates = [] %}
 {% for item in edt.vpn_service_templates | default([]) %}
 {% for dhcp_index in range(item.ethernet_interface_templates | default([]) | length()) %}
+{% if item.ethernet_interface_templates[dhcp_index].dhcp_server_template is defined %}
 {% set _ = rec_eit_dhcp_server_templates.append(item.ethernet_interface_templates[dhcp_index].dhcp_server_template) %}
+{% endif %}
 {% endfor %}
 {% endfor %}
 
 {% set rec_ipsec_dhcp_server_templates = [] %}
 {% for item in edt.vpn_service_templates | default([]) %}
 {% for dhcp_index in range(item.ipsec_interface_templates | default([]) | length()) %}
+{% if item.ipsec_interface_templates[dhcp_index].dhcp_server_template is defined %}
 {% set _ = rec_ipsec_dhcp_server_templates.append(item.ipsec_interface_templates[dhcp_index].dhcp_server_template) %}
+{% endif %}
 {% endfor %}
 {% endfor %}
 
 {% set rec_svi_dhcp_server_templates = [] %}
 {% for item in edt.vpn_service_templates | default([]) %}
 {% for dhcp_index in range(item.svi_interface_templates | default([]) | length()) %}
+{% if item.svi_interface_templates[dhcp_index].dhcp_server_template is defined %}
 {% set _ = rec_svi_dhcp_server_templates.append(item.svi_interface_templates[dhcp_index].dhcp_server_template) %}
+{% endif %}
 {% endfor %}
 {% endfor %}
 
