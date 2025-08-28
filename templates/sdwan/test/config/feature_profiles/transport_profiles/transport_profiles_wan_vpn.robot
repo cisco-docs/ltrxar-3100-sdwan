@@ -68,8 +68,8 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
     Should Be Equal Value Json Yaml    ${transport_wan_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].prefix.ipAddress   {{ route_entry.network_address| default('not_defined') }}     {{ route_entry.network_address_variable| default('not_defined') }}     msg=transport_wan_vpn route_entry.network_address     var_msg=transport_wan_vpn route_entry.network_address variable
     Should Be Equal Value Json Yaml    ${transport_wan_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].prefix.subnetMask   {{ route_entry.subnet_mask| default('not_defined') }}     {{ route_entry.subnet_mask_variable| default('not_defined') }}     msg=transport_wan_vpn route_entry.subnet_mask     var_msg=transport_wan_vpn route_entry.subnet_mask variable
     ${gateway_raw}=    Evaluate    "{{ route_entry.gateway | default(defaults.sdwan.feature_profiles.transport_profiles.wan_vpn.ipv4_static_routes.gateway) }}"
-    ${gateway}=    Run Keyword If    '${gateway_raw}' == 'nexthop'    Set Variable    nextHop    ELSE    Set Variable    ${gateway_raw}
-    Should Be Equal Value Json String    ${transport_wan_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].gateway.value   {{ gateway }}     msg=transport_wan_vpn route_entry.gateway
+    ${gateway}=    Run Keyword If    '${gateway_raw}'.lower() == 'nexthop'    Set Variable    nextHop    ELSE    Set Variable    ${gateway_raw}
+    Should Be Equal Value Json String    ${transport_wan_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].gateway.value   ${gateway}     msg=transport_wan_vpn route_entry.gateway
     Should Be Equal Value Json Yaml    ${transport_wan_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].distance   {{ route_entry.administrative_distance| default('not_defined') }}     {{ route_entry.administrative_distance_variable| default('not_defined') }}     msg=transport_wan_vpn route_entry.admin_distance     var_msg=transport_wan_vpn route_entry.admin_distance variable
 
     ${outer_loop_index}=    Set Variable    {{ loop.index0 }}
