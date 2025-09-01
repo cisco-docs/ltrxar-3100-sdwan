@@ -396,6 +396,10 @@ objects:
     template: service_ipv4_tracker
     folder: features_service
     paths: [sdwan.feature_profiles.service_profiles.ipv4_trackers]
+  - name: Service LAN VPN Feature
+    template: service_lan_vpn
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.lan_vpn]
   - name: Service Object Tracker Group Feature
     template: service_object_tracker_group
     folder: features_service

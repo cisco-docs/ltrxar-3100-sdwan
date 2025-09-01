@@ -153,6 +153,10 @@ sdwan:
             - prefix: 192.168.0.0/16
               ge: 24
               le: 28
+        - name: ipv4_pl_service
+          description: ipv4 prefix list
+          entries:
+            - prefix: 10.10.10.10/32
       ipv6_data_prefix_lists:
         - name: ipv6_dpl
           description: ipv6 data prefix list
@@ -262,6 +266,188 @@ sdwan:
             endpoint_port: 80
             endpoint_protocol: tcp
             tracker_name: service_ipv4_tcp_tracker
+        lan_vpns:
+          - name: service_lan_vpn1
+            description: lan_vpn1_test
+            vpn_id: 1
+            vpn_name: VPN1
+            ipv4_omp_admin_distance: 1
+            ipv4_omp_advertise_routes:
+              - protocol: bgp
+              - protocol: connected
+              - protocol: static
+                route_policy: service_rpl
+              - protocol: network
+                networks:
+                  - network_address: 10.10.1.0
+                    subnet_mask: 255.255.255.0
+                  - network_address: 10.10.2.0
+                    subnet_mask: 255.255.255.0
+              - protocol: aggregate
+                aggregates:
+                  - aggregate_address: 10.10.0.0
+                    subnet_mask: 255.255.255.0
+                    aggregate_only: true
+            ipv4_primary_dns_address: 10.2.1.1
+            ipv4_secondary_dns_address: 10.2.3.52
+            ipv6_omp_admin_distance: 1
+            ipv6_omp_advertise_routes:
+              - protocol: bgp
+              - protocol: connected
+              - protocol: static
+              - protocol: aggregate
+                aggregates:
+                  - aggregate_prefix: 2001:0:0:1::/64
+                    aggregate_only: false
+            ipv6_primary_dns_address: 2001:0:0:1::1
+            ipv6_secondary_dns_address: 2001:0:0:2::2
+            sdwan_remote_access: false
+            host_mappings:
+              - hostname: HOSTMAPPING1
+                ips:
+                  - 1.2.3.4
+                  - 10.1.1.1
+              - hostname: HOSTMAPPING2
+                ips:
+                  - 2.2.2.2
+                  - 2001:0:0:1::2
+            ipv4_static_routes:
+              - network_address: 10.10.10.0
+                subnet_mask: 255.255.255.0
+                gateway: nexthop
+                next_hops:
+                  - address: 10.2.1.4
+                    administrative_distance: 1
+                  - address: 10.2.2.1
+                    administrative_distance: 1
+              - network_address: 10.10.11.0
+                subnet_mask: 255.255.255.0
+                gateway: null0
+              - network_address: 10.10.12.0
+                subnet_mask: 255.255.255.0
+                gateway: vpn
+              - network_address: 10.10.13.0
+                subnet_mask: 255.255.255.0
+                gateway: dhcp
+              - network_address: 10.10.15.0
+                subnet_mask: 255.255.255.0
+                gateway: nexthop
+                next_hops_with_tracker:
+                  - address: 10.1.1.1
+                    administrative_distance: 10
+                    tracker: static_route_ip_tracker
+            ipv6_static_routes:
+              - prefix: 2001:0:0:2::0/64
+                gateway: nexthop
+                next_hops:
+                  - address: 2001:0:0:1::1
+                    administrative_distance: 1
+              - prefix: 2001:1111:0:2::0/64
+                gateway: nat
+                nat: nat64
+            services:
+              - service_type: fw
+                ipv4_addresses:
+                  - 1.2.3.4
+                track_enable: true
+              - service_type: te
+                ipv4_addresses:
+                  - 10.0.0.1
+            service_routes:
+              - network_address: 1.2.3.0
+                subnet_mask: 255.255.255.0
+                service: sig
+            # gre_routes:
+            #   - network_address: 10.2.3.0
+            #     subnet_mask: 255.255.255.0
+            #     interfaces:
+            #       - gre1
+            #       - gre2
+            # ipsec_routes:
+            #   - network_address: 10.2.3.0
+            #     subnet_mask: 255.255.255.0
+            #     interfaces:
+            #       - ipsec1
+            #       - ipsec2
+            nat_pools:
+              - id: 1
+                prefix_length: 24
+                range_start: 10.0.0.100
+                range_end: 10.0.0.112
+                overload: true
+                direction: inside
+                tracker_object: object_route_tracker
+              - id: 2
+                prefix_length: 24
+                range_start: 10.1.0.100
+                range_end: 10.1.0.122
+                overload: true
+                direction: inside
+            nat_port_forwards:
+              - nat_pool_id: 1
+                source_port: 122
+                translate_port: 330
+                source_ip: 192.168.1.99
+                translate_ip: 10.0.0.123
+                protocol: tcp
+            static_nat_entries:
+              - nat_pool_id: 1
+                direction: inside
+                source_ip: 192.168.100.100
+                translate_ip: 10.0.0.110
+                tracker_object: object_route_tracker
+            nat64_pools:
+              - name: natpool64
+                range_start: 10.1.1.10
+                range_end: 10.1.1.100
+                overload: true
+            route_leaks_to_global:
+              - protocol: static
+                # redistributions:
+                #   - protocol: bgp
+            route_leaks_from_global:
+              - protocol: connected
+              - protocol: static
+            route_leaks_from_service:
+              - source_vpn: 2
+                protocol: static
+                route_policy: service_rpl2
+            ipv4_import_route_targets:
+              - route_target: 1.1.1.1:200
+            ipv4_export_route_targets:
+              - route_target: 1.1.1.2:200
+              - route_target: 1.1.1.2:300
+            ipv6_import_route_targets:
+              - route_target: 1.1.1.3:200
+            ipv6_export_route_targets:
+              - route_target: 1.1.1.3:400
+          - name: service_lan_vpn2
+            description: Branch LAN VPN 2
+            ipv4_primary_dns_address: 10.2.1.1
+            ipv4_omp_advertise_routes:
+              - protocol: connected
+              - protocol: static
+            ipv4_secondary_dns_address: 10.2.1.2
+            ipv4_static_routes:
+              - network_address: 10.10.10.0
+                subnet_mask: 255.255.255.0
+                gateway: nexthop
+                next_hops:
+                  - address: 10.2.1.1
+                    administrative_distance: 1
+            ipv6_omp_advertise_routes:
+              - protocol: connected
+              - protocol: static
+            ipv6_primary_dns_address: 2001:0:0:1::1
+            ipv6_secondary_dns_address: 2001:0:0:2::2
+            ipv6_static_routes:
+              - prefix: 2001:0:0:2::0/64
+                gateway: nexthop
+                next_hops:
+                  - address: 2001:0:0:1::1
+                    administrative_distance: 1
+            vpn_id: 2
+            vpn_name: VPN2
         object_tracker_groups:
           - name: object_tracker_group
             description: Tracker Group
@@ -342,6 +528,16 @@ sdwan:
                 protocol: both
                 match_entries:
                   ospf_tag: 300
+          - name: service_rpl2
+            description: service_rpl2
+            default_action: reject
+            sequences:
+              - id: 1
+                name: route
+                base_action: accept
+                protocol: ipv4
+                match_entries:
+                  ipv4_address_prefix_list: ipv4_pl_service
       - name: service2
     system_profiles:
       - name: system1

@@ -65,7 +65,7 @@ Verify Feature Profiles Service Profiles {{ profile.name }} Route Policy Feature
     Should Be Equal Value Json String    ${service_route_policies_{{ route_policy.name }}}    $..name    {{ route_policy.name }}    msg=name
     Should Be Equal Value Json Special_String    ${service_route_policies_{{ route_policy.name }}}    $..description    {{ route_policy.description | default('not_defined') | normalize_special_string }}    msg=description
 
-    Should Be Equal Value Json Yaml    ${service_route_policies_{{ route_policy.name }}}    $..data.defaultAction    {{ route_policy.default_action }}    not_defined    msg=route_policy.default_action    var_msg=not_defined
+    Should Be Equal Value Json String    ${service_route_policies_{{ route_policy.name }}}    $..data.defaultAction.value   {{ route_policy.default_action }}    msg=defaultAction
 
     Should Be Equal Value Json List Length    ${service_route_policies_{{ route_policy.name }}}    $..sequences    {{ route_policy.get('sequences', []) | length }}    msg=sequences length
 {% if route_policy.get('sequences', []) | length > 0 %}
