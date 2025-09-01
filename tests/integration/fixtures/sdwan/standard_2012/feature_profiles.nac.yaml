@@ -183,6 +183,35 @@ sdwan:
           burst_bytes: 2000000
           exceed_action: remark
           rate_bps: 250000000
+      preferred_color_groups:
+        - name: preferred_color_group1
+          description: Preferred Color Group 1
+          primary_colors:
+            - default
+            - mpls
+          primary_path_preference: all-paths
+          secondary_colors:
+            - custom1
+            - custom2
+          secondary_path_preference: direct-path
+          tertiary_colors:
+            - biz-internet
+            - custom3
+          tertiary_path_preference: multi-hop-path
+        - name: preferred_color_group2
+          description: Preferred Color Group 2
+          primary_colors:
+            - private1
+            - private2
+          primary_path_preference: direct-path
+          secondary_colors:
+            - private3
+            - private4
+          secondary_path_preference: multi-hop-path
+          tertiary_colors:
+            - metro-ethernet
+            - mpls
+          tertiary_path_preference: all-paths
       standard_community_lists:
         - name: standard_community_list
           standard_communities:

@@ -399,7 +399,7 @@ objects:
   - name: Service LAN VPN Feature
     template: service_lan_vpn
     folder: features_service
-    paths: [sdwan.feature_profiles.service_profiles.lan_vpn]
+    paths: [sdwan.feature_profiles.service_profiles.lan_vpns]
   - name: Service Object Tracker Group Feature
     template: service_object_tracker_group
     folder: features_service
@@ -564,6 +564,10 @@ objects:
     template: policer
     folder: policy_objects
     paths: [sdwan.feature_profiles.policy_object_profile.policers]
+  - name: Preferred Color Group
+    template: preferred_color_group
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.preferred_color_groups]
   - name: Standard Community List
     template: standard_community_list
     folder: policy_objects
