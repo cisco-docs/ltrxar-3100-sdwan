@@ -16,8 +16,8 @@ class Rule:
     #       do not flatten with trailing [] if the object is not a list
     # 2. parent_jmes_path: The name of the parent variable which should be enabled before declaring the child variables.
     #       example: ['tloc_preference_change']
-    # 3. parent_variable_requirement: The condition required on the parent variable so that child variables can be declared.
-    #       example: True
+    # 3. parent_variable_requirement: A list of possible values required on the parent variable so that child variables can be declared, multiple values are expected if the default value is same as the required value.
+    #       example: [False, None]
     # 4. variable_jmes_path: List containing the path to the child variables in the Data Model which is dependent on the Parent variable. As many child variables as required can be added on the list.
     #       example: ['tloc_preference_change_value_variable', 'tloc_preference_change_value']
     #
@@ -26,10 +26,10 @@ class Rule:
     # 'variable1_jmes_path' or 'variable2_jmes_path' in the data model. If no, it will throw an error.
     # mutually_inclusive_variables_list = [
     #   {
-    #       'object_jmes_path': 'sdwan.edge_feature_templates.ethernet_interface_templates[*].ipv4_vrrp_groups[]',
-    #       'parent_jmes_path' : 'tloc_preference_change', 
-    #       'parent_variable_requirement' : True,
-    #       'variables_jmes_path' : ['tloc_preference_change_value_variable', 'tloc_preference_change_value'],
+    #        'object_jmes_path': 'sdwan.edge_feature_templates.ethernet_interface_templates[*].ipv4_vrrp_groups[]',
+    #        'parent_jmes_path' : 'track_omp', 
+    #        'parent_variable_requirement' : [False, None],
+    #        'variables_jmes_path' : ['track_prefix_list'],
     #    },
     # ]
     #########################################################################################################################################
@@ -39,19 +39,19 @@ class Rule:
         {
             'object_jmes_path': 'sdwan.edge_feature_templates.ethernet_interface_templates[*].ipv4_vrrp_groups[]',
             'parent_jmes_path' : 'tloc_preference_change', 
-            'parent_variable_requirement' : True,
+            'parent_variable_requirement' : [True],
             'variables_jmes_path' : ['tloc_preference_change_value_variable', 'tloc_preference_change_value'],
         },
         {
             'object_jmes_path': 'sdwan.edge_feature_templates.ethernet_interface_templates[*].ipv4_vrrp_groups[]',
             'parent_jmes_path' : 'track_omp', 
-            'parent_variable_requirement' : False,
+            'parent_variable_requirement' : [False, None],
             'variables_jmes_path' : ['track_prefix_list'],
         },
         {
             'object_jmes_path': 'sdwan.edge_feature_templates.ethernet_interface_templates[]',
             'parent_jmes_path' : 'ipv4_nat', 
-            'parent_variable_requirement' : True,
+            'parent_variable_requirement' : [True],
             'variables_jmes_path' : ['ipv4_nat_type'],
         },
     ]
@@ -93,7 +93,7 @@ class Rule:
                             if parent_data is None and child_data is not None:
                                 results.append('On Data model path ' + data_model_path + ', the parent variable ' + parent_data_variable + ' is not set, but value ' + str(child_data_variable) + ' is declared.')
                             # Check if the Parent is not a valid value and child data is declared
-                            elif parent_data is not parent_variable and child_data is not None:
+                            elif parent_data not in parent_variable and child_data is not None:
                                 results.append('On Data model path ' + data_model_path + ', the parent variable ' + parent_data_variable + ' is set to: \"' + str(parent_data) + '", and value ' + str(child_data_variable) + ' is declared.')
             except KeyError:
                 pass
