@@ -44,6 +44,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
     ${tracker_groups_ethernet_interfaces}=    Get Value From Json    ${transport_profile_res.json()}    $..subparcels[?(@.parcelType=='wan/vpn/interface/ethernet')]
     Set Suite Variable    ${tracker_groups_ethernet_interfaces}
 
+    ${ipv4_acls}=    Get Value From Json    ${transport_profile_res.json()}    $..associatedProfileParcels[?(@.parcelType=='ipv4-acl')]
+    Set Suite Variable    ${ipv4_acls}
+
     Should Be Equal Value Json List Length   ${trans_wan_vpn_intf}   $   {{ profile.wan_vpn.get('ethernet_interfaces' , []) | length }}    msg=transport_wan_vpn ethernet_interfaces length
 
 {% for intf_entry in profile.wan_vpn.ethernet_interfaces | default([]) %}
@@ -225,6 +228,14 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
     Should Be Equal Value Json Yaml    ${r_interface_name[0]}    $..aclQos.shapingRateDownstreamConfig.minShapingRateDownstream  {{ intf_entry.adaptive_qos_shaping_rate_downstream.minimum| default('not_defined') }}     {{ intf_entry.adaptive_qos_shaping_rate_downstream.minimum_variable| default('not_defined') }}     msg=transport_wan_vpn adaptive_qos_shaping_rate_downstream minimum     var_msg=transport_wan_vpn adaptive_qos_shaping_rate_downstream minimum variable
     Should Be Equal Value Json Yaml    ${r_interface_name[0]}    $..aclQos.shapingRateDownstreamConfig.maxShapingRateDownstream   {{ intf_entry.adaptive_qos_shaping_rate_downstream.maximum| default('not_defined') }}     {{ intf_entry.adaptive_qos_shaping_rate_downstream.maximum_variable| default('not_defined') }}     msg=transport_wan_vpn adaptive_qos_shaping_rate_downstream maximum    var_msg=transport_wan_vpn adaptive_qos_shaping_rate_downstream maximum variable
     Should Be Equal Value Json Yaml    ${r_interface_name[0]}    $..aclQos.shapingRateDownstreamConfig.defaultShapingRateDownstream   {{ intf_entry.adaptive_qos_shaping_rate_downstream.default| default('not_defined') }}     {{ intf_entry.adaptive_qos_shaping_rate_downstream.default| default('not_defined') }}     msg=transport_wan_vpn adaptive_qos_shaping_rate_downstream.default     var_msg=transport_wan_vpn adaptive_qos_shaping_rate_udownstream default variable
+    ${configured_ipv4_egress_acl_refid_raw}=    Get Value From Json    ${r_interface_name[0]}    $..aclQos.ipv4AclEgress.refId.value
+    ${configured_ipv4_egress_acl_refid}=    Set Variable If    ${configured_ipv4_egress_acl_refid_raw} == []    not_defined    ${configured_ipv4_egress_acl_refid_raw[0]}
+    ${configured_ipv4_egress_acl}=    Get Value From Json    ${ipv4_acls}    $[?(@.parcelId=='${configured_ipv4_egress_acl_refid}')]
+    Should Be Equal Value Json String    ${configured_ipv4_egress_acl}    $..name    {{ intf_entry.ipv4_egress_acl | default('not_defined') }}    msg=wan_vpn.ethernet_interfaces_ipv4_egress_acl
+    ${configured_ipv4_ingress_acl_refid_raw}=    Get Value From Json    ${r_interface_name[0]}    $..aclQos.ipv4AclIngress.refId.value
+    ${configured_ipv4_ingress_acl_refid}=    Set Variable If    ${configured_ipv4_ingress_acl_refid_raw} == []    not_defined    ${configured_ipv4_ingress_acl_refid_raw[0]}
+    ${configured_ipv4_ingress_acl}=    Get Value From Json    ${ipv4_acls}    $[?(@.parcelId=='${configured_ipv4_ingress_acl_refid}')]
+    Should Be Equal Value Json String    ${configured_ipv4_ingress_acl}    $..name    {{ intf_entry.ipv4_ingress_acl | default('not_defined') }}    msg=wan_vpn.ethernet_interfaces_ipv4_ingress_acl
 
     Log    =====Advanced Features=====
 
@@ -251,5 +262,3 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
 {% endfor %}
 
 {% endif %}
-
-

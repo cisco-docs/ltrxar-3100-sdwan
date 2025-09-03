@@ -1009,6 +1009,56 @@ sdwan:
             nmea_source_address: 10.10.10.1
             nmea_destination_address: 10.10.10.100
             nmea_destination_port: 12345
+        ipv4_acls:
+          - name: transport_ipv4_acl
+            description: ipv4 access control list
+            default_action: accept
+            sequences:
+              - id: 1
+                name: acl
+                base_action: accept
+                match_entries:
+                  destination_data_prefix: 172.16.200.0/24
+                  source_data_prefix: 172.16.201.0/24
+                  destination_ports:
+                    - 10
+                    - 50-100
+                  dscps:
+                    - 10
+                    - 20
+                  source_ports:
+                    - 10
+                    - 50-100
+                actions:
+                  counter_name: accept_prefix
+                  dscp: 0
+                  ipv4_next_hop: 172.16.254.1
+                  log: true
+                  mirror: mirror
+                  policer: branch_policer
+              - id: 2
+                name: acl
+                base_action: drop
+                match_entries:
+                  destination_data_prefix_variable: drop_dst_prefix
+                  source_data_prefix_variable: drop_src_prefix
+                  packet_length: 100
+                  tcp_state: syn
+                actions:
+                  log: true
+                  counter_name: drop_prefix
+              - id: 3
+                name: acl
+                base_action: accept
+                match_entries:
+                  destination_data_prefix_list: ipv4_dpl
+                  source_data_prefix_list: ipv4_dpl
+                  packet_length: 100-1500
+                  protocols:
+                    - 1
+                  icmp_messages:
+                    - option-missing
+                    - timestamp-reply
         ipv4_tracker_groups:
           - name: ipv4_tracker_group
             tracker_boolean: or
@@ -1226,8 +1276,8 @@ sdwan:
               ipv4_dhcp_helpers:
                 - 172.16.1.254
                 - 172.16.1.253
-              # ipv4_egress_acl: vpn0_ipv4_acl_out ! uncomment when acl supported
-              # ipv4_ingress_acl: vpn0_ipv4_acl_in ! uncomment when acl supported
+              ipv4_egress_acl: transport_ipv4_acl
+              ipv4_ingress_acl: transport_ipv4_acl
               ipv4_nat: true
               ipv4_nat_type: interface
               ipv4_nat_tcp_timeout: 1200
@@ -1241,8 +1291,8 @@ sdwan:
               ipv4_subnet_mask_variable: vpn0_inet_mask
               ipv6_configuration_type: static
               ipv6_address_variable: vpn0_inet_ipv6
-              ipv6_egress_acl: vpn0_ipv6_acl_out
-              ipv6_ingress_acl: vpn0_ipv6_acl_in
+              # ipv6_egress_acl: vpn0_ipv6_acl_out
+              # ipv6_ingress_acl: vpn0_ipv6_acl_in
               ipv6_secondary_addresses:
                 - address_variable: vpn0_ipv6_sec1_ip
               ipv6_tracker_group: ipv6_tracker_group

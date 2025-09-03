@@ -1,5 +1,5 @@
 class Rule:
-    id = "413"
+    id = "414"
     description = "Validate sequences"
     severity = "HIGH"
 
@@ -14,6 +14,7 @@ class Rule:
         "sdwan.feature_profiles.service_profiles.route_policies.sequences",
         "sdwan.feature_profiles.system_profiles.ipv4_device_access_policy.sequences",
         "sdwan.feature_profiles.system_profiles.ipv6_device_access_policy.sequences",
+        "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences",
         "sdwan.feature_profiles.transport_profiles.route_policies.sequences"
     ]
 

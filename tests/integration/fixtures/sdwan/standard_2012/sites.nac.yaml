@@ -28,6 +28,8 @@ sdwan:
             vpn512_mgmt_int_ip: 192.168.254.1
             vpn512_mgmt_int_mask: 255.255.255.0
             vpn512_mgmt_int_ipv6: fd02::1/64
+            drop_dst_prefix: 192.168.123.0/24
+            drop_src_prefix: 192.168.123.0/24
     - id: 200
       routers:
         - chassis_id: C8K-B5EE117E-1210-C396-EC41-D3DA64D6A51A

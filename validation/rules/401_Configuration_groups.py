@@ -176,6 +176,8 @@ class Rule:
         "sdwan.feature_profiles.system_profiles.snmp.trap_target_servers.vpn_id",
         "sdwan.feature_profiles.system_profiles.snmp.user.group_variable",
         "sdwan.feature_profiles.system_profiles.snmp.views.oids.id_variable",
+        "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.match_entries.destination_data_prefix_variable",
+        "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.match_entries.source_data_prefix_variable",
         "sdwan.feature_profiles.transport_profiles.ipv4_tracker_groups.tracker_name_variable",
         "sdwan.feature_profiles.transport_profiles.ipv4_trackers.tracker_name_variable",
         "sdwan.feature_profiles.transport_profiles.ipv6_tracker_groups.tracker_name_variable",
@@ -263,6 +265,7 @@ class Rule:
     # This is a list of partial paths where name key is used for other purposes than feature name
     skip_name_paths = [
         "aaa.users",
+        "ipv4_acls.sequences",
         "ipv4_device_access_policy.sequences",
         "ipv6_device_access_policy.sequences",
         "logging.tls_profiles",

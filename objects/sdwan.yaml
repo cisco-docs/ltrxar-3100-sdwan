@@ -480,6 +480,10 @@ objects:
     template: transport_gps
     folder: features_transport
     paths: [sdwan.feature_profiles.transport_profiles.gps_features]
+  - name: Transport IPv4 ACL Feature
+    template: transport_ipv4_acl
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ipv4_acls]
   - name: Transport IPv4 Tracker Group Feature
     template: transport_ipv4_tracker_group
     folder: features_transport

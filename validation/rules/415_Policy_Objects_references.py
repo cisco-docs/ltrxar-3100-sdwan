@@ -1,5 +1,5 @@
 class Rule:
-    id = "414"
+    id = "415"
     description = "Validate policy object references"
     severity = "HIGH"
 
@@ -39,7 +39,9 @@ class Rule:
             "type": "ipv4_data_prefix_lists",
             "paths": [
                 "sdwan.feature_profiles.system_profiles.ipv4_device_access_policy.sequences.match_entries.destination_data_prefix_list",
-                "sdwan.feature_profiles.system_profiles.ipv4_device_access_policy.sequences.match_entries.source_data_prefix_list"
+                "sdwan.feature_profiles.system_profiles.ipv4_device_access_policy.sequences.match_entries.source_data_prefix_list",
+                "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.match_entries.destination_data_prefix_list",
+                "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.match_entries.source_data_prefix_list",
             ]
         },
         {
@@ -65,6 +67,18 @@ class Rule:
                 "sdwan.feature_profiles.service_profiles.route_policies.sequences.match_entries.ipv6_next_hop_prefix_list",
                 "sdwan.feature_profiles.transport_profiles.route_policies.sequences.match_entries.ipv6_address_prefix_list",
                 "sdwan.feature_profiles.transport_profiles.route_policies.sequences.match_entries.ipv6_next_hop_prefix_list",
+            ]
+        },
+        {
+            "type": "mirrors",
+            "paths": [
+                "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.actions.mirror",
+            ]
+        },
+        {
+            "type": "policers",
+            "paths": [
+                "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.actions.policer",
             ]
         },
         {
