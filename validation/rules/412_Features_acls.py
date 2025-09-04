@@ -6,7 +6,7 @@ class Rule:
     @classmethod
     def match(cls, inventory):
         results = []
-        for feature_profile_type in ["transport_profiles"]:
+        for feature_profile_type in ["transport_profiles", "service_profiles"]:
             for feature_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get(feature_profile_type, []):
                 for acl in feature_profile.get("ipv4_acls", []):
                     for sequence in acl.get("sequences"):

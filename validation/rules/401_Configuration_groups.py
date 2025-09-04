@@ -24,6 +24,8 @@ class Rule:
         "sdwan.feature_profiles.service_profiles.dhcp_servers.options.ip_addresses_variable",
         "sdwan.feature_profiles.service_profiles.dhcp_servers.static_leases.ip_address_variable",
         "sdwan.feature_profiles.service_profiles.dhcp_servers.static_leases.mac_address_variable",
+        "sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.match_entries.destination_data_prefix_variable",
+        "sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.match_entries.source_data_prefix_variable",
         "sdwan.feature_profiles.service_profiles.ipv4_trackers.tracker_name_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.gre_routes.interfaces_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.gre_routes.network_address_variable",
@@ -244,19 +246,33 @@ class Rule:
 
     # List of features where variables are required only if feature is associated
     # feature_path is the path to the feature definition in the data model
-    # associate_jmes_path is the jmes path to where the feature is associated when used
+    # associate_jmes_paths are the jmes path to where the feature might be associated when used
     associated_features = [
         {
             "feature_path": "sdwan.feature_profiles.service_profiles.dhcp_servers",
-            "associate_jmes_path": "sdwan.feature_profiles.service_profiles[].lan_vpns[].ethernet_interfaces[].dhcp_server",
+            "associate_jmes_paths": ["sdwan.feature_profiles.service_profiles[].lan_vpns[].ethernet_interfaces[].dhcp_server"],
+        },
+        {
+            "feature_path": "sdwan.feature_profiles.service_profiles.ipv4_acls",
+            "associate_jmes_paths": [
+                "sdwan.feature_profiles.service_profiles[].lan_vpns[].ethernet_interfaces[].ipv4_egress_acl",
+                "sdwan.feature_profiles.service_profiles[].lan_vpns[].ethernet_interfaces[].ipv4_ingress_acl",
+                ],
+        },
+        {
+            "feature_path": "sdwan.feature_profiles.transport_profiles.ipv4_acls",
+            "associate_jmes_paths": [
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn[].ethernet_interfaces[].ipv4_egress_acl",
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn[].ethernet_interfaces[].ipv4_ingress_acl",
+            ],
         },
         {
             "feature_path": "sdwan.feature_profiles.transport_profiles.ipv4_trackers",
-            "associate_jmes_path": "sdwan.feature_profiles.transport_profiles[].wan_vpn[].ethernet_interfaces[].ipv4_tracker[]",
+            "associate_jmes_paths": ["sdwan.feature_profiles.transport_profiles[].wan_vpn[].ethernet_interfaces[].ipv4_tracker[]"],
         },
         {
             "feature_path": "sdwan.feature_profiles.transport_profiles.ipv6_trackers",
-            "associate_jmes_path": "sdwan.feature_profiles.transport_profiles[].wan_vpn[].ethernet_interfaces[].ipv6_tracker[]",
+            "associate_jmes_paths": ["sdwan.feature_profiles.transport_profiles[].wan_vpn[].ethernet_interfaces[].ipv6_tracker[]"],
         },
     ]
 
@@ -498,11 +514,18 @@ class Rule:
                     profile_name, feature_name = re.findall(
                         r"\[([^\]]+)\]", var["full_path"]
                     )[:2]
-                    search_path = associated_feature["associate_jmes_path"].replace(
-                        "[]", f"[?name == '{profile_name}']", 1
-                    )
-                    found_feature_names = jmespath.search(search_path, inventory)
-                    if feature_name not in found_feature_names:
+                    # Check if feature is found in any of the associate_jmes_paths
+                    feature_found = False
+                    for associate_path in associated_feature["associate_jmes_paths"]:
+                        search_path = associate_path.replace(
+                            "[]", f"[?name == '{profile_name}']", 1
+                        )
+                        found_feature_names = jmespath.search(search_path, inventory)
+                        if found_feature_names and feature_name in found_feature_names:
+                            feature_found = True
+                            break
+                    
+                    if not feature_found:
                         variables_to_remove.append(var)
             for var in variables_to_remove:
                 required_variables.remove(var)

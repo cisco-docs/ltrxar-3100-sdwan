@@ -265,6 +265,44 @@ sdwan:
               - code: 240
                 ip_addresses:
                   - 10.10.11.11
+        ipv4_acls:
+          - name: service_ipv4_acl
+            description: service ipv4 access control list
+            default_action: accept
+            sequences:
+              - id: 1
+                name: acl
+                base_action: accept
+                match_entries:
+                  destination_data_prefix: 172.16.100.0/24
+                  source_data_prefix: 172.16.101.0/24
+                  destination_ports:
+                    - 80
+                    - 443
+                    - 8080-8090
+                  dscps:
+                    - 16
+                    - 32
+                  source_ports:
+                    - 1024-65535
+                actions:
+                  counter_name: service_accept
+                  dscp: 8
+                  ipv4_next_hop: 172.16.254.10
+                  log: true
+                  mirror: mirror
+                  policer: branch_policer
+              - id: 2
+                name: acl
+                base_action: drop
+                match_entries:
+                  destination_data_prefix_variable: service_drop_dst_prefix
+                  source_data_prefix_variable: service_drop_src_prefix
+                  packet_length: 64
+                  tcp_state: syn
+                actions:
+                  log: true
+                  counter_name: service_drop
         ipv4_tracker_groups:
           - name: service_ipv4_tracker_group
             tracker_boolean: or

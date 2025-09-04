@@ -388,6 +388,10 @@ objects:
     template: service_dhcp_server
     folder: features_service
     paths: [sdwan.feature_profiles.service_profiles.dhcp_servers]
+  - name: Service IPv4 ACL Feature
+    template: service_ipv4_acl
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.ipv4_acls]
   - name: Service IPv4 Tracker Group Feature
     template: service_ipv4_tracker_group
     folder: features_service
