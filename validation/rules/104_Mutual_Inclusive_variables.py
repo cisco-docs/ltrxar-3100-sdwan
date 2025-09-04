@@ -79,7 +79,6 @@ class Rule:
                             parent_data = jmespath.search(each_inclusion_item.get('parent_jmes_path'), each_data)
                             parent_data_variable = each_inclusion_item.get('parent_jmes_path')
                         # Extract the child data for the variableX_jmes_path defined. Else use the data as is
-                        test1 = 1
                         for varName in each_inclusion_item.get('variables_jmes_path'):
                             # Extract the Parent data further only if parent_jmes_path is defined. Else use the data as is
                             if varName == "":
