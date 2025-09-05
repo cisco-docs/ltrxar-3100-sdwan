@@ -4,7 +4,7 @@ class Rule:
     severity = "HIGH"
 
     #########################################################################################################################################
-    # This rule checks if the policy objects referenced in other feautres/policies are defined in the policy_objects_profile
+    # This rule checks if the policy objects referenced in other features/policies are defined in the policy_objects_profile
     # For any additional parameters where the validation is required, update the policy_object_references list below
     # No additional code changes should be required
     # The policy_object_references list has the following details:

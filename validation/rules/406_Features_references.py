@@ -6,27 +6,38 @@ class Rule:
     @classmethod
     def match(cls, inventory):
         results = []
-        defined_elements = {}
-        for transport_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get("transport_profiles", []):
-            feature_types = ["ipv4_tracker", "ipv4_tracker_group", "ipv6_tracker", "ipv6_tracker_group"]
+        for service_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get("service_profiles", []):
+            defined_elements = {}
+            feature_types = ["bgp_features", "ipv4_trackers", "ipv4_tracker_groups", "route_policies", "object_trackers", "object_tracker_groups"]
             # Check which elements are defined
             for feature_type in feature_types:
                 defined_elements[feature_type] = []
-                for element in transport_profile.get(f"{feature_type}s", []):
+                for element in service_profile.get(feature_type, []):
                     defined_elements[feature_type].append(element["name"])
-            # Validate references in wan_vpn ethernet interfaces
-            for interface in transport_profile.get("wan_vpn", {}).get("ethernet_interfaces", []):
-                for feature_type in feature_types:  
-                    if interface.get(feature_type) and interface.get(feature_type) not in defined_elements[feature_type]:
-                        results.append(f"{feature_type} {interface.get(feature_type)} is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].{feature_type}s, but is referenced in the sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].wan_vpn.ethernet_interfaces[{interface['name']}]")
-        # Service profiles references check
-        for service_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get("service_profiles", []):
-            defined_elements = {}
-            feature_types = ["ipv4_trackers", "ipv4_tracker_groups", "route_policies", "object_trackers", "object_tracker_groups"]
-            for feature_type in feature_types:
-                defined_elements[feature_type] = []
-                for element in service_profile.get(f"{feature_type}", []):
-                    defined_elements[feature_type].append(element["name"]) 
+            # Validate route policy references in bgp_features
+            for bgp_feature in service_profile.get("bgp_features", []):
+                for ipv4_neighbor in bgp_feature.get("ipv4_neighbors", []):
+                    for af in ipv4_neighbor.get("address_families", []):
+                        if af.get("route_policy_in") and af["route_policy_in"] not in defined_elements["route_policies"]:
+                            results.append(f"Route policy '{af['route_policy_in']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].bgp_features[{bgp_feature['name']}].ipv4_neighbors[{ipv4_neighbor['name']}].address_families, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
+                        if af.get("route_policy_out") and af["route_policy_out"] not in defined_elements["route_policies"]:
+                            results.append(f"Route policy '{af['route_policy_out']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].bgp_features[{bgp_feature['name']}].ipv4_neighbors[{ipv4_neighbor['name']}].address_families, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
+                if bgp_feature.get("ipv4_table_map_route_policy") and bgp_feature["ipv4_table_map_route_policy"] not in defined_elements["route_policies"]:
+                    results.append(f"Route policy '{bgp_feature['ipv4_table_map_route_policy']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].bgp_features[{bgp_feature['name']}].ipv4_table_map_route_policy, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
+                for redistribute in bgp_feature.get("ipv4_redistributes", []):
+                    if redistribute.get("route_policy") and redistribute["route_policy"] not in defined_elements["route_policies"]:
+                        results.append(f"Route policy '{redistribute['route_policy']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].bgp_features[{bgp_feature['name']}].ipv4_redistributes, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
+                for ipv6_neighbor in bgp_feature.get("ipv6_neighbors", []):
+                    for af in ipv6_neighbor.get("address_families", []):
+                        if af.get("route_policy_in") and af["route_policy_in"] not in defined_elements["route_policies"]:
+                            results.append(f"Route policy '{af['route_policy_in']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].bgp_features[{bgp_feature['name']}].ipv6_neighbors[{ipv6_neighbor['name']}].address_families, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
+                        if af.get("route_policy_out") and af["route_policy_out"] not in defined_elements["route_policies"]:
+                            results.append(f"Route policy '{af['route_policy_out']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].bgp_features[{bgp_feature['name']}].ipv6_neighbors[{ipv6_neighbor['name']}].address_families, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
+                if bgp_feature.get("ipv6_table_map_route_policy") and bgp_feature["ipv6_table_map_route_policy"] not in defined_elements["route_policies"]:
+                    results.append(f"Route policy '{bgp_feature['ipv6_table_map_route_policy']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].bgp_features[{bgp_feature['name']}].ipv6_table_map_route_policy, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
+                for redistribute in bgp_feature.get("ipv6_redistributes", []):
+                    if redistribute.get("route_policy") and redistribute["route_policy"] not in defined_elements["route_policies"]:
+                        results.append(f"Route policy '{redistribute['route_policy']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].bgp_features[{bgp_feature['name']}].ipv6_redistributes, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
             for lan_vpn in service_profile.get("lan_vpns", []):
                 # Validate tracker references in lan_vpns static routes 
                 for route in lan_vpn.get("ipv4_static_routes", []):
@@ -61,5 +72,48 @@ class Rule:
                             results.append(
                                 f"Object Tracker (Group) {item['tracker_object']} is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}], "
                                 f"but is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].{tracker_block}")
-
+        for transport_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get("transport_profiles", []):
+            defined_elements = {}
+            feature_types = ["bgp_features", "ipv4_trackers", "ipv4_tracker_groups", "ipv6_trackers", "ipv6_tracker_groups", "route_policies"]
+            # Check which elements are defined
+            for feature_type in feature_types:
+                defined_elements[feature_type] = []
+                for element in transport_profile.get(feature_type, []):
+                    defined_elements[feature_type].append(element["name"])
+            # Validate route policy references in bgp_features
+            for bgp_feature in transport_profile.get("bgp_features", []):
+                for ipv4_neighbor in bgp_feature.get("ipv4_neighbors", []):
+                    for af in ipv4_neighbor.get("address_families", []):
+                        if af.get("route_policy_in") and af["route_policy_in"] not in defined_elements["route_policies"]:
+                            results.append(f"Route policy '{af['route_policy_in']}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].bgp_features[{bgp_feature['name']}].ipv4_neighbors[{ipv4_neighbor['name']}].address_families, but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].route_policies")
+                        if af.get("route_policy_out") and af["route_policy_out"] not in defined_elements["route_policies"]:
+                            results.append(f"Route policy '{af['route_policy_out']}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].bgp_features[{bgp_feature['name']}].ipv4_neighbors[{ipv4_neighbor['name']}].address_families, but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].route_policies")
+                if bgp_feature.get("ipv4_table_map_route_policy") and bgp_feature["ipv4_table_map_route_policy"] not in defined_elements["route_policies"]:
+                    results.append(f"Route policy '{bgp_feature['ipv4_table_map_route_policy']}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].bgp_features[{bgp_feature['name']}].ipv4_table_map_route_policy, but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].route_policies")
+                for redistribute in bgp_feature.get("ipv4_redistributes", []):
+                    if redistribute.get("route_policy") and redistribute["route_policy"] not in defined_elements["route_policies"]:
+                        results.append(f"Route policy '{redistribute['route_policy']}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].bgp_features[{bgp_feature['name']}].ipv4_redistributes, but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].route_policies")
+                for ipv6_neighbor in bgp_feature.get("ipv6_neighbors", []):
+                    for af in ipv6_neighbor.get("address_families", []):
+                        if af.get("route_policy_in") and af["route_policy_in"] not in defined_elements["route_policies"]:
+                            results.append(f"Route policy '{af['route_policy_in']}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].bgp_features[{bgp_feature['name']}].ipv6_neighbors[{ipv6_neighbor['name']}].address_families, but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].route_policies")
+                        if af.get("route_policy_out") and af["route_policy_out"] not in defined_elements["route_policies"]:
+                            results.append(f"Route policy '{af['route_policy_out']}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].bgp_features[{bgp_feature['name']}].ipv6_neighbors[{ipv6_neighbor['name']}].address_families, but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].route_policies")
+                if bgp_feature.get("ipv6_table_map_route_policy") and bgp_feature["ipv6_table_map_route_policy"] not in defined_elements["route_policies"]:
+                    results.append(f"Route policy '{bgp_feature['ipv6_table_map_route_policy']}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].bgp_features[{bgp_feature['name']}].ipv6_table_map_route_policy, but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].route_policies")
+                for redistribute in bgp_feature.get("ipv6_redistributes", []):
+                    if redistribute.get("route_policy") and redistribute["route_policy"] not in defined_elements["route_policies"]:
+                        results.append(f"Route policy '{redistribute['route_policy']}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].bgp_features[{bgp_feature['name']}].ipv6_redistributes, but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].route_policies")
+            # Validate references in wan_vpn
+            wan_vpn = transport_profile.get("wan_vpn", {})
+            if wan_vpn:
+                # Validate BGP reference in WAN VPN
+                attached_bgp = wan_vpn.get("bgp", {})
+                if attached_bgp and attached_bgp not in defined_elements["bgp_features"]:
+                    results.append(f"BGP feature '{attached_bgp}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].wan_vpn.bgp, but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].bgp_features")
+            # Validate references in wan_vpn ethernet interfaces
+            for interface in transport_profile.get("wan_vpn", {}).get("ethernet_interfaces", []):
+                for feature_type in feature_types:
+                    if interface.get(feature_type) and interface.get(feature_type) not in defined_elements[feature_type]:
+                        results.append(f"{feature_type} {interface.get(feature_type)} is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].{feature_type}s, but is referenced in the sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].wan_vpn.ethernet_interfaces[{interface['name']}]")
         return results

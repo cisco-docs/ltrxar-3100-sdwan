@@ -12,6 +12,9 @@ sdwan:
         - name: primary-router
           features:
             - inet_tloc
+            # - service_rpl # this will work only in 20.15
+            - transport_bgp
+            # - transport_rpl # this will work only in 20.15
         - name: secondary-router
           features:
             - mpls_tloc

@@ -7,6 +7,68 @@ class Rule:
     def match(cls, inventory):
         results = []
         for feature_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get("transport_profiles", []):
+            # Validate bgp features
+            for bgp in feature_profile.get("bgp_features", []):
+                as_number = bgp.get("as_number", "as_number")
+                for neighbor_family_type in ["ipv4_neighbors", "ipv6_neighbors"]:
+                    for index, neighbor in enumerate(bgp.get(neighbor_family_type, [])):
+                        if neighbor.get("local_as", "local_as") == as_number:
+                            results.append(f"local_as is the same as as_number {as_number} in sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].bgp_features[{bgp['name']}].{neighbor_family_type}[{index}]")
+                    # Check for duplicate family_type in neighbor.address_families
+                    family_types = [af.get("family_type") for af in neighbor.get("address_families", []) if "family_type" in af]
+                    duplicates = set([ft for ft in family_types if family_types.count(ft) > 1])
+                    for dup in duplicates:
+                        results.append(
+                            f"Duplicate family_type '{dup}' found in sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].bgp_features[{bgp['name']}].{neighbor_family_type}[{index}].address_families"
+                        )
+                    # Validate maximum_prefixes_reach_policy
+                    for index, address_family in enumerate(neighbor.get("address_families", [])):
+                        reach_policy = address_family.get("maximum_prefixes_reach_policy", "off")
+                        family_type = address_family.get('family_type')
+                        base_path = f"sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].bgp_features[{bgp['name']}].{neighbor_family_type}[{index}].address_families[{family_type}]"
+                        # Define required and forbidden fields for each policy
+                        policy_requirements = {
+                            "off": {
+                                "forbidden": [
+                                    "maximum_prefixes_number", "maximum_prefixes_number_variable",
+                                    "maximum_prefixes_restart_interval", "maximum_prefixes_restart_interval_variable",
+                                    "maximum_prefixes_threshold", "maximum_prefixes_threshold_variable"
+                                ],
+                                "required": []
+                            },
+                            "restart": {
+                                "forbidden": [],
+                                "required": [
+                                    ("maximum_prefixes_number", "maximum_prefixes_number_variable"),
+                                    ("maximum_prefixes_restart_interval", "maximum_prefixes_restart_interval_variable")
+                                ]
+                            },
+                            "warning-only": {
+                                "forbidden": [
+                                    "maximum_prefixes_restart_interval", "maximum_prefixes_restart_interval_variable"
+                                ],
+                                "required": [
+                                    ("maximum_prefixes_number", "maximum_prefixes_number_variable")
+                                ]
+                            },
+                            "disable-peer": {
+                                "forbidden": [
+                                    "maximum_prefixes_restart_interval", "maximum_prefixes_restart_interval_variable"
+                                ],
+                                "required": [
+                                    ("maximum_prefixes_number", "maximum_prefixes_number_variable")
+                                ]
+                            }
+                        }
+                        reqs = policy_requirements.get(reach_policy, policy_requirements["off"])
+                        # Check forbidden fields
+                        for param in reqs["forbidden"]:
+                            if param in address_family:
+                                results.append(f"maximum_prefixes_reach_policy is {reach_policy}, but {param} is defined in {base_path}")
+                        # Check required fields (at least one of the tuple must be present)
+                        for required_group in reqs["required"]:
+                            if not any(field in address_family for field in required_group):
+                                results.append(f"maximum_prefixes_reach_policy is {reach_policy}, but {required_group[0]} is not defined in {base_path}")
             # Validate cellular_profile feature
             for cellular_profile in feature_profile.get("cellular_profiles", []):
                 # If authentication is Enabled: authentication_type, username, and password must be present
@@ -126,7 +188,7 @@ class Rule:
                             results.append(f"ipv4_nat_loopback_interface is defined but ipv4_nat_type is not loopback in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ethernet_interfaces[{interface.get('name')}]")
                         nat_pool_parameters = ["ipv4_nat_pool_overload", "ipv4_nat_pool_overload_variable", "ipv4_nat_pool_prefix_length", "ipv4_nat_pool_prefix_length_variable", "ipv4_nat_pool_range_end", "ipv4_nat_pool_range_end_variable", "ipv4_nat_pool_range_start", "ipv4_nat_pool_range_start_variable"]
                         for parameter in nat_pool_parameters:
-                            if interface.get(parameter) and interface.get("ipv4_nat_type", "inteface") != "pool":
+                            if interface.get(parameter) and interface.get("ipv4_nat_type", "interface") != "pool":
                                 results.append(f"{parameter} is defined but ipv4_nat_type is not pool in the sdwan.feature_profiles.transport_profiles[{feature_profile['name']}].wan_vpn.ethernet_interfaces[{interface.get('name')}]")
                     if interface.get("ipv6_nat", False) == False:
                         for key in interface.keys():

@@ -384,6 +384,10 @@ objects:
     template: other_ucse
     folder: features_other
     paths: [sdwan.feature_profiles.other_profiles.ucse]
+  - name: Service BGP Feature
+    template: service_bgp
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.bgp_features]
   - name: Service DHCP Server Feature
     template: service_dhcp_server
     folder: features_service
@@ -476,11 +480,15 @@ objects:
     template: system_snmp
     folder: features_system
     paths: [sdwan.feature_profiles.system_profiles.snmp]
+  - name: Transport BGP Feature
+    template: transport_bgp
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.bgp_features]
   - name: Transport Cellular Profile Feature
     template: transport_cellular_profile
     folder: features_transport
     paths: [sdwan.feature_profiles.transport_profiles.cellular_profiles]
-  - name: Transport GPS
+  - name: Transport GPS Feature
     template: transport_gps
     folder: features_transport
     paths: [sdwan.feature_profiles.transport_profiles.gps_features]

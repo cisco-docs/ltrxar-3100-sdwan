@@ -234,6 +234,100 @@ sdwan:
     service_profiles:
       - name: service1
         description: full profile
+        bgp_features:
+          - name: service_bgp
+            description: bgp full
+            always_compare_med: true
+            as_number: 65000
+            compare_router_id: true
+            deterministic_med: true
+            external_routes_distance: 20
+            hold_time: 180
+            internal_routes_distance: 200
+            ipv4_aggregate_addresses:
+              - as_set_path: true
+                network_address: 10.0.0.0
+                subnet_mask: 255.0.0.0
+                summary_only: false
+            ipv4_default_originate: true
+            ipv4_eibgp_maximum_paths: 4
+            ipv4_neighbors:
+              - address_variable: vpn_service_bgp_neighbor_ipv4
+                address_families:
+                  - family_type: ipv4-unicast
+                    maximum_prefixes_reach_policy: restart
+                    maximum_prefixes_number: 10000
+                    maximum_prefixes_restart_interval: 1000
+                    maximum_prefixes_threshold: 50
+                    route_policy_in: service_rpl
+                    route_policy_out: service_rpl
+                allowas_in_number: 2
+                as_override: false
+                description: service bgp ipv4
+                ebgp_multihop: 4
+                hold_time: 180
+                keepalive_time: 60
+                local_as: 65002
+                next_hop_self: false
+                password: sch927TQ52fx3mh
+                remote_as: 65001
+                send_community: true
+                send_extended_community: true
+                send_label: false
+                shutdown: false
+                source_interface: GigabitEthernet1
+            ipv4_networks:
+              - network_address: 10.0.0.0
+                subnet_mask: 255.255.255.0
+            ipv4_redistributes:
+              - protocol: connected
+                route_policy: service_rpl
+            ipv4_table_map_filter: false
+            ipv4_table_map_route_policy: service_rpl
+            ipv6_aggregate_addresses:
+              - as_set_path: false
+                prefix: fc00::/12
+                summary_only: false
+            ipv6_default_originate: false
+            ipv6_eibgp_maximum_paths: 4
+            ipv6_neighbors:
+              - address_variable: vpn_service_bgp_neighbor_ipv6
+                address_families:
+                  - family_type: ipv6-unicast
+                    maximum_prefixes_reach_policy: restart
+                    maximum_prefixes_number: 10000
+                    maximum_prefixes_restart_interval: 1000
+                    maximum_prefixes_threshold: 50
+                    route_policy_in: service_rpl
+                    route_policy_out: service_rpl
+                allowas_in_number: 2
+                as_override: false
+                description: service bgp ipv6
+                ebgp_multihop: 4
+                hold_time: 180
+                keepalive_time: 60
+                local_as: 65002
+                next_hop_self: false
+                password: sch927TQ52fx3mh
+                remote_as: 65001
+                send_community: true
+                send_extended_community: true
+                shutdown: false
+                source_interface: GigabitEthernet1
+            ipv6_networks:
+              - prefix: fc00::/12
+            ipv6_redistributes:
+              - protocol: connected
+                route_policy: service_rpl
+            ipv6_table_map_filter: false
+            ipv6_table_map_route_policy: service_rpl
+            keepalive_time: 60
+            local_routes_distance: 200
+            missing_med_as_worst: false
+            multipath_relax: false
+            propagate_as_path: true
+            propagate_community: true
+            router_id_variable: vpn_service_bgp_router_id
         dhcp_servers:
           - name: dhcp-server-vpn11
             description: LAN DHCP Server VPN 11
@@ -338,6 +432,7 @@ sdwan:
             description: lan_vpn1_test
             vpn_id: 1
             vpn_name: VPN1
+            bgp: service_bgp
             ipv4_omp_admin_distance: 1
             ipv4_omp_advertise_routes:
               - protocol: bgp
@@ -1028,6 +1123,103 @@ sdwan:
     transport_profiles:
       - name: transport1
         description: full profile
+        bgp_features:
+          - name: transport_bgp
+            description: bgp full
+            always_compare_med: true
+            as_number: 65000
+            compare_router_id: true
+            deterministic_med: true
+            external_routes_distance: 20
+            hold_time: 180
+            internal_routes_distance: 200
+            ipv4_aggregate_addresses:
+              - as_set_path: true
+                network_address: 10.0.0.0
+                subnet_mask: 255.0.0.0
+                summary_only: false
+            ipv4_default_originate: true
+            ipv4_eibgp_maximum_paths: 4
+            ipv4_neighbors:
+              - address_variable: vpn0_bgp_neighbor_ipv4
+                address_families:
+                  - family_type: ipv4-unicast
+                    maximum_prefixes_reach_policy: restart
+                    maximum_prefixes_number: 10000
+                    maximum_prefixes_restart_interval: 1000
+                    maximum_prefixes_threshold: 50
+                    route_policy_in: transport_rpl
+                    route_policy_out: transport_rpl
+                allowas_in_number: 2
+                as_override: false
+                description: transport bgp ipv4
+                ebgp_multihop: 4
+                hold_time: 180
+                keepalive_time: 60
+                local_as: 65002
+                next_hop_self: false
+                password: sch927TQ52fx3mh
+                remote_as: 65001
+                send_community: true
+                send_extended_community: true
+                send_label: false
+                send_label_explicit_null: false
+                shutdown: false
+                source_interface: GigabitEthernet1
+            ipv4_networks:
+              - network_address: 10.0.0.0
+                subnet_mask: 255.255.255.0
+            ipv4_redistributes:
+              - protocol: connected
+                route_policy: transport_rpl
+            ipv4_table_map_filter: false
+            ipv4_table_map_route_policy: transport_rpl
+            ipv6_aggregate_addresses:
+              - as_set_path: false
+                prefix: fc00::/12
+                summary_only: false
+            ipv6_default_originate: false
+            ipv6_eibgp_maximum_paths: 4
+            ipv6_neighbors:
+              - address_variable: vpn0_bgp_neighbor_ipv6
+                address_families:
+                  - family_type: ipv6-unicast
+                    maximum_prefixes_reach_policy: restart
+                    maximum_prefixes_number: 10000
+                    maximum_prefixes_restart_interval: 1000
+                    maximum_prefixes_threshold: 50
+                    route_policy_in: transport_rpl
+                    route_policy_out: transport_rpl
+                allowas_in_number: 2
+                as_override: false
+                description: transport bgp ipv6
+                ebgp_multihop: 4
+                hold_time: 180
+                keepalive_time: 60
+                local_as: 65002
+                next_hop_self: false
+                password: sch927TQ52fx3mh
+                remote_as: 65001
+                send_community: true
+                send_extended_community: true
+                shutdown: false
+                source_interface: GigabitEthernet1
+            ipv6_networks:
+              - prefix: fc00::/12
+            ipv6_redistributes:
+              - protocol: connected
+                route_policy: transport_rpl
+            ipv6_table_map_filter: false
+            ipv6_table_map_route_policy: transport_rpl
+            keepalive_time: 60
+            local_routes_distance: 200
+            missing_med_as_worst: false
+            mpls_interfaces:
+              - name: GigabitEthernet2
+            multipath_relax: false
+            propagate_as_path: true
+            propagate_community: true
+            router_id_variable: vpn0_bgp_router_id
         cellular_profiles:
           - name: cellular_profiles_with_auth
             description: cellular profile
@@ -1279,6 +1471,7 @@ sdwan:
         wan_vpn:
           name: wan_vpn
           description: VPN 0 configuration
+          bgp: transport_bgp
           enhance_ecmp_keying: true
           ethernet_interfaces:
             - name: inet_tloc

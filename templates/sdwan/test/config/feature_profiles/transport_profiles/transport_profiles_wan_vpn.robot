@@ -29,6 +29,9 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
     ${profile}=    Get Value From Json    ${r.json()}    $[?(@.profileName=='{{ profile.name }}')]
     Run Keyword If    ${profile} == []    Fail    Feature Profile '{{profile.name}}' should be present on the Manager
     ${profile_id}=    Get Value From Json    ${profile}    $..profileId
+    ${transport_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/transport/${profile_id[0]}
+    ${wan_vpn_subparcels}=    Get Value From Json    ${transport_res.json()}    $.associatedProfileParcels[?(@.parcelType=='wan/vpn')].subparcels
+    Set Suite Variable    ${wan_vpn_subparcels}
     ${transport_wan_vpn_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/transport/${profile_id[0]}/wan/vpn
     ${transport_wan_vpn}=    Get Value From Json    ${transport_wan_vpn_res.json()}    $..payload
     Run Keyword If    ${transport_wan_vpn} == []    Fail    Feature '{{ profile.wan_vpn.name | default(defaults.sdwan.feature_profiles.transport_profiles.wan_vpn.name) }}' expected to be configured within the transport profile '{{profile.name}}' on the Manager
@@ -156,6 +159,12 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
     Lists Should Be Equal   ${services_list}   ${r_services_list}     msg: services_list  ignore_order=True
 
 {% endif %}
+
+    Log    ======Routing Associations=======
+
+    ${bgp_raw}=    Get Value From Json    ${wan_vpn_subparcels}[0]    $[?(@.parcelType=='routing/bgp')]
+    ${bgp}=    Set Variable If    ${bgp_raw} == []    not_defined    ${bgp_raw[0]}
+    Should Be Equal Value Json String    ${bgp}    $.payload.name   {{ profile.wan_vpn.bgp | default('not_defined') }}     msg=transport_wan_vpn wan_vpn bgp
 
 {% endif %}
 

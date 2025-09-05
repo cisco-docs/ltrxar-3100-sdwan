@@ -261,7 +261,9 @@ Verify Feature Profiles Service Profiles {{ profile.name }} LAN VPN {{ lan_vpn.n
     Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..natPortForward[{{ loop.index0 }}].sourcePort   {{ natpf_entry.source_port|default('not_defined') }}   {{ natpf_entry.source_port_variable|default('not_defined') }}   msg=nat_port_forward source_port   var_msg=nat_port_forward source_port variable
     Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..natPortForward[{{ loop.index0 }}].translatePort   {{ natpf_entry.translate_port|default('not_defined') }}   {{ natpf_entry.translate_port_variable|default('not_defined') }}   msg=nat_port_forward translate_port   var_msg=nat_port_forward translate_port variable
     Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..natPortForward[{{ loop.index0 }}].sourceIp   {{ natpf_entry.source_ip|default('not_defined') }}   {{ natpf_entry.source_ip_variable|default('not_defined') }}   msg=nat_port_forward source_ip   var_msg=nat_port_forward source_ip variable
-    Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..natPortForward[{{ loop.index0 }}].TranslatedSourceIp   {{ natpf_entry.translate_ip|default('not_defined') }}   {{ natpf_entry.translate_ip_variable|default('not_defined') }}   msg=nat_port_forward translate_ip   var_msg=nat_port_forward translate_ip variable
+    ${translatedSourceIp}=     Get Value From Json    ${service_lan_vpn_data}    $..natPortForward[{{ loop.index0 }}].TranslatedSourceIp
+    Run Keyword If    ${translatedSourceIp} != []    Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..natPortForward[{{ loop.index0 }}].TranslatedSourceIp   {{ natpf_entry.translate_ip|default('not_defined') }}   {{ natpf_entry.translate_ip_variable|default('not_defined') }}   msg=nat_port_forward translate_ip   var_msg=nat_port_forward translate_ip variable
+    ...    ELSE    Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..natPortForward[{{ loop.index0 }}].translatedSourceIp   {{ natpf_entry.translate_ip|default('not_defined') }}   {{ natpf_entry.translate_ip_variable|default('not_defined') }}   msg=nat_port_forward translate_ip   var_msg=nat_port_forward translate_ip variable
     Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..natPortForward[{{ loop.index0 }}].protocol   {{ natpf_entry.protocol|upper if natpf_entry.protocol is defined else not_defined }}   {{ natpf_entry.protocol_variable|default('not_defined') }}   msg=nat_port_forward protocol   var_msg=nat_port_forward protocol variable
 {% endfor %}
 {% endif %}
@@ -273,7 +275,9 @@ Verify Feature Profiles Service Profiles {{ profile.name }} LAN VPN {{ lan_vpn.n
 {% for snat_entry in lan_vpn.static_nat_entries | default([]) %}
     Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..staticNat[{{ loop.index0 }}].natPoolName   {{ snat_entry.nat_pool_id|default('not_defined') }}   {{ snat_entry.nat_pool_id_variable|default('not_defined') }}   msg=static_nat nat_pool_id   var_msg=static_nat nat_pool_id variable
     Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..staticNat[{{ loop.index0 }}].sourceIp   {{ snat_entry.source_ip|default('not_defined') }}   {{ snat_entry.source_ip_variable|default('not_defined') }}   msg=static_nat source_ip   var_msg=static_nat source_ip variable
-    Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..staticNat[{{ loop.index0 }}].TranslatedSourceIp   {{ snat_entry.translate_ip|default('not_defined') }}   {{ snat_entry.translate_ip_variable|default('not_defined') }}   msg=static_nat translate_ip   var_msg=static_nat translate_ip variable
+    ${translatedSourceIp}=     Get Value From Json    ${service_lan_vpn_data}    $..staticNat[{{ loop.index0 }}].TranslatedSourceIp
+    Run Keyword If    ${translatedSourceIp} != []    Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..staticNat[{{ loop.index0 }}].TranslatedSourceIp   {{ snat_entry.translate_ip|default('not_defined') }}   {{ snat_entry.translate_ip_variable|default('not_defined') }}   msg=static_nat translate_ip   var_msg=static_nat translate_ip variable
+    ...    ELSE    Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..staticNat[{{ loop.index0 }}].translatedSourceIp   {{ snat_entry.translate_ip|default('not_defined') }}   {{ snat_entry.translate_ip_variable|default('not_defined') }}   msg=static_nat translate_ip   var_msg=static_nat translate_ip variable
     Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..staticNat[{{ loop.index0 }}].staticNatDirection   {{ snat_entry.direction|default('not_defined') }}   {{ snat_entry.direction_variable|default('not_defined') }}   msg=static_nat direction   var_msg=static_nat direction variable
     # --- Tracker Object RefId Check ---
 {% if snat_entry.tracker_object is defined %}
@@ -439,6 +443,11 @@ Verify Feature Profiles Service Profiles {{ profile.name }} LAN VPN {{ lan_vpn.n
     {% endfor %}
    
     Should Be Equal Value Json Yaml    ${service_lan_vpn_data}    $..enableSdra    {{ lan_vpn.sdwan_remote_access|default('not_defined') }}   not_defined   msg= sdwan remote access  var_msg=variable not_defined
+
+    Log    ======Routing Associations=======
+    ${bgp_raw}=    Get Value From Json    ${service_profile_features[0]}    $[?(@.payload.name=='${service_lan_vpn_data['name']}')].subparcels[?(@.parcelType=='routing/bgp')]
+    ${bgp}=    Set Variable If    ${bgp_raw} == []    not_defined    ${bgp_raw[0]}
+    Should Be Equal Value Json String    ${bgp}    $.payload.name   {{ lan_vpn.bgp | default('not_defined') }}     msg=service lan vpn bgp
 
 {% endfor %}
 {% endif %}

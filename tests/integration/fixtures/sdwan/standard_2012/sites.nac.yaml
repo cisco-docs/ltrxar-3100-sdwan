@@ -14,10 +14,16 @@ sdwan:
             site_id: 100
             host_name: SD-DC-C8KV-01
             pseudo_commit_timer: 300
+            vpn0_bgp_router_id: 10.0.0.1
+            vpn0_bgp_neighbor_ipv4: 172.16.0.254
+            vpn0_bgp_neighbor_ipv6: 2001:db8::254
             vpn0_inet_ip: 172.16.1.1
             vpn0_inet_mask: 255.255.255.0
             vpn0_inet_ipv6: 2001:db8::1/64
             vpn0_ipv6_sec1_ip: 2001:db8:1::1/64
+            vpn_service_bgp_router_id: 10.0.0.1
+            vpn_service_bgp_neighbor_ipv4: 192.168.100.1
+            vpn_service_bgp_neighbor_ipv6: 2001:db8::254
             motd_banner: this is motd banner
             device_access_destination_prefixes:
               - 10.0.0.0/8
