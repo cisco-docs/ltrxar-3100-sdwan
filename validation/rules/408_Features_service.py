@@ -19,61 +19,61 @@ class Rule:
                     for index, neighbor in enumerate(bgp.get(neighbor_family_type, [])):
                         if neighbor.get("local_as", "local_as") == as_number:
                             results.append(f"local_as is the same as as_number {as_number} in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].bgp_features[{bgp['name']}].{neighbor_family_type}[{index}]")
-                    # Check for duplicate family_type in neighbor.address_families
-                    family_types = [af.get("family_type") for af in neighbor.get("address_families", []) if "family_type" in af]
-                    duplicates = set([ft for ft in family_types if family_types.count(ft) > 1])
-                    for dup in duplicates:
-                        results.append(
-                            f"Duplicate family_type '{dup}' found in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].bgp_features[{bgp['name']}].{neighbor_family_type}[{index}].address_families"
-                        )
-                    # Validate maximum_prefixes_reach_policy
-                    for index, address_family in enumerate(neighbor.get("address_families", [])):
-                        reach_policy = address_family.get("maximum_prefixes_reach_policy", "off")
-                        family_type = address_family.get('family_type')
-                        base_path = f"sdwan.feature_profiles.service_profiles[{feature_profile['name']}].bgp_features[{bgp['name']}].{neighbor_family_type}[{index}].address_families[{family_type}]"
-                        # Define required and forbidden fields for each policy
-                        policy_requirements = {
-                            "off": {
-                                "forbidden": [
-                                    "maximum_prefixes_number", "maximum_prefixes_number_variable",
-                                    "maximum_prefixes_restart_interval", "maximum_prefixes_restart_interval_variable",
-                                    "maximum_prefixes_threshold", "maximum_prefixes_threshold_variable"
-                                ],
-                                "required": []
-                            },
-                            "restart": {
-                                "forbidden": [],
-                                "required": [
-                                    ("maximum_prefixes_number", "maximum_prefixes_number_variable"),
-                                    ("maximum_prefixes_restart_interval", "maximum_prefixes_restart_interval_variable")
-                                ]
-                            },
-                            "warning-only": {
-                                "forbidden": [
-                                    "maximum_prefixes_restart_interval", "maximum_prefixes_restart_interval_variable"
-                                ],
-                                "required": [
-                                    ("maximum_prefixes_number", "maximum_prefixes_number_variable")
-                                ]
-                            },
-                            "disable-peer": {
-                                "forbidden": [
-                                    "maximum_prefixes_restart_interval", "maximum_prefixes_restart_interval_variable"
-                                ],
-                                "required": [
-                                    ("maximum_prefixes_number", "maximum_prefixes_number_variable")
-                                ]
+                        # Check for duplicate family_type in neighbor.address_families
+                        family_types = [af.get("family_type") for af in neighbor.get("address_families", []) if "family_type" in af]
+                        duplicates = set([ft for ft in family_types if family_types.count(ft) > 1])
+                        for dup in duplicates:
+                            results.append(
+                                f"Duplicate family_type '{dup}' found in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].bgp_features[{bgp['name']}].{neighbor_family_type}[{index}].address_families"
+                            )
+                        # Validate maximum_prefixes_reach_policy
+                        for index, address_family in enumerate(neighbor.get("address_families", [])):
+                            reach_policy = address_family.get("maximum_prefixes_reach_policy", "off")
+                            family_type = address_family.get('family_type')
+                            base_path = f"sdwan.feature_profiles.service_profiles[{feature_profile['name']}].bgp_features[{bgp['name']}].{neighbor_family_type}[{index}].address_families[{family_type}]"
+                            # Define required and forbidden fields for each policy
+                            policy_requirements = {
+                                "off": {
+                                    "forbidden": [
+                                        "maximum_prefixes_number", "maximum_prefixes_number_variable",
+                                        "maximum_prefixes_restart_interval", "maximum_prefixes_restart_interval_variable",
+                                        "maximum_prefixes_threshold", "maximum_prefixes_threshold_variable"
+                                    ],
+                                    "required": []
+                                },
+                                "restart": {
+                                    "forbidden": [],
+                                    "required": [
+                                        ("maximum_prefixes_number", "maximum_prefixes_number_variable"),
+                                        ("maximum_prefixes_restart_interval", "maximum_prefixes_restart_interval_variable")
+                                    ]
+                                },
+                                "warning-only": {
+                                    "forbidden": [
+                                        "maximum_prefixes_restart_interval", "maximum_prefixes_restart_interval_variable"
+                                    ],
+                                    "required": [
+                                        ("maximum_prefixes_number", "maximum_prefixes_number_variable")
+                                    ]
+                                },
+                                "disable-peer": {
+                                    "forbidden": [
+                                        "maximum_prefixes_restart_interval", "maximum_prefixes_restart_interval_variable"
+                                    ],
+                                    "required": [
+                                        ("maximum_prefixes_number", "maximum_prefixes_number_variable")
+                                    ]
+                                }
                             }
-                        }
-                        reqs = policy_requirements.get(reach_policy, policy_requirements["off"])
-                        # Check forbidden fields
-                        for param in reqs["forbidden"]:
-                            if param in address_family:
-                                results.append(f"maximum_prefixes_reach_policy is {reach_policy}, but {param} is defined in {base_path}")
-                        # Check required fields (at least one of the tuple must be present)
-                        for required_group in reqs["required"]:
-                            if not any(field in address_family for field in required_group):
-                                results.append(f"maximum_prefixes_reach_policy is {reach_policy}, but {required_group[0]} is not defined in {base_path}")
+                            reqs = policy_requirements.get(reach_policy, policy_requirements["off"])
+                            # Check forbidden fields
+                            for param in reqs["forbidden"]:
+                                if param in address_family:
+                                    results.append(f"maximum_prefixes_reach_policy is {reach_policy}, but {param} is defined in {base_path}")
+                            # Check required fields (at least one of the tuple must be present)
+                            for required_group in reqs["required"]:
+                                if not any(field in address_family for field in required_group):
+                                    results.append(f"maximum_prefixes_reach_policy is {reach_policy}, but {required_group[0]} is not defined in {base_path}")
             # Validate lan_vpn feature options
             for lan_vpn in feature_profile.get("lan_vpns", []):
                 if ("ipv4_primary_dns_address" not in lan_vpn and "ipv4_primary_dns_address_variable" not in lan_vpn) and ("ipv4_secondary_dns_address" in lan_vpn or "ipv4_secondary_dns_address_variable" in lan_vpn):
