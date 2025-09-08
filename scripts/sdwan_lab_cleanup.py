@@ -2,7 +2,7 @@ import argparse
 import os
 import sys
 import time
-from cisco_sdwan.base.rest_api import Rest
+from cisco_sdwan.base.rest_api import Rest, RestAPIException
 from cisco_sdwan.tasks.implementation import TaskDetach, DetachEdgeArgs, TaskDelete, DeleteArgs
 from cisco_sdwan.tasks.common import Task
 
@@ -23,7 +23,7 @@ def detach_edges(api):
   task_args = DetachEdgeArgs()
   task.runner(task_args, api)
 
-  # Workaround for https://github.com/CiscoDevNet/sastre/issues/56
+  # Workaround for https://github.com/CiscoDevNet/sastre/issues/74
   for config_group in api.get("/v1/config-group/"):
     if config_group.get("solution") == "sdwan" and config_group.get("numberOfDevices") > 0:
       associated_devices = api.get(f"/v1/config-group/{config_group['id']}/device/associate")
@@ -49,7 +49,18 @@ def remove_tags(api):
         ]
       }
       api.post(payload, "/v1/tags/associate?operationType=DELETE")
-    api.delete(f"/v1/tags?tagId={tag['id']}")
+    # Try to delete the tag with retry logic
+    max_retries = 5
+    for attempt in range(max_retries):
+      try:
+        api.delete(f"/v1/tags?tagId={tag['id']}")
+        break
+      except RestAPIException:
+        if attempt < max_retries - 1:
+          time.sleep(1)
+        else:
+           print(f"Failed to delete tag {tag['id']} after {max_retries} attempts.")
+           exit(1)
 
 
 def deactivate_policy(api):
@@ -63,7 +74,7 @@ def delete_configuration(api):
   """Delete configuration and feature profiles."""
   print("Deleting configuration...")
 
-  # Workaround: https://github.com/CiscoDevNet/sastre/issues/57
+  # Workaround to delete sastre unsupported features
   task = TaskDelete()
   task_args = DeleteArgs(
     tag="config_group",
@@ -74,23 +85,24 @@ def delete_configuration(api):
   profiles = api.get("/v1/feature-profile/sdwan")
   for profile in profiles:
     if profile["profileType"] != "policy-object" and not any(
-      excluded in profile.get("profileName", "")
-      for excluded in {"_basic", "umbrellaTokenList", "Policy_Profile_Global", "policy_objects"}
-    ):
+       excluded in profile.get("profileName", "") 
+       for excluded in {"_basic", "umbrellaTokenList", "Policy_Profile_Global", "policy_objects"}
+       ):
       api.delete(f"/v1/feature-profile/sdwan/{profile['profileType']}/{profile['profileId']}")
 
   # In some versions, policy-object profile cannot be removed
   # Instead, we just remove all objects under this profile
   policy_objects_profile_id = next(
-    (profile["profileId"] for profile in profiles if profile["profileType"] == "policy-object"),
+    (profile["profileId"] for profile in profiles if profile["profileType"] == "policy-object"), 
     None
-  )
+    )
   if policy_objects_profile_id:
     policy_objects_profile = api.get(f"/v1/feature-profile/sdwan/policy-object/{policy_objects_profile_id}")
     for feature in policy_objects_profile.get("associatedProfileParcels", []):
-      api.delete(
-        f"/v1/feature-profile/sdwan/policy-object/{policy_objects_profile['profileId']}/{feature['parcelType']}/{feature['parcelId']}"
-      )
+      if feature.get("createdBy", "") != "system":
+        api.delete(
+          f"/v1/feature-profile/sdwan/policy-object/{policy_objects_profile['profileId']}/{feature['parcelType']}/{feature['parcelId']}"
+        )
   # End of a workaround
 
   # Delete remaining configurations
@@ -112,14 +124,7 @@ def main():
 
   with Rest(base_url=sdwan_url, username=sdwan_username, password=sdwan_password) as api:
     detach_edges(api)
-
-    major, minor, _ = api.server_version.split(".")
-    if int(major) > 20 or (int(major) == 20 and int(minor) >= 12):
-      time.sleep(5) # required as otherwise tag deletion fails
-      remove_tags(api)
-    else:
-      print(f"Skip tag deletion for versions < 20.12.")
-
+    remove_tags(api)
     deactivate_policy(api)
     delete_configuration(api)
 

@@ -818,6 +818,7 @@ sdwan:
           - name: tracker1
             endpoint_api_url: http://test.com
             type: interface
+        enhanced_app_aware_routing: conservative
       - name: FT-CEDGE-SYSTEM-02
         description: Tracker example configs
         console_baud_rate: 9600

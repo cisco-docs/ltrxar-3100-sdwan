@@ -48,31 +48,18 @@ pipeline {
             steps {
                 sh "pip install cisco-sdwan"
                 lock(resource: 'nac-ci-sdwan1') {
-                    sh 'python3 scripts/sdwan_lab_cleanup.py https://10.50.202.8'
+                    sh 'python3 scripts/sdwan_lab_cleanup.py https://10.50.202.6'
                 }
                 lock(resource: 'nac-ci-sdwan2') {
-                    sh 'python3 scripts/sdwan_lab_cleanup.py https://10.50.202.6'
+                    sh 'python3 scripts/sdwan_lab_cleanup.py https://10.50.202.8'
                 }
             }
         }
         stage('Test') {
             parallel {
-                stage('Test SDWAN 20.9 Terraform') {
-                    steps {
-                        lock(resource: 'nac-ci-sdwan1') {
-                            sh 'pytest -m sdwan_209'
-                        }
-                    }
-                    post {
-                        always {
-                            junit 'sdwan_tf_20.9_xunit.xml'
-                            archiveArtifacts 'sdwan_tf_20.9_*.html, sdwan_tf_20.9_*.xml'
-                        }
-                    }
-                }
                 stage('Test SDWAN 20.12 Terraform') {
                     steps {
-                        lock(resource: 'nac-ci-sdwan2') {
+                        lock(resource: 'nac-ci-sdwan1') {
                             sh 'pytest -m sdwan_2012'
                         }
                     }
@@ -80,6 +67,19 @@ pipeline {
                         always {
                             junit 'sdwan_tf_20.12_xunit.xml'
                             archiveArtifacts 'sdwan_tf_20.12_*.html, sdwan_tf_20.12_*.xml'
+                        }
+                    }
+                }
+                stage('Test SDWAN 20.15 Terraform') {
+                    steps {
+                        lock(resource: 'nac-ci-sdwan2') {
+                            sh 'pytest -m sdwan_2015'
+                        }
+                    }
+                    post {
+                        always {
+                            junit 'sdwan_tf_20.15_xunit.xml'
+                            archiveArtifacts 'sdwan_tf_20.15_*.html, sdwan_tf_20.15_*.xml'
                         }
                     }
                 }
