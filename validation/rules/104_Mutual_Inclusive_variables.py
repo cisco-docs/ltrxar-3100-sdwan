@@ -88,12 +88,12 @@ class Rule:
                                 child_data = jmespath.search(varName, each_data)
                                 child_data_variable = varName
                             parent_variable = each_inclusion_item.get('parent_variable_requirement')
-                            # Check if the Parent is None and child data is declared
-                            if parent_data is None and child_data is not None:
-                                results.append('On Data model path ' + data_model_path + ', the parent variable ' + parent_data_variable + ' is not set, but value ' + str(child_data_variable) + ' is declared.')
                             # Check if the Parent is not a valid value and child data is declared
-                            elif parent_data not in parent_variable and child_data is not None:
-                                results.append('On Data model path ' + data_model_path + ', the parent variable ' + parent_data_variable + ' is set to: \"' + str(parent_data) + '", and value ' + str(child_data_variable) + ' is declared.')
+                            if parent_data not in parent_variable and child_data is not None:
+                                if parent_data is None:
+                                    results.append('On Data model path ' + data_model_path + ', the parent variable ' + parent_data_variable + ' is not set, but value ' + str(child_data_variable) + ' is declared.')
+                                else:
+                                    results.append('On Data model path ' + data_model_path + ', the parent variable ' + parent_data_variable + ' is set to: \"' + str(parent_data) + '", and value ' + str(child_data_variable) + ' is declared.')
             except KeyError:
                 pass
         return results
