@@ -1199,7 +1199,7 @@ edge_feature_templates_secure_internet_gateway_interface:
   track: bool(required=False)
   tracker: str(required=False)
   tracker_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
-  tunnel_dc_preference: enum("primary-dc", "secondary-dc")
+  tunnel_dc_preference: enum("primary-dc", "secondary-dc", required=False)
   tunnel_destination: ip(version=4, required=False)
   tunnel_destination_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
   tunnel_public_source_ip: ip(version=4, required=False)
