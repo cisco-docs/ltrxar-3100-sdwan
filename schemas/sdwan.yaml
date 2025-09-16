@@ -3134,6 +3134,7 @@ feature_profiles_policy_object:
   mirrors: list(include("feature_profiles_policy_object_mirror"), required=False)
   policers: list(include("feature_profiles_policy_object_policer"), required=False)
   preferred_color_groups: list(include("feature_profiles_policy_object_preferred_color_group"), required=False)
+  sla_classes: list(include("feature_profiles_policy_object_sla_class"), required=False)
   standard_community_lists: list(include("feature_profiles_policy_object_standard_community_list"), required=False)
   tloc_lists: list(include("feature_profiles_policy_object_tloc_list"), required=False)
 feature_profiles_policy_object_app_probe_class:
@@ -3199,6 +3200,16 @@ feature_profiles_policy_object_policer:
   burst_bytes: int(min=15000, max=10000000)
   exceed_action: enum("drop", "remark")
   rate_bps: int(min=8, max=100000000000)
+feature_profiles_policy_object_sla_class:
+  name: regex('^[^&<>! \"]{1,32}$')
+  app_probe_class: regex('^[^&<>! \"]{1,128}$', required=False)
+  fallback_best_tunnel_criteria: enum("jitter", "latency", "loss", "loss-latency", "loss-jitter", "latency-loss", "latency-jitter", "jitter-latency", "jitter-loss", "loss-latency-jitter", "loss-jitter-latency", "latency-loss-jitter", "latency-jitter-loss", "jitter-latency-loss", "jitter-loss-latency", required=False)
+  fallback_best_tunnel_jitter_variance: int(min=1, max=1000, required=False)
+  fallback_best_tunnel_latency_variance: int(min=1, max=1000, required=False)
+  fallback_best_tunnel_loss_variance: int(min=0, max=100, required=False)
+  jitter_ms: int(min=1, max=1000, required=False)
+  latency_ms: int(min=1, max=1000, required=False)
+  loss_percentage: int(min=0, max=100, required=False)
 feature_profiles_policy_object_standard_community_list:
   name: regex('^[^&<>! \"]{1,128}$')
   description: str(required=False)

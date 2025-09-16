@@ -212,6 +212,16 @@ sdwan:
             - metro-ethernet
             - mpls
           tertiary_path_preference: all-paths
+      sla_classes:
+        - name: sla_default
+          app_probe_class: app_probe1
+          jitter_ms: 300
+          latency_ms: 500
+          loss_percentage: 5
+          fallback_best_tunnel_criteria: loss-latency-jitter
+          fallback_best_tunnel_jitter_variance: 1
+          fallback_best_tunnel_latency_variance: 50
+          fallback_best_tunnel_loss_variance: 10
       standard_community_lists:
         - name: standard_community_list
           standard_communities:

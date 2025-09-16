@@ -584,6 +584,10 @@ objects:
     template: preferred_color_group
     folder: policy_objects
     paths: [sdwan.feature_profiles.policy_object_profile.preferred_color_groups]
+  - name: SLA Class
+    template: sla_class
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.sla_classes]
   - name: Standard Community List
     template: standard_community_list
     folder: policy_objects

@@ -25,5 +25,22 @@ class Rule:
         for preferred_color_group in inventory.get('sdwan', {}).get('feature_profiles', {}).get("policy_object_profile", {}).get("preferred_color_groups", []):
             if "tertiary_colors" in preferred_color_group and "secondary_colors" not in preferred_color_group:
                 results.append(f"Preferred color group '{preferred_color_group['name']}' has tertiary_colors configured without secondary_colors in sdwan.feature_profiles.policy_object_profile.preferred_color_groups[{preferred_color_group['name']}]")
+        
+        # Validate SLA Class feature:
+        # at least one value among latency, jitter or loss is required;
+        # if fallback_best_tunnel_criteria contains jitter, fallback_best_tunnel_jitter_variance must be defined;
+        # if fallback_best_tunnel_criteria contains latency, fallback_best_tunnel_latency_variance must be defined;
+        # if fallback_best_tunnel_criteria contains loss, fallback_best_tunnel_loss_variance must be defined.
+        for sla_class in inventory.get('sdwan', {}).get('feature_profiles', {}).get("policy_object_profile", {}).get("sla_classes", []):
+            if 'jitter_ms' not in sla_class and 'latency_ms' not in sla_class and 'loss_percentage' not in sla_class:
+                results.append(f"SLA class '{sla_class['name']}' must have at least one of jitter_ms, latency_ms or loss_percentage defined in sdwan.feature_profiles.policy_object_profile.sla_classes[{sla_class['name']}]")
+            if sla_class.get('fallback_best_tunnel_criteria', None):
+                criteria = sla_class['fallback_best_tunnel_criteria']
+                if 'jitter' in criteria and 'fallback_best_tunnel_jitter_variance' not in sla_class:
+                    results.append(f"SLA class '{sla_class['name']}' has 'jitter' in fallback_best_tunnel_criteria but fallback_best_tunnel_jitter_variance is not defined in sdwan.feature_profiles.policy_object_profile.sla_classes[{sla_class['name']}]")
+                if 'latency' in criteria and 'fallback_best_tunnel_latency_variance' not in sla_class:
+                    results.append(f"SLA class '{sla_class['name']}' has 'latency' in fallback_best_tunnel_criteria but fallback_best_tunnel_latency_variance is not defined in sdwan.feature_profiles.policy_object_profile.sla_classes[{sla_class['name']}]")
+                if 'loss' in criteria and 'fallback_best_tunnel_loss_variance' not in sla_class:
+                    results.append(f"SLA class '{sla_class['name']}' has 'loss' in fallback_best_tunnel_criteria but fallback_best_tunnel_loss_variance is not defined in sdwan.feature_profiles.policy_object_profile.sla_classes[{sla_class['name']}]")
 
         return results
