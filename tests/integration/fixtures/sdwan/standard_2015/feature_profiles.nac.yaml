@@ -1,0 +1,14 @@
+sdwan:
+  feature_profiles:
+    service_profiles:
+      - name: service1
+        bgp_features:
+          - name: service_bgp
+            ipv4_redistributes:
+              - protocol: omp
+                translate_rib_metric: true
+        ospf_features:
+          - name: service_ospf
+            redistributes:
+              - protocol: omp
+                translate_rib_metric: true

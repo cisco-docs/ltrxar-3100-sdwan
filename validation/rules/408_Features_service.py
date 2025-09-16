@@ -74,7 +74,33 @@ class Rule:
                             for required_group in reqs["required"]:
                                 if not any(field in address_family for field in required_group):
                                     results.append(f"maximum_prefixes_reach_policy is {reach_policy}, but {required_group[0]} is not defined in {base_path}")
-            # Validate lan_vpn feature options
+            # Validate ospf features
+            for ospf in feature_profile.get("ospf_features", []):
+                if ospf.get("default_originate", False) == False:
+                    forbidden_options = ["default_originate_always", "default_originate_always_variable", "default_originate_metric", "default_originate_metric_variable", "default_originate_metric_type", "default_originate_metric_type_variable"]
+                    for option in forbidden_options:
+                        if option in ospf:
+                            results.append(f"default_originate is false, but {option} is defined in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].ospf_features[{ospf['name']}]")
+                if ospf.get("router_lsa_advertisement_type", "none") != "on-startup" and "router_lsa_advertisement_time" in ospf:
+                    results.append(f"router_lsa_advertisement_time is defined but router_lsa_advertisement_type is not set to on-startup in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].ospf_features[{ospf['name']}]")
+                for area_index, area in enumerate(ospf.get("areas", [])):
+                    if area.get("number") == 0:
+                        forbidden_options = ["type", "no_summary", "no_summary_variable"]
+                        for option in forbidden_options:
+                            if option in area:
+                                results.append(f"area number is 0, but {option} is defined in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].ospf_features[{ospf['name']}].areas[{area_index}]")
+                    for interface_index, interface in enumerate(area.get("interfaces", [])):
+                        if interface.get("authentication_type", "none") == "md5":
+                            if "authentication_message_digest_key" not in interface and "authentication_message_digest_key_variable" not in interface:
+                                results.append(f"authentication_type is md5 but authentication_message_digest_key is not defined in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].ospf_features[{ospf['name']}].areas[{area.get('number', area_index)}].interfaces[{interface.get('name', interface_index)}]")
+                            if "authentication_message_digest_key_id" not in interface and "authentication_message_digest_key_id_variable" not in interface:
+                                results.append(f"authentication_type is md5 but authentication_message_digest_key_id is not defined in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].ospf_features[{ospf['name']}].areas[{area.get('number', area_index)}].interfaces[{interface.get('name', interface_index)}]")
+                for index, redistribute in enumerate(ospf.get("redistributes", [])):
+                    if redistribute.get("protocol") != "omp" and ("translate_rib_metric" in redistribute or "translate_rib_metric_variable" in redistribute):
+                        results.append(f"translate_rib_metric is defined but protocol is not set to omp in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].ospf_features[{ospf['name']}].redistributes[{index}]")
+                    if redistribute.get("protocol") != "nat" and ("dia" in redistribute or "dia_variable" in redistribute):
+                        results.append(f"dia is defined but protocol is not set to nat in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].ospf_features[{ospf['name']}].redistributes[{index}]")
+            # Validate lan_vpns features
             for lan_vpn in feature_profile.get("lan_vpns", []):
                 if ("ipv4_primary_dns_address" not in lan_vpn and "ipv4_primary_dns_address_variable" not in lan_vpn) and ("ipv4_secondary_dns_address" in lan_vpn or "ipv4_secondary_dns_address_variable" in lan_vpn):
                     results.append(f"ipv4_secondary_dns_address is defined but ipv4_primary_dns_address is not defined in the sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}]")

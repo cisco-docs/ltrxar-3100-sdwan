@@ -1,28 +1,11 @@
 sdwan:
   configuration_groups:
     - name: cg1
-      description: dual device configuration group
-      cli_profile: cli1
-      other_profile: other1
-      policy_object_profile: policy_objects
-      service_profile: service1
       system_profile: system1
       transport_profile: transport1
       device_tags:
         - name: primary-router
           features:
-            - inet_tloc
-            - service_rpl
-            - transport_bgp
-            - transport_rpl
+            - service_rpl # this will not work in 20.12
+            - transport_rpl # this will not work in 20.12
         - name: secondary-router
-          features:
-            - mpls_tloc
-    - name: cg2
-      description: single device configuration group
-      cli_profile: cli1
-      other_profile: other1
-      policy_object_profile: policy_objects
-      service_profile: service1
-      system_profile: system1
-      transport_profile: transport1

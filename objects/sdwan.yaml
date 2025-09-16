@@ -416,6 +416,10 @@ objects:
     template: service_object_tracker
     folder: features_service
     paths: [sdwan.feature_profiles.service_profiles.object_trackers]
+  - name: Service OSPF Feature
+    template: service_ospf
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.ospf_features]
   - name: Service Route Policy Feature
     template: service_route_policy
     folder: features_service
@@ -520,6 +524,10 @@ objects:
     template: transport_management_vpn_ethernet_interface
     folder: features_transport
     paths: [sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces]
+  - name: Transport OSPF Feature
+    template: transport_ospf
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ospf_features]
   - name: Transport Route Policy Feature
     template: transport_route_policy
     folder: features_transport

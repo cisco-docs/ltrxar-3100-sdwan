@@ -8,7 +8,7 @@ class Rule:
         results = []
         for service_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get("service_profiles", []):
             defined_elements = {}
-            feature_types = ["bgp_features", "ipv4_trackers", "ipv4_tracker_groups", "route_policies", "object_trackers", "object_tracker_groups"]
+            feature_types = ["bgp_features", "ipv4_trackers", "ipv4_tracker_groups", "route_policies", "object_trackers", "object_tracker_groups", "ospf_features"]
             # Check which elements are defined
             for feature_type in feature_types:
                 defined_elements[feature_type] = []
@@ -38,6 +38,13 @@ class Rule:
                 for redistribute in bgp_feature.get("ipv6_redistributes", []):
                     if redistribute.get("route_policy") and redistribute["route_policy"] not in defined_elements["route_policies"]:
                         results.append(f"Route policy '{redistribute['route_policy']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].bgp_features[{bgp_feature['name']}].ipv6_redistributes, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
+            # Validate route policy references in ospf_features
+            for ospf_feature in service_profile.get("ospf_features", []):
+                if ospf_feature.get("route_policy") and ospf_feature["route_policy"] not in defined_elements["route_policies"]:
+                    results.append(f"Route policy '{ospf_feature['route_policy']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].ospf_features[{ospf_feature['name']}].route_policy, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
+                for index, redistribute in enumerate(ospf_feature.get("redistributes", [])):
+                    if redistribute.get("route_policy") and redistribute["route_policy"] not in defined_elements["route_policies"]:
+                        results.append(f"Route policy '{redistribute['route_policy']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].ospf_features[{ospf_feature['name']}].redistributes[{index}], but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
             for lan_vpn in service_profile.get("lan_vpns", []):
                 # Validate tracker references in lan_vpns static routes 
                 for route in lan_vpn.get("ipv4_static_routes", []):
@@ -72,9 +79,18 @@ class Rule:
                             results.append(
                                 f"Object Tracker (Group) {item['tracker_object']} is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}], "
                                 f"but is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].{tracker_block}")
+                                            # Validate BGP reference in WAN VPN
+                # Validate routing protocol references
+                attached_bgp = lan_vpn.get("bgp", {})
+                if attached_bgp and attached_bgp not in defined_elements["bgp_features"]:
+                    results.append(f"BGP feature '{attached_bgp}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].bgp, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].bgp_features")
+                attached_ospf = lan_vpn.get("ospf", {})
+                if attached_ospf and attached_ospf not in defined_elements["ospf_features"]:
+                    results.append(f"OSPF feature '{attached_ospf}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ospf, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].ospf_features")
+        # Validate transport profiles
         for transport_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get("transport_profiles", []):
             defined_elements = {}
-            feature_types = ["bgp_features", "ipv4_trackers", "ipv4_tracker_groups", "ipv6_trackers", "ipv6_tracker_groups", "route_policies"]
+            feature_types = ["bgp_features", "ipv4_trackers", "ipv4_tracker_groups", "ipv6_trackers", "ipv6_tracker_groups", "ospf_features", "route_policies"]
             # Check which elements are defined
             for feature_type in feature_types:
                 defined_elements[feature_type] = []
@@ -104,6 +120,13 @@ class Rule:
                 for redistribute in bgp_feature.get("ipv6_redistributes", []):
                     if redistribute.get("route_policy") and redistribute["route_policy"] not in defined_elements["route_policies"]:
                         results.append(f"Route policy '{redistribute['route_policy']}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].bgp_features[{bgp_feature['name']}].ipv6_redistributes, but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].route_policies")
+            # Validate route policy references in ospf_features
+            for ospf_feature in transport_profile.get("ospf_features", []):
+                if ospf_feature.get("route_policy") and ospf_feature["route_policy"] not in defined_elements["route_policies"]:
+                    results.append(f"Route policy '{ospf_feature['route_policy']}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].ospf_features[{ospf_feature['name']}].route_policy, but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].route_policies")
+                for index, redistribute in enumerate(ospf_feature.get("redistributes", [])):
+                    if redistribute.get("route_policy") and redistribute["route_policy"] not in defined_elements["route_policies"]:
+                        results.append(f"Route policy '{redistribute['route_policy']}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].ospf_features[{ospf_feature['name']}].redistributes[{index}], but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].route_policies")
             # Validate references in wan_vpn
             wan_vpn = transport_profile.get("wan_vpn", {})
             if wan_vpn:
@@ -111,6 +134,10 @@ class Rule:
                 attached_bgp = wan_vpn.get("bgp", {})
                 if attached_bgp and attached_bgp not in defined_elements["bgp_features"]:
                     results.append(f"BGP feature '{attached_bgp}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].wan_vpn.bgp, but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].bgp_features")
+                # Validate OSPF reference in WAN VPN
+                attached_ospf = wan_vpn.get("ospf", {})
+                if attached_ospf and attached_ospf not in defined_elements["ospf_features"]:
+                    results.append(f"OSPF feature '{attached_ospf}' is referenced in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].wan_vpn.ospf, but is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].ospf_features")
             # Validate references in wan_vpn ethernet interfaces
             for interface in transport_profile.get("wan_vpn", {}).get("ethernet_interfaces", []):
                 for feature_type in feature_types:

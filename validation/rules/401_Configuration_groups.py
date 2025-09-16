@@ -100,7 +100,9 @@ class Rule:
         "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat.source_ip_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat.translate_ip_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.vpn_id_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.vpn_name_variable",        
+        "sdwan.feature_profiles.service_profiles.lan_vpns.vpn_name_variable", 
+        "sdwan.feature_profiles.service_profiles.ospf_features.areas.number",
+        "sdwan.feature_profiles.service_profiles.ospf_features.redistributes.protocol",
         "sdwan.feature_profiles.system_profiles.aaa.authorization_config_commands_variable",
         "sdwan.feature_profiles.system_profiles.aaa.authorization_console_variable",
         "sdwan.feature_profiles.system_profiles.aaa.dot1x_authentication_variable",
@@ -246,6 +248,8 @@ class Rule:
         "sdwan.feature_profiles.transport_profiles.management_vpn.ipv6_routes.prefix_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ipv6_routes.next_hops.address_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ipv6_routes.next_hops.administrative_distance_variable",
+        "sdwan.feature_profiles.transport_profiles.ospf_features.areas.number",
+        "sdwan.feature_profiles.transport_profiles.ospf_features.redistributes.protocol",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.enhance_ecmp_keying_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.arp_entries.ip_address_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.arp_entries.mac_address_variable",
@@ -303,6 +307,10 @@ class Rule:
                 ],
         },
         {
+            "feature_path": "sdwan.feature_profiles.service_profiles.ospf_features",
+            "associate_jmes_paths": ["sdwan.feature_profiles.service_profiles[].lan_vpns[].ospf"],
+        },
+        {
             "feature_path": "sdwan.feature_profiles.transport_profiles.ipv4_acls",
             "associate_jmes_paths": [
                 "sdwan.feature_profiles.transport_profiles[].wan_vpn[].ethernet_interfaces[].ipv4_egress_acl",
@@ -312,6 +320,10 @@ class Rule:
         {
             "feature_path": "sdwan.feature_profiles.transport_profiles.bgp_features",
             "associate_jmes_paths": ["sdwan.feature_profiles.transport_profiles[].wan_vpn[].bgp"],
+        },
+        {
+            "feature_path": "sdwan.feature_profiles.transport_profiles.ospf_features",
+            "associate_jmes_paths": ["sdwan.feature_profiles.transport_profiles[].wan_vpn[].ospf"],
         },
         {
             "feature_path": "sdwan.feature_profiles.transport_profiles.ipv4_trackers",
@@ -333,6 +345,7 @@ class Rule:
         "ipv4_device_access_policy.sequences",
         "ipv6_device_access_policy.sequences",
         "logging.tls_profiles",
+        "ospf_features.areas.interfaces",
         "route_policies.sequences",
         "snmp.communities",
         "snmp.views",

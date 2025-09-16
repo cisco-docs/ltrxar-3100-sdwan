@@ -449,6 +449,10 @@ Verify Feature Profiles Service Profiles {{ profile.name }} LAN VPN {{ lan_vpn.n
     ${bgp}=    Set Variable If    ${bgp_raw} == []    not_defined    ${bgp_raw[0]}
     Should Be Equal Value Json String    ${bgp}    $.payload.name   {{ lan_vpn.bgp | default('not_defined') }}     msg=service lan vpn bgp
 
+    ${ospf_raw}=    Get Value From Json    ${service_profile_features[0]}    $[?(@.payload.name=='${service_lan_vpn_data['name']}')].subparcels[?(@.parcelType=='routing/ospf')]
+    ${ospf}=    Set Variable If    ${ospf_raw} == []    not_defined    ${ospf_raw[0]}
+    Should Be Equal Value Json String    ${ospf}    $.payload.name   {{ lan_vpn.ospf | default('not_defined') }}     msg=service lan vpn ospf
+
 {% endfor %}
 {% endif %}
 {% endfor %}

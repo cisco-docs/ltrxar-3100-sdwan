@@ -15,6 +15,7 @@ sdwan:
             # - service_rpl # this will not work in 20.12
             - transport_bgp
             # - transport_rpl # this will not work in 20.12
+            - transport_ospf
         - name: secondary-router
           features:
             - mpls_tloc

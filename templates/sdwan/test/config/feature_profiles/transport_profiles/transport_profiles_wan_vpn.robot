@@ -166,6 +166,10 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
     ${bgp}=    Set Variable If    ${bgp_raw} == []    not_defined    ${bgp_raw[0]}
     Should Be Equal Value Json String    ${bgp}    $.payload.name   {{ profile.wan_vpn.bgp | default('not_defined') }}     msg=transport_wan_vpn wan_vpn bgp
 
+    ${ospf_raw}=    Get Value From Json    ${wan_vpn_subparcels}[0]    $[?(@.parcelType=='routing/ospf')]
+    ${ospf}=    Set Variable If    ${ospf_raw} == []    not_defined    ${ospf_raw[0]}
+    Should Be Equal Value Json String    ${ospf}    $.payload.name   {{ profile.wan_vpn.ospf | default('not_defined') }}     msg=transport_wan_vpn wan_vpn ospf
+
 {% endif %}
 
 {% endfor %}
