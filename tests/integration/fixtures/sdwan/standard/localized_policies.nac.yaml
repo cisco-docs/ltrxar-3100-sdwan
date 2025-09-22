@@ -187,7 +187,7 @@ sdwan:
               ip_type: ipv4
               base_action: accept
               match_criterias:
-                as_path_list: ASPATH-PRIVATE
+                as_path_list: '100'
               actions:
                 communities:
                   - internet

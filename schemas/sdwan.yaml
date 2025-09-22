@@ -2181,7 +2181,7 @@ policy_objects_application_list:
   applications: list(str(), required=False)
   application_families: list(enum("application-service", "audio-video", "authentication", "behavioral", "database", "encrypted", "erp", "file-server", "file-transfer", "forum", "game", "instant-messaging", "mail", "microsoft-office", "middleware", "network-management", "network-service", "peer-to-peer", "printer", "routing", "security-service", "terminal", "thin-client", "tunneling", "web", "webmail"), required=False)
 policy_objects_as_path_list:
-  name: regex('^[A-Za-z0-9-_]{1,128}$')
+  name: regex('^(?:[1-9]|[1-9][0-9]|[1-4][0-9][0-9]|500)$')
   as_paths: list(str())
 policy_objects_class_map:
   name: regex('^[A-Za-z0-9-_]{1,128}$')

@@ -58,7 +58,7 @@ sdwan:
         applications:
           - amazon
     as_path_lists:
-      - name: ASPATH-PRIVATE
+      - name: '100'
         as_paths:
           - ^65100
           - ^65101
