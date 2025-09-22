@@ -287,10 +287,10 @@ objects:
     template: feature_policy
     folder: centralized_policies
     paths: [sdwan.centralized_policies.feature_policies]
-  - name: CLI Policy
-    template: cli_policy
-    folder: centralized_policies
-    paths: [sdwan.centralized_policies.cli_policies]
+  # - name: CLI Policy
+  #   template: cli_policy
+  #   folder: centralized_policies
+  #   paths: [sdwan.centralized_policies.cli_policies]
   - name: Activation
     template: activation
     folder: centralized_policies

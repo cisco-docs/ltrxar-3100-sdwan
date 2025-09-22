@@ -2615,12 +2615,12 @@ multi_region_fabric:
 centralized_policies:
   definitions: include("centralized_policy_definitions", required=False)
   feature_policies: list(include("centralized_policy_policies"), required=False)
-  cli_policies: list(include("centralized_policy_cli_policies"), required=False)
+  # cli_policies: list(include("centralized_policy_cli_policies"), required=False)
   activated_policy: str(required=False)
-centralized_policy_cli_policies:
-  name: regex('^[A-Za-z0-9\-_]{1,127}$')
-  description: str()
-  policy_definition: str()
+# centralized_policy_cli_policies:
+#   name: regex('^[A-Za-z0-9\-_]{1,127}$')
+#   description: str()
+#   policy_definition: str()
 centralized_policy_definitions:
   control_policy: include("centralized_policy_control", required=False)
   data_policy: include("centralized_policy_data", required=False)
