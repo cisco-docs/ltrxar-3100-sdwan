@@ -1564,7 +1564,7 @@ edge_feature_templates_system:
   object_trackers: list(include("edge_feature_templates_system_object_tracker"), required=False)
   on_demand_tunnel: bool(required=False)
   on_demand_tunnel_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
-  on_demand_tunnel_idle_timeout: int(min=10, max=65535, required=False)
+  on_demand_tunnel_idle_timeout: int(min=2, max=65535, required=False)
   on_demand_tunnel_idle_timeout_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
   overlay_id: int(min=1, max=4294967295, required=False)
   overlay_id_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
