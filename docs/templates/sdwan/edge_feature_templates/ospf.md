@@ -1,7 +1,6 @@
 # OSPF Feature Template
 
-Configure the OSPF Routing parameters for a IOS-XE WAN Edge. This feature tempalte is referenced under a VPN feature template in the cEdge Device Template.
-OSPF routing allows the WAN Edge to make intelligent routing decision. 
+Configure the OSPF Routing parameters for a IOS-XE WAN Edge. This feature tempalte is referenced under a VPN feature template in the cEdge Device Template. OSPF routing allows the WAN Edge to make intelligent routing decision.
 
 {{ doc_gen }}
 
@@ -32,8 +31,7 @@ sdwan:
 
 Examples-2: OSPF template with MD5 authentication, with variable for MD5 password, variable for interfaces, variable for route policy and variable for router-id. This template allows OMP routes to be redistributed into OSPF, this will allow service side devices to learn routes from static routes defined on the WAN Edge. Enable OSPF MD5 authentication for added security. OSPF timers have added to tweak the failover and convergence times.
 
-
-```
+```yaml
 sdwan:
   edge_feature_templates:
     ospf_templates:
