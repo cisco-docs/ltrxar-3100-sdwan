@@ -8,6 +8,9 @@ This includes site and device specific configuration including device variables.
 
 Example-1: The example below shows how to assign router to a single device configuration group, list variables for device-specific fields in features under this configuration group and specify configuration should not be deployed to the device.
 
+!!! info
+    For variables under Security Policies, they are defined a bit differently with a `vedgePolicy/` prefix. For example, a variable named `zbfw_dip_pl_1` in security policy will be defined as `vedgePolicy/zbfw_dip_pl_1`
+
 ```yaml
 sdwan:
   sites:
@@ -37,6 +40,7 @@ sdwan:
             vpn512_mgmt_int_ip: 192.168.254.1
             vpn512_mgmt_int_mask: 255.255.255.0
             vpn512_mgmt_int_ipv6: fd02::1/64
+            vedgePolicy/zbfw_dip_pl_1: 10.10.99.0/24
 ```
 
 Example-2: The example below shows how to assign router to a dual device configuration group, assign the tag required for dual device configuration group, list variables for device-specific fields in features under this configuration group and specify configuration should be deployed to the device.

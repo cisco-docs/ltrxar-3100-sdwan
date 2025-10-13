@@ -52,6 +52,8 @@ sdwan:
       ntp_template: FT-CEDGE-NTP-01
       omp_template: FT-CEDGE-OMP-01
       security_template: FT-CEDGE-SECURITY-01
+      security_policy:
+        name: SECURITY-POLICY-TEMPLATE-01
       snmp_template: FT-CEDGE-SNMPV3-01
       system_template: FT-CEDGE-SYSTEM-01
       vpn_0_template:

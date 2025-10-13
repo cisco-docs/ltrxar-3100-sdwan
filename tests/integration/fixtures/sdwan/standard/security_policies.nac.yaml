@@ -61,7 +61,7 @@ sdwan:
               match_criterias:
                 source_fqdn: cisco.com
                 source_ip_prefix: 10.10.98.0/24
-                destination_ip_prefix: 10.10.99.0/24
+                destination_ip_prefix_variable: ZBFW_DIP_PL_1_uni1
                 destination_fqdn: example.com
               actions:
                 log: true
