@@ -392,6 +392,10 @@ objects:
     template: service_dhcp_server
     folder: features_service
     paths: [sdwan.feature_profiles.service_profiles.dhcp_servers]
+  - name: Service EIGRP Feature
+    template: service_eigrp
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.eigrp_features]
   - name: Service IPv4 ACL Feature
     template: service_ipv4_acl
     folder: features_service

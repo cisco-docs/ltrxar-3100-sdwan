@@ -300,6 +300,10 @@ class Rule:
             "associate_jmes_paths": ["sdwan.feature_profiles.service_profiles[].lan_vpns[].ethernet_interfaces[].dhcp_server"],
         },
         {
+            "feature_path": "sdwan.feature_profiles.service_profiles.eigrp_features",
+            "associate_jmes_paths": ["sdwan.feature_profiles.service_profiles[].lan_vpns[].eigrp"],
+        },
+        {
             "feature_path": "sdwan.feature_profiles.service_profiles.ipv4_acls",
             "associate_jmes_paths": [
                 "sdwan.feature_profiles.service_profiles[].lan_vpns[].ethernet_interfaces[].ipv4_egress_acl",

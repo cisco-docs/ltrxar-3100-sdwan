@@ -74,6 +74,22 @@ class Rule:
                             for required_group in reqs["required"]:
                                 if not any(field in address_family for field in required_group):
                                     results.append(f"maximum_prefixes_reach_policy is {reach_policy}, but {required_group[0]} is not defined in {base_path}")
+            # Validate eigrp features
+            for eigrp in feature_profile.get("eigrp_features", []):
+                # if authentication type is md5, md5_keys must be defined, and key_id/key_id_variable and key_string/key_string_variable must be defined in each md5_key
+                if eigrp.get("authentication_type", "none") == "md5":
+                    if "md5_keys" not in eigrp:
+                        results.append(f"authentication_type is md5 but md5_keys is not defined in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].eigrp_features[{eigrp['name']}]")
+                    else:
+                        for index, md5_key in enumerate(eigrp["md5_keys"]):
+                            if "key_id" not in md5_key and "key_id_variable" not in md5_key:
+                                results.append(f"authentication_type is md5 but key_id is not defined in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].eigrp_features[{eigrp['name']}]")
+                            if "key_string" not in md5_key and "key_string_variable" not in md5_key:
+                                results.append(f"authentication_type is md5 but key_string is not defined in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].eigrp_features[{eigrp['name']}]")
+                # if authentication type is hmac-sha-256, hmac_authentication_key/hmac_authentication_key_variable must be defined
+                elif eigrp.get("authentication_type", "none") == "hmac-sha-256":
+                    if "hmac_authentication_key" not in eigrp and "hmac_authentication_key_variable" not in eigrp:
+                        results.append(f"authentication_type is hmac-sha-256 but hmac_authentication_key is not defined in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].eigrp_features[{eigrp['name']}]")
             # Validate ospf features
             for ospf in feature_profile.get("ospf_features", []):
                 if ospf.get("default_originate", False) == False:

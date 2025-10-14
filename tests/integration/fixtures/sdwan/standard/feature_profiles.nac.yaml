@@ -369,6 +369,30 @@ sdwan:
               - code: 240
                 ip_addresses:
                   - 10.10.11.11
+        eigrp_features:
+          - name: service_eigrp
+            description: service eigrp feature
+            autonomous_system_id: 111
+            networks:
+              - network_address: 100.2.2.0
+                subnet_mask: 255.255.255.0
+            authentication_type: md5
+            md5_keys:
+              - key_id: 2
+                key_string: password123
+            filter: false
+            hello_interval: 10
+            hold_time: 30
+            interfaces:
+              - name: GigabitEthernet4
+                shutdown: false
+                summary_addresses:
+                  - network_address: 10.0.0.0
+                    subnet_mask: 255.255.255.0
+            redistributes:
+              - protocol: connected
+                route_policy: service_rpl
+            route_policy: service_rpl
         ipv4_acls:
           - name: service_ipv4_acl
             description: service ipv4 access control list
@@ -443,6 +467,7 @@ sdwan:
             vpn_id: 1
             vpn_name: VPN1
             bgp: service_bgp
+            eigrp: service_eigrp
             ipv4_omp_admin_distance: 1
             ipv4_omp_advertise_routes:
               - protocol: bgp

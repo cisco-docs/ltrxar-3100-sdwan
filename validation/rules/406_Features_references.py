@@ -8,7 +8,7 @@ class Rule:
         results = []
         for service_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get("service_profiles", []):
             defined_elements = {}
-            feature_types = ["bgp_features", "ipv4_trackers", "ipv4_tracker_groups", "route_policies", "object_trackers", "object_tracker_groups", "ospf_features"]
+            feature_types = ["bgp_features", "eigrp_features", "ipv4_trackers", "ipv4_tracker_groups", "route_policies", "object_trackers", "object_tracker_groups", "ospf_features"]
             # Check which elements are defined
             for feature_type in feature_types:
                 defined_elements[feature_type] = []
@@ -38,6 +38,13 @@ class Rule:
                 for redistribute in bgp_feature.get("ipv6_redistributes", []):
                     if redistribute.get("route_policy") and redistribute["route_policy"] not in defined_elements["route_policies"]:
                         results.append(f"Route policy '{redistribute['route_policy']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].bgp_features[{bgp_feature['name']}].ipv6_redistributes, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
+            # Validate route policy references in eigrp_features
+            for eigrp_feature in service_profile.get("eigrp_features", []):
+                if eigrp_feature.get("route_policy") and eigrp_feature["route_policy"] not in defined_elements["route_policies"]:
+                    results.append(f"Route policy '{eigrp_feature['route_policy']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].eigrp_features[{eigrp_feature['name']}].route_policy, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
+                for index, redistribute in enumerate(eigrp_feature.get("redistributes", [])):
+                    if redistribute.get("route_policy") and redistribute["route_policy"] not in defined_elements["route_policies"]:
+                        results.append(f"Route policy '{redistribute['route_policy']}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].eigrp_features[{eigrp_feature['name']}].redistributes[{index}], but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].route_policies")
             # Validate route policy references in ospf_features
             for ospf_feature in service_profile.get("ospf_features", []):
                 if ospf_feature.get("route_policy") and ospf_feature["route_policy"] not in defined_elements["route_policies"]:
@@ -84,6 +91,9 @@ class Rule:
                 attached_bgp = lan_vpn.get("bgp", {})
                 if attached_bgp and attached_bgp not in defined_elements["bgp_features"]:
                     results.append(f"BGP feature '{attached_bgp}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].bgp, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].bgp_features")
+                attached_eigrp = lan_vpn.get("eigrp", {})
+                if attached_eigrp and attached_eigrp not in defined_elements["eigrp_features"]:
+                    results.append(f"EIGRP feature '{attached_eigrp}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].eigrp, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].eigrp_features")
                 attached_ospf = lan_vpn.get("ospf", {})
                 if attached_ospf and attached_ospf not in defined_elements["ospf_features"]:
                     results.append(f"OSPF feature '{attached_ospf}' is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ospf, but is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].ospf_features")
