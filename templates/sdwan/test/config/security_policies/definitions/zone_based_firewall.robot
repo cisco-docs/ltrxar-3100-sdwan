@@ -160,6 +160,36 @@ Verify Security Policies Zone Based Firewall {{ zbf.name }}
         Lists Should Be Equal   ${destination_geo_locations_value}   ${destination_geo_locations_list}   ignore_order=True    msg=destination geo location
     END
 
+    ${port_lists}=    GET On Session    sdwan_manager    dataservice/template/policy/list/port
+
+    ${source_port_lists_data_api_value_list}=   Get Value From Json    ${r_id.json()}   $..sequences[?(@.sequenceName=="{{ rule.name }}")].match.entries[?(@.field=="sourcePortList")].ref
+    IF    ${source_port_lists_data_api_value_list} == []
+        Should Be Equal Value Json String    ${r_id.json()}    $..sequences[?(@.sequenceName=="{{ rule.name }}")].match.entries[?(@.field=="sourcePortList")].ref    {{ rule.match_criterias.source_port_lists | default("not_defined") }}    msg=source port list
+    ELSE
+        ${source_port_yaml_list}=    Create List    {{ rule.match_criterias.source_port_lists | join('   ') }}
+        ${source_port_api_lists_ids}=  Split String    ${source_port_lists_data_api_value_list[0]}
+        ${source_port_api_lists}=    Create List
+        FOR    ${id}    IN    @{source_port_api_lists_ids}
+            ${port}=    Get Value From Json    ${port_lists.json()}    $.data[?(@.listId=="${id}")].name    msg=get port list name from ref
+            Append To List    ${source_port_api_lists}    ${port[0]}
+        END
+        Lists Should Be Equal   ${source_port_api_lists}   ${source_port_yaml_list}   ignore_order=True    msg=source port list
+    END
+
+    ${destination_port_lists_data_api_value_list}=   Get Value From Json    ${r_id.json()}   $..sequences[?(@.sequenceName=="{{ rule.name }}")].match.entries[?(@.field=="destinationPortList")].ref
+    IF    ${destination_port_lists_data_api_value_list} == []
+        Should Be Equal Value Json String    ${r_id.json()}    $..sequences[?(@.sequenceName=="{{ rule.name }}")].match.entries[?(@.field=="destinationPortList")].ref    {{ rule.match_criterias.destination_port_lists | default("not_defined") }}    msg=destination port list
+    ELSE
+        ${destination_port_yaml_list}=    Create List    {{ rule.match_criterias.destination_port_lists | join('   ') }}
+        ${destination_port_api_lists_ids}=  Split String    ${destination_port_lists_data_api_value_list[0]}
+        ${destination_port_api_lists}=    Create List
+        FOR    ${id}    IN    @{destination_port_api_lists_ids}
+            ${port}=    Get Value From Json    ${port_lists.json()}    $.data[?(@.listId=="${id}")].name    msg=get port list name from ref
+            Append To List    ${destination_port_api_lists}    ${port[0]}
+        END
+        Lists Should Be Equal   ${destination_port_api_lists}   ${destination_port_yaml_list}   ignore_order=True    msg=destination port list
+    END
+
 {% set source_port_range_list = [] %}
 {% for source_port_range in rule.match_criterias.source_port_ranges | default([]) %}
     {% set test_list = [] %}

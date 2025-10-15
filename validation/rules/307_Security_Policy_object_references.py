@@ -12,6 +12,25 @@ class Rule:
         'match_criterias', 'actions'
     ]
 
+    """
+    For Any future lists which are referenced in policy_definition_type (Example: Zone Based Firewall) \
+        under every sequence of the policy definition sub branches i.e. 'match_criterias', 'actions' \
+        Add the new list name used in Security Policy and its corresponding policy object type in the policy_object_reference dictionary below. \
+
+    The policy_object_reference dictionary below maps the list names to their corresponding policy object types.
+    Example:
+    policy_object_reference = \
+        {
+        'The key field in the Security Policy :
+        'The key field in policy object (sdwan.policy_objects.definitions)'
+        }
+    where 'The key field in the Security Policy' corresponds to keys below \
+        (sdwan.security_policies.definitions.zone_based_firewall[*].rules[*].match_criterias[.] or sdwan.security_policies.definitions.zone_based_firewall[*].rules[*].actions[.])'
+        and
+        'The key field in policy object' corresponds to keys below \
+        (sdwan.policy_objects.)
+    """
+
     policy_object_reference = {
         'source_data_prefix_lists': 'ipv4_data_prefix_lists',
         'destination_data_prefix_lists': 'ipv4_data_prefix_lists',
@@ -20,6 +39,8 @@ class Rule:
         'local_application_list': 'local_application_lists',
         'source_zone': 'zones',
         'destination_zone': 'zones',
+        'source_port_lists': 'port_lists',
+        'destination_port_lists': 'port_lists'
     }
 
     # Extract the Policy Object Names defined in the Policy Objects at ['sdwan']['policy_objects'][.]
@@ -64,7 +85,7 @@ class Rule:
                         if "rules" in ds:
                             for seq in ds['rules']:
                                 for y in cls.policy_definition_sub_branches:
-                                    if y in seq:                                        
+                                    if y in seq:
                                         if pot in seq[y]:
                                             results.append(cls.make_dict(ds['name'], seq['name'], pot, cls.policy_object_reference[pot], w, pot, seq[y][pot]))
                 except KeyError:

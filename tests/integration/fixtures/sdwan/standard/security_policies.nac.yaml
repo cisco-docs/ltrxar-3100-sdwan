@@ -85,6 +85,36 @@ sdwan:
                 protocol_names:
                   - aol
                   - cifs
+            - id: 6
+              name: Rule_6
+              base_action: pass
+              match_criterias:
+                source_data_prefix_lists:
+                  - ZBFW_SDPL_1_uni1
+                  - ZBFW_SDPL_2_uni1
+                source_fqdn_lists:
+                  - ZBFW_SFL_1_uni1
+                  - ZBFW_SFL_2_uni1
+                source_geo_locations:
+                  - DZA
+                  - AGO
+                source_port_lists:
+                  - Test_Additional_Ports
+                  - Test_Management_Ports
+                destination_data_prefix_lists:
+                  - ZBFW_DDPL_1_uni1
+                  - ZBFW_DDPL_2_uni1
+                destination_fqdn_lists:
+                  - ZBFW_DFL_1_uni1
+                  - ZBFW_DFL_2_uni1
+                destination_geo_locations:
+                  - IND
+                  - LKA
+                destination_port_lists:
+                  - Test_Device_access_ports
+                  - Test_Web_Ports
+              actions:
+                log: true
           zone_pairs:
             - source_zone: Test_zone_1_uni1
               destination_zone: Test_zone_2_uni1

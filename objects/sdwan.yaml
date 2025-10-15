@@ -310,14 +310,18 @@ objects:
     template: feature_policy
     folder: security_policies
     paths: [sdwan.security_policies.feature_policies]
-  - name: Zone List
-    template: zone_list
-    folder: classic_policy_objects
-    paths: [sdwan.policy_objects.zones]
   - name: FQDN List
     template: fqdn_list
     folder: classic_policy_objects
     paths: [sdwan.policy_objects.fqdn_lists]
+  - name: Port List
+    template: port_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.port_lists]
+  - name: Zone List
+    template: zone_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.zones]
   - name: Local Application List
     template: local_application_list
     folder: classic_policy_objects

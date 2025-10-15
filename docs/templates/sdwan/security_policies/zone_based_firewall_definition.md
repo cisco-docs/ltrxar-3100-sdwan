@@ -104,3 +104,43 @@ sdwan:
         vpn_ids:
           - 120
 ```
+
+Example-3: In this example it is shown how we could reference the Port Lists to match the Source and Destination Ports in a zone based firewall Security Policy. 
+
+```yaml
+sdwan:
+  security_policies:
+    definitions:
+      zone_based_firewall:
+        - name: ZONE-BASED-FIREWALL-01
+          description: ZONE-BASED-FIREWALL-01
+          default_action_type: drop
+          rules:
+            - id: 1
+              name: Rule_1
+              base_action: pass
+              match_criterias:
+                source_port_lists:
+                  - Test_source_ports
+                destination_port_lists:
+                  - Test_Device_access_ports
+                  - Test_Web_Ports
+```
+The security policy YAML mentioned above will only be effective if the following Port Lists are created under policy objects.
+
+```yaml
+sdwan:
+  policy_objects:
+    port_lists:
+      - name: Test_source_ports
+        ports:
+          - 5062-6083
+      - name: Test_Device_access_ports
+        ports:
+          - 22
+          - 23
+      - name: Test_Web_Ports
+        ports:
+          - 443
+          - 80
+```

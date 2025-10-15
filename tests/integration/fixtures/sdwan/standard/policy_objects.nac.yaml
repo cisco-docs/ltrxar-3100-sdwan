@@ -191,6 +191,22 @@ sdwan:
         burst_bytes: 2000000
         exceed_action: remark
         rate_bps: 240000000
+    port_lists:
+      - name: Test_Additional_Ports
+        ports:
+          - 65535
+      - name: Test_Device_access_ports
+        ports:
+          - 22
+          - 23
+      - name: Test_Management_Ports
+        ports:
+          - 8080-8082
+          - 65529-65534
+      - name: Test_Web_Ports
+        ports:
+          - 80
+          - 443
     preferred_color_groups:
       - name: PREFER_MPLS
         primary_colors:

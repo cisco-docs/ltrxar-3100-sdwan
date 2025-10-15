@@ -218,74 +218,88 @@ class Rule:
             'variable2_jmes_path' : '',
             'variable2' : ['tunnel_source_interface', 'tunnel_source_interface_variable','tunnel_source_ip'],
         },
-                {
+        {
             'object_jmes_path': 'sdwan.centralized_policies.feature_policies[*].traffic_data[].site_region_vpn[]',
             'variable1_jmes_path' : '', 
             'variable1' : ['site_lists'],
             'variable2_jmes_path' : '',
             'variable2' : ['region_list','region'],
         },
-                {
+        {
             'object_jmes_path': 'sdwan.centralized_policies.feature_policies[*].traffic_data[].site_region_vpn[]',
             'variable1_jmes_path' : '', 
             'variable1' : ['region_list'],
             'variable2_jmes_path' : '',
             'variable2' : ['region'],
         },
-                {
+        {
+            'object_jmes_path': "sdwan.security_policies.definitions.zone_based_firewall[].rules[]",
+            'variable1_jmes_path' : 'match_criterias', 
+            'variable1' : ['source_port_lists'],
+            'variable2_jmes_path' : 'match_criterias',
+            'variable2' : ['source_ports','source_port_ranges']
+        },
+        {
+            'object_jmes_path': "sdwan.security_policies.definitions.zone_based_firewall[].rules[]",
+            'variable1_jmes_path' : 'match_criterias', 
+            'variable1' : ['destination_port_lists'],
+            'variable2_jmes_path' : 'match_criterias',
+            'variable2' : ['destination_ports','destination_port_ranges']
+        },
+        {
             'object_jmes_path': "sdwan.centralized_policies.definitions.control_policy.custom_control_topology[*].sequences[?type=='route'] | []",
             'variables_jmes_path' : 'match_criterias', 
             'variables' : ['group_id','domain_id'],
             'type': 'mut_exclusive_value'
         },    
-                {
+        {
             'object_jmes_path': "sdwan.centralized_policies.definitions.control_policy.custom_control_topology[*].sequences[?type=='tloc'] | []",
             'variables_jmes_path' : 'match_criterias', 
             'variables' : ['community','community_additive','origin','path_type','vpn_list','vpn','ipv4_prefix_list'],
             'type': 'mut_exclusive_value'
         },   
-                {
+        {
             'object_jmes_path': "sdwan.centralized_policies.definitions.control_policy.custom_control_topology[*].sequences[?type=='tloc'] | []",
             'variables_jmes_path' : 'actions', 
             'variables' : ['community_list','expanded_community_list','tloc','tloc_list','tloc_action','service','export_to_vpn_list'],
             'type': 'mut_exclusive_value'
         },
-                {
+        {
             'object_jmes_path': "sdwan.centralized_policies.definitions.control_policy.custom_control_topology[*].sequences[?ip_type=='all' && type=='route'] | []",
             'variables_jmes_path' : 'match_criterias', 
             'variables' : ['ipv4_prefix_list'],
             'type': 'mut_exclusive_value'
         }, 
-                {
+        {
             'object_jmes_path': "sdwan.centralized_policies.definitions.data_policy.traffic_data[*].sequences[?type=='application_firewall' || type=='qos' || type=='service_chaining' || type=='traffic_engineering'] | []",
             'variables_jmes_path' : 'match_criterias', 
             'variables' : ['dns_application_list','dns','traffic_to','destination_region'],
             'type': 'mut_exclusive_value'
         },
-                {
+        {
             'object_jmes_path': "sdwan.centralized_policies.definitions.data_policy.traffic_data[*].sequences[?type=='application_firewall'] | []",
             'variables_jmes_path' : 'actions', 
             'variables' : ['cflowd','sig','redirect_dns','loss_correction','nat_pool','nat_vpn','appqoe_optimization','dscp','forwarding_class','local_tloc_list','next_hop','preferred_color_group','policer_list','service','tloc','tloc_list','vpn'],
             'type': 'mut_exclusive_value'
         },
-                {
+        {
             'object_jmes_path': "sdwan.centralized_policies.definitions.data_policy.traffic_data[*].sequences[?type=='qos'] | []",
             'variables_jmes_path' : 'actions', 
             'variables' : ['cflowd','sig','redirect_dns','nat_pool','nat_vpn','appqoe_optimization','local_tloc_list','next_hop','preferred_color_group','service','tloc','tloc_list','vpn'],
             'type': 'mut_exclusive_value'
         },
-                {
+        {
             'object_jmes_path': "sdwan.centralized_policies.definitions.data_policy.traffic_data[*].sequences[?type=='service_chaining'] | []",
             'variables_jmes_path' : 'actions', 
             'variables' : ['cflowd','sig','redirect_dns','loss_correction','nat_pool','nat_vpn','appqoe_optimization','dscp','forwarding_class','local_tloc_list','next_hop','preferred_color_group','policer_list'],
             'type': 'mut_exclusive_value'
         },
-                {
+        {
             'object_jmes_path': "sdwan.centralized_policies.definitions.data_policy.traffic_data[*].sequences[?type=='traffic_engineering'] | []",
             'variables_jmes_path' : 'actions', 
             'variables' : ['cflowd','sig','redirect_dns','loss_correction','nat_pool','nat_vpn','appqoe_optimization','dscp','forwarding_class','preferred_color_group','policer_list','service'],
             'type': 'mut_exclusive_value'
-        },                                      
+        },
     ]
 
 
