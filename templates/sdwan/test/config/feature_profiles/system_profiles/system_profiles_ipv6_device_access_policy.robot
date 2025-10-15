@@ -53,28 +53,31 @@ Verify Feature Profiles System Profiles {{ profile.name }} IPv6 Device Access Po
 {% if profile.ipv6_device_access_policy.get('sequences', []) | length > 0 %}
     Log     === Sequences List ===
 {% for sequence in profile.ipv6_device_access_policy.sequences | default([]) %}
-    Log     === {{ sequence.name }} ===
+    Log    === Sequence {{ sequence.id }} ===
+    ${sequence_raw}=    Get Value From Json    ${system_ipv6_device_access_policy[0]}    $.data.sequences[?(@.sequenceId.value=={{ sequence.id }})]
+    Run Keyword If    ${sequence_raw} == []    Fail    IPv6 Device Access Policy sequence ID {{ sequence.id }} expected to be configured on the Manager
+    ${sequence}=    Set Variable If    ${sequence_raw} == []    not_defined    ${sequence_raw[0]}
 
-    Should Be Equal Value Json Yaml    ${system_ipv6_device_access_policy[0]}    $.data.sequences[{{ loop.index0 }}].baseAction    {{ sequence.base_action | default('not_defined') }}    not_defined    msg=base action    var_msg=not_defined
-    Should Be Equal Value Json Yaml    ${system_ipv6_device_access_policy[0]}    $.data.sequences[{{ loop.index0 }}].sequenceId    {{ sequence.id | default('not_defined') }}    not_defined    msg=id    var_msg=not_defined
-    Should Be Equal Value Json Yaml    ${system_ipv6_device_access_policy[0]}    $.data.sequences[{{ loop.index0 }}].sequenceName    {{ sequence.name | default('not_defined') }}    not_defined    msg=name    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    $.baseAction    {{ sequence.base_action | default('not_defined') }}    not_defined    msg=base action    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    $.sequenceId    {{ sequence.id | default('not_defined') }}    not_defined    msg=id    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    $.sequenceName    {{ sequence.name | default('not_defined') }}    not_defined    msg=name    var_msg=not_defined
 
     ${destination_data_prefixes_list}=    Create List    {{ sequence.match_entries.get('destination_data_prefixes', []) | join('   ') }}
     ${destination_data_prefixes_list}=    Set Variable If    ${destination_data_prefixes_list} == []    not_defined    ${destination_data_prefixes_list}
-    Should Be Equal Value Json Yaml    ${system_ipv6_device_access_policy[0]}    $.data.sequences[{{ loop.index0 }}].matchEntries.destinationDataPrefix.destinationIpPrefixList    ${destination_data_prefixes_list}    not_defined    msg=destination data prefixes    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries.destinationDataPrefix.destinationIpPrefixList    ${destination_data_prefixes_list}    not_defined    msg=destination data prefixes    var_msg=not_defined
 
-    Should Be Equal Value Json Yaml    ${system_ipv6_device_access_policy[0]}    $.data.sequences[{{ loop.index0 }}].matchEntries.destinationPort    {{ sequence.match_entries.destination_port | default('not_defined') }}    not_defined    msg=destination port    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries.destinationPort    {{ sequence.match_entries.destination_port | default('not_defined') }}    not_defined    msg=destination port    var_msg=not_defined
 
     ${source_data_prefixes_list}=    Create List    {{ sequence.match_entries.get('source_data_prefixes', []) | join('   ') }}
     ${source_data_prefixes_list}=    Set Variable If    ${source_data_prefixes_list} == []    not_defined    ${source_data_prefixes_list}
-    Should Be Equal Value Json Yaml    ${system_ipv6_device_access_policy[0]}    $.data.sequences[{{ loop.index0 }}].matchEntries.sourceDataPrefix.sourceIpPrefixList    ${source_data_prefixes_list}    not_defined    msg=source data prefixes    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries.sourceDataPrefix.sourceIpPrefixList    ${source_data_prefixes_list}    not_defined    msg=source data prefixes    var_msg=not_defined
 
     ${source_ports_list}=    Create List    {{ sequence.match_entries.get('source_ports', []) | join('   ') }}
     ${source_ports_list}=    Set Variable If    ${source_ports_list} == []    not_defined    ${source_ports_list}
-    Should Be Equal Value Json Yaml    ${system_ipv6_device_access_policy[0]}    $.data.sequences[{{ loop.index0 }}].matchEntries.sourcePorts    ${source_ports_list}    not_defined    msg=source ports    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries.sourcePorts    ${source_ports_list}    not_defined    msg=source ports    var_msg=not_defined
 
     # Extract refID of the destination data prefix list
-    ${refid_destination_data_prefix_list_raw}=    Get Value From Json    ${system_ipv6_device_access_policy[0]}    $.data.sequences[{{ loop.index0 }}].matchEntries.destinationDataPrefix.destinationDataPrefixList.refId.value
+    ${refid_destination_data_prefix_list_raw}=    Get Value From Json    ${sequence}    $.matchEntries.destinationDataPrefix.destinationDataPrefixList.refId.value
     ${refid_destination_data_prefix_list}=    Set Variable If    ${refid_destination_data_prefix_list_raw} == []    not_defined    ${refid_destination_data_prefix_list_raw[0]}
 
     # Extract the data prefix list from the policy object profile using the refID
@@ -84,7 +87,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} IPv6 Device Access Po
     Should Be Equal Value Json String    ${profile_ipv6_data_prefix}    $..name    {{ sequence.match_entries.destination_data_prefix_list | default('not_defined') }}    msg=destination data prefix list
 
     # Extract refID of the source data prefix list
-    ${refid_source_data_prefix_list_raw}=    Get Value From Json    ${system_ipv6_device_access_policy[0]}    $.data.sequences[{{ loop.index0 }}].matchEntries.sourceDataPrefix.sourceDataPrefixList.refId.value
+    ${refid_source_data_prefix_list_raw}=    Get Value From Json    ${sequence}    $.matchEntries.sourceDataPrefix.sourceDataPrefixList.refId.value
     ${refid_source_data_prefix_list}=    Set Variable If    ${refid_source_data_prefix_list_raw} == []    not_defined    ${refid_source_data_prefix_list_raw[0]}
 
     # Extract the data prefix list from the policy object profile using the refID

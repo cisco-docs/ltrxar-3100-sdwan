@@ -10,7 +10,7 @@ Resource        ../../../sdwan_common.resource
 {% if sdwan.feature_profiles.transport_profiles is defined %}
 
 *** Test Cases ***
-Get System Profiles
+Get Transport Profiles
     ${r}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/transport
     Set Suite Variable    ${r}
 
