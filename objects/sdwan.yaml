@@ -52,6 +52,10 @@ objects:
     template: ospf
     folder: edge_feature_templates
     paths: [sdwan.edge_feature_templates.ospf_templates]
+  - name: Edge PIM
+    template: pim
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.pim_templates]
   - name: Edge Secure Internet Gateway
     template: secure_internet_gateway
     folder: edge_feature_templates

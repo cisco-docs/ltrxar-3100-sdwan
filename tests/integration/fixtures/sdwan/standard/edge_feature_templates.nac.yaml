@@ -238,6 +238,16 @@ sdwan:
             address-family ipv4 unicast vrf 10
             neighbor {{bgp_neighbor_ip}} local-as {{bgp_neighbor_local_as}}
           !
+      - name: FT-EDGE-CLI-DUALCPE-ACTIVE
+        description: "Edge CLI Template to set PIM configuration and Edge CLI Template to disable DAUTH logs"
+        cli_config: |
+          logging discriminator auth mnemonics drops AUTH_PASSED
+          logging console discriminator auth
+          ip access-list standard 10
+            10 permit 224.1.1.1
+            11 permit 224.1.1.2
+            12 permit 10.0.0.1
+          !
     dhcp_server_templates:
       - name: FT-CEDGE-DHCPSERVER-VPN2-V01
         description: Internet DHCP Server
@@ -737,6 +747,65 @@ sdwan:
         graceful_restart: true
         send_path_limit: 16
         graceful_restart_timer: 86400
+    pim_templates:
+      - name: FT-CEDGE-PIM-01
+        description: The cEdge PIM Feature Template with Auto RP and RP announces and discovery included
+        device_types:
+          - C8000V
+          - C8200-1N-4T
+          - C8200L-1N-4T
+          - C8300-1N1S-4T2X
+          - C8300-1N1S-6T
+          - C8300-2N2S-4T2X
+          - C8300-2N2S-6T
+          - C8500-12X
+          - C8500-12X4QC
+          - C8500-20X6C
+          - C8500L-8S4X
+        auto_rp: true
+        interfaces:
+          - interface_name: Loopback511
+            join_prune_interval: 60
+            query_interval: 30
+        rp_addresses:
+          - ip_address: 10.0.0.2
+            access_list: "27"
+            override: false
+        rp_candidates:
+          - interface_name: Loopback511
+        rp_announces:
+          - interface_name: Loopback511
+            scope: 1
+        rp_discovery_interface: Loopback511
+        rp_discovery_scope: 1
+        spt_threshold: "0"
+        ssm_access_list_range: "27"
+        ssm_default: True
+      - name: FT-CEDGE-PIM-02
+        description: The cEdge PIM Feature Template with no auto RP and BSR included
+        device_types:
+          - C8000V
+        auto_rp: false
+        bsr_candidate_interface: GigabitEthernet6
+        bsr_candidate_hash_mask_length: 32
+        bsr_candidate_priority: 1
+        bsr_candidate_rp_access_list: "10"
+        interfaces:
+          - interface_name: GigabitEthernet6
+            join_prune_interval: 60
+            query_interval: 30
+        rp_addresses:
+          - ip_address: 10.0.0.1
+            access_list: "10"
+            override: false
+        rp_candidates:
+          - interface_name: GigabitEthernet6
+            access_list: "10"
+            priority: 2
+            interval: 100
+        spt_threshold: "0"
+        ssm_access_list_range: "10"
+        ssm_default: True
     security_templates:
       - name: FT-CEDGE-SECURITY-01
         description: Base SD-WAN data-plane security

@@ -45,7 +45,7 @@ sdwan:
       aaa_template: FT-CEDGE-AAA-01
       banner_template: FT-CEDGE-BANNER-01
       bfd_template: FT-CEDGE-BFD-01
-      cli_template: FT-EDGE-CLI-LOGGING
+      cli_template: FT-EDGE-CLI-DUALCPE-ACTIVE
       global_settings_template: FT-CEDGE-GLOBAL-01
       localized_policy: LOCAL-POLICY-TEMPLATE-01
       logging_template: FT-CEDGE-LOGGING-01
@@ -68,6 +68,7 @@ sdwan:
             - name: FT-CEDGE-VPN1-LAN1
           igmp_template: FT-CEDGE-IGMP-01
           multicast_template: FT-CEDGE-MULTICAST-01
+          pim_template: FT-CEDGE-PIM-02
         - name: FT-CEDGE-VPN511-01
           ethernet_interface_templates:
             - name: FT-CEDGE-VPN511-LOOPBACK511
@@ -105,6 +106,7 @@ sdwan:
         - name: FT-CEDGE-VPN511-01
           ethernet_interface_templates:
             - name: FT-CEDGE-VPN511-LOOPBACK511
+          pim_template: FT-CEDGE-PIM-01
       vpn_512_template:
         name: FT-CEDGE-VPN512-01
         ethernet_interface_templates:

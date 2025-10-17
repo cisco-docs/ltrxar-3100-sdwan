@@ -202,7 +202,7 @@ Verify Edge Device Templates {{ edt.name }}
     Lists Should Be Equal    ${rec_bgp_temp_list}    ${bgp_temp_list}    ignore_order=True    msg=bgp templates
 
 
-
+    Log    =====Multicast=====
 {% set vpn_service_multicast_template = [] %}
 {% for item in edt.vpn_service_templates | default([]) %}
 {% set test_list = [] %}
@@ -226,7 +226,31 @@ Verify Edge Device Templates {{ edt.name }}
     Log    From API:${rec_multicast_temp_list}
     Log    From YAML:${multicast_temp_list}
     Lists Should Be Equal    ${rec_multicast_temp_list}    ${multicast_temp_list}    ignore_order=True    msg=multicast templates
-    
+
+    Log    =====PIM=====
+{% set vpn_service_pim_template = [] %}
+{% for item in edt.vpn_service_templates | default([]) %}
+{% set test_list = [] %}
+{% if item.pim_template is defined %}
+{% set _ = test_list.append(item.pim_template) %}
+{% endif %}
+{% set vpn_service_pim_templates_test = ','.join(test_list | map('string')) %}
+{% set _ = vpn_service_pim_template.append(vpn_service_pim_templates_test) %}
+{% endfor %}
+
+{% set rec_pim_templates = vpn_service_pim_template %}
+    ${pim_temp_list}=   Create List   {{ rec_pim_templates | join('   ') }}
+    Set Suite Variable    ${pim_temp_list}
+
+    ${rec_pim_temp_list}=    Create List
+    ${pim_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_vpn")]..subTemplates[?(@.templateType=="cedge_pim")].templateId
+    FOR    ${id}    IN    @{pim_temp_id}
+        ${rec_pim_temp_name}=    Get Value From Json    ${templates_id.json()}    $..data[?(@.templateId=="${id}")].templateName
+        Append To List    ${rec_pim_temp_list}    ${rec_pim_temp_name[0]}
+    END
+    Log    From API:${rec_pim_temp_list}
+    Log    From YAML:${pim_temp_list}
+    Lists Should Be Equal    ${rec_pim_temp_list}    ${pim_temp_list}    ignore_order=True    msg=pim templates
 
 {% set rec_vpn0_ospf_template = [] %}
 {% if edt.vpn_0_template.ospf_template is defined %}
