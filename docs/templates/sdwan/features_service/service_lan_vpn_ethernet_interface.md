@@ -6,7 +6,7 @@ Configure LAN VPN Ethernet interface feature.
 
 ### Examples
 
-Example-1: The example below demonstrates how to configure a service ethernet interface feature under LAN VPN feature within a service profile with static IPv4 and IPv6 address settings. The interface is configured with VRRP high availability for both IPv4 and IPv6 address families, including tracking objects for failover scenarios.
+Example-1: The example below demonstrates how to configure a service ethernet interface feature under LAN VPN feature within a service profile with static IPv4 and IPv6 address settings. The interface is configured with VRRP high availability for both IPv4 and IPv6 address families, including tracking object for failover scenarios.
 
 ```yaml
 sdwan:
@@ -20,7 +20,7 @@ sdwan:
             vpn_id: 20
             vpn_name: vpn20-lan
             ethernet_interfaces:
-              - name: inet_lan_static
+              - name: lan_int_static
                 interface_name: GigabitEthernet0/0/1
                 interface_description: "Branch LAN Interface with VRRP HA"
                 shutdown: false
@@ -44,7 +44,6 @@ sdwan:
                     global_prefix: 2001:db8:20::1/64
                     priority: 110
                     timer: 1000
-                ipv4_tracker_group: branch_ip_tracker_group
 ```
 
 Example-2: The example below demonstrates how to configure a LAN VPN ethernet interface feature within a service profile with dynamic IPv4 and IPv6 address settings.
@@ -60,7 +59,7 @@ sdwan:
             vpn_id: 30
             vpn_name: vpn30-lan
             ethernet_interfaces:
-              - name: inet_lan_dynamic
+              - name: lan_int_dynamic
                 interface_name: GigabitEthernet0/0/2
                 interface_description: "DHCP Client Interface"
                 ipv4_configuration_type: dynamic
