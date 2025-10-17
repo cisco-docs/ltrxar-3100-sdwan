@@ -416,6 +416,10 @@ objects:
     template: service_lan_vpn
     folder: features_service
     paths: [sdwan.feature_profiles.service_profiles.lan_vpns]
+  - name: Service LAN VPN Ethernet Interface Feature
+    template: service_lan_vpn_ethernet_interface
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.lan_vpn_ethernet_interfaces]
   - name: Service Object Tracker Group Feature
     template: service_object_tracker_group
     folder: features_service

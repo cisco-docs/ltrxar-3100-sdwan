@@ -86,6 +86,23 @@ class Rule:
                             results.append(
                                 f"Object Tracker (Group) {item['tracker_object']} is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}], "
                                 f"but is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].{tracker_block}")
+                # Validate tracker references in ethernet interfaces
+                for ethernet_interface in lan_vpn.get("ethernet_interfaces", []):
+                    if ethernet_interface.get("ipv4_tracker") and ethernet_interface["ipv4_tracker"] not in defined_elements["ipv4_trackers"]:
+                        results.append(
+                            f"IPv4 Tracker {ethernet_interface['ipv4_tracker']} is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].ipv4_trackers, "
+                            f"but is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ethernet_interfaces[{ethernet_interface.get('interface_name', '')}].ipv4_tracker")
+                    if ethernet_interface.get("ipv4_tracker_group") and ethernet_interface["ipv4_tracker_group"] not in defined_elements["ipv4_tracker_groups"]:
+                        results.append(
+                            f"IPv4 Tracker Group {ethernet_interface['ipv4_tracker_group']} is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}].ipv4_tracker_groups, "
+                            f"but is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ethernet_interfaces[{ethernet_interface.get('interface_name', '')}].ipv4_tracker_group")
+                    for vrrp_group in ethernet_interface.get("ipv4_vrrp_groups", []):
+                        for tracking_object in vrrp_group.get("tracking_objects", []):
+                            if "tracker_object" in tracking_object:
+                                if tracking_object["tracker_object"] not in defined_elements["object_trackers"] and tracking_object["tracker_object"] not in defined_elements["object_tracker_groups"]:
+                                    results.append(
+                                        f"Object Tracker (Group) {tracking_object['tracker_object']} is not defined in sdwan.feature_profiles.service_profiles[{service_profile['name']}], "
+                                        f"but is referenced in sdwan.feature_profiles.service_profiles[{service_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ethernet_interfaces[{ethernet_interface.get('interface_name', '')}].ipv4_vrrp_groups.tracking_objects")
                                             # Validate BGP reference in WAN VPN
                 # Validate routing protocol references
                 attached_bgp = lan_vpn.get("bgp", {})

@@ -31,6 +31,14 @@ class Rule:
             "parameter_names" : ["endpoint_port", "endpoint_url"],
         },
         {
+            "path": "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces",
+            "parameter_names" : ["ipv4_tracker", "ipv4_tracker_group"],
+        },
+        {
+            "path": "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces",
+            "parameter_names" : ["ipv6_tracker", "ipv6_tracker_group"],
+        },
+        {
             "path": "sdwan.feature_profiles.system_profiles.ipv4_device_access_policy.sequences.match_entries",
             "parameter_names": ["destination_data_prefix_list", "destination_data_prefixes"],
         },

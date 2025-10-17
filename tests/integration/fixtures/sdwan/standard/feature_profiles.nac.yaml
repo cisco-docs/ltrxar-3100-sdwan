@@ -339,8 +339,8 @@ sdwan:
             propagate_community: true
             router_id_variable: vpn_service_bgp_router_id
         dhcp_servers:
-          - name: dhcp-server-vpn11
-            description: LAN DHCP Server VPN 11
+          - name: dhcp_server_vpn1
+            description: LAN DHCP Server VPN 1
             pool_network_address: 10.10.10.0
             pool_subnet_mask: "255.255.255.0"
             default_gateway: 10.10.10.1
@@ -357,8 +357,8 @@ sdwan:
               - 10.10.10.1-10.10.10.5
               - 10.10.10.10-10.10.10.15
             static_leases:
-              - mac_address_variable: vpn10_static_lease_mac1
-                ip_address_variable: vpn10_static_lease_ip1
+              - mac_address_variable: vpn1_static_lease_mac1
+                ip_address_variable: vpn1_static_lease_ip1
               - mac_address: 52:54:00:04:ce:de
                 ip_address: 10.10.10.100
             options:
@@ -431,6 +431,36 @@ sdwan:
                 actions:
                   log: true
                   counter_name: service_drop
+          - name: service_ipv4_acl_in
+            description: service ipv4 access control list ingress
+            default_action: drop
+            sequences:
+              - id: 1
+                name: acl
+                base_action: accept
+                match_entries:
+                  destination_data_prefix: 192.168.0.0/16
+                  source_data_prefix: 192.168.0.0/16
+                actions:
+                  counter_name: service_accept
+                  dscp: 8
+                  log: true
+          - name: service_ipv4_acl_out
+            description: service ipv4 access control list egress
+            default_action: accept
+            sequences:
+              - id: 1
+                name: acl
+                base_action: accept
+                match_entries:
+                  destination_data_prefix: 192.168.0.0/16
+                  source_data_prefix: 192.168.0.0/16
+                  destination_ports:
+                    - 8080
+                actions:
+                  counter_name: service_accept
+                  dscp: 10
+                  log: true
         ipv4_tracker_groups:
           - name: service_ipv4_tracker_group
             tracker_boolean: or
@@ -468,6 +498,74 @@ sdwan:
             vpn_name: VPN1
             bgp: service_bgp
             eigrp: service_eigrp
+            ethernet_interfaces:
+              - name: lan_interface_static
+                description: LAN Interface
+                dhcp_server: dhcp_server_vpn1
+                ipv4_tracker: static_route_ip_tracker
+                interface_name: GigabitEthernet3
+                interface_description: Full LAN Interface
+                arp_timeout: 1200
+                arp_entries:
+                  - ip_address: 10.0.0.10
+                    mac_address: 00:0C:29:11:22:33
+                ipv4_egress_acl: service_ipv4_acl_out
+                ipv4_ingress_acl: service_ipv4_acl_in
+                ipv4_configuration_type: static
+                ipv4_address: 10.0.0.1
+                ipv4_subnet_mask: 255.255.255.0
+                ipv4_secondary_addresses:
+                  - address: 10.0.0.2
+                    subnet_mask: 255.255.255.0
+                  - address: 10.1.0.12
+                    subnet_mask: 255.255.255.0
+                ipv4_dhcp_helpers:
+                  - 10.0.1.1
+                  - 10.0.1.2
+                ipv4_vrrp_groups:
+                  - id: 10
+                    priority: 120
+                    timer: 1000
+                    track_omp: false
+                    address: 10.0.0.254
+                    secondary_addresses:
+                      - address: 10.0.0.253
+                        subnet_mask: 255.255.255.0
+                    tloc_preference_change: true
+                    tloc_preference_change_value: 100
+                    tracking_objects:
+                      - tracker_object: object_route_tracker
+                        action: decrement
+                        decrement_value: 20
+                ipv6_configuration_type: static
+                ipv6_address: 2001:db8::1/64
+                ipv6_secondary_addresses:
+                  - address: 2001:db8::2/64
+                ipv6_dhcp_helpers:
+                  - address: 2001:db8:ffff::1
+                    vpn_id: 1
+                ipv6_vrrp_groups:
+                  - id: 20
+                    priority: 120
+                    timer: 1000
+                    track_omp: false
+                    link_local_address: fe80::1
+                    global_prefix: 2001:db8::ffff/64
+                mac_address: 00:0C:29:A1:B2:C3
+                interface_mtu: 1500
+                ip_mtu: 1500
+                autonegotiate: true
+                shutdown: false
+                icmp_redirect_disable: true
+                load_interval: 30
+                tcp_mss: 1460
+                trustsec_enable_enforced_propogation: false
+                trustsec_enable_sgt_propogation: false
+                trustsec_enforced_sgt: 200
+                trustsec_propogate: true
+                trustsec_sgt: 100
+                xconnect: test
+                shaping_rate: 10000
             ipv4_omp_admin_distance: 1
             ipv4_omp_advertise_routes:
               - protocol: bgp
@@ -514,9 +612,8 @@ sdwan:
                 gateway: nexthop
                 next_hops:
                   - address: 10.2.1.4
-                    administrative_distance: 1
+                    administrative_distance: 10
                   - address: 10.2.2.1
-                    administrative_distance: 1
               - network_address: 10.10.11.0
                 subnet_mask: 255.255.255.0
                 gateway: null0
@@ -555,6 +652,7 @@ sdwan:
               - network_address: 1.2.3.0
                 subnet_mask: 255.255.255.0
                 service: sig
+            # to be added when gre and ipsec interfaces are supported
             # gre_routes:
             #   - network_address: 10.2.3.0
             #     subnet_mask: 255.255.255.0
@@ -621,6 +719,17 @@ sdwan:
               - route_target: 1.1.1.3:400
           - name: service_lan_vpn2
             description: Branch LAN VPN 2
+            ethernet_interfaces:
+              - name: lan_interface_vpn2
+                description: LAN Interface
+                interface_name: GigabitEthernet4
+                interface_description: LAN Interface vpn2
+                ipv4_configuration_type: dynamic
+                ipv4_dhcp_distance: 1
+                ipv6_configuration_type: dynamic
+                ipv6_dhcp_secondary_addresses:
+                  - address: 2001:db9::2/64
+                  - address: 2001:db9::3/64
             ipv4_primary_dns_address: 10.2.1.1
             ipv4_omp_advertise_routes:
               - protocol: connected
@@ -676,18 +785,18 @@ sdwan:
             description: service ospf feature
             areas:
               - number: 0
-                # interfaces: # uncomment when lan vpn interface ethernet is supported
-                #   - name: GigabitEthernet3
-                #     authentication_message_digest_key: VzBgdxMK3Lksfaf
-                #     authentication_message_digest_key_id: 1
-                #     authentication_type: message-digest
-                #     cost: 10
-                #     hello_interval: 10
-                #     dead_interval: 40
-                #     designated_router_priority: 100
-                #     lsa_retransmit_interval: 100
-                #     network_type: broadcast
-                #     passive: false
+                interfaces:
+                  - name: GigabitEthernet3
+                    authentication_message_digest_key: VzBgdxMK3Lksfaf
+                    authentication_message_digest_key_id: 1
+                    authentication_type: message-digest
+                    cost: 10
+                    hello_interval: 10
+                    dead_interval: 40
+                    designated_router_priority: 100
+                    lsa_retransmit_interval: 100
+                    network_type: broadcast
+                    passive: false
                 ranges:
                   - cost: 50
                     network_address: 192.168.8.0
@@ -1007,19 +1116,19 @@ sdwan:
           ipv4_servers:
             - hostname_ip: 10.0.0.1
               severity: informational
-              # source_interface: GigabitEthernet1  ! uncomment when lan/vpn supported
+              source_interface: GigabitEthernet3
               tls_enable: true
               tls_properties_custom_profile: true
               tls_properties_profile: tls1
-              # vpn_id: 0 ! uncomment when lan/vpn supported
+              vpn_id: 1
           ipv6_servers:
             - hostname_ip: fc00::1
               severity: error
-              # source_interface: GigabitEthernet1 ! uncomment when lan/vpn supported
+              source_interface: GigabitEthernet3
               tls_enable: true
               tls_properties_custom_profile: true
               tls_properties_profile: tls1
-              # vpn_id: 0 ! uncomment when lan/vpn supported
+              vpn_id: 1
           tls_profiles:
             - cipher_suites:
                 - aes-128-cbc-sha
@@ -1034,15 +1143,15 @@ sdwan:
           #   - id: 1
           #     md5_value: jYbmu7-honpyq-gamtyk
           authoritative_ntp_server: true
-          # authoritative_ntp_server_source_interface: Loopback0 ! uncomment when lan/vpn supported
+          authoritative_ntp_server_source_interface: GigabitEthernet3
           authoritative_ntp_server_stratum: 5
           servers:
             - authentication_key: 1
               hostname_ip: 10.0.0.1
               prefer: true
-              # source_interface: Loopback0 ! uncomment when lan/vpn supported
+              source_interface: GigabitEthernet3
               ntp_version: 4
-              # vpn_id: 511 ! uncomment when lan/vpn supported
+              vpn_id: 1
           trusted_keys:
             - 1
         omp:
@@ -1642,11 +1751,11 @@ sdwan:
               ipv4_nat_type: interface
               ipv4_nat_tcp_timeout: 1200
               ipv4_nat_udp_timeout: 1200
-              # ipv4_nat_static_entries: ! uncomment when lan/vpn supported
-              #   - direction: inside
-              #     source_ip_variable: vpn0_ipv4_nat_source_ip
-              #     source_vpn_id: 10
-              #     translate_ip_variable: vpn0_ipv4_nat_translate_ip
+              ipv4_nat_static_entries:
+                - direction: inside
+                  source_ip_variable: vpn0_ipv4_nat_source_ip
+                  source_vpn_id: 1
+                  translate_ip_variable: vpn0_ipv4_nat_translate_ip
               ipv4_tracker_group: ipv4_tracker_group
               ipv4_subnet_mask_variable: vpn0_inet_mask
               ipv6_configuration_type: static

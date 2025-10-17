@@ -164,11 +164,29 @@ class Rule:
                         results.append(f"'networks' attribute is not allowed for protocol '{protocol}' in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ipv6_omp_advertise_routes[{route_index}]")
                     elif protocol !=  "aggregate" and  "aggregates" in route:
                         results.append(f"'aggregates' attribute is not allowed for protocol '{protocol}' in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ipv6_omp_advertise_routes[{route_index}]")
-                # Check if NAT pools exist
-                if not lan_vpn.get("nat_pools") and lan_vpn.get("nat_port_forwards"):
-                    results.append(
-                        f"nat_port_forward is defined but no NAT pools exist in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}]")
-                if not lan_vpn.get("nat_pools") and lan_vpn.get("static_nat_entries"):
-                    results.append(
-                        f"static_nat is defined but no NAT pools exist in sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}]")                        
+                    
+                # Validate ethernet interfaces
+                for ethernet_interface in lan_vpn.get("ethernet_interfaces", []):
+                    if ethernet_interface.get("ipv4_configuration_type", "static") == "static":
+                        if "ipv4_address" not in ethernet_interface and "ipv4_address_variable" not in ethernet_interface:
+                            results.append(f"ipv4_configuration type is static but ipv4_address is not defined in the sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ethernet_interfaces[{ethernet_interface.get('name', '')}]")
+                        if "ipv4_subnet_mask" not in ethernet_interface and "ipv4_subnet_mask_variable" not in ethernet_interface:
+                            results.append(f"ipv4_configuration type is static but ipv4_subnet_mask is not defined in the sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ethernet_interfaces[{ethernet_interface.get('name', '')}]")
+                        if "ipv4_dhcp_distance" in ethernet_interface or "ipv4_dhcp_distance_variable" in ethernet_interface:
+                            results.append(f"ipv4_configuration type is static but ipv4_dhcp_distance is defined in the sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ethernet_interfaces[{ethernet_interface.get('name', '')}]")
+                    elif ethernet_interface.get("ipv4_configuration_type", "static") == "dynamic":
+                        if "ipv4_address" in ethernet_interface or "ipv4_address_variable" in ethernet_interface:
+                            results.append(f"ipv4_configuration type is dynamic but static ipv4_address is defined in the sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ethernet_interfaces[{ethernet_interface.get('name', '')}]")
+                        if "ipv4_subnet_mask" in ethernet_interface or "ipv4_subnet_mask_variable" in ethernet_interface:
+                            results.append(f"ipv4_configuration type is dynamic but static ipv4_subnet_mask is defined in the sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ethernet_interfaces[{ethernet_interface.get('name', '')}]")
+                    if "ipv4_secondary_addresses" in ethernet_interface and ethernet_interface.get("ipv4_configuration_type", "static") != "static":
+                        results.append(f"ipv4_secondary_addresses is defined but ipv4_configuration type is not static in the sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ethernet_interfaces[{ethernet_interface.get('name', '')}]")
+                    if ethernet_interface.get("ipv6_configuration_type", "none") == "static":
+                        if "ipv6_address" not in ethernet_interface and "ipv6_address_variable" not in ethernet_interface:
+                            results.append(f"ipv6_configuration type is static but ipv6_address is not defined in the sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ethernet_interfaces[{ethernet_interface.get('name', '')}]")
+                    if ethernet_interface.get("autonegotiate") and ethernet_interface.get("speed"):
+                        results.append(f"autonegotiate is true but speed is defined in the sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ethernet_interfaces[{ethernet_interface.get('name', '')}]")
+                    for vrrp_group in ethernet_interface.get("ipv4_vrrp_groups", []):
+                        if "tloc_preference_change_value" in vrrp_group and not vrrp_group.get("tloc_preference_change"):
+                            results.append(f"tloc_preference_change_value is defined but tloc_preference_change is not present or false in the sdwan.feature_profiles.service_profiles[{feature_profile['name']}].lan_vpns[{lan_vpn.get('name', '')}].ethernet_interfaces[{ethernet_interface.get('name', '')}].ipv4_vrrp_groups")
         return results
