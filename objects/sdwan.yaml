@@ -338,6 +338,13 @@ objects:
     template: configuration_group
     folder: configuration_groups
     paths: [sdwan.configuration_groups]
+  - name: Application Priority Profile
+    template: application_priority
+    folder: feature_profiles
+    paths: [
+      sdwan.feature_profiles.application_priority.name,
+      sdwan.feature_profiles.application_priority.description,
+    ]
   - name: CLI Profile
     template: cli
     folder: feature_profiles
@@ -380,6 +387,10 @@ objects:
       sdwan.feature_profiles.transport_profiles.name,
       sdwan.feature_profiles.transport_profiles.description,
     ]
+  - name: Application Priority QoS Policy
+    template: application_priority_qos_policy
+    folder: features_application_priority
+    paths: [sdwan.feature_profiles.application_priority.qos_policies]
   - name: CLI Config Feature
     template: cli_config
     folder: features_cli
@@ -568,10 +579,6 @@ objects:
     template: as_path_list
     folder: policy_objects
     paths: [sdwan.feature_profiles.policy_object_profile.as_path_lists]
-  - name: Class Map
-    template: class_map
-    folder: policy_objects
-    paths: [sdwan.feature_profiles.policy_object_profile.class_maps]
   - name: Color List
     template: color_list
     folder: policy_objects
@@ -584,6 +591,10 @@ objects:
     template: extended_community_list
     folder: policy_objects
     paths: [sdwan.feature_profiles.policy_object_profile.extended_community_lists]
+  - name: Forwarding Class
+    template: forwarding_class
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.forwarding_classes]
   - name: IPv4 Data Prefix List
     template: ipv4_data_prefix_list
     folder: policy_objects

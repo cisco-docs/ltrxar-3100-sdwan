@@ -3119,12 +3119,26 @@ configuration_group_device_tag:
   name: regex('^[^&<>! \"]{1,128}$')
   features: list(regex('^[^&<>! \"]{1,128}$'), required=False)
 feature_profiles:
+  application_priority_profiles: list(include("feature_profiles_application_priority"), required=False)
   cli_profiles: list(include("feature_profiles_cli"), required=False)
   other_profiles: list(include("feature_profiles_other"), required=False)
   policy_object_profile: include("feature_profiles_policy_object", required=False)
   service_profiles: list(include("feature_profiles_service"), required=False)
   system_profiles: list(include("feature_profiles_system"), required=False)
   transport_profiles: list(include("feature_profiles_transport"), required=False)
+feature_profiles_application_priority:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  qos_policies: list(include("feature_profiles_application_priority_qos_policy"), required=False)
+feature_profiles_application_priority_qos_policy:
+  name: regex('^[^&<>! \"]{1,128}$')
+  target_interfaces: list(str(), required=False)
+  target_interfaces_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
+  qos_schedulers: list(include("feature_profiles_application_priority_qos_policy_qos_scheduler"), min=2)
+feature_profiles_application_priority_qos_policy_qos_scheduler:
+  bandwidth_percent: int(min=1, max=99)
+  drops: enum("tail-drop", "red-drop")
+  forwarding_class: regex('^[^&<>! \"]{1,128}$')
 feature_profiles_cli:
   name: regex('^[^&<>! \"]{1,128}$')
   description: str(required=False)
@@ -3192,10 +3206,10 @@ feature_profiles_policy_object:
   app_probe_classes: list(include("feature_profiles_policy_object_app_probe_class"), required=False)
   application_lists: list(include("feature_profiles_policy_object_application_list"), required=False)
   as_path_lists: list(include("feature_profiles_policy_object_as_path_list"), required=False)
-  class_maps: list(include("feature_profiles_policy_object_class_map"), required=False)
   color_lists: list(include("feature_profiles_policy_object_color_list"), required=False)
   expanded_community_lists: list(include("feature_profiles_policy_object_expanded_community_list"), required=False)
   extended_community_lists: list(include("feature_profiles_policy_object_extended_community_list"), required=False)
+  forwarding_classes: list(include("feature_profiles_policy_object_forwarding_class"), required=False)
   ipv4_data_prefix_lists: list(include("feature_profiles_policy_object_ipv4_data_prefix_list"), required=False)
   ipv4_prefix_lists: list(include("feature_profiles_policy_object_ipv4_prefix_list"), required=False)
   ipv6_data_prefix_lists: list(include("feature_profiles_policy_object_ipv6_data_prefix_list"), required=False)
@@ -3222,10 +3236,6 @@ feature_profiles_policy_object_as_path_list:
   description: str(required=False)
   id: int(min=1, max=500)
   as_paths: list(str(), min=1)
-feature_profiles_policy_object_class_map:
-  name: regex('^[^&<>! \"]{1,128}$')
-  description: str(required=False)
-  queue: int(min=0, max=7)
 feature_profiles_policy_object_color_list:
   name: regex('^[^&<>! \"]{1,32}$')
   colors: list(enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6"))
@@ -3237,6 +3247,10 @@ feature_profiles_policy_object_extended_community_list:
   name: regex('^[^&<>! \"]{1,128}$')
   description: str(required=False)
   extended_communities: list(regex('^(rt|soo)\s([\d\.]+):(\d+)$'), min=1)
+feature_profiles_policy_object_forwarding_class:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  queue: int(min=0, max=7)
 feature_profiles_policy_object_ipv4_data_prefix_list:
   name: regex('^[^&<>! \"]{1,128}$')
   description: str(required=False)

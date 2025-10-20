@@ -11,6 +11,7 @@ class Rule:
     #########################################################################################################################################
 
     paths = [
+        "sdwan.feature_profiles.application_priority_profiles.qos_policies.target_interfaces",
         "sdwan.feature_profiles.other_profiles.thousandeyes.account_group_token",
         "sdwan.feature_profiles.other_profiles.ucse.cimc_ipv4_address",
         "sdwan.feature_profiles.other_profiles.ucse.interfaces.ipv4_address",

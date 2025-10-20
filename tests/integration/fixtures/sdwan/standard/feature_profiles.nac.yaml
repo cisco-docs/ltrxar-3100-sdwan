@@ -1,5 +1,25 @@
 sdwan:
   feature_profiles:
+    application_priority_profiles:
+      - name: app_priority1
+        qos_policies:
+          - name: qos_policy1
+            target_interfaces:
+              - GigabitEthernet1
+              - GigabitEthernet2
+            qos_schedulers:
+              - bandwidth_percent: 20
+                drops: tail-drop
+                forwarding_class: realtime
+              - bandwidth_percent: 25
+                forwarding_class: transactional
+                drops: red-drop
+              - bandwidth_percent: 30
+                drops: red-drop
+                forwarding_class: default
+              - bandwidth_percent: 25
+                drops: red-drop
+                forwarding_class: bulk
     cli_profiles:
       - name: cli1
         config:
@@ -110,19 +130,6 @@ sdwan:
           as_paths:
             - ^65100
             - ^65101
-      class_maps:
-        - name: realtime
-          description: realtime class map
-          queue: 0
-        - name: transactional
-          description: transactional class map
-          queue: 1
-        - name: default
-          description: default class map
-          queue: 2
-        - name: bulk
-          description: bulk class map
-          queue: 3
       color_lists:
         - name: CL-INTERNET
           colors:
@@ -149,6 +156,19 @@ sdwan:
           extended_communities:
             - soo 1:1
             - rt 1:1
+      forwarding_classes:
+        - name: realtime
+          description: realtime forwarding class
+          queue: 0
+        - name: transactional
+          description: transactional forwarding class
+          queue: 1
+        - name: default
+          description: default forwarding class
+          queue: 2
+        - name: bulk
+          description: bulk forwarding class
+          queue: 3
       ipv4_data_prefix_lists:
         - name: ipv4_dpl
           description: ipv4 data prefix list

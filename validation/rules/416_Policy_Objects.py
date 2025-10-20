@@ -17,9 +17,9 @@ class Rule:
         inventory_policy_objects = inventory.get('sdwan', {}).get('feature_profiles', {}).get("policy_object_profile", {})
         for app_probe_class in inventory_policy_objects.get("app_probe_classes", []):
             if app_probe_class.get('forwarding_class', None):
-                first_class_match = next((item for item in inventory_policy_objects.get("class_maps", []) if item.get('name') == app_probe_class['forwarding_class']), None)
+                first_class_match = next((item for item in inventory_policy_objects.get("forwarding_classes", []) if item.get('name') == app_probe_class['forwarding_class']), None)
                 if not first_class_match:
-                    results.append(f"The forwarding class '{app_probe_class['forwarding_class']}' in app_probe_class '{app_probe_class['name']}' is not defined in sdwan.feature_profiles.policy_object_profile.class_maps")
+                    results.append(f"The forwarding class '{app_probe_class['forwarding_class']}' in app_probe_class '{app_probe_class['name']}' is not defined in sdwan.feature_profiles.policy_object_profile.forwarding_classes")
         
         # Validate Preferred Color Group feature - Tertiary Colors should not be configured without configuring Secondary Colors
         for preferred_color_group in inventory.get('sdwan', {}).get('feature_profiles', {}).get("policy_object_profile", {}).get("preferred_color_groups", []):
