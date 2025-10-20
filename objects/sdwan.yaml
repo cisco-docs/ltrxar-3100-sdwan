@@ -572,6 +572,10 @@ objects:
     template: class_map
     folder: policy_objects
     paths: [sdwan.feature_profiles.policy_object_profile.class_maps]
+  - name: Color List
+    template: color_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.color_lists]
   - name: Expanded Community List
     template: expanded_community_list
     folder: policy_objects

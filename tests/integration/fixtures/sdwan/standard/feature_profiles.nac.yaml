@@ -123,6 +123,19 @@ sdwan:
         - name: bulk
           description: bulk class map
           queue: 3
+      color_lists:
+        - name: CL-INTERNET
+          colors:
+            - custom1
+            - custom2
+        - name: COLOR-INTERNET-CCT-TEST
+          colors:
+            - custom1
+            - custom2
+        - name: COLOR-INTERNET-CCT-TEST2
+          colors:
+            - gold
+            - silver
       expanded_community_lists:
         - name: community_legacy_wan
           description: expanded community list

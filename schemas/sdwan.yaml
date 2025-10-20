@@ -3193,6 +3193,7 @@ feature_profiles_policy_object:
   application_lists: list(include("feature_profiles_policy_object_application_list"), required=False)
   as_path_lists: list(include("feature_profiles_policy_object_as_path_list"), required=False)
   class_maps: list(include("feature_profiles_policy_object_class_map"), required=False)
+  color_lists: list(include("feature_profiles_policy_object_color_list"), required=False)
   expanded_community_lists: list(include("feature_profiles_policy_object_expanded_community_list"), required=False)
   extended_community_lists: list(include("feature_profiles_policy_object_extended_community_list"), required=False)
   ipv4_data_prefix_lists: list(include("feature_profiles_policy_object_ipv4_data_prefix_list"), required=False)
@@ -3225,6 +3226,9 @@ feature_profiles_policy_object_class_map:
   name: regex('^[^&<>! \"]{1,128}$')
   description: str(required=False)
   queue: int(min=0, max=7)
+feature_profiles_policy_object_color_list:
+  name: regex('^[^&<>! \"]{1,32}$')
+  colors: list(enum("default", "mpls", "metro-ethernet", "biz-internet", "public-internet", "lte", "3g", "red", "green", "blue", "gold", "silver", "bronze", "custom1", "custom2", "custom3", "private1", "private2", "private3", "private4", "private5", "private6"))
 feature_profiles_policy_object_expanded_community_list:
   name: regex('^[^&<>! \"]{1,128}$')
   description: str(required=False)
