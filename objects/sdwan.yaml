@@ -342,8 +342,8 @@ objects:
     template: application_priority
     folder: feature_profiles
     paths: [
-      sdwan.feature_profiles.application_priority.name,
-      sdwan.feature_profiles.application_priority.description,
+      sdwan.feature_profiles.application_priority_profiles.name,
+      sdwan.feature_profiles.application_priority_profiles.description,
     ]
   - name: CLI Profile
     template: cli
