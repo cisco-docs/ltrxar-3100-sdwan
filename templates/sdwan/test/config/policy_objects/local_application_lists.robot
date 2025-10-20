@@ -6,7 +6,7 @@ Default Tags    sdwan   config   classic_policy_objects
 Resource        ../../sdwan_common.resource
 
 
-{% if sdwan.policy_objects.local_application_lists is defined %}
+{% if sdwan.policy_objects is defined and sdwan.policy_objects.local_application_lists is defined %}
 
 
 *** Test Cases ***

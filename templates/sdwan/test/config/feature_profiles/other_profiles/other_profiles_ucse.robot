@@ -7,6 +7,7 @@ Default Tags    sdwan    config    feature_profiles    other_profiles    ucse
 Resource        ../../../sdwan_common.resource
 
 
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.other_profiles is defined %}
 {% set profile_ucse_list = [] %}
 {% for profile in sdwan.feature_profiles.other_profiles %}
  {% if profile.ucse is defined %}
@@ -58,4 +59,6 @@ Verify Feature Profiles Other Profiles {{ profile.name }} UCSE Feature {{ profil
 {% endif %}
 {% endif %}
 {% endfor %}
+{% endif %}
+
 {% endif %}

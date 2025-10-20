@@ -7,7 +7,7 @@ Default Tags    sdwan    config    feature_profiles     policy_object_profile   
 Resource        ../../../sdwan_common.resource
 
 
-{% if sdwan.feature_profiles.policy_object_profile.class_maps is defined %}
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.policy_object_profile is defined and sdwan.feature_profiles.policy_object_profile.class_maps is defined %}
 
 *** Test Cases ***
 Get Policy Object Profile

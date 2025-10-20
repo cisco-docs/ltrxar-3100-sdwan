@@ -6,7 +6,7 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_profiles   transport_profiles  wan_vpn  ethernet_interfaces
 Resource        ../../../sdwan_common.resource
 
-
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.transport_profiles is defined %}
 {% set profile_wan_vpn = [] %}
 {% for profile in sdwan.feature_profiles.transport_profiles %}
  {% if profile.wan_vpn is defined %}
@@ -260,5 +260,7 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} WAN VPN {{ profile
 {% endif %}
     
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

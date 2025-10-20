@@ -7,6 +7,7 @@ Default Tags    sdwan    config    feature_profiles    other_profiles   thousand
 Resource        ../../../sdwan_common.resource
 
 
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.other_profiles is defined %}
 {% set profile_te_list = [] %}
 {% for profile in sdwan.feature_profiles.other_profiles %}
  {% if profile.thousandeyes is defined %}
@@ -48,4 +49,6 @@ Verify Feature Profiles Other Profiles {{ profile.name }} Thousandeyes Feature {
 
 {% endif %}
 {% endfor %}
+{% endif %}
+
 {% endif %}

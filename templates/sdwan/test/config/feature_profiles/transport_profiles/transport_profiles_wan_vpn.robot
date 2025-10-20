@@ -7,7 +7,7 @@ Default Tags    sdwan    config    feature_profiles     transport_profiles   wan
 Resource        ../../../sdwan_common.resource
 
 {% set profile_wan_vpn = [] %}
-{% for profile in sdwan.feature_profiles.transport_profiles %}
+{% for profile in sdwan.feature_profiles.transport_profiles | default([]) %}
  {% if profile.wan_vpn is defined %}
   {% set _ = profile_wan_vpn.append(profile.name) %}
  {% endif %}

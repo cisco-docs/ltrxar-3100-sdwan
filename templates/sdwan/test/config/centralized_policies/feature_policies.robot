@@ -133,14 +133,14 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
             ${cct_sr_sl_id_in_list_length} =    Get Length    ${cct_sr_sl_id_in_list[0]}
             ${cct_sr_sl_id_in_list}=    Set Variable    ${cct_sr_sl_id_in_list[0]}
         END
-    Should Be Equal As Integers    ${cct_sr_sl_id_in_list_length}    {{ cct_policy.site_region.site_lists_in | default([]) | length }}    msg=custom control topology site lists in length for {{ cct_policy.policy_definition }}
+    Should Be Equal As Integers    ${cct_sr_sl_id_in_list_length}    {{ (cct_policy.site_region | default({})).site_lists_in | default([]) | length }}    msg=custom control topology site lists in length for {{ cct_policy.policy_definition }}
     ${cct_sr_sl_id_in_name_list}=    Create List
     FOR    ${cct_sr_sl_id_in}    IN    @{cct_sr_sl_id_in_list}
         ${site_list_in_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/site/${cct_sr_sl_id_in}
         ${site_in_name}=    Get Value From Json    ${site_list_in_id.json()}    $.name
         Append To List    ${cct_sr_sl_id_in_name_list}    ${site_in_name[0]}
     END
-    ${exp_cct_sr_sl_id_in}=    Create List    {{ cct_policy.site_region.site_lists_in | default([]) | join('   ') }}
+    ${exp_cct_sr_sl_id_in}=    Create List    {{ (cct_policy.site_region | default({})).site_lists_in | default([]) | join('   ') }}
     Lists Should Be Equal    ${cct_sr_sl_id_in_name_list}    ${exp_cct_sr_sl_id_in}    ignore_order=True    msg=custom control topology site lists in for {{ cct_policy.policy_definition }}
     
     # custom control topology Site List Out
@@ -152,14 +152,14 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
             ${cct_sr_sl_id_out_list_length} =    Get Length    ${cct_sr_sl_id_out_list[0]}
             ${cct_sr_sl_id_out_list}=    Set Variable    ${cct_sr_sl_id_out_list[0]}
         END
-    Should Be Equal As Integers    ${cct_sr_sl_id_out_list_length}    {{ cct_policy.site_region.site_lists_out | default([]) | length }}    msg=custom control topology site lists out length for {{ cct_policy.policy_definition }}
+    Should Be Equal As Integers    ${cct_sr_sl_id_out_list_length}    {{ (cct_policy.site_region | default({})).site_lists_out | default([]) | length }}    msg=custom control topology site lists out length for {{ cct_policy.policy_definition }}
     ${cct_sr_sl_id_out_name_list}=    Create List
     FOR    ${cct_sr_sl_id_out}    IN    @{cct_sr_sl_id_out_list}
         ${site_list_out_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/site/${cct_sr_sl_id_out}
         ${site_out_name}=    Get Value From Json    ${site_list_out_id.json()}    $.name
         Append To List    ${cct_sr_sl_id_out_name_list}    ${site_out_name[0]}
     END
-    ${exp_cct_sr_sl_id_out}=    Create List    {{ cct_policy.site_region.site_lists_out | default([]) | join('   ') }}
+    ${exp_cct_sr_sl_id_out}=    Create List    {{ (cct_policy.site_region | default({})).site_lists_out | default([]) | join('   ') }}
     Lists Should Be Equal    ${cct_sr_sl_id_out_name_list}    ${exp_cct_sr_sl_id_out}    ignore_order=True    msg=custom control topology site lists out for {{ cct_policy.policy_definition }}
 
     # custom control topology Region List In
@@ -171,14 +171,14 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
             ${cct_sr_rl_id_in_list_length} =    Get Length    ${cct_sr_rl_id_in_list[0]}
             ${cct_sr_rl_id_in_list}=    Set Variable    ${cct_sr_rl_id_in_list[0]}
         END
-    Should Be Equal As Integers    ${cct_sr_rl_id_in_list_length}    {{ cct_policy.site_region.region_lists_in | default([]) | length }}    msg=custom control topology region lists in length for {{ cct_policy.policy_definition }}
+    Should Be Equal As Integers    ${cct_sr_rl_id_in_list_length}    {{ (cct_policy.site_region | default({})).region_lists_in | default([]) | length }}    msg=custom control topology region lists in length for {{ cct_policy.policy_definition }}
     ${cct_sr_rl_id_in_name_list}=    Create List
     FOR    ${cct_sr_rl_id_in}    IN    @{cct_sr_rl_id_in_list}
         ${rl_in_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/region/${cct_sr_rl_id_in}
         ${rl_in_name}=    Get Value From Json    ${rl_in_id.json()}    $.name
         Append To List    ${cct_sr_rl_id_in_name_list}    ${rl_in_name[0]}
     END
-    ${exp_cct_sr_rl_id_in}=    Create List    {{ cct_policy.site_region.region_lists_in | default([]) | join('   ') }}
+    ${exp_cct_sr_rl_id_in}=    Create List    {{ (cct_policy.site_region | default({})).region_lists_in | default([]) | join('   ') }}
     Lists Should Be Equal    ${cct_sr_rl_id_in_name_list}    ${exp_cct_sr_rl_id_in}    ignore_order=True    msg=custom control topology region lists in for {{ cct_policy.policy_definition }}
 
     # custom control topology Region List Out
@@ -190,21 +190,21 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
             ${cct_sr_rl_id_out_list_length} =    Get Length    ${cct_sr_rl_id_out_list[0]}
             ${cct_sr_rl_id_out_list}=    Set Variable    ${cct_sr_rl_id_out_list[0]}
         END
-    Should Be Equal As Integers    ${cct_sr_rl_id_out_list_length}    {{ cct_policy.site_region.region_lists_out | default([]) | length }}    msg=custom control topology region lists out length for {{ cct_policy.policy_definition }}
+    Should Be Equal As Integers    ${cct_sr_rl_id_out_list_length}    {{ (cct_policy.site_region | default({})).region_lists_out | default([]) | length }}    msg=custom control topology region lists out length for {{ cct_policy.policy_definition }}
     ${cct_sr_rl_id_out_name_list}=    Create List
     FOR    ${cct_sr_rl_id_out}    IN    @{cct_sr_rl_id_out_list}
         ${rl_out_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/region/${cct_sr_rl_id_out}
         ${rl_out_name}=    Get Value From Json    ${rl_out_id.json()}    $.name
         Append To List    ${cct_sr_rl_id_out_name_list}    ${rl_out_name[0]}
     END
-    ${exp_cct_sr_rl_id_out}=    Create List    {{ cct_policy.site_region.region_lists_out | default([]) | join('   ') }}
+    ${exp_cct_sr_rl_id_out}=    Create List    {{ (cct_policy.site_region | default({})).region_lists_out | default([]) | join('   ') }}
     Lists Should Be Equal    ${cct_sr_rl_id_out_name_list}    ${exp_cct_sr_rl_id_out}    ignore_order=True    msg=custom control topology region lists out for {{ cct_policy.policy_definition }}
 
     # custom control topology Region In
-    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ cct_policy.policy_definition }}"]}")].entries[?(@.direction=="in")].regionIds[0]    {{ cct_policy.site_region.region_in | default("not_defined") }}    msg=custom control topology region in for {{ cct_policy.policy_definition }}
+    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ cct_policy.policy_definition }}"]}")].entries[?(@.direction=="in")].regionIds[0]    {{ (cct_policy.site_region | default({})).region_in | default("not_defined") }}    msg=custom control topology region in for {{ cct_policy.policy_definition }}
     
     # custom control topology Region Out
-    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ cct_policy.policy_definition }}"]}")].entries[?(@.direction=="out")].regionIds[0]    {{ cct_policy.site_region.region_out | default("not_defined") }}    msg=custom control topology region out for {{ cct_policy.policy_definition }}
+    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="control" & @.definitionId=="${cct_dict["{{ cct_policy.policy_definition }}"]}")].entries[?(@.direction=="out")].regionIds[0]    {{ (cct_policy.site_region | default({})).region_out | default("not_defined") }}    msg=custom control topology region out for {{ cct_policy.policy_definition }}
 {% endfor %}
 
     # application aware routing
@@ -231,14 +231,14 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
             ${aar_sl_id_list_length} =    Get Length    ${aar_sl_id_list[0]}
             ${aar_sl_id_list}=    Set Variable    ${aar_sl_id_list[0]}
         END
-    Should Be Equal As Integers    ${aar_sl_id_list_length}    {{ fp_app_route.site_region_vpn.site_lists | default([]) | length }}    msg=application aware routing site lists length for {{ fp_app_route.policy_definition }}
+    Should Be Equal As Integers    ${aar_sl_id_list_length}    {{ (fp_app_route.site_region_vpn | default({})).site_lists | default([]) | length }}    msg=application aware routing site lists length for {{ fp_app_route.policy_definition }}
     ${aar_sl_id_name_list}=    Create List
     FOR    ${id}    IN    @{aar_sl_id_list}
         ${site_list_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/site/${id}
         ${site_list_name}=    Get Value From Json    ${site_list_id.json()}    $.name
         Append To List    ${aar_sl_id_name_list}    ${site_list_name[0]}
     END
-    ${exp_aar_sl_id}=    Create List    {{ fp_app_route.site_region_vpn.site_lists | default([]) | join('   ') }}
+    ${exp_aar_sl_id}=    Create List    {{ (fp_app_route.site_region_vpn | default({})).site_lists | default([]) | join('   ') }}
     Lists Should Be Equal    ${aar_sl_id_name_list}    ${exp_aar_sl_id}    ignore_order=True    msg=application aware routing site lists for {{ fp_app_route.policy_definition }}
 
     # application aware routing Region List
@@ -256,7 +256,11 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
         ${region_list_name}=    Get Value From Json    ${region_list_id.json()}    $.name
         Append To List    ${aar_rl_id_name_list}    ${region_list_name[0]}
     END
-    ${exp_aar_rl_id}=    Create List    {{ [fp_app_route.site_region_vpn.region_list] | default([]) | join('   ') }}
+    {% if (fp_app_route.site_region_vpn | default({})).region_list | default([]) == [] %}
+    ${exp_aar_rl_id}=    Create List
+    {% else %}
+    ${exp_aar_rl_id}=    Create List    {{ (fp_app_route.site_region_vpn | default({})).region_list }}
+    {% endif %}
     Lists Should Be Equal    ${aar_rl_id_name_list}    ${exp_aar_rl_id}    ignore_order=True    msg=application aware routing region list for {{ fp_app_route.policy_definition }}
 
     # application aware routing vpn lists
@@ -268,19 +272,18 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
             ${aar_vl_id_list_length} =    Get Length    ${aar_vl_id_list[0]}
             ${aar_vl_id_list}=    Set Variable    ${aar_vl_id_list[0]}
         END
-    Should Be Equal As Integers    ${aar_vl_id_list_length}    {{ fp_app_route.site_region_vpn.vpn_lists | default([]) | length }}    msg=application aware routing vpn lists length for {{ fp_app_route.policy_definition }}
+    Should Be Equal As Integers    ${aar_vl_id_list_length}    {{ (fp_app_route.site_region_vpn | default({})).vpn_lists | default([]) | length }}    msg=application aware routing vpn lists length for {{ fp_app_route.policy_definition }}
     ${aar_vl_id_name_list}=    Create List
     FOR    ${id}    IN    @{aar_vl_id_list}
         ${vpn_list_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/vpn/${id}
         ${vpn_list_name}=    Get Value From Json    ${vpn_list_id.json()}    $.name
         Append To List    ${aar_vl_id_name_list}    ${vpn_list_name[0]}
     END
-    ${exp_aar_vl_id}=    Create List    {{ fp_app_route.site_region_vpn.vpn_lists | default([]) | join('   ') }}
+    ${exp_aar_vl_id}=    Create List    {{ (fp_app_route.site_region_vpn | default({})).vpn_lists | default([]) | join('   ') }}
     Lists Should Be Equal    ${aar_vl_id_name_list}    ${exp_aar_vl_id}    ignore_order=True    msg=application aware routing vpn lists for {{ fp_app_route.policy_definition }}
 
     # application aware routing region
-    ${aar_region_id}=    Get Value From Json    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="appRoute" & @.definitionId=="${aar_dict["{{ fp_app_route.policy_definition }}"]}")].entries[*].regionIds[0]
-    Should Be Equal Value Json String    ${aar_region_id}    {{ fp_app_route.site_region_vpn.region | default("not_defined") }}    msg=application aware routing region for {{ fp_app_route.policy_definition }}
+    Should Be Equal Value Json String    ${r_id.json()}    $.policyDefinition.assembly[?(@.type=="appRoute" & @.definitionId=="${aar_dict["{{ fp_app_route.policy_definition }}"]}")].entries[*].regionIds[0]    {{ (fp_app_route.site_region_vpn | default({})).region | default("not_defined") }}    msg=application aware routing region for {{ fp_app_route.policy_definition }}
 {% endfor %}
 
     # traffic data
@@ -352,7 +355,11 @@ Verify Centralized Policies Feature Policies {{ fp.name }}
         ${region_list_name}=    Get Value From Json    ${region_list_id.json()}    $.name
         Append To List    ${td_sr_rl_id_name_list}    ${region_list_name[0]}
     END
-    ${exp_td_sr_rl_id}=    Create List    {{ [srv.region_list] | default([]) | join('   ') }}
+    {% if (srv.region_list | default([])) == [] %}
+    ${exp_td_sr_rl_id}=    Create List
+    {% else %}
+    ${exp_td_sr_rl_id}=    Create List    {{ srv.region_list }}
+    {% endif %}
     Lists Should Be Equal    ${td_sr_rl_id_name_list}    ${exp_td_sr_rl_id}    ignore_order=True    msg=traffic data region list for {{ fp_traffic_data.policy_definition }} and direction {{ srv.direction }}
 
     # traffic data region

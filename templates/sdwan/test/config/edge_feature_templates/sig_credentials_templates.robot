@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation   Verify SIG Credential Feature Template
+Documentation   Verify SIG Credential Feature Templates
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_templates
@@ -8,67 +8,78 @@ Resource        ../../sdwan_common.resource
 {% if sdwan.edge_feature_templates.sig_credentials_templates is defined %}
 
 *** Test Cases ***
-Get SIG Credential Feature template
+Get SIG Credential Feature Templates
     ${r}=    GET On Session    sdwan_manager    /dataservice/template/feature
     ${r}=    Get Value From Json    ${r.json()}    $..data[?(@..templateType=="cisco_sig_credentials")]
     Set Suite Variable    ${r}
 
-{% for sigc in sdwan.edge_feature_templates.sig_credentials_templates | default([]) %}
+{% for ft_yaml in sdwan.edge_feature_templates.sig_credentials_templates | default([]) %}
 
-{% if sigc.name == "umbrella" %}
+{% if ft_yaml.name == "umbrella" %}
 {% set sigc_value = "Cisco-Umbrella-Global-Credentials" %}
-{% elif sigc.name == "zscaler" %}
+{% elif ft_yaml.name == "zscaler" %}
 {% set sigc_value = "Cisco-Zscaler-Global-Credentials" %}
 {% endif %}
 
-Verify Edge Feature Template SIG Credential Feature template {{ sigc_value }}
-    ${sigc_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{sigc_value }}")]
-    Should Be Equal Value Json String    ${sigc_id}    $..templateName    {{ sigc_value }}    msg=name
+Verify Edge Feature Template SIG Credential Feature Template {{ sigc_value }}
+    ${ft_summary_json}=    Get Value From Json    ${r}    $[?(@.templateName=="{{sigc_value }}")]
+    Should Not be Empty   ${ft_summary_json}   msg=Feature Template '{{ft_yaml.name}}' should be present on the Manager
+    Should Be Equal Value Json String    ${ft_summary_json}    $..templateName    {{ sigc_value }}    msg=name
+    Should Be Equal Value Json Special_String    ${ft_summary_json}    $..templateDescription    {{ ft_yaml.description | normalize_special_string }}    msg=description
 
-    ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{sigc_value }}")].templateId
-    ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${template_id[0]}
+    # Device types validation
+    {% set device_types_yaml = [] %}
+    {% for item in ft_yaml.device_types | default(defaults.sdwan.edge_feature_templates.sig_credentials_templates.device_types) %}
+    {% set device_type = "vedge-" ~ item %}
+    {% set _ = device_types_yaml.append(device_type) %}
+    {% endfor %}
+    ${device_types_json}=    Get Value From Json    ${ft_summary_json}    $..deviceType
+    ${device_types_yaml}=    Create List           {{ device_types_yaml | join('   ') }}
+    Lists Should Be Equal    ${device_types_json}[0]    ${device_types_yaml}    ignore_order=True    msg=device_types
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.umbrella["api-key"].vipValue    {{ sigc.umbrella_api_key | default("not_defined") }}    msg=umbrella api key
-    Should Be Equal Value Json String    ${r_id.json()}    $.umbrella["api-key"].vipVariableName    {{ sigc.umbrella_api_key_variable | default("not_defined") }}    msg=umbrella api key variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.umbrella["api-secret"].vipValue    {{ sigc.umbrella_api_secret | default("not_defined") }}    msg=umbrella api secret
-    Should Be Equal Value Json String    ${r_id.json()}    $.umbrella["api-secret"].vipVariableName    {{ sigc.umbrella_api_secret_variable | default("not_defined") }}    msg=umbrella api secret variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.umbrella["org-id"].vipValue    {{ sigc.umbrella_organization_id | default("not_defined") }}    msg=umbrella organization id
-    Should Be Equal Value Json String    ${r_id.json()}    $.umbrella["org-id"].vipVariableName    {{ sigc.umbrella_organization_id_variable | default("not_defined") }}    msg=umbrella organization id variable
+    # Get template definition
+    ${ft_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{sigc_value }}")].templateId
+    ${ft}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${ft_id[0]}
 
-    ${zscaler_org}=    Get Value From Json    ${r_id.json()}    $.zscaler.organization.vipType
-    IF    ${zscaler_org} == ['constant']
-        Should Be Equal Value Json String    ${r_id.json()}    $.zscaler.organization.vipValue    {{ sigc.zscaler_organization | default("not_defined") }}    msg=zscaler organization
-    ELSE
-        Should Be Equal Value Json String    ${r_id.json()}    $.zscaler.organization.vipVariableName    {{ sigc.zscaler_organization_variable | default("not_defined") }}    msg=zscaler organization variable
-    END
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.umbrella["api-key"]
+    ...    {{ ft_yaml.umbrella_api_key | default("not_defined") }}
+    ...    {{ ft_yaml.umbrella_api_key_variable | default("not_defined") }}
+    ...    msg=umbrella_api_key
 
-    ${zscaler_partner_base}=    Get Value From Json    ${r_id.json()}    $.zscaler["partner-base-uri"].vipType
-    IF    ${zscaler_partner_base} == ['constant']
-        Should Be Equal Value Json String    ${r_id.json()}    $.zscaler["partner-base-uri"].vipValue    {{ sigc.zscaler_partner_base_uri | default("not_defined") }}    msg=zscaler partner base uri
-    ELSE
-        Should Be Equal Value Json String    ${r_id.json()}    $.zscaler["partner-base-uri"].vipVariableName    {{ sigc.zscaler_partner_base_uri_variable | default("not_defined") }}    msg=zscaler partner base uri variable
-    END
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.umbrella["api-secret"]
+    ...    {{ ft_yaml.umbrella_api_secret | default("not_defined") }}
+    ...    {{ ft_yaml.umbrella_api_secret_variable | default("not_defined") }}
+    ...    msg=umbrella_api_secret
 
-    ${zscaler_uname}=    Get Value From Json    ${r_id.json()}    $.zscaler.username.vipType
-    IF    ${zscaler_uname} == ['constant']
-        Should Be Equal Value Json String    ${r_id.json()}    $.zscaler.username.vipValue    {{ sigc.zscaler_username | default("not_defined") }}    msg=zscaler username
-    ELSE
-        Should Be Equal Value Json String    ${r_id.json()}    $.zscaler.username.vipVariableName    {{ sigc.zscaler_username_variable | default("not_defined") }}    msg=zscaler username variable
-    END
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.umbrella["org-id"]
+    ...    {{ ft_yaml.umbrella_organization_id | default("not_defined") }}
+    ...    {{ ft_yaml.umbrella_organization_id_variable | default("not_defined") }}
+    ...    msg=umbrella_organization_id
 
-    ${zscaler_pwd}=    Get Value From Json    ${r_id.json()}    $.zscaler.password.vipType
-    IF    ${zscaler_pwd} == ['constant']
-        Should Be Equal Value Json String    ${r_id.json()}    $.zscaler.password.vipValue    {{ sigc.zscaler_password | default("not_defined") }}    msg=zscaler password
-    ELSE
-        Should Be Equal Value Json String    ${r_id.json()}    $.zscaler.password.vipVariableName    {{ sigc.zscaler_password_variable | default("not_defined") }}    msg=zscaler password variable
-    END
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.zscaler.organization
+    ...    {{ ft_yaml.zscaler_organization | default("not_defined") }}
+    ...    {{ ft_yaml.zscaler_organization_variable | default("not_defined") }}
+    ...    msg=zscaler_organization
 
-    ${zscaler_partner_api}=    Get Value From Json    ${r_id.json()}    $.zscaler["partner-key"].vipType
-    IF    ${zscaler_partner_api} == ['constant']
-        Should Be Equal Value Json String    ${r_id.json()}    $.zscaler["partner-key"].vipValue    {{ sigc.zscaler_partner_api_key | default("not_defined") }}    msg=zscaler partner api key
-    ELSE
-        Should Be Equal Value Json String    ${r_id.json()}    $.zscaler["partner-key"].vipVariableName    {{ sigc.zscaler_partner_api_key_variable | default("not_defined") }}    msg=zscaler partner api key variable
-    END
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.zscaler["partner-base-uri"]
+    ...    {{ ft_yaml.zscaler_partner_base_uri | default("not_defined") }}
+    ...    {{ ft_yaml.zscaler_partner_base_uri_variable | default("not_defined") }}
+    ...    msg=zscaler_partner_base_uri
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.zscaler.username
+    ...    {{ ft_yaml.zscaler_username | default("not_defined") }}
+    ...    {{ ft_yaml.zscaler_username_variable | default("not_defined") }}
+    ...    msg=zscaler_username
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.zscaler.password
+    ...    {{ ft_yaml.zscaler_password | default("not_defined") }}
+    ...    {{ ft_yaml.zscaler_password_variable | default("not_defined") }}
+    ...    msg=zscaler_password
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.zscaler["partner-key"]
+    ...    {{ ft_yaml.zscaler_partner_api_key | default("not_defined") }}
+    ...    {{ ft_yaml.zscaler_partner_api_key_variable | default("not_defined") }}
+    ...    msg=zscaler_partner_api_key
 
 {% endfor %}
 

@@ -5,7 +5,7 @@ Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags    sdwan    config    localized_policies
 Resource        ../../../sdwan_common.resource
 
-{% if sdwan.localized_policies.definitions.ipv6_access_control_lists is defined%}
+{% if sdwan.localized_policies is defined and sdwan.localized_policies.definitions is defined and sdwan.localized_policies.definitions.ipv6_access_control_lists is defined %}
 
 *** Test Cases ***
 Get IPv6 Access Control Lists
@@ -23,7 +23,7 @@ Verify Localized Policies IPv6 Access Control Lists {{ ipv6_acl.name }}
 
     ${sequence_items}=    Get Value From Json    ${r_id.json()}    $.sequences
     ${sequence_length}=    Get Length    ${sequence_items[0]}
-    Should Be Equal As Integers    ${sequence_length}    {{ ipv6_acl.sequences | length }}    msg=sequences
+    Should Be Equal As Integers    ${sequence_length}    {{ ipv6_acl.sequences | default([]) | length }}    msg=sequences
 
 {% for sequence in ipv6_acl.sequences | default([]) %}
 

@@ -60,10 +60,10 @@ Verify Centralized Policies Control Policy Custom Control Topology {{ cct.name }
 
     ${region_list_ref_id}=    Get Value From Json    ${r_id.json()}    $.sequences[{{loop.index0}}]..match.entries[?(@.field=="regionList")].ref
     IF    ${region_list_ref_id} == []
-        Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..match.entries[?(@.field=="regionList")].ref    {{ sequence.match_criterias.region_list | default("not_defined") }}    msg=tloc region list
+        Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..match.entries[?(@.field=="regionList")].ref    {{ (sequence.match_criterias | default({})).region_list | default("not_defined") }}    msg=tloc region list
     ELSE
         ${region_list_match_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/region/${region_list_ref_id[0]}
-        Should Be Equal Value Json String    ${region_list_match_id.json()}    $..name    {{ sequence.match_criterias.region_list | default("not_defined") }}    msg=tloc region list
+        Should Be Equal Value Json String    ${region_list_match_id.json()}    $..name    {{ (sequence.match_criterias | default({})).region_list | default("not_defined") }}    msg=tloc region list
     END
 
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..match.entries[?(@.field=="regionId")].value    {{ sequence.match_criterias.region_id | default("not_defined") }}    msg=tloc region id
@@ -87,7 +87,7 @@ Verify Centralized Policies Control Policy Custom Control Topology {{ cct.name }
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..baseAction    {{ sequence.base_action }}    msg=route base action
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..sequenceId    {{ sequence.id }}    msg=route id
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..sequenceName    {{ sequence.name }}    msg=route name
-    Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..sequenceIpType    {{ sequence.ip_type }}    msg=route ip type
+    Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..sequenceIpType    {{ sequence.ip_type | default(defaults.sdwan.centralized_policies.definitions.control_policy.custom_control_topology.sequences.ip_type) }}    msg=route ip type
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..sequenceType    {{ sequence.type }}    msg=route type
 
     ${color_list_ref_id}=    Get Value From Json    ${r_id.json()}    $.sequences[{{loop.index0}}]..match.entries[?(@.field=="colorList")].ref
@@ -131,10 +131,10 @@ Verify Centralized Policies Control Policy Custom Control Topology {{ cct.name }
 
     ${region_list_ref_id}=    Get Value From Json    ${r_id.json()}    $.sequences[{{loop.index0}}]..match.entries[?(@.field=="regionList")].ref
     IF    ${region_list_ref_id} == []
-        Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..match.entries[?(@.field=="regionList")].ref    {{ sequence.match_criterias.region_list | default("not_defined") }}    msg=route region list
+        Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..match.entries[?(@.field=="regionList")].ref    {{ (sequence.match_criterias | default({})).region_list | default("not_defined") }}    msg=route region list
     ELSE
         ${region_list_match_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/region/${region_list_ref_id[0]}
-        Should Be Equal Value Json String    ${region_list_match_id.json()}    $..name    {{ sequence.match_criterias.region_list | default("not_defined") }}    msg=route region list
+        Should Be Equal Value Json String    ${region_list_match_id.json()}    $..name    {{ (sequence.match_criterias | default({})).region_list | default("not_defined") }}    msg=route region list
     END
 
     Should Be Equal Value Json String    ${r_id.json()}    $.sequences[{{loop.index0}}]..match.entries[?(@.field=="regionId")].value    {{ sequence.match_criterias.region_id | default("not_defined") }}    msg=route region id

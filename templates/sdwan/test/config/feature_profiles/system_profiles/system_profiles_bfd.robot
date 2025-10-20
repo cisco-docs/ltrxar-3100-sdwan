@@ -6,7 +6,7 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_profiles     system_profiles   bfd
 Resource        ../../../sdwan_common.resource
 
-
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.system_profiles is defined %}
 {% set profile_bfd_list = [] %}
 {% for profile in sdwan.feature_profiles.system_profiles %}
  {% if profile.bfd is defined %}
@@ -56,5 +56,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} BFD Feature {{ profil
 
 {% endif %}
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

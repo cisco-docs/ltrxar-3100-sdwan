@@ -7,8 +7,9 @@ Default Tags    sdwan    config    feature_profiles     transport_profiles    ro
 Resource        ../../../sdwan_common.resource
 
 
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.transport_profiles is defined %}
 {% set profile_route_policy_list = [] %}
-{% for profile in sdwan.get('feature_profiles', {}).get('transport_profiles', {}) %}
+{% for profile in sdwan.feature_profiles.transport_profiles %}
  {% if profile.route_policies is defined %}
   {% set _ = profile_route_policy_list.append(profile.name) %}
  {% endif %}
@@ -180,4 +181,5 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Route Policy Featu
 
 {% endfor %}
 
+{% endif %}
 {% endif %}

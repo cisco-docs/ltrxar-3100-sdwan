@@ -6,7 +6,7 @@ Default Tags    sdwan   config   classic_policy_objects
 Resource        ../../sdwan_common.resource
 Library         String
 
-{% if sdwan.policy_objects.preferred_color_groups is defined %}
+{% if sdwan.policy_objects is defined and sdwan.policy_objects.preferred_color_groups is defined %}
 
 *** Test Cases ***
 Get Preferred Color Group List(s)

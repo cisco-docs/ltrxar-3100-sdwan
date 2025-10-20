@@ -6,7 +6,7 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_profiles     system_profiles   global
 Resource        ../../../sdwan_common.resource
 
-
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.system_profiles is defined %}
 {% set profile_global_list = [] %}
 {% for profile in sdwan.feature_profiles.system_profiles %}
  {% if profile.global is defined %}
@@ -63,5 +63,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} Global Feature {{ pro
 
 {% endif %}
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

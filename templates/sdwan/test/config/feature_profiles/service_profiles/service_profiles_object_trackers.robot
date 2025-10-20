@@ -7,6 +7,7 @@ Default Tags    sdwan    config    feature_profiles     service_profiles    obje
 Resource        ../../../sdwan_common.resource
 
 
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.service_profiles is defined %}
 {% set profile_object_tracker_list = [] %}
 {% for profile in sdwan.feature_profiles.service_profiles %}
  {% if profile.object_trackers is defined %}
@@ -114,5 +115,7 @@ Verify Feature Profiles Service Profiles {{ profile.name }} Object Tracker Group
 
 
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

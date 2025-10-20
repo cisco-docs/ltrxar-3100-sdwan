@@ -5,7 +5,7 @@ Suite Teardown    Run On Last Process   Logout SDWAN Manager
 Default Tags      sdwan   config   security_policies
 Resource          ../../../sdwan_common.resource
 
-{% if sdwan.security_policies.definitions.zone_based_firewall is defined %}
+{% if sdwan.security_policies is defined and sdwan.security_policies.definitions is defined and sdwan.security_policies.definitions.zone_based_firewall is defined %}
 
 *** Test Cases ***
 Get Zone Based Firewall
@@ -48,9 +48,9 @@ Verify Security Policies Zone Based Firewall {{ zbf.name }}
         Should Be Equal Value Json String    ${r_app_list_id.json()}   $..name   {{ rule.match_criterias.local_application_list | default("not_defined") }}    msg=local application list
     END
 
-{% if rule.actions.log is defined and rule.actions.log == True %}
+{% if rule.actions is defined and rule.actions.log is defined and rule.actions.log == True %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@.type=="log")].type     log    msg= log
-{% elif rule.actions.log == False %}
+{% elif rule.actions is defined and rule.actions.log is defined and rule.actions.log == False %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@.type=="log")].type     false    msg= log
 {% else %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@.type=="log")].type     not_defined    msg= log
@@ -128,7 +128,7 @@ Verify Security Policies Zone Based Firewall {{ zbf.name }}
     IF    ${protocol_names_data_api_value_list} == []
         Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="protocolName")].value    {{ rule.match_criterias.protocol_names | default("not_defined") }}    msg=protocol name
     ELSE
-        ${protocol_names_list}=    Create List    {{ rule.match_criterias.protocol_names | join('   ') }}
+        ${protocol_names_list}=    Create List    {{ rule.match_criterias.protocol_names | default([]) | join('   ') }}
         ${protocol_names_value}=  Split String    ${protocol_names_data_api_value_list[0]}
         Lists Should Be Equal   ${protocol_names_value}   ${protocol_names_list}   ignore_order=True    msg=protocol name
     END
@@ -137,7 +137,7 @@ Verify Security Policies Zone Based Firewall {{ zbf.name }}
     IF    ${protocols_data_api_value_list} == []
         Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="protocol")].value    {{ rule.match_criterias.protocols | default("not_defined") }}    msg=protocol
     ELSE
-        ${protocols_list}=    Create List    {{ rule.match_criterias.protocols | join('   ') }}
+        ${protocols_list}=    Create List    {{ rule.match_criterias.protocols | default([]) | join('   ') }}
         ${protocols_value}=  Split String    ${protocols_data_api_value_list[0]}
         Lists Should Be Equal   ${protocols_value}   ${protocols_list}   ignore_order=True    msg=protocol
     END
@@ -146,7 +146,7 @@ Verify Security Policies Zone Based Firewall {{ zbf.name }}
     IF    ${source_geo_locations_data_api_value_list} == []
         Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="sourceGeoLocation")].value    {{ rule.match_criterias.source_geo_locations | default("not_defined") }}    msg=source geo location
     ELSE
-        ${source_geo_locations_list}=    Create List    {{ rule.match_criterias.source_geo_locations | join('   ') }}
+        ${source_geo_locations_list}=    Create List    {{ rule.match_criterias.source_geo_locations | default([]) | join('   ') }}
         ${source_geo_locations_value}=  Split String    ${source_geo_locations_data_api_value_list[0]}
         Lists Should Be Equal   ${source_geo_locations_value}   ${source_geo_locations_list}   ignore_order=True    msg=source geo location
     END
@@ -155,7 +155,7 @@ Verify Security Policies Zone Based Firewall {{ zbf.name }}
     IF    ${destination_geo_locations_data_api_value_list} == []
         Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="destinationGeoLocation")].value    {{ rule.match_criterias.destination_geo_locations | default("not_defined") }}    msg=destination geo location
     ELSE
-        ${destination_geo_locations_list}=    Create List    {{ rule.match_criterias.destination_geo_locations | join('   ') }}
+        ${destination_geo_locations_list}=    Create List    {{ rule.match_criterias.destination_geo_locations | default([]) | join('   ') }}
         ${destination_geo_locations_value}=  Split String    ${destination_geo_locations_data_api_value_list[0]}
         Lists Should Be Equal   ${destination_geo_locations_value}   ${destination_geo_locations_list}   ignore_order=True    msg=destination geo location
     END
@@ -166,7 +166,7 @@ Verify Security Policies Zone Based Firewall {{ zbf.name }}
     IF    ${source_port_lists_data_api_value_list} == []
         Should Be Equal Value Json String    ${r_id.json()}    $..sequences[?(@.sequenceName=="{{ rule.name }}")].match.entries[?(@.field=="sourcePortList")].ref    {{ rule.match_criterias.source_port_lists | default("not_defined") }}    msg=source port list
     ELSE
-        ${source_port_yaml_list}=    Create List    {{ rule.match_criterias.source_port_lists | join('   ') }}
+        ${source_port_yaml_list}=    Create List    {{ rule.match_criterias.source_port_lists | default([]) | join('   ') }}
         ${source_port_api_lists_ids}=  Split String    ${source_port_lists_data_api_value_list[0]}
         ${source_port_api_lists}=    Create List
         FOR    ${id}    IN    @{source_port_api_lists_ids}
@@ -180,7 +180,7 @@ Verify Security Policies Zone Based Firewall {{ zbf.name }}
     IF    ${destination_port_lists_data_api_value_list} == []
         Should Be Equal Value Json String    ${r_id.json()}    $..sequences[?(@.sequenceName=="{{ rule.name }}")].match.entries[?(@.field=="destinationPortList")].ref    {{ rule.match_criterias.destination_port_lists | default("not_defined") }}    msg=destination port list
     ELSE
-        ${destination_port_yaml_list}=    Create List    {{ rule.match_criterias.destination_port_lists | join('   ') }}
+        ${destination_port_yaml_list}=    Create List    {{ rule.match_criterias.destination_port_lists | default([]) | join('   ') }}
         ${destination_port_api_lists_ids}=  Split String    ${destination_port_lists_data_api_value_list[0]}
         ${destination_port_api_lists}=    Create List
         FOR    ${id}    IN    @{destination_port_api_lists_ids}

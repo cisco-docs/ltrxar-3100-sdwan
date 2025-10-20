@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation   Verify PIM Feature Template Configuration
+Documentation   Verify PIM Feature Templates
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_templates pim_templates
@@ -8,74 +8,188 @@ Resource        ../../sdwan_common.resource
 {% if sdwan.edge_feature_templates.pim_templates is defined %}
 
 *** Test Cases ***
-Get PIM Feature Template
+Get PIM Feature Templates
     ${r}=    GET On Session    sdwan_manager    /dataservice/template/feature
+    ${r}=    Get Value From Json    ${r.json()}    $..data[?(@..templateType=="cedge_pim")]
     Set Suite Variable    ${r}
 
-{% for pim in sdwan.edge_feature_templates.pim_templates | default([]) %}
+{% for ft_yaml in sdwan.edge_feature_templates.pim_templates | default([]) %}
 
-Verify Edge Feature PIM Configuration Template {{ pim.name }}
-    ${pim_id}=  Get Value From Json   ${r.json()}   $..data[?(@..templateName=="{{ pim.name }}")].templateId
-    Log    =====Name=====
-    Should Not be Empty   ${pim_id}   msg= {{ pim.name }} not present
-    Log    =====Description=====
-    Should Be Equal Value Json Special_String   ${r.json()}   $..data[?(@..templateName=="{{ pim.name }}")].templateDescription   {{ pim.description | normalize_special_string }}  msg=description
-    ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/feature/definition/${pim_id[0]}
-    Set Suite Variable   ${r_id}
-    Log    =====DeviceType=====
-    {% set dt_list_local = [] %}
-    {% for item in pim.device_types | default(defaults.sdwan.edge_feature_templates.pim_templates.device_types) %}
-    {% set test = "vedge-" ~ item %}
-    {% set _ = dt_list_local.append(test) %}
-    {% endfor %}
-    ${dt_list}=  Get Value From Json   ${r.json()}   $..data[?(@..templateName=="{{ pim.name }}")].deviceType
-    ${dt_list_local}=   Create List   {{ dt_list_local | join('   ') }}
-    Lists Should Be Equal    ${dt_list_local}    ${dt_list}[0]   ignore_order=True   msg={{ pim.name }}: device type
+Verify Edge Feature Template PIM Feature Template {{ ft_yaml.name }}
+    ${ft_summary_json}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ ft_yaml.name }}")]
+    Should Not be Empty   ${ft_summary_json}   msg=Feature Template '{{ft_yaml.name}}' should be present on the Manager
+    Should Be Equal Value Json String    ${ft_summary_json}    $..templateName    {{ ft_yaml.name }}    msg=name
+    Should Be Equal Value Json Special_String    ${ft_summary_json}    $..templateDescription    {{ ft_yaml.description | normalize_special_string }}    msg=description
 
-    Log    =====SSM Fields=====
-    Should Be Equal Value Json String FT   ${r_id.json()}   $..pim.ssm.default    {{ pim.ssm_default_variable | default(pim.ssm_default | default("") | lower())}}    msg=ssm default pim
-    Should Be Equal Value Json String FT   ${r_id.json()}   $..pim.ssm.range    {{ pim.ssm_access_list_range_variable | default(pim.ssm_access_list_range | default("not_defined"))}}    msg=ssm range pim
-    Should Be Equal Value Json String FT   ${r_id.json()}   $..pim["auto-rp"]    {{ pim.auto_rp_variable | default(pim.auto_rp | default("not_defined") | lower())}}    msg=auto rp pim
-    Should Be Equal Value Json String FT   ${r_id.json()}   $..pim["spt-threshold"]    {{ pim.spt_threshold_variable | default(pim.spt_threshold | default("not_defined"))}}    msg=spt threshold pim
-    Log    =====RP Announce=====
-    Should Be Equal Value Json List Length    ${r_id.json()}    $..pim["send-rp-announce"]["send-rp-announce-list"].vipValue    {{ pim.rp_announces | default([]) | length }}    msg=rp announce entries length
-    {% for rp_announce in pim.rp_announces | default([]) %}
-        Should Be Equal Value Json String FT    ${r_id.json()}    $..pim["send-rp-announce"]["send-rp-announce-list"].vipValue[{{ loop.index0 }}]["if-name"]    {{ rp_announce.interface_name_variable | default(rp_announce.interface_name | default("not_defined")) }}    msg=rp announce interface name pim
-        Should Be Equal Value Json String FT    ${r_id.json()}    $..pim["send-rp-announce"]["send-rp-announce-list"].vipValue[{{ loop.index0 }}]["scope"]    {{ rp_announce.scope_variable | default(rp_announce.scope | default("not_defined")) }}    msg=rp announce scope pim
-        Should Be Equal Value Json String    ${r_id.json()}    $..pim["send-rp-announce"]["send-rp-announce-list"].vipValue[{{ loop.index0 }}]["vipOptional"]    {{ rp_announce.optional | default("not_defined") }}    msg=rp announce optional
+    # Device types validation
+    {% set device_types_yaml = [] %}
+    {% for item in ft_yaml.device_types | default(defaults.sdwan.edge_feature_templates.pim_templates.device_types) %}
+    {% set device_type = "vedge-" ~ item %}
+    {% set _ = device_types_yaml.append(device_type) %}
     {% endfor %}
-    Log    =====RP Discovery=====
-    Should Be Equal Value Json String FT   ${r_id.json()}   $..pim["send-rp-discovery"]["if-name"]    {{ pim.rp_discovery_interface_variable | default(pim.rp_discovery_interface | default("not_defined")) }}    msg=rp discovery interface name pim
-    Should Be Equal Value Json String FT   ${r_id.json()}   $..pim["send-rp-discovery"]["scope"]    {{ pim.rp_discovery_scope_variable | default(pim.rp_discovery_scope | default("not_defined")) }}    msg=rp discovery scope pim
-    Log    =====RP Address=====
-    Should Be Equal Value Json List Length    ${r_id.json()}    $..pim["rp-addr"].vipValue    {{ pim.rp_addresses | default([]) | length }}    msg=rp address entries length
-    {% for rp_address in pim.rp_addresses | default([]) %}
-        Should Be Equal Value Json String FT    ${r_id.json()}    $..pim["rp-addr"].vipValue[{{ loop.index0 }}]["address"]    {{ rp_address.ip_address_variable | default(rp_address.ip_address | default("not_defined")) }}    msg=rp address ip address pim
-        Should Be Equal Value Json String FT    ${r_id.json()}    $..pim["rp-addr"].vipValue[{{ loop.index0 }}]["access-list"]    {{ rp_address.access_list_variable | default(rp_address.access_list | default("not_defined")) }}    msg=rp address access list pim
-        Should Be Equal Value Json String FT    ${r_id.json()}    $..pim["rp-addr"].vipValue[{{ loop.index0 }}]["override"]    {{ rp_address.override_variable | default(rp_address.override | default("not_defined") | lower()) }}    msg=rp address override pim
-        Should Be Equal Value Json String    ${r_id.json()}    $..pim["rp-addr"].vipValue[{{ loop.index0 }}]["vipOptional"]    {{ rp_address.optional | default("not_defined") }}    msg=rp address optional
+    ${device_types_json}=    Get Value From Json    ${ft_summary_json}    $..deviceType
+    ${device_types_yaml}=    Create List           {{ device_types_yaml | join('   ') }}
+    Lists Should Be Equal    ${device_types_json}[0]    ${device_types_yaml}    ignore_order=True    msg=device_types
+
+    # Get template definition
+    ${ft_id}=    Get Value From Json    ${r}    $[?(@.templateName="{{ ft_yaml.name }}")].templateId
+    ${ft}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${ft_id[0]}
+
+    # SSM Fields
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim.ssm.default
+    ...    {{ ft_yaml.ssm_default | default("not_defined") }}
+    ...    {{ ft_yaml.ssm_default_variable | default("not_defined") }}
+    ...    msg=ssm_default
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim.ssm.range
+    ...    {{ ft_yaml.ssm_access_list_range | default("not_defined") }}
+    ...    {{ ft_yaml.ssm_access_list_range_variable | default("not_defined") }}
+    ...    msg=ssm_access_list_range
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["auto-rp"]
+    ...    {{ ft_yaml.auto_rp | default("not_defined") }}
+    ...    {{ ft_yaml.auto_rp_variable | default("not_defined") }}
+    ...    msg=auto_rp
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["spt-threshold"]
+    ...    {{ ft_yaml.spt_threshold | default("not_defined") }}
+    ...    {{ ft_yaml.spt_threshold_variable | default("not_defined") }}
+    ...    msg=spt_threshold
+
+    # RP Announce
+    Should Be Equal Value Json List Length    ${ft.json()}    $..pim["send-rp-announce"]["send-rp-announce-list"].vipValue    {{ ft_yaml.rp_announces | default([]) | length }}    msg=rp_announces length
+
+    {% for rp_announce in ft_yaml.rp_announces | default([]) %}
+    Log    === RP Announce {{loop.index0}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["send-rp-announce"]["send-rp-announce-list"].vipValue[{{ loop.index0 }}]["if-name"]
+    ...    {{ rp_announce.interface_name | default("not_defined") }}
+    ...    {{ rp_announce.interface_name_variable | default("not_defined") }}
+    ...    msg=rp_announces.interface_name
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["send-rp-announce"]["send-rp-announce-list"].vipValue[{{ loop.index0 }}]["scope"]
+    ...    {{ rp_announce.scope | default("not_defined") }}
+    ...    {{ rp_announce.scope_variable | default("not_defined") }}
+    ...    msg=rp_announces.scope
+
+    Should Be Equal Value Json String    ${ft.json()}    $..pim["send-rp-announce"]["send-rp-announce-list"].vipValue[{{ loop.index0 }}]["vipOptional"]
+    ...    {{ rp_announce.optional | default("not_defined") }}
+    ...    msg=rp_announces.optional
+
     {% endfor %}
-    Log    =====RP Candidate=====
-    Should Be Equal Value Json List Length    ${r_id.json()}    $..pim["rp-candidate"].vipValue    {{ pim.rp_candidates | default([]) | length }}    msg=rp candidates entries length
-    {% for rp_candidate in pim.rp_candidates | default([]) %}
-        Should Be Equal Value Json String FT    ${r_id.json()}    $..pim["rp-candidate"].vipValue[{{ loop.index0 }}]["pim-interface-name"]    {{ rp_candidate.interface_name_variable | default(rp_candidate.interface_name | default("not_defined")) }}    msg=rp candidate interface name pim
-        Should Be Equal Value Json String FT    ${r_id.json()}    $..pim["rp-candidate"].vipValue[{{ loop.index0 }}]["group-list"]    {{ rp_candidate.access_list_variable | default(rp_candidate.access_list | default("not_defined")) }}    msg=rp candidate access list pim
-        Should Be Equal Value Json String FT    ${r_id.json()}    $..pim["rp-candidate"].vipValue[{{ loop.index0 }}]["interval"]    {{ rp_candidate.interval_variable | default(rp_candidate.interval | default("not_defined")) }}    msg=rp candidate interval pim
-        Should Be Equal Value Json String FT    ${r_id.json()}    $..pim["rp-candidate"].vipValue[{{ loop.index0 }}]["priority"]    {{ rp_candidate.priority_variable | default(rp_candidate.priority | default("not_defined")) }}    msg=rp candidate priority pim
-        Should Be Equal Value Json String    ${r_id.json()}    $..pim["rp-candidate"].vipValue[{{ loop.index0 }}]["vipOptional"]    {{ rp_candidate.optional | default("not_defined") }}    msg=rp candidate optional
+
+    # RP Discovery
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["send-rp-discovery"]["if-name"]
+    ...    {{ ft_yaml.rp_discovery_interface | default("not_defined") }}
+    ...    {{ ft_yaml.rp_discovery_interface_variable | default("not_defined") }}
+    ...    msg=rp_discovery_interface
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["send-rp-discovery"]["scope"]
+    ...    {{ ft_yaml.rp_discovery_scope | default("not_defined") }}
+    ...    {{ ft_yaml.rp_discovery_scope_variable | default("not_defined") }}
+    ...    msg=rp_discovery_scope
+
+    # RP Address
+    Should Be Equal Value Json List Length    ${ft.json()}    $..pim["rp-addr"].vipValue    {{ ft_yaml.rp_addresses | default([]) | length }}    msg=rp_addresses length
+
+    {% for rp_address in ft_yaml.rp_addresses | default([]) %}
+    Log    === RP Address {{loop.index0}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["rp-addr"].vipValue[{{ loop.index0 }}]["address"]
+    ...    {{ rp_address.ip_address | default("not_defined") }}
+    ...    {{ rp_address.ip_address_variable | default("not_defined") }}
+    ...    msg=rp_addresses.ip_address
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["rp-addr"].vipValue[{{ loop.index0 }}]["access-list"]
+    ...    {{ rp_address.access_list | default("not_defined") }}
+    ...    {{ rp_address.access_list_variable | default("not_defined") }}
+    ...    msg=rp_addresses.access_list
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["rp-addr"].vipValue[{{ loop.index0 }}]["override"]
+    ...    {{ rp_address.override | default("not_defined") }}
+    ...    {{ rp_address.override_variable | default("not_defined") }}
+    ...    msg=rp_addresses.override
+
+    Should Be Equal Value Json String    ${ft.json()}    $..pim["rp-addr"].vipValue[{{ loop.index0 }}]["vipOptional"]
+    ...    {{ rp_address.optional | default("not_defined") }}
+    ...    msg=rp_addresses.optional
+
     {% endfor %}
-    Log    =====BSR Candidate=====
-    Should Be Equal Value Json String FT   ${r_id.json()}   $..pim["bsr-candidate"]["bsr-interface-name"]    {{ pim.bsr_candidate_interface_variable | default(pim.bsr_candidate_interface | default("not_defined")) }}    msg=bsr candidate interface name pim
-    Should Be Equal Value Json String FT   ${r_id.json()}   $..pim["bsr-candidate"]["mask"]    {{ pim.bsr_candidate_hash_mask_length_variable | default(pim.bsr_candidate_hash_mask_length | default("not_defined")) }}    msg=bsr candidate hash mask length pim
-    Should Be Equal Value Json String FT   ${r_id.json()}   $..pim["bsr-candidate"]["priority"]    {{ pim.bsr_candidate_priority_variable | default(pim.bsr_candidate_priority | default("not_defined")) }}    msg=bsr candidate priority pim
-    Should Be Equal Value Json String FT   ${r_id.json()}   $..pim["bsr-candidate"]["accept-rp-candidate"]    {{ pim.bsr_candidate_rp_access_list_variable | default(pim.bsr_candidate_rp_access_list | default("not_defined")) }}    msg=bsr candidate rp access list pim
-    Log    =====Interfaces=====
-    Should Be Equal Value Json List Length    ${r_id.json()}    $..pim["interface"].vipValue    {{ pim.interfaces | default([]) | length }}    msg=interface entries length
-    {% for interface in pim.interfaces | default([]) %}
-        Should Be Equal Value Json String FT    ${r_id.json()}    $..pim.interface.vipValue[{{ loop.index0 }}].name   {{ interface.interface_name_variable | default(interface.interface_name | default("not_defined")) }}    msg=interface name pim
-        Should Be Equal Value Json String FT    ${r_id.json()}    $..pim.interface.vipValue[{{ loop.index0 }}]["join-prune-interval"]    {{ interface.join_prune_interval_variable | default(interface.join_prune_interval | default("not_defined")) }}    msg=interface join-prune-interval pim
-        Should Be Equal Value Json String FT    ${r_id.json()}    $..pim.interface.vipValue[{{ loop.index0 }}]["query-interval"]    {{ interface.query_interval_variable | default(interface.query_interval | default("not_defined")) }}    msg=interface query-interval pim
-        Should Be Equal Value Json String    ${r_id.json()}    $..pim.interface.vipValue[{{ loop.index0 }}]["vipOptional"]    {{ interface.optional | default("not_defined")}}    msg=interface optional
+
+    # RP Candidate
+    Should Be Equal Value Json List Length    ${ft.json()}    $..pim["rp-candidate"].vipValue    {{ ft_yaml.rp_candidates | default([]) | length }}    msg=rp_candidates length
+
+    {% for rp_candidate in ft_yaml.rp_candidates | default([]) %}
+    Log    === RP Candidate {{loop.index0}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["rp-candidate"].vipValue[{{ loop.index0 }}]["pim-interface-name"]
+    ...    {{ rp_candidate.interface_name | default("not_defined") }}
+    ...    {{ rp_candidate.interface_name_variable | default("not_defined") }}
+    ...    msg=rp_candidates.interface_name
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["rp-candidate"].vipValue[{{ loop.index0 }}]["group-list"]
+    ...    {{ rp_candidate.access_list | default("not_defined") }}
+    ...    {{ rp_candidate.access_list_variable | default("not_defined") }}
+    ...    msg=rp_candidates.access_list
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["rp-candidate"].vipValue[{{ loop.index0 }}]["interval"]
+    ...    {{ rp_candidate.interval | default("not_defined") }}
+    ...    {{ rp_candidate.interval_variable | default("not_defined") }}
+    ...    msg=rp_candidates.interval
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["rp-candidate"].vipValue[{{ loop.index0 }}]["priority"]
+    ...    {{ rp_candidate.priority | default("not_defined") }}
+    ...    {{ rp_candidate.priority_variable | default("not_defined") }}
+    ...    msg=rp_candidates.priority
+
+    Should Be Equal Value Json String    ${ft.json()}    $..pim["rp-candidate"].vipValue[{{ loop.index0 }}]["vipOptional"]
+    ...    {{ rp_candidate.optional | default("not_defined") }}
+    ...    msg=rp_candidates.optional
+
+    {% endfor %}
+
+    # BSR Candidate
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["bsr-candidate"]["bsr-interface-name"]
+    ...    {{ ft_yaml.bsr_candidate_interface | default("not_defined") }}
+    ...    {{ ft_yaml.bsr_candidate_interface_variable | default("not_defined") }}
+    ...    msg=bsr_candidate_interface
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["bsr-candidate"]["mask"]
+    ...    {{ ft_yaml.bsr_candidate_hash_mask_length | default("not_defined") }}
+    ...    {{ ft_yaml.bsr_candidate_hash_mask_length_variable | default("not_defined") }}
+    ...    msg=bsr_candidate_hash_mask_length
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["bsr-candidate"]["priority"]
+    ...    {{ ft_yaml.bsr_candidate_priority | default("not_defined") }}
+    ...    {{ ft_yaml.bsr_candidate_priority_variable | default("not_defined") }}
+    ...    msg=bsr_candidate_priority
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim["bsr-candidate"]["accept-rp-candidate"]
+    ...    {{ ft_yaml.bsr_candidate_rp_access_list | default("not_defined") }}
+    ...    {{ ft_yaml.bsr_candidate_rp_access_list_variable | default("not_defined") }}
+    ...    msg=bsr_candidate_rp_access_list
+
+    # Interfaces
+    Should Be Equal Value Json List Length    ${ft.json()}    $..pim["interface"].vipValue    {{ ft_yaml.interfaces | default([]) | length }}    msg=interfaces length
+
+    {% for interface in ft_yaml.interfaces | default([]) %}
+    Log    === Interface {{loop.index0}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim.interface.vipValue[{{ loop.index0 }}].name
+    ...    {{ interface.interface_name | default("not_defined") }}
+    ...    {{ interface.interface_name_variable | default("not_defined") }}
+    ...    msg=interfaces.interface_name
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim.interface.vipValue[{{ loop.index0 }}]["join-prune-interval"]
+    ...    {{ interface.join_prune_interval | default("not_defined") }}
+    ...    {{ interface.join_prune_interval_variable | default("not_defined") }}
+    ...    msg=interfaces.join_prune_interval
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..pim.interface.vipValue[{{ loop.index0 }}]["query-interval"]
+    ...    {{ interface.query_interval | default("not_defined") }}
+    ...    {{ interface.query_interval_variable | default("not_defined") }}
+    ...    msg=interfaces.query_interval
+
+    Should Be Equal Value Json String    ${ft.json()}    $..pim.interface.vipValue[{{ loop.index0 }}]["vipOptional"]
+    ...    {{ interface.optional | default("not_defined") }}
+    ...    msg=interfaces.optional
+
     {% endfor %}
 {% endfor %}
 {% endif %}

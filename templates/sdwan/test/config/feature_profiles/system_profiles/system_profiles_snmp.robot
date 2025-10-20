@@ -6,7 +6,7 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_profiles     system_profiles   snmp
 Resource        ../../../sdwan_common.resource
 
-
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.system_profiles is defined %}
 {% set profile_snmp_list = [] %}
 {% for profile in sdwan.feature_profiles.system_profiles %}
  {% if profile.snmp is defined %}
@@ -121,5 +121,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} SNMP Feature {{ profi
 
 {% endif %}
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

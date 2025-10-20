@@ -5,7 +5,7 @@ Suite Teardown    Run On Last Process   Logout SDWAN Manager
 Default Tags      sdwan   config   security_policies
 Resource          ../../../sdwan_common.resource
 
-{% if sdwan.security_policies.definitions.intrusion_prevention is defined %}
+{% if sdwan.security_policies is defined and sdwan.security_policies.definitions is defined and sdwan.security_policies.definitions.intrusion_prevention is defined %}
 
 *** Test Cases ***
 

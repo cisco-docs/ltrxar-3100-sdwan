@@ -6,7 +6,7 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_profiles     system_profiles   mrf
 Resource        ../../../sdwan_common.resource
 
-
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.system_profiles is defined %}
 {% set profile_mrf_list = [] %}
 {% for profile in sdwan.feature_profiles.system_profiles %}
  {% if profile.mrf is defined %}
@@ -45,5 +45,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} MRF Feature {{ profil
 
 {% endif %}
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

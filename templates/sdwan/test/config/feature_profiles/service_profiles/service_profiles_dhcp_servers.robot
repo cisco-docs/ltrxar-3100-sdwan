@@ -8,7 +8,7 @@ Resource        ../../../sdwan_common.resource
 
 
 {% set profile_dhcp_server_list = [] %}
-{% for profile in sdwan.feature_profiles.service_profiles %}
+{% for profile in sdwan.get('feature_profiles', {}).get('service_profiles', []) %}
  {% if profile.dhcp_servers is defined %}
   {% set _ = profile_dhcp_server_list.append(profile.name) %}
  {% endif %}
@@ -22,7 +22,7 @@ Get Service Profiles
     Set Suite Variable    ${r}
 
 
-{% for profile in sdwan.feature_profiles.service_profiles | default([]) %}
+{% for profile in sdwan.get('feature_profiles', {}).get('service_profiles', []) %}
 {% if profile.dhcp_servers is defined %}
 
 Verify Feature Profiles Service Profiles {{ profile.name }} DHCP Server Feature

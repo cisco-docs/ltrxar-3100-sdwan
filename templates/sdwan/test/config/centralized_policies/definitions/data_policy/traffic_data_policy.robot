@@ -29,8 +29,9 @@ Verify Centralized Policy Data Policy Traffic Data {{ traffic_policy.name }}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceIpType   {{ item.ip_type | default(defaults.sdwan.centralized_policies.definitions.data_policy.traffic_data.sequences.ip_type) }}    msg=sequence ip type
 
 {% set type = ({"qos":"qos", "service_chaining":"serviceChaining", "traffic_engineering":"trafficEngineering", "application_firewall":"applicationFirewall", "custom":"data"}) %}
+{% set item_type = (item.type | default(defaults.sdwan.centralized_policies.definitions.data_policy.traffic_data.sequences.type)) %}
 
-    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceType   {{ type[item.type] }}    msg=sequence type- {{ item.type }}
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceType   {{ type[item_type] }}    msg=sequence type- {{ item_type }}
 
     ${app_list_id}=    Get Value From Json    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@..field=="appList")].ref
     IF    ${app_list_id} == []
@@ -48,7 +49,7 @@ Verify Centralized Policy Data Policy Traffic Data {{ traffic_policy.name }}
     IF    ${proto} == []
         Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@..field=="protocol")].value    {{ item.match_criterias.protocols | default("not_defined") }}    msg=protocols list
     ELSE
-        ${protocol_list}=    Create List    {{ item.match_criterias.protocols | join('   ') }}
+        ${protocol_list}=    Create List    {{ item.match_criterias.protocols | default([]) | join('   ') }}
         ${proto_list}=  Split String    ${proto[0]}
         Lists Should Be Equal   ${proto_list}   ${protocol_list}   ignore_order=True    msg=protocols list
     END
@@ -148,7 +149,7 @@ Verify Centralized Policy Data Policy Traffic Data {{ traffic_policy.name }}
 {% endif %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="count")].parameter    {{ item.actions.counter_name | default("not_defined") }}    msg=counter name
 
-{% if item.type == "custom" %}
+{% if item_type == "custom" %}
     ${dns_app_list_id}=    Get Value From Json    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@..field=="dnsAppList")].ref
     IF    ${dns_app_list_id} == []
         Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@..field=="dnsAppList")].ref    {{ item.match_criterias.dns_application_list | default("not_defined") }}    msg=dns application list
@@ -218,14 +219,14 @@ Verify Centralized Policy Data Policy Traffic Data {{ traffic_policy.name }}
 
 {% endif %}
 
-{% if item.type == "service_chaining" or item.type == "traffic_engineering" or item.type == "custom" %}
+{% if item_type == "service_chaining" or item_type == "traffic_engineering" or item_type == "custom" %}
 
     ${tloc_id}=   Get Value From Json   ${r_id.json()}   $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="tlocList")].ref
     IF    ${tloc_id} == []
         Should Be Equal Value Json String    ${r_id.json()}   $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="tlocList")].ref    {{ item.actions.tloc_list | default("not_defined") }}    msg=tloc list
     ELSE
         ${r_tloc_id}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/tloc/${tloc_id[0]}
-        Should Be Equal Value Json String    ${r_tloc_id.json()}    $..name    {{ item.actions.tloc_list }}    msg=tloc list
+        Should Be Equal Value Json String    ${r_tloc_id.json()}    $..name    {{ item.actions.tloc_list | default("not_defined") }}    msg=tloc list
     END
 
 {% if item.actions.tloc is defined %}
@@ -238,7 +239,7 @@ Verify Centralized Policy Data Policy Traffic Data {{ traffic_policy.name }}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="vpn")].value    {{ item.actions.vpn | default("not_defined") }}    msg=vpn
 {% endif %}
 
-{% if item.type == "service_chaining" or item.type == "custom" %}
+{% if item_type == "service_chaining" or item_type == "custom" %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="service")].value.type    {{ item.actions.service.type | default("not_defined") }}    msg=service type
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="service")].value.vpn    {{ item.actions.service.vpn | default("not_defined") }}    msg=service vpn
 
@@ -264,9 +265,10 @@ Verify Centralized Policy Data Policy Traffic Data {{ traffic_policy.name }}
 
 {% endif %}
 
-{% if item.type == "qos" or item.type == "custom" %}
+{% if item_type == "qos" or item_type == "custom" %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="dscp")].value    {{ item.actions.dscp | default("not_defined") }}    msg=dscp
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="forwardingClass")].value    {{ item.actions.forwarding_class | default("not_defined") }}    msg=forwarding class
+{% if item.actions.loss_correction is defined %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="lossProtect")].parameter    {{ item.actions.loss_correction.type | default("not_defined") }}    msg=loss correction type
 {% if item.actions.loss_correction.type == "fecAlways" %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="lossProtectFec")].parameter    fecAlways    msg=fec always
@@ -276,17 +278,19 @@ Verify Centralized Policy Data Policy Traffic Data {{ traffic_policy.name }}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="lossProtectFec")].parameter    fecAdaptive    msg=fec adaptive
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="lossProtectFec")].value    {{ item.actions.loss_correction.loss_threshold_percentage | default("not_defined") }}    msg=loss threshold percentage
 {% endif %}
+{% endif %}
 
     ${policer_list_id}=    Get Value From Json    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="policer")].ref
     IF    ${policer_list_id} == []
         Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="policer")].ref    {{ item.actions.policer_list | default("not_defined") }}    msg=policer list
     ELSE
         ${r_policer_id}=    GET On Session    sdwan_manager    /dataservice/template/policy/list/policer/${policer_list_id[0]}
-        Should Be Equal Value Json String    ${r_policer_id.json()}    $..name    {{ item.actions.policer_list }}    msg=policer list
+        Should Be Equal Value Json String    ${r_policer_id.json()}    $..name    {{ item.actions.policer_list | default("not_defined") }}    msg=policer list
     END
 {% endif %}
 
-{% if item.type == "traffic_engineering" or item.type == "custom" %}
+{% if item_type == "traffic_engineering" or item_type == "custom" %}
+{% if item.actions.local_tloc_list is defined %}
     ${color_list}=   Get Value From Json   ${r_id.json()}   $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="localTlocList")].value.color
     IF    ${color_list} == []
         Should Be Equal Value Json String    ${r_id.json()}   $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="localTlocList")].value.color    {{ item.actions.local_tloc_list.colors | default("not_defined") }}    msg=local tloc color
@@ -301,7 +305,7 @@ Verify Centralized Policy Data Policy Traffic Data {{ traffic_policy.name }}
         Should Be Equal Value Json String    ${r_id.json()}   $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="localTlocList")].value.encap    {{ item.actions.local_tloc_list.encaps | default("not_defined") }}    msg=local tloc encap
     ELSE
         ${local_tloc_encap_list}=  Split String    ${encap_list[0]}
-        ${local_tloc_encap}=    Create List    {{ item.actions.local_tloc_list.encaps | join('   ') }}
+        ${local_tloc_encap}=    Create List    {{ item.actions.local_tloc_list.encaps | default([]) | join('   ') }}
         Lists Should Be Equal   ${local_tloc_encap_list}   ${local_tloc_encap}    ignore_order=True    msg=local tloc encap
     END
 
@@ -312,7 +316,8 @@ Verify Centralized Policy Data Policy Traffic Data {{ traffic_policy.name }}
 {% else %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="localTlocList")].value.restrict     {{ item.actions.local_tloc_list.restrict | default("not_defined") }}    msg=restrict
 {% endif %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="nextHop")].value    {{ item.actions.next_hop.ip_address }}    msg=next hop ip
+{% endif %}
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="nextHop")].value    {{ item.actions.next_hop.ip_address | default("not_defined") }}    msg=next hop ip
 
 {% if item.actions.next_hop.when_next_hop_is_not_available is defined and item.actions.next_hop.when_next_hop_is_not_available == "route_table_entry" | default("not_defined") %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@..type=="set")].parameter[?(@..field=="nextHopLoose")].value    true    msg=nexthop

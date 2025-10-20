@@ -5,7 +5,7 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    localized_policies
 Resource        ../../../sdwan_common.resource
 
-{% if sdwan.localized_policies.definitions.ipv6_device_access_policies is defined %}
+{% if sdwan.localized_policies is defined and sdwan.localized_policies.definitions is defined and sdwan.localized_policies.definitions.ipv6_device_access_policies is defined %}
 
 *** Test Cases ***
 Get Device Access IPv6 ACL
@@ -24,7 +24,7 @@ Verify Localized Policies Device Access IPv6 ACL {{ ipv6_device.name }}
 
     ${sequence_items}=    Get Value From Json    ${r_id.json()}    $.sequences
     ${sequence_length}=    Get Length    ${sequence_items[0]}
-    Should Be Equal As Integers    ${sequence_length}    {{ ipv6_device.sequences | length }}    msg=sequences
+    Should Be Equal As Integers    ${sequence_length}    {{ ipv6_device.sequences | default([]) | length }}    msg=sequences
 
 {% for sequence_index in range(ipv6_device.sequences | default([]) | length()) %}
 

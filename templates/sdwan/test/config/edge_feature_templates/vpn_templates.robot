@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation   Verify VPN Feature Template Configuration
+Documentation   Verify VPN Feature Templates
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_templates
@@ -8,439 +8,724 @@ Resource        ../../sdwan_common.resource
 {% if sdwan.edge_feature_templates.vpn_templates is defined %}
 
 *** Test Cases ***
-Get VPN Template(s)
+Get VPN Feature Templates
     ${r}=    GET On Session    sdwan_manager    /dataservice/template/feature
     ${r}=    Get Value From Json    ${r.json()}    $..data[?(@..templateType=="cisco_vpn")]
     Set Suite Variable    ${r}
 
-{% for vpn in sdwan.edge_feature_templates.vpn_templates | default([]) %}
+{% for ft_yaml in sdwan.edge_feature_templates.vpn_templates | default([]) %}
 
-Verify Edge Feature Template VPN Feature Template {{ vpn.name }}
-    ${vpn_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ vpn.name }}")]
-    Should Be Equal Value Json String    ${vpn_id}    $..templateName    {{ vpn.name }}    msg=name
-    Should Be Equal Value Json Special_String    ${vpn_id}    $..templateDescription    {{ vpn.description | normalize_special_string }}    msg=description
+Verify Edge Feature Template VPN Feature Template {{ ft_yaml.name }}
+    ${ft_summary_json}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ft_yaml.name }}")]
+    Should Not be Empty   ${ft_summary_json}   msg=Feature Template '{{ft_yaml.name}}' should be present on the Manager
+    Should Be Equal Value Json String    ${ft_summary_json}    $..templateName    {{ ft_yaml.name }}    msg=name
+    Should Be Equal Value Json Special_String    ${ft_summary_json}    $..templateDescription    {{ ft_yaml.description | normalize_special_string }}    msg=description
 
-{% set test_list = [] %}
-{% for item in vpn.device_types | default(defaults.sdwan.edge_feature_templates.vpn_templates.device_types) %}
-{% set test = "vedge-" ~ item %}
-{% set _ = test_list.append(test) %}
-{% endfor %}
+    # Device types validation
+    {% set device_types_yaml = [] %}
+    {% for item in ft_yaml.device_types | default(defaults.sdwan.edge_feature_templates.vpn_templates.device_types) %}
+    {% set device_type = "vedge-" ~ item %}
+    {% set _ = device_types_yaml.append(device_type) %}
+    {% endfor %}
+    ${device_types_json}=    Get Value From Json    ${ft_summary_json}    $..deviceType
+    ${device_types_yaml}=    Create List           {{ device_types_yaml | join('   ') }}
+    Lists Should Be Equal    ${device_types_json}[0]    ${device_types_yaml}    ignore_order=True    msg=device_types
 
-    ${dt_list}=    Get Value From Json    ${vpn_id}    $..deviceType
-    ${test_list}=    Create List    {{ test_list | join('   ') }}
-    Lists Should Be Equal    ${dt_list}[0]    ${test_list}    ignore_order=True    msg=device types
+    # Get template definition
+    ${ft_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ft_yaml.name }}")].templateId
+    ${ft}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${ft_id[0]}
 
-    ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{vpn.name }}")].templateId
-    ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${template_id[0]}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["ecmp-hash-key"].layer4
+    ...    {{ ft_yaml.enhance_ecmp_keying | default("not_defined") | lower }}
+    ...    {{ ft_yaml.enhance_ecmp_keying_variable | default("not_defined") }}
+    ...    msg=enhance_ecmp_keying
 
-    Should Be Equal Value Json String    ${r_id.json()}    $["ecmp-hash-key"].layer4.vipValue    {{ vpn.enhance_ecmp_keying | default("not_defined") | lower() }}    msg=enhance ecmp keying
-    Should Be Equal Value Json String    ${r_id.json()}    $["ecmp-hash-key"].layer4.vipVariableName    {{ vpn.enhance_ecmp_keying_variable | default("not_defined") }}    msg=enhance ecmp keying variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.dns.vipValue[?(@.role.vipValue=="primary")]..["dns-addr"].vipValue    {{ vpn.ipv4_primary_dns_server | default("not_defined") }}    msg=ipv4 primary dns server
-    Should Be Equal Value Json String    ${r_id.json()}    $.dns.vipValue[?(@.role.vipValue=="primary")]..["dns-addr"].vipVariableName    {{ vpn.ipv4_primary_dns_server_variable | default("not_defined") }}    msg=ipv4 primary dns server variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.dns.vipValue[?(@.role.vipValue=="secondary")]..["dns-addr"].vipValue    {{ vpn.ipv4_secondary_dns_server | default("not_defined") }}    msg=ipv4 secondary dns server
-    Should Be Equal Value Json String    ${r_id.json()}    $.dns.vipValue[?(@.role.vipValue=="secondary")]..["dns-addr"].vipVariableName    {{ vpn.ipv4_secondary_dns_server_variable | default("not_defined") }}    msg=ipv4 secondary dns server variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["dns-ipv6"].vipValue[?(@.role.vipValue=="primary")]..["dns-addr"].vipValue    {{ vpn.ipv6_primary_dns_server | default("not_defined") }}    msg=ipv6 primary dns server
-    Should Be Equal Value Json String    ${r_id.json()}    $..["dns-ipv6"].vipValue[?(@.role.vipValue=="primary")]..["dns-addr"].vipVariableName    {{ vpn.ipv6_primary_dns_server_variable | default("not_defined") }}    msg=ipv6 primary dns server variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["dns-ipv6"].vipValue[?(@.role.vipValue=="secondary")]..["dns-addr"].vipValue    {{ vpn.ipv6_secondary_dns_server | default("not_defined") }}    msg=ipv6 secondary dns server
-    Should Be Equal Value Json String    ${r_id.json()}    $..["dns-ipv6"].vipValue[?(@.role.vipValue=="secondary")]..["dns-addr"].vipVariableName    {{ vpn.ipv6_secondary_dns_server_variable | default("not_defined") }}    msg=ipv6 secondary dns server variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["omp-admin-distance-ipv4"].vipValue    {{ vpn.omp_admin_distance_ipv4 | default("not_defined") }}    msg=omp admin distance ipv4
-    Should Be Equal Value Json String    ${r_id.json()}    $..["omp-admin-distance-ipv4"].vipVariableName    {{ vpn.omp_admin_distance_ipv4_variable | default("not_defined") }}    msg=omp admin distance ipv4 variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["omp-admin-distance-ipv6"].vipValue    {{ vpn.omp_admin_distance_ipv6 | default("not_defined") }}    msg=omp admin distance ipv6
-    Should Be Equal Value Json String    ${r_id.json()}    $..["omp-admin-distance-ipv6"].vipVariableName    {{ vpn.omp_admin_distance_ipv6_variable | default("not_defined") }}    msg=omp admin distance ipv6 variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["vpn-id"].vipValue    {{ vpn.vpn_id | default("not_defined") }}    msg=vpn id
-    Should Be Equal Value Json String    ${r_id.json()}    $.name.vipValue    {{ vpn.vpn_name | default("not_defined") }}    msg=vpn name
-    Should Be Equal Value Json String    ${r_id.json()}    $.name.vipVariableName    {{ vpn.vpn_name_variable | default("not_defined") }}    msg=vpn name variable
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.dns.vipValue[?(@.role.vipValue=="primary")]..["dns-addr"]
+    ...    {{ ft_yaml.ipv4_primary_dns_server | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_primary_dns_server_variable | default("not_defined") }}
+    ...    msg=ipv4_primary_dns_server
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.host.vipValue    {{ vpn.ipv4_dns_hosts | default([]) | length + vpn.ipv6_dns_hosts | default([]) | length }}    msg=ipv4 dns hosts/ipv6 dns hosts length
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.dns.vipValue[?(@.role.vipValue=="secondary")]..["dns-addr"]
+    ...    {{ ft_yaml.ipv4_secondary_dns_server | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_secondary_dns_server_variable | default("not_defined") }}
+    ...    msg=ipv4_secondary_dns_server
 
-{% for ipv4_host in vpn.ipv4_dns_hosts | default([]) %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["dns-ipv6"].vipValue[?(@.role.vipValue=="primary")]..["dns-addr"]
+    ...    {{ ft_yaml.ipv6_primary_dns_server | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_primary_dns_server_variable | default("not_defined") }}
+    ...    msg=ipv6_primary_dns_server
 
-    ${hostname_det}=    Get Value From Json    ${r_id.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv4_host.hostname }}")].hostname
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["dns-ipv6"].vipValue[?(@.role.vipValue=="secondary")]..["dns-addr"]
+    ...    {{ ft_yaml.ipv6_secondary_dns_server | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_secondary_dns_server_variable | default("not_defined") }}
+    ...    msg=ipv6_secondary_dns_server
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["omp-admin-distance-ipv4"]
+    ...    {{ ft_yaml.omp_admin_distance_ipv4 | default("not_defined") }}
+    ...    {{ ft_yaml.omp_admin_distance_ipv4_variable | default("not_defined") }}
+    ...    msg=omp_admin_distance_ipv4
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["omp-admin-distance-ipv6"]
+    ...    {{ ft_yaml.omp_admin_distance_ipv6 | default("not_defined") }}
+    ...    {{ ft_yaml.omp_admin_distance_ipv6_variable | default("not_defined") }}
+    ...    msg=omp_admin_distance_ipv6
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["vpn-id"]
+    ...    {{ ft_yaml.vpn_id | default("not_defined") }}
+    ...    {{ ft_yaml.vpn_id_variable | default("not_defined") }}
+    ...    msg=vpn_id
+
+    # Custom handling for vpn_name as it might have multiple spaces
+    Should Be Equal Value Json Special_String    ${ft.json()}   $.name.vipValue    {{ ft_yaml.vpn_name | default("not_defined") | normalize_special_string }}    msg=name
+    Should Be Equal Value Json String    ${ft.json()}   $.name.vipVariableName    {{ ft_yaml.vpn_name_variable | default("not_defined") }}    msg=name_variable
+    # End of custom handling
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.host.vipValue    {{ ft_yaml.ipv4_dns_hosts | default([]) | length + ft_yaml.ipv6_dns_hosts | default([]) | length }}    msg=ipv4_dns_hosts|ipv6_dns_hosts.length
+
+{% for ipv4_host in ft_yaml.ipv4_dns_hosts | default([]) %}
+
+    Log    === IPv4 DNS Host {{loop.index0}} ===
+    ${hostname_det}=    Get Value From Json    ${ft.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv4_host.hostname }}")].hostname
     Should Not be Empty   ${hostname_det}   msg=ipv4 hostname not present
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv4_host.hostname }}")].hostname.vipVariableName    {{ ipv4_host.hostname_variable | default("not_defined") }}    msg=ipv4 hostname variable
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv4_host.hostname }}")].hostname
+    ...    {{ ipv4_host.hostname | default("not_defined") }}
+    ...    {{ ipv4_host.hostname_variable | default("not_defined") }}
+    ...    msg=ipv4_dns_hosts.hostname
 
-    ${rec_ips_list}=    Get Value From Json    ${r_id.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv4_host.hostname }}")].ip.vipValue
-    ${exp_ips_list}=    Create List    {{ ipv4_host.ips | default([]) | join('   ') }}
-    Lists Should Be Equal    ${rec_ips_list[0]}    ${exp_ips_list}    ignore_order=True    msg=ipv4 ips
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv4_host.hostname }}")].ip
+    ...    {{ ipv4_host.ips | default("not_defined") }}
+    ...    {{ ipv4_host.ips_variable | default("not_defined") }}
+    ...    msg=ipv4_dns_hosts.ips
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv4_host.hostname }}")].ip.vipVariableName    {{ ipv4_host.ips_variable | default("not_defined") }}    msg=ipv4 ips variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv4_host.hostname }}")].vipOptional    {{ ipv4_host.optional | default("not_defined") }}    msg=ipv4 optional
+    Should Be Equal Value Json String    ${ft.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv4_host.hostname }}")].vipOptional    {{ ipv4_host.optional | default("not_defined") }}    msg=ipv4_dns_hosts.optional
 
 {% endfor %}
 
-{% for ipv6_host in vpn.ipv6_dns_hosts | default([]) %}
+{% for ipv6_host in ft_yaml.ipv6_dns_hosts | default([]) %}
 
-    ${hostname_det}=    Get Value From Json    ${r_id.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv6_host.hostname }}")].hostname
+    Log    === IPv6 DNS Host {{loop.index0}} ===
+    ${hostname_det}=    Get Value From Json    ${ft.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv6_host.hostname }}")].hostname
     Should Not be Empty   ${hostname_det}   msg=ipv6 hostname not present
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv6_host.hostname }}")].hostname.vipVariableName    {{ ipv6_host.hostname_variable | default("not_defined") }}    msg=ipv6 hostname variable
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv6_host.hostname }}")].hostname
+    ...    {{ ipv6_host.hostname | default("not_defined") }}
+    ...    {{ ipv6_host.hostname_variable | default("not_defined") }}
+    ...    msg=ipv6_dns_hosts.hostname
 
-    ${rec_ips_list}=    Get Value From Json    ${r_id.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv6_host.hostname }}")].ip.vipValue
-    ${exp_ips_list}=    Create List    {{ ipv6_host.ips | default([]) | join('   ') }}
-    Lists Should Be Equal    ${rec_ips_list[0]}    ${exp_ips_list}    ignore_order=True    msg=ipv6 ips
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv6_host.hostname }}")].ip
+    ...    {{ ipv6_host.ips | default("not_defined") }}
+    ...    {{ ipv6_host.ips_variable | default("not_defined") }}
+    ...    msg=ipv6_dns_hosts.ips
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv6_host.hostname }}")].ip.vipVariableName    {{ ipv6_host.ips_variable | default("not_defined") }}    msg=ipv6 ips variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv6_host.hostname }}")].vipOptional    {{ ipv6_host.optional | default("not_defined") }}    msg=ipv6 optional
-
-{% endfor %}
-
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.ip..["gre-route"].vipValue    {{ vpn.ipv4_static_gre_routes | default([]) | length }}    msg=ipv4 static gre routes length
-
-{% for ipv4_gre in vpn.ipv4_static_gre_routes | default([]) %}
-
-    ${rec_int_list}=    Get Value From Json    ${r_id.json()}    $.ip..["gre-route"].vipValue[{{ loop.index0 }}].interface.vipValue
-    ${exp_int_list}=    Create List    {{ ipv4_gre.interfaces | default([]) | join('   ') }}
-    Lists Should Be Equal    ${rec_int_list[0]}    ${exp_int_list}    ignore_order=True    msg=gre interfaces
-
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip..["gre-route"].vipValue[{{ loop.index0 }}].interface.vipVariableName    {{ ipv4_gre.interfaces_variable | default("not_defined") }}    msg=gre interfaces variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip..["gre-route"].vipValue[{{ loop.index0 }}].prefix.vipValue    {{ ipv4_gre.prefix | default("not_defined") }}    msg=gre prefix
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip..["gre-route"].vipValue[{{ loop.index0 }}].prefix.vipVariableName    {{ ipv4_gre.prefix_variable | default("not_defined") }}    msg=gre prefix variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip..["gre-route"].vipValue[{{ loop.index0 }}].vipOptional    {{ ipv4_gre.optional | default("not_defined") }}    msg=gre optional
+    Should Be Equal Value Json String    ${ft.json()}    $.host.vipValue[?(@.hostname.vipValue=="{{ ipv6_host.hostname }}")].vipOptional    {{ ipv6_host.optional | default("not_defined") }}    msg=ipv6_dns_hosts.optional
 
 {% endfor %}
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.ip..["ipsec-route"].vipValue    {{ vpn.ipv4_static_ipsec_routes | default([]) | length }}    msg=ipv4 static ipsec routes length
+    Should Be Equal Value Json List Length    ${ft.json()}    $.ip..["gre-route"].vipValue    {{ ft_yaml.ipv4_static_gre_routes | default([]) | length }}    msg=ipv4_static_gre_routes.length
 
-{% for ipv4_ipsec in vpn.ipv4_static_ipsec_routes | default([]) %}
+{% for ipv4_gre in ft_yaml.ipv4_static_gre_routes | default([]) %}
 
-    ${rec_int_list}=    Get Value From Json    ${r_id.json()}    $.ip..["ipsec-route"].vipValue[{{ loop.index0 }}].interface.vipValue
-    ${exp_int_list}=    Create List    {{ ipv4_ipsec.interfaces | default([]) | join('   ') }}
-    Lists Should Be Equal    ${rec_int_list[0]}    ${exp_int_list}    ignore_order=True    msg=ipsec interfaces
+    Log    === IPv4 Static GRE Route {{loop.index0}} ===
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip..["ipsec-route"].vipValue[{{ loop.index0 }}].interface.vipVariableName    {{ ipv4_ipsec.interfaces_variable | default("not_defined") }}    msg=ipsec interfaces variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip..["ipsec-route"].vipValue[{{ loop.index0 }}].prefix.vipValue    {{ ipv4_ipsec.prefix | default("not_defined") }}    msg=ipsec prefix
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip..["ipsec-route"].vipValue[{{ loop.index0 }}].prefix.vipVariableName    {{ ipv4_ipsec.prefix_variable | default("not_defined") }}    msg=ipsec prefix variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip..["ipsec-route"].vipValue[{{ loop.index0 }}].vipOptional    {{ ipv4_ipsec.optional | default("not_defined") }}    msg=ipsec optional
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip..["gre-route"].vipValue[{{ loop.index0 }}].interface
+    ...    {{ ipv4_gre.interfaces | default("not_defined") }}
+    ...    {{ ipv4_gre.interfaces_variable | default("not_defined") }}
+    ...    msg=ipv4_static_gre_routes.interfaces
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip..["gre-route"].vipValue[{{ loop.index0 }}].prefix
+    ...    {{ ipv4_gre.prefix | default("not_defined") }}
+    ...    {{ ipv4_gre.prefix_variable | default("not_defined") }}
+    ...    msg=ipv4_static_gre_routes.prefix
+
+    Should Be Equal Value Json String    ${ft.json()}    $.ip..["gre-route"].vipValue[{{ loop.index0 }}].vipOptional    {{ ipv4_gre.optional | default("not_defined") }}    msg=ipv4_static_gre_routes.optional
 
 {% endfor %}
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.ip.route.vipValue    {{ vpn.ipv4_static_routes | default([]) | length }}    msg=ipv4 static routes length
+    Should Be Equal Value Json List Length    ${ft.json()}    $.ip..["ipsec-route"].vipValue    {{ ft_yaml.ipv4_static_ipsec_routes | default([]) | length }}    msg=ipv4_static_ipsec_routes.length
 
-{% for v4_route_index in range(vpn.ipv4_static_routes | default([]) | length()) %}
+{% for ipv4_ipsec in ft_yaml.ipv4_static_ipsec_routes | default([]) %}
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].dhcp.vipValue    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_dhcp | default("not_defined") | lower() }}    msg=ipv4 next hop dhcp
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].null0.vipValue    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_null0 | default("not_defined") | lower() }}    msg=ipv4 next hop null0
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].distance.vipValue    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_null0_distance | default("not_defined") }}    msg=ipv4 next hop null0 distance
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].distance.vipVariableName    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_null0_distance_variable | default("not_defined") }}    msg=ipv4 next hop null0 distance variable
+    Log    === IPv4 Static IPsec Route {{loop.index0}} ===
 
-    ${dia_val}=    Get Value From Json    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].vpn.vipValue
-{% if vpn.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") | lower() == "true" %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip..["ipsec-route"].vipValue[{{ loop.index0 }}].interface
+    ...    {{ ipv4_ipsec.interfaces | default("not_defined") }}
+    ...    {{ ipv4_ipsec.interfaces_variable | default("not_defined") }}
+    ...    msg=ipv4_static_ipsec_routes.interfaces
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip..["ipsec-route"].vipValue[{{ loop.index0 }}].prefix
+    ...    {{ ipv4_ipsec.prefix | default("not_defined") }}
+    ...    {{ ipv4_ipsec.prefix_variable | default("not_defined") }}
+    ...    msg=ipv4_static_ipsec_routes.prefix
+
+    Should Be Equal Value Json String    ${ft.json()}    $.ip..["ipsec-route"].vipValue[{{ loop.index0 }}].vipOptional    {{ ipv4_ipsec.optional | default("not_defined") }}    msg=ipv4_static_ipsec_routes.optional
+
+{% endfor %}
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.ip.route.vipValue    {{ ft_yaml.ipv4_static_routes | default([]) | length }}    msg=ipv4_static_routes.length
+
+{% for v4_route_index in range(ft_yaml.ipv4_static_routes | default([]) | length()) %}
+
+    Log    === IPv4 Static Route {{v4_route_index}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}].dhcp
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hop_dhcp | default("not_defined") | lower }}
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hop_dhcp_variable | default("not_defined") }}
+    ...    msg=ipv4_static_routes.next_hop_dhcp
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}].null0
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hop_null0 | default("not_defined") | lower }}
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hop_null0_variable | default("not_defined") }}
+    ...    msg=ipv4_static_routes.next_hop_null0
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}].distance
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hop_null0_distance | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hop_null0_distance_variable | default("not_defined") }}
+    ...    msg=ipv4_static_routes.next_hop_null0_distance
+
+    ${dia_val}=    Get Value From Json    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}].vpn.vipValue
+
+    # Custom handling to check if DIA is enabled or not
+{% if ft_yaml.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") | lower() == "true" %}
     IF    ${dia_val} == []
         ${r_value}=    Set Variable    not_defined
     ELSE
         ${r_value}=    Set Variable If    "${dia_val[0]}" == "0"    true
     END
-    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_dia | lower() }}    msg=ipv4 next hop dia
-{% elif vpn.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") | lower() == "false" %}
+    Should Be Equal As Strings    ${r_value}    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hop_dia | lower() }}    msg=ipv4_static_routes.next_hop_dia
+{% elif ft_yaml.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") | lower() == "false" %}
     IF    ${dia_val} == []
         ${r_value}=    Set Variable    false
     ELSE
         ${r_value}=    Set Variable    ${dia_val[0]}
     END
-    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_dia | lower() }}    msg=ipv4 next hop dia
-{% elif vpn.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") == "not_defined" %}
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].vpn.vipValue    {{ vpn.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") }}    msg=ipv4 next hop dia
+    Should Be Equal As Strings    ${r_value}    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hop_dia | lower() }}    msg=ipv4_static_routes.next_hop_dia
+{% elif ft_yaml.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") == "not_defined" %}
+    Should Be Equal Value Json String    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}].vpn.vipValue    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hop_dia | default("not_defined") }}    msg=ipv4_static_routes.next_hop_dia
 {% endif %}
+    # End of custom handling
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].vipOptional    {{ vpn.ipv4_static_routes[v4_route_index].optional | default("not_defined") }}    msg=ipv4 optional
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].prefix.vipValue    {{ vpn.ipv4_static_routes[v4_route_index].prefix | default("not_defined") }}    msg=ipv4 prefix
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}].prefix.vipVariableName    {{ vpn.ipv4_static_routes[v4_route_index].prefix_variable | default("not_defined") }}    msg=ipv4 prefix variable
+    Should Be Equal Value Json String    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}].vipOptional    {{ ft_yaml.ipv4_static_routes[v4_route_index].optional | default("not_defined") }}    msg=ipv4_static_routes.optional
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop"].vipValue    {{ vpn.ipv4_static_routes[v4_route_index].next_hops | default([]) | length }}    msg=ipv4 next hops length
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}].prefix
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].prefix | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].prefix_variable | default("not_defined") }}
+    ...    msg=ipv4_static_routes.prefix
 
-{% for v4_hop_index in range(vpn.ipv4_static_routes[v4_route_index].next_hops | default([]) | length()) %}
+    Should Be Equal Value Json List Length    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop"].vipValue    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hops | default([]) | length }}    msg=ipv4_static_routes.next_hops.length
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop"].vipValue[{{ v4_hop_index }}].address.vipValue    {{ vpn.ipv4_static_routes[v4_route_index].next_hops[v4_hop_index].address | default("not_defined") }}    msg=ipv4 hop address
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop"].vipValue[{{ v4_hop_index }}].address.vipVariableName    {{ vpn.ipv4_static_routes[v4_route_index].next_hops[v4_hop_index].address_variable | default("not_defined") }}    msg=ipv4 hop address variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop"].vipValue[{{ v4_hop_index }}].distance.vipValue    {{ vpn.ipv4_static_routes[v4_route_index].next_hops[v4_hop_index].distance | default("not_defined") }}    msg=ipv4 hop distance
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop"].vipValue[{{ v4_hop_index }}].distance.vipVariableName    {{ vpn.ipv4_static_routes[v4_route_index].next_hops[v4_hop_index].distance_variable | default("not_defined") }}    msg=ipv4 hop distance variable
+{% for v4_hop_index in range(ft_yaml.ipv4_static_routes[v4_route_index].next_hops | default([]) | length()) %}
 
-{% endfor %}
+    Log    === IPv4 Static Route {{v4_route_index}} Next Hop {{v4_hop_index}} ===
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop-with-track"].vipValue    {{ vpn.ipv4_static_routes[v4_route_index].track_next_hops | default([]) | length }}    msg=ipv4 track next hops length
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop"].vipValue[{{ v4_hop_index }}].address
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hops[v4_hop_index].address | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hops[v4_hop_index].address_variable | default("not_defined") }}
+    ...    msg=ipv4_static_routes.next_hops.address
 
-{% for v4_track_index in range(vpn.ipv4_static_routes[v4_route_index].track_next_hops | default([]) | length()) %}
-
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop-with-track"].vipValue[{{ v4_track_index }}].address.vipValue    {{ vpn.ipv4_static_routes[v4_route_index].track_next_hops[v4_track_index].address | default("not_defined") }}    msg=ipv4 track address
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop-with-track"].vipValue[{{ v4_track_index }}].address.vipVariableName    {{ vpn.ipv4_static_routes[v4_route_index].track_next_hops[v4_track_index].address_variable | default("not_defined") }}    msg=ipv4 track address variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop-with-track"].vipValue[{{ v4_track_index }}].distance.vipValue    {{ vpn.ipv4_static_routes[v4_route_index].track_next_hops[v4_track_index].distance | default("not_defined") }}    msg=ipv4 track distance
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop-with-track"].vipValue[{{ v4_track_index }}].distance.vipVariableName    {{ vpn.ipv4_static_routes[v4_route_index].track_next_hops[v4_track_index].distance_variable | default("not_defined") }}    msg=ipv4 track distance variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop-with-track"].vipValue[{{ v4_track_index }}].tracker.vipValue    {{ vpn.ipv4_static_routes[v4_route_index].track_next_hops[v4_track_index].tracker | default("not_defined") }}    msg=ipv4 track tracker
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop-with-track"].vipValue[{{ v4_track_index }}].tracker.vipVariableName    {{ vpn.ipv4_static_routes[v4_route_index].track_next_hops[v4_track_index].tracker_variable | default("not_defined") }}    msg=ipv4 track tracker variable
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop"].vipValue[{{ v4_hop_index }}].distance
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hops[v4_hop_index].distance | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].next_hops[v4_hop_index].distance_variable | default("not_defined") }}
+    ...    msg=ipv4_static_routes.next_hops.distance
 
 {% endfor %}
 
+    Should Be Equal Value Json List Length    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop-with-track"].vipValue    {{ ft_yaml.ipv4_static_routes[v4_route_index].track_next_hops | default([]) | length }}    msg=ipv4_static_routes.track_next_hops.length
+
+{% for v4_track_index in range(ft_yaml.ipv4_static_routes[v4_route_index].track_next_hops | default([]) | length()) %}
+
+    Log    === IPv4 Static Route {{v4_route_index}} Track Next Hop {{v4_track_index}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop-with-track"].vipValue[{{ v4_track_index }}].address
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].track_next_hops[v4_track_index].address | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].track_next_hops[v4_track_index].address_variable | default("not_defined") }}
+    ...    msg=ipv4_static_routes.track_next_hops.address
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop-with-track"].vipValue[{{ v4_track_index }}].distance
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].track_next_hops[v4_track_index].distance | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].track_next_hops[v4_track_index].distance_variable | default("not_defined") }}
+    ...    msg=ipv4_static_routes.track_next_hops.distance
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip.route.vipValue[{{ v4_route_index }}]["next-hop-with-track"].vipValue[{{ v4_track_index }}].tracker
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].track_next_hops[v4_track_index].tracker | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_static_routes[v4_route_index].track_next_hops[v4_track_index].tracker_variable | default("not_defined") }}
+    ...    msg=ipv4_static_routes.track_next_hops.tracker
+
 {% endfor %}
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.ip..["service-route"].vipValue    {{ vpn.ipv4_static_service_routes | default([]) | length }}    msg=ipv4 static service routes length
+{% endfor %}
 
-{% for ipv4_service in vpn.ipv4_static_service_routes | default([]) %}
+    Should Be Equal Value Json List Length    ${ft.json()}    $.ip..["service-route"].vipValue    {{ ft_yaml.ipv4_static_service_routes | default([]) | length }}    msg=ipv4_static_service_routes.length
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip..["service-route"].vipValue[{{ loop.index0 }}].prefix.vipValue    {{ ipv4_service.prefix | default("not_defined") }}    msg=ipv4 service prefix
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip..["service-route"].vipValue[{{ loop.index0 }}].prefix.vipVariableName    {{ ipv4_service.prefix_variable | default("not_defined") }}    msg=ipv4 service prefix variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.ip..["service-route"].vipValue[{{ loop.index0 }}].service.vipValue    {{ ipv4_service.service | default("not_defined") }}    msg=ipv4 service
+{% for ipv4_service in ft_yaml.ipv4_static_service_routes | default([]) %}
+
+    Log    === IPv4 Static Service Route {{loop.index0}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip..["service-route"].vipValue[{{ loop.index0 }}].prefix
+    ...    {{ ipv4_service.prefix | default("not_defined") }}
+    ...    {{ ipv4_service.prefix_variable | default("not_defined") }}
+    ...    msg=ipv4_static_service_routes.prefix
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ip..["service-route"].vipValue[{{ loop.index0 }}].service
+    ...    {{ ipv4_service.service | default("not_defined") }}
+    ...    {{ ipv4_service.service_variable | default("not_defined") }}
+    ...    msg=ipv4_static_service_routes.service
 
 {% endfor %}
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.ipv6.route.vipValue    {{ vpn.ipv6_static_routes | default([]) | length }}    msg=ipv6 static routes length
+    Should Be Equal Value Json List Length    ${ft.json()}    $.ipv6.route.vipValue    {{ ft_yaml.ipv6_static_routes | default([]) | length }}    msg=ipv6_static_routes.length
 
-{% for v6_route_index in range(vpn.ipv6_static_routes | default([]) | length()) %}
+{% for v6_route_index in range(ft_yaml.ipv6_static_routes | default([]) | length()) %}
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].nat.vipValue    {{ vpn.ipv6_static_routes[v6_route_index].nat | default("not_defined") }}    msg=ipv6 nat
-    Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].nat.vipVariableName    {{ vpn.ipv6_static_routes[v6_route_index].nat_variable | default("not_defined") }}    msg=ipv6 nat variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].null0.vipValue    {{ vpn.ipv6_static_routes[v6_route_index].next_hop_null0 | default("not_defined") | lower() }}    msg=ipv6 next hop null0
+    Log    === IPv6 Static Route {{v6_route_index}} ===
 
-    ${dia_val}=    Get Value From Json    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].vpn.vipValue
-{% if vpn.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") | lower() == "true" %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].nat
+    ...    {{ ft_yaml.ipv6_static_routes[v6_route_index].nat | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_static_routes[v6_route_index].nat_variable | default("not_defined") }}
+    ...    msg=ipv6_static_routes.nat
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].null0
+    ...    {{ ft_yaml.ipv6_static_routes[v6_route_index].next_hop_null0 | default("not_defined") | lower }}
+    ...    {{ ft_yaml.ipv6_static_routes[v6_route_index].next_hop_null0_variable | default("not_defined") }}
+    ...    msg=ipv6_static_routes.next_hop_null0
+
+    ${dia_val}=    Get Value From Json    ${ft.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].vpn.vipValue
+
+    # Custom handling to check if DIA is enabled or not
+{% if ft_yaml.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") | lower() == "true" %}
     IF    ${dia_val} == []
         ${r_value}=    Set Variable    not_defined
     ELSE
         ${r_value}=    Set Variable If    "${dia_val[0]}" == "0"    true
     END
-    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv6_static_routes[v6_route_index].next_hop_dia | lower() }}    msg=ipv6 next hop dia
-{% elif vpn.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") | lower() == "false" %}
+    Should Be Equal As Strings    ${r_value}    {{ ft_yaml.ipv6_static_routes[v6_route_index].next_hop_dia | lower() }}    msg=ipv6_static_routes.next_hop_dia
+{% elif ft_yaml.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") | lower() == "false" %}
     IF    ${dia_val} == []
         ${r_value}=    Set Variable    false
     ELSE
         ${r_value}=    Set Variable    ${dia_val[0]}
     END
-    Should Be Equal As Strings    ${r_value}    {{ vpn.ipv6_static_routes[v6_route_index].next_hop_dia | lower() }}    msg=ipv6 next hop dia
-{% elif vpn.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") == "not_defined" %}
-    Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].vpn.vipValue    {{ vpn.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") }}    msg=ipv6 next hop dia
+    Should Be Equal As Strings    ${r_value}    {{ ft_yaml.ipv6_static_routes[v6_route_index].next_hop_dia | lower() }}    msg=ipv6_static_routes.next_hop_dia
+{% elif ft_yaml.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") == "not_defined" %}
+    Should Be Equal Value Json String    ${ft.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].vpn.vipValue    {{ ft_yaml.ipv6_static_routes[v6_route_index].next_hop_dia | default("not_defined") }}    msg=ipv6_static_routes.next_hop_dia
 {% endif %}
+    # End of custom handling
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].vipOptional    {{ vpn.ipv6_static_routes[v6_route_index].optional | default("not_defined") }}    msg=ipv6 optional
-    Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].prefix.vipValue    {{ vpn.ipv6_static_routes[v6_route_index].prefix | default("not_defined") }}    msg=ipv6 prefix
-    Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].prefix.vipVariableName    {{ vpn.ipv6_static_routes[v6_route_index].prefix_variable | default("not_defined") }}    msg=ipv6 prefix variable
+    Should Be Equal Value Json String    ${ft.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].vipOptional    {{ ft_yaml.ipv6_static_routes[v6_route_index].optional | default("not_defined") }}    msg=ipv6_static_routes.optional
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}]..["next-hop"].vipValue    {{ vpn.ipv6_static_routes[v6_route_index].next_hops | default([]) | length }}    msg=ipv6 next hops length
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}].prefix
+    ...    {{ ft_yaml.ipv6_static_routes[v6_route_index].prefix | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_static_routes[v6_route_index].prefix_variable | default("not_defined") }}
+    ...    msg=ipv6_static_routes.prefix
 
-{% for v6_hop_index in range(vpn.ipv6_static_routes[v6_route_index].next_hops | default([]) | length()) %}
+    Should Be Equal Value Json List Length    ${ft.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}]..["next-hop"].vipValue    {{ ft_yaml.ipv6_static_routes[v6_route_index].next_hops | default([]) | length }}    msg=ipv6_static_routes.next_hops.length
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}]["next-hop"].vipValue[{{ v6_hop_index }}].address.vipValue    {{ vpn.ipv6_static_routes[v6_route_index].next_hops[v6_hop_index].address | default("not_defined") }}    msg=ipv6 hop address
-    Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}]["next-hop"].vipValue[{{ v6_hop_index }}].address.vipVariableName    {{ vpn.ipv6_static_routes[v6_route_index].next_hops[v6_hop_index].address_variable | default("not_defined") }}    msg=ipv6 hop address variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}]["next-hop"].vipValue[{{ v6_hop_index }}].distance.vipValue    {{ vpn.ipv6_static_routes[v6_route_index].next_hops[v6_hop_index].distance | default("not_defined") }}    msg=ipv6 hop distance
-    Should Be Equal Value Json String    ${r_id.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}]["next-hop"].vipValue[{{ v6_hop_index }}].distance.vipVariableName    {{ vpn.ipv6_static_routes[v6_route_index].next_hops[v6_hop_index].distance_variable | default("not_defined") }}    msg=ipv6 hop distance variable
+{% for v6_hop_index in range(ft_yaml.ipv6_static_routes[v6_route_index].next_hops | default([]) | length()) %}
 
-{% endfor %}
+    Log    === IPv6 Static Route {{v6_route_index}} Next Hop {{v6_hop_index}} ===
 
-{% endfor %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}]["next-hop"].vipValue[{{ v6_hop_index }}].address
+    ...    {{ ft_yaml.ipv6_static_routes[v6_route_index].next_hops[v6_hop_index].address | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_static_routes[v6_route_index].next_hops[v6_hop_index].address_variable | default("not_defined") }}
+    ...    msg=ipv6_static_routes.next_hops.address
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.nat.natpool.vipValue    {{ vpn.nat_pools | default([]) | length }}    msg=nat pools length
-
-{% for nat_pool in vpn.nat_pools | default([]) %}
-
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}].direction.vipValue    {{ nat_pool.direction | default("not_defined") }}    msg=nat pool direction
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}].direction.vipVariableName    {{ nat_pool.direction_variable | default("not_defined") }}    msg=nat pool direction variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}].name.vipValue    {{ nat_pool.id | default("not_defined") }}    msg=nat pool id
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}].name.vipVariableName    {{ nat_pool.id_variable | default("not_defined") }}    msg=nat pool id variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}].overload.vipValue    {{ nat_pool.overload | default("not_defined") | lower() }}    msg=nat pool overload
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}].overload.vipVariableName    {{ nat_pool.overload_variable | default("not_defined") }}    msg=nat pool overload variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}]["prefix-length"].vipValue    {{ nat_pool.prefix_length | default("not_defined") }}    msg=nat pool prefix length
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}]["prefix-length"].vipVariableName    {{ nat_pool.prefix_length_variable | default("not_defined") }}    msg=nat pool prefix length variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}]["range-start"].vipValue    {{ nat_pool.range_start | default("not_defined") }}    msg=nat pool range start
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}]["range-start"].vipVariableName    {{ nat_pool.range_start_variable | default("not_defined") }}    msg=nat pool range start variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}]["range-end"].vipValue    {{ nat_pool.range_end | default("not_defined") }}    msg=nat pool range end
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}]["range-end"].vipVariableName    {{ nat_pool.range_end_variable | default("not_defined") }}    msg=nat pool range end variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}]["tracker-id"].vipValue    {{ nat_pool.tracker_id | default("not_defined") }}    msg=nat pool tracker id
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}]["tracker-id"].vipVariableName    {{ nat_pool.tracker_id_variable | default("not_defined") }}    msg=nat pool tracker id variable
-
-{% endfor %}
-
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.nat64.v4.pool.vipValue    {{ vpn.nat64_pools | default([]) | length }}    msg=nat64 pools length
-
-{% for nat64_pool in vpn.nat64_pools | default([]) %}
-
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat64.v4.pool.vipValue[{{ loop.index0 }}].name.vipValue    {{ nat64_pool.name }}    msg=nat64 pool name
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat64.v4.pool.vipValue[{{ loop.index0 }}].overload.vipValue    {{ nat64_pool.overload | default("not_defined") | lower() }}    msg=nat64 pool overload
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat64.v4.pool.vipValue[{{ loop.index0 }}].overload.vipVariableName    {{ nat64_pool.overload_variable | default("not_defined") }}    msg=nat64 pool overload variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat64.v4.pool.vipValue[{{ loop.index0 }}]["start-address"].vipValue    {{ nat64_pool.range_start | default("not_defined") }}    msg=nat64 pool range start
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat64.v4.pool.vipValue[{{ loop.index0 }}]["start-address"].vipVariableName    {{ nat64_pool.range_start_variable | default("not_defined") }}    msg=nat64 pool range start variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat64.v4.pool.vipValue[{{ loop.index0 }}]["end-address"].vipValue    {{ nat64_pool.range_end | default("not_defined") }}    msg=nat64 pool range end
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat64.v4.pool.vipValue[{{ loop.index0 }}]["end-address"].vipVariableName    {{ nat64_pool.range_end_variable | default("not_defined") }}    msg=nat64 pool range end variable
-
-{% endfor %}
-
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.omp.advertise.vipValue    {{ vpn.omp_advertise_ipv4_routes | default([]) | length }}    msg=omp advertise ipv4 routes length
-
-{% for v4_omp_index in range(vpn.omp_advertise_ipv4_routes | default([]) | length()) %}
-
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}].protocol.vipValue    {{ vpn.omp_advertise_ipv4_routes[v4_omp_index].protocol | default("not_defined") }}    msg=ipv4 omp protocol
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}].protocol.vipVariableName    {{ vpn.omp_advertise_ipv4_routes[v4_omp_index].protocol_variable | default("not_defined") }}    msg=ipv4 omp protocol variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}]["route-policy"].vipValue    {{ vpn.omp_advertise_ipv4_routes[v4_omp_index].route_policy | default("not_defined") }}    msg=ipv4 omp route policy
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}]["route-policy"].vipVariableName    {{ vpn.omp_advertise_ipv4_routes[v4_omp_index].route_policy_variable | default("not_defined") }}    msg=ipv4 omp route policy variable
-
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}]["prefix-list"].vipValue    {{ vpn.omp_advertise_ipv4_routes[v4_omp_index].networks | default([]) | length }}    msg=ipv4 omp networks length
-
-{% for v4_omp_net_index in range(vpn.omp_advertise_ipv4_routes[v4_omp_index].networks | default([]) | length()) %}
-
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}]["prefix-list"].vipValue[{{ v4_omp_net_index }}]["aggregate-only"].vipValue    {{ vpn.omp_advertise_ipv4_routes[v4_omp_index].networks[v4_omp_net_index].aggregate_only | default("not_defined") | lower() }}    msg=ipv4 omp network aggregate only
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}]["prefix-list"].vipValue[{{ v4_omp_net_index }}]["aggregate-only"].vipVariableName    {{ vpn.omp_advertise_ipv4_routes[v4_omp_index].networks[v4_omp_net_index].aggregate_only_variable | default("not_defined") }}    msg=ipv4 omp network aggregate only variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}]["prefix-list"].vipValue[{{ v4_omp_net_index }}]["prefix-entry"].vipValue    {{ vpn.omp_advertise_ipv4_routes[v4_omp_index].networks[v4_omp_net_index].prefix | default("not_defined") }}    msg=ipv4 omp network prefix
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}]["prefix-list"].vipValue[{{ v4_omp_net_index }}]["prefix-entry"].vipVariableName    {{ vpn.omp_advertise_ipv4_routes[v4_omp_index].networks[v4_omp_net_index].prefix_variable | default("not_defined") }}    msg=ipv4 omp network prefix variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}]["prefix-list"].vipValue[{{ v4_omp_net_index }}].vipOptional    {{ vpn.omp_advertise_ipv4_routes[v4_omp_index].networks[v4_omp_net_index].optional | default("not_defined") }}    msg=ipv4 omp network optional
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.ipv6.route.vipValue[{{ v6_route_index }}]["next-hop"].vipValue[{{ v6_hop_index }}].distance
+    ...    {{ ft_yaml.ipv6_static_routes[v6_route_index].next_hops[v6_hop_index].distance | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_static_routes[v6_route_index].next_hops[v6_hop_index].distance_variable | default("not_defined") }}
+    ...    msg=ipv6_static_routes.next_hops.distance
 
 {% endfor %}
 
 {% endfor %}
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.omp["ipv6-advertise"].vipValue    {{ vpn.omp_advertise_ipv6_routes | default([]) | length }}    msg=omp advertise ipv6 routes length
+    Should Be Equal Value Json List Length    ${ft.json()}    $.nat.natpool.vipValue    {{ ft_yaml.nat_pools | default([]) | length }}    msg=nat_pools.length
 
-{% for v6_omp_index in range(vpn.omp_advertise_ipv6_routes | default([]) | length()) %}
+{% for nat_pool in ft_yaml.nat_pools | default([]) %}
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}].protocol.vipValue    {{ vpn.omp_advertise_ipv6_routes[v6_omp_index].protocol | default("not_defined") }}    msg=ipv6 omp protocol
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}].protocol.vipVariableName    {{ vpn.omp_advertise_ipv6_routes[v6_omp_index].protocol_variable | default("not_defined") }}    msg=ipv6 omp protocol variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}]["route-policy"].vipValue    {{ vpn.omp_advertise_ipv6_routes[v6_omp_index].route_policy | default("not_defined") }}    msg=ipv6 omp route policy
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}]["route-policy"].vipVariableName    {{ vpn.omp_advertise_ipv6_routes[v6_omp_index].route_policy_variable | default("not_defined") }}    msg=ipv6 omp route policy variable
+    Log    === NAT Pool {{loop.index0}} ===
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}]["prefix-list"].vipValue    {{ vpn.omp_advertise_ipv6_routes[v6_omp_index].networks | default([]) | length }}    msg=ipv6 omp networks length
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}].direction
+    ...    {{ nat_pool.direction | default("not_defined") }}
+    ...    {{ nat_pool.direction_variable | default("not_defined") }}
+    ...    msg=nat_pools.direction
 
-{% for v6_omp_net_index in range(vpn.omp_advertise_ipv6_routes[v6_omp_index].networks | default([]) | length()) %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}].name
+    ...    {{ nat_pool.id | default("not_defined") }}
+    ...    {{ nat_pool.id_variable | default("not_defined") }}
+    ...    msg=nat_pools.id
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}]["prefix-list"].vipValue[{{ v6_omp_net_index }}]["aggregate-only"].vipValue    {{ vpn.omp_advertise_ipv6_routes[v6_omp_index].networks[v6_omp_net_index].aggregate_only | default("not_defined") | lower() }}    msg=ipv6 omp network aggregate only
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}]["prefix-list"].vipValue[{{ v6_omp_net_index }}]["aggregate-only"].vipVariableName    {{ vpn.omp_advertise_ipv6_routes[v6_omp_index].networks[v6_omp_net_index].aggregate_only_variable | default("not_defined") }}    msg=ipv6 omp network aggregate only variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}]["prefix-list"].vipValue[{{ v6_omp_net_index }}]["prefix-entry"].vipValue    {{ vpn.omp_advertise_ipv6_routes[v6_omp_index].networks[v6_omp_net_index].prefix | default("not_defined") }}    msg=ipv6 omp network prefix
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}]["prefix-list"].vipValue[{{ v6_omp_net_index }}]["prefix-entry"].vipVariableName    {{ vpn.omp_advertise_ipv6_routes[v6_omp_index].networks[v6_omp_net_index].prefix_variable | default("not_defined") }}    msg=ipv6 omp network prefix variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}]["prefix-list"].vipValue[{{ v6_omp_net_index }}].vipOptional    {{ vpn.omp_advertise_ipv6_routes[v6_omp_index].networks[v6_omp_net_index].optional | default("not_defined") }}    msg=ipv6 omp network optional
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}].overload
+    ...    {{ nat_pool.overload | default("not_defined") | lower }}
+    ...    {{ nat_pool.overload_variable | default("not_defined") }}
+    ...    msg=nat_pools.overload
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}]["prefix-length"]
+    ...    {{ nat_pool.prefix_length | default("not_defined") }}
+    ...    {{ nat_pool.prefix_length_variable | default("not_defined") }}
+    ...    msg=nat_pools.prefix_length
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}]["range-start"]
+    ...    {{ nat_pool.range_start | default("not_defined") }}
+    ...    {{ nat_pool.range_start_variable | default("not_defined") }}
+    ...    msg=nat_pools.range_start
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}]["range-end"]
+    ...    {{ nat_pool.range_end | default("not_defined") }}
+    ...    {{ nat_pool.range_end_variable | default("not_defined") }}
+    ...    msg=nat_pools.range_end
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat.natpool.vipValue[{{ loop.index0 }}]["tracker-id"]
+    ...    {{ nat_pool.tracker_id | default("not_defined") }}
+    ...    {{ nat_pool.tracker_id_variable | default("not_defined") }}
+    ...    msg=nat_pools.tracker_id
+
+{% endfor %}
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.nat64.v4.pool.vipValue    {{ ft_yaml.nat64_pools | default([]) | length }}    msg=nat64_pools.length
+
+{% for nat64_pool in ft_yaml.nat64_pools | default([]) %}
+
+    Log    === NAT64 Pool {{loop.index0}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat64.v4.pool.vipValue[{{ loop.index0 }}].name
+    ...    {{ nat64_pool.name | default("not_defined") }}
+    ...    {{ nat64_pool.name_variable | default("not_defined") }}
+    ...    msg=nat64_pools.name
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat64.v4.pool.vipValue[{{ loop.index0 }}].overload
+    ...    {{ nat64_pool.overload | default("not_defined") | lower }}
+    ...    {{ nat64_pool.overload_variable | default("not_defined") }}
+    ...    msg=nat64_pools.overload
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat64.v4.pool.vipValue[{{ loop.index0 }}]["start-address"]
+    ...    {{ nat64_pool.range_start | default("not_defined") }}
+    ...    {{ nat64_pool.range_start_variable | default("not_defined") }}
+    ...    msg=nat64_pools.range_start
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat64.v4.pool.vipValue[{{ loop.index0 }}]["end-address"]
+    ...    {{ nat64_pool.range_end | default("not_defined") }}
+    ...    {{ nat64_pool.range_end_variable | default("not_defined") }}
+    ...    msg=nat64_pools.range_end
+
+{% endfor %}
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.omp.advertise.vipValue    {{ ft_yaml.omp_advertise_ipv4_routes | default([]) | length }}    msg=omp_advertise_ipv4_routes.length
+
+{% for v4_omp_index in range(ft_yaml.omp_advertise_ipv4_routes | default([]) | length()) %}
+
+    Log    === IPv4 OMP Advertise Route {{v4_omp_index}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}].protocol
+    ...    {{ ft_yaml.omp_advertise_ipv4_routes[v4_omp_index].protocol | default("not_defined") }}
+    ...    {{ ft_yaml.omp_advertise_ipv4_routes[v4_omp_index].protocol_variable | default("not_defined") }}
+    ...    msg=omp_advertise_ipv4_routes.protocol
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}]["route-policy"]
+    ...    {{ ft_yaml.omp_advertise_ipv4_routes[v4_omp_index].route_policy | default("not_defined") }}
+    ...    {{ ft_yaml.omp_advertise_ipv4_routes[v4_omp_index].route_policy_variable | default("not_defined") }}
+    ...    msg=omp_advertise_ipv4_routes.route_policy
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}]["prefix-list"].vipValue    {{ ft_yaml.omp_advertise_ipv4_routes[v4_omp_index].networks | default([]) | length }}    msg=omp_advertise_ipv4_routes.networks.length
+
+{% for v4_omp_net_index in range(ft_yaml.omp_advertise_ipv4_routes[v4_omp_index].networks | default([]) | length()) %}
+
+    Log    === IPv4 OMP Advertise Route {{v4_omp_index}} Network {{v4_omp_net_index}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}]["prefix-list"].vipValue[{{ v4_omp_net_index }}]["aggregate-only"]
+    ...    {{ ft_yaml.omp_advertise_ipv4_routes[v4_omp_index].networks[v4_omp_net_index].aggregate_only | default("not_defined") | lower }}
+    ...    {{ ft_yaml.omp_advertise_ipv4_routes[v4_omp_index].networks[v4_omp_net_index].aggregate_only_variable | default("not_defined") }}
+    ...    msg=omp_advertise_ipv4_routes.networks.aggregate_only
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}]["prefix-list"].vipValue[{{ v4_omp_net_index }}]["prefix-entry"]
+    ...    {{ ft_yaml.omp_advertise_ipv4_routes[v4_omp_index].networks[v4_omp_net_index].prefix | default("not_defined") }}
+    ...    {{ ft_yaml.omp_advertise_ipv4_routes[v4_omp_index].networks[v4_omp_net_index].prefix_variable | default("not_defined") }}
+    ...    msg=omp_advertise_ipv4_routes.networks.prefix
+
+    Should Be Equal Value Json String    ${ft.json()}    $.omp.advertise.vipValue[{{ v4_omp_index }}]["prefix-list"].vipValue[{{ v4_omp_net_index }}].vipOptional    {{ ft_yaml.omp_advertise_ipv4_routes[v4_omp_index].networks[v4_omp_net_index].optional | default("not_defined") }}    msg=omp_advertise_ipv4_routes.networks.optional
 
 {% endfor %}
 
 {% endfor %}
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.nat..["port-forward"].vipValue    {{ vpn.port_forwarding_rules | default([]) | length }}    msg=port forwarding rules length
+    Should Be Equal Value Json List Length    ${ft.json()}    $.omp["ipv6-advertise"].vipValue    {{ ft_yaml.omp_advertise_ipv6_routes | default([]) | length }}    msg=omp_advertise_ipv6_routes.length
 
-{% for port_fw in vpn.port_forwarding_rules | default([]) %}
+{% for v6_omp_index in range(ft_yaml.omp_advertise_ipv6_routes | default([]) | length()) %}
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["pool-name"].vipValue    {{ port_fw.nat_pool_id }}    msg=port fw nat pool id
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["pool-name"].vipVariableName    {{ port_fw.nat_pool_id_variable }}    msg=port fw nat pool id variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}].proto.vipValue    {{ port_fw.protocol }}    msg=port fw protocol
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}].proto.vipVariableName    {{ port_fw.protocol_variable }}    msg=port fw protocol variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["source-ip"].vipValue    {{ port_fw.source_ip }}    msg=port fw source ip
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["source-ip"].vipVariableName    {{ port_fw.source_ip_variable }}    msg=port fw source ip variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["source-port"].vipValue    {{ port_fw.source_port }}    msg=port fw source port
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["source-port"].vipVariableName    {{ port_fw.source_port_variable }}    msg=port fw source port variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["translate-ip"].vipValue    {{ port_fw.translate_ip }}    msg=port fw translate ip
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["translate-ip"].vipVariableName    {{ port_fw.translate_ip_variable }}    msg=port fw translate ip variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["translate-port"].vipValue    {{ port_fw.translate_port }}    msg=port fw translate port
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["translate-port"].vipVariableName    {{ port_fw.translate_port_variable }}    msg=port fw translate port variable
+    Log    === IPv6 OMP Advertise Route {{v6_omp_index}} ===
 
-{% endfor %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}].protocol
+    ...    {{ ft_yaml.omp_advertise_ipv6_routes[v6_omp_index].protocol | default("not_defined") }}
+    ...    {{ ft_yaml.omp_advertise_ipv6_routes[v6_omp_index].protocol_variable | default("not_defined") }}
+    ...    msg=omp_advertise_ipv6_routes.protocol
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $["route-export"].vipValue    {{ vpn.route_global_exports | default([]) | length }}    msg=route global exports length
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}]["route-policy"]
+    ...    {{ ft_yaml.omp_advertise_ipv6_routes[v6_omp_index].route_policy | default("not_defined") }}
+    ...    {{ ft_yaml.omp_advertise_ipv6_routes[v6_omp_index].route_policy_variable | default("not_defined") }}
+    ...    msg=omp_advertise_ipv6_routes.route_policy
 
-{% for rt_gl_exp_index in range(vpn.route_global_exports | default([]) | length()) %}
+    Should Be Equal Value Json List Length    ${ft.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}]["prefix-list"].vipValue    {{ ft_yaml.omp_advertise_ipv6_routes[v6_omp_index].networks | default([]) | length }}    msg=omp_advertise_ipv6_routes.networks.length
 
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-export"].vipValue[{{ rt_gl_exp_index }}].protocol.vipValue    {{ vpn.route_global_exports[rt_gl_exp_index].protocol | default("not_defined") }}    msg=route global export protocol
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-export"].vipValue[{{ rt_gl_exp_index }}].protocol.vipVariableName    {{ vpn.route_global_exports[rt_gl_exp_index].protocol_variable | default("not_defined") }}    msg=route global export protocol variable
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-export"].vipValue[{{ rt_gl_exp_index }}]["route-policy"].vipValue    {{ vpn.route_global_exports[rt_gl_exp_index].route_policy | default("not_defined") }}    msg=route global export route policy
+{% for v6_omp_net_index in range(ft_yaml.omp_advertise_ipv6_routes[v6_omp_index].networks | default([]) | length()) %}
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $["route-export"].vipValue[{{ rt_gl_exp_index }}].redistribute.vipValue    {{ vpn.route_global_exports[rt_gl_exp_index].redistributes | default([]) | length }}    msg=route global exports redistributes length
+    Log    === IPv6 OMP Advertise Route {{v6_omp_index}} Network {{v6_omp_net_index}} ===
 
-{% for rt_gl_exp_red_index in range(vpn.route_global_exports[rt_gl_exp_index].redistributes | default([]) | length()) %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}]["prefix-list"].vipValue[{{ v6_omp_net_index }}]["aggregate-only"]
+    ...    {{ ft_yaml.omp_advertise_ipv6_routes[v6_omp_index].networks[v6_omp_net_index].aggregate_only | default("not_defined") | lower }}
+    ...    {{ ft_yaml.omp_advertise_ipv6_routes[v6_omp_index].networks[v6_omp_net_index].aggregate_only_variable | default("not_defined") }}
+    ...    msg=omp_advertise_ipv6_routes.networks.aggregate_only
 
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-export"].vipValue[{{ rt_gl_exp_index }}].redistribute.vipValue[{{ rt_gl_exp_red_index }}].protocol.vipValue    {{ vpn.route_global_exports[rt_gl_exp_index].redistributes[rt_gl_exp_red_index].protocol | default("not_defined") }}    msg=route global export redistribute protocol
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-export"].vipValue[{{ rt_gl_exp_index }}].redistribute.vipValue[{{ rt_gl_exp_red_index }}].protocol.vipVariableName    {{ vpn.route_global_exports[rt_gl_exp_index].redistributes[rt_gl_exp_red_index].protocol_variable | default("not_defined") }}    msg=route global export redistribute protocol variable
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-export"].vipValue[{{ rt_gl_exp_index }}].redistribute.vipValue[{{ rt_gl_exp_red_index }}]["route-policy"].vipValue    {{ vpn.route_global_exports[rt_gl_exp_index].redistributes[rt_gl_exp_red_index].route_policy | default("not_defined") }}    msg=route global export redistribute route policy
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}]["prefix-list"].vipValue[{{ v6_omp_net_index }}]["prefix-entry"]
+    ...    {{ ft_yaml.omp_advertise_ipv6_routes[v6_omp_index].networks[v6_omp_net_index].prefix | default("not_defined") }}
+    ...    {{ ft_yaml.omp_advertise_ipv6_routes[v6_omp_index].networks[v6_omp_net_index].prefix_variable | default("not_defined") }}
+    ...    msg=omp_advertise_ipv6_routes.networks.prefix
 
-{% endfor %}
-
-{% endfor %}
-
-    Should Be Equal Value Json List Length    ${r_id.json()}    $["route-import"].vipValue    {{ vpn.route_global_imports | default([]) | length }}    msg=route global imports length
-
-{% for rt_gl_imp_index in range(vpn.route_global_imports | default([]) | length()) %}
-
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import"].vipValue[{{ rt_gl_imp_index }}].protocol.vipValue    {{ vpn.route_global_imports[rt_gl_imp_index].protocol | default("not_defined") }}    msg=route global import protocol
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import"].vipValue[{{ rt_gl_imp_index }}].protocol.vipVariableName    {{ vpn.route_global_imports[rt_gl_imp_index].protocol_variable | default("not_defined") }}    msg=route global import protocol variable
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import"].vipValue[{{ rt_gl_imp_index }}]["route-policy"].vipValue    {{ vpn.route_global_imports[rt_gl_imp_index].route_policy | default("not_defined") }}    msg=route global import route policy
-
-    Should Be Equal Value Json List Length    ${r_id.json()}    $["route-import"].vipValue[{{ rt_gl_imp_index }}].redistribute.vipValue    {{ vpn.route_global_imports[rt_gl_imp_index].redistributes | default([]) | length }}    msg=route global imports redistributes length
-
-{% for rt_gl_imp_red_index in range(vpn.route_global_imports[rt_gl_imp_index].redistributes | default([]) | length()) %}
-
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import"].vipValue[{{ rt_gl_imp_index }}].redistribute.vipValue[{{ rt_gl_imp_red_index }}].protocol.vipValue    {{ vpn.route_global_imports[rt_gl_imp_index].redistributes[rt_gl_imp_red_index].protocol | default("not_defined") }}    msg=route global import redistribute protocol
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import"].vipValue[{{ rt_gl_imp_index }}].redistribute.vipValue[{{ rt_gl_imp_red_index }}].protocol.vipVariableName    {{ vpn.route_global_imports[rt_gl_imp_index].redistributes[rt_gl_imp_red_index].protocol_variable | default("not_defined") }}    msg=route global import redistribute protocol variable
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import"].vipValue[{{ rt_gl_imp_index }}].redistribute.vipValue[{{ rt_gl_imp_red_index }}]["route-policy"].vipValue    {{ vpn.route_global_imports[rt_gl_imp_index].redistributes[rt_gl_imp_red_index].route_policy | default("not_defined") }}    msg=route global import redistribute route policy
+    Should Be Equal Value Json String    ${ft.json()}    $.omp["ipv6-advertise"].vipValue[{{ v6_omp_index }}]["prefix-list"].vipValue[{{ v6_omp_net_index }}].vipOptional    {{ ft_yaml.omp_advertise_ipv6_routes[v6_omp_index].networks[v6_omp_net_index].optional | default("not_defined") }}    msg=omp_advertise_ipv6_routes.networks.optional
 
 {% endfor %}
 
 {% endfor %}
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $["route-import-from"].vipValue    {{ vpn.route_vpn_imports | default([]) | length }}    msg=route vpn imports length
+    Should Be Equal Value Json List Length    ${ft.json()}    $.nat..["port-forward"].vipValue    {{ ft_yaml.port_forwarding_rules | default([]) | length }}    msg=port_forwarding_rules.length
 
-{% for rt_vpn_imp_index in range(vpn.route_vpn_imports | default([]) | length()) %}
+{% for port_fw in ft_yaml.port_forwarding_rules | default([]) %}
 
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}].protocol.vipValue    {{ vpn.route_vpn_imports[rt_vpn_imp_index].protocol | default("not_defined") }}    msg=route vpn import protocol
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}].protocol.vipVariableName    {{ vpn.route_vpn_imports[rt_vpn_imp_index].protocol_variable | default("not_defined") }}    msg=route vpn import protocol variable
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}]["route-policy"].vipValue    {{ vpn.route_vpn_imports[rt_vpn_imp_index].route_policy | default("not_defined") }}    msg=route vpn import route policy
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}]["route-policy"].vipVariableName    {{ vpn.route_vpn_imports[rt_vpn_imp_index].route_policy_variable | default("not_defined") }}    msg=route vpn import route policy variable
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}]["source-vpn"].vipValue    {{ vpn.route_vpn_imports[rt_vpn_imp_index].source_vpn_id | default("not_defined") }}    msg=route vpn import source vpn id
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}]["source-vpn"].vipVariableName    {{ vpn.route_vpn_imports[rt_vpn_imp_index].source_vpn_id_variable | default("not_defined") }}    msg=route vpn import source vpn id variable
+    Log    === NAT Port Forwarding Rule {{loop.index0}} ===
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}].redistribute.vipValue    {{ vpn.route_vpn_imports[rt_vpn_imp_index].redistributes | default([]) | length }}    msg=route vpn imports redistributes length
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["pool-name"]
+    ...    {{ port_fw.nat_pool_id | default("not_defined") }}
+    ...    {{ port_fw.nat_pool_id_variable | default("not_defined") }}
+    ...    msg=port_forwarding_rules.nat_pool_id
 
-{% for rt_vpn_imp_red_index in range(vpn.route_vpn_imports[rt_vpn_imp_index].redistributes | default([]) | length()) %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}].proto
+    ...    {{ port_fw.protocol | default("not_defined") }}
+    ...    {{ port_fw.protocol_variable | default("not_defined") }}
+    ...    msg=port_forwarding_rules.protocol
 
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}].redistribute.vipValue[{{ rt_vpn_imp_red_index }}].protocol.vipValue    {{ vpn.route_vpn_imports[rt_vpn_imp_index].redistributes[rt_vpn_imp_red_index].protocol | default("not_defined") }}    msg=route vpn import redistribute protocol
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}].redistribute.vipValue[{{ rt_vpn_imp_red_index }}].protocol.vipVariableName    {{ vpn.route_vpn_imports[rt_vpn_imp_index].redistributes[rt_vpn_imp_red_index].protocol_variable | default("not_defined") }}    msg=route vpn import redistribute protocol variable
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}].redistribute.vipValue[{{ rt_vpn_imp_red_index }}]["route-policy"].vipValue    {{ vpn.route_vpn_imports[rt_vpn_imp_index].redistributes[rt_vpn_imp_red_index].route_policy | default("not_defined") }}    msg=route vpn import redistribute route policy
-    Should Be Equal Value Json String    ${r_id.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}].redistribute.vipValue[{{ rt_vpn_imp_red_index }}]["route-policy"].vipVariableName    {{ vpn.route_vpn_imports[rt_vpn_imp_index].redistributes[rt_vpn_imp_red_index].route_policy_variable | default("not_defined") }}    msg=route vpn import redistribute route policy variable
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["source-ip"]
+    ...    {{ port_fw.source_ip | default("not_defined") }}
+    ...    {{ port_fw.source_ip_variable | default("not_defined") }}
+    ...    msg=port_forwarding_rules.source_ip
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["source-port"]
+    ...    {{ port_fw.source_port | default("not_defined") }}
+    ...    {{ port_fw.source_port_variable | default("not_defined") }}
+    ...    msg=port_forwarding_rules.source_port
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["translate-ip"]
+    ...    {{ port_fw.translate_ip | default("not_defined") }}
+    ...    {{ port_fw.translate_ip_variable | default("not_defined") }}
+    ...    msg=port_forwarding_rules.translate_ip
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat..["port-forward"].vipValue[{{ loop.index0 }}]["translate-port"]
+    ...    {{ port_fw.translate_port | default("not_defined") }}
+    ...    {{ port_fw.translate_port_variable | default("not_defined") }}
+    ...    msg=port_forwarding_rules.translate_port
+
+{% endfor %}
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $["route-export"].vipValue    {{ ft_yaml.route_global_exports | default([]) | length }}    msg=route_global_exports.length
+
+{% for rt_gl_exp_index in range(ft_yaml.route_global_exports | default([]) | length()) %}
+
+    Log    === Route Global Export {{rt_gl_exp_index}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["route-export"].vipValue[{{ rt_gl_exp_index }}].protocol
+    ...    {{ ft_yaml.route_global_exports[rt_gl_exp_index].protocol | default("not_defined") }}
+    ...    {{ ft_yaml.route_global_exports[rt_gl_exp_index].protocol_variable | default("not_defined") }}
+    ...    msg=route_global_exports.protocol
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["route-export"].vipValue[{{ rt_gl_exp_index }}]["route-policy"]
+    ...    {{ ft_yaml.route_global_exports[rt_gl_exp_index].route_policy | default("not_defined") }}
+    ...    {{ ft_yaml.route_global_exports[rt_gl_exp_index].route_policy_variable | default("not_defined") }}
+    ...    msg=route_global_exports.route_policy
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $["route-export"].vipValue[{{ rt_gl_exp_index }}].redistribute.vipValue    {{ ft_yaml.route_global_exports[rt_gl_exp_index].redistributes | default([]) | length }}    msg=route_global_exports.redistributes.length
+
+{% for rt_gl_exp_red_index in range(ft_yaml.route_global_exports[rt_gl_exp_index].redistributes | default([]) | length()) %}
+
+    Log    === Route Global Export {{rt_gl_exp_index}} Redistribute {{rt_gl_exp_red_index}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["route-export"].vipValue[{{ rt_gl_exp_index }}].redistribute.vipValue[{{ rt_gl_exp_red_index }}].protocol
+    ...    {{ ft_yaml.route_global_exports[rt_gl_exp_index].redistributes[rt_gl_exp_red_index].protocol | default("not_defined") }}
+    ...    {{ ft_yaml.route_global_exports[rt_gl_exp_index].redistributes[rt_gl_exp_red_index].protocol_variable | default("not_defined") }}
+    ...    msg=route_global_exports.redistributes.protocol
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["route-export"].vipValue[{{ rt_gl_exp_index }}].redistribute.vipValue[{{ rt_gl_exp_red_index }}]["route-policy"]
+    ...    {{ ft_yaml.route_global_exports[rt_gl_exp_index].redistributes[rt_gl_exp_red_index].route_policy | default("not_defined") }}
+    ...    {{ ft_yaml.route_global_exports[rt_gl_exp_index].redistributes[rt_gl_exp_red_index].route_policy_variable | default("not_defined") }}
+    ...    msg=route_global_exports.redistributes.route_policy
 
 {% endfor %}
 
 {% endfor %}
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.service.vipValue    {{ vpn.services | default([]) | length }}    msg=services length
+    Should Be Equal Value Json List Length    ${ft.json()}    $["route-import"].vipValue    {{ ft_yaml.route_global_imports | default([]) | length }}    msg=route_global_imports.length
 
-{% for service in vpn.services | default([]) %}
+{% for rt_gl_imp_index in range(ft_yaml.route_global_imports | default([]) | length()) %}
 
-    ${rec_add_list}=    Get Value From Json    ${r_id.json()}    $.service.vipValue[{{ loop.index0 }}].address.vipValue
-    ${rec_add_list}=    Run Keyword If    ${rec_add_list} == []    Create List    
-...                 ELSE    Set Variable    ${rec_add_list[0]}   
-    ${exp_add_list}=    Create List    {{ service.addresses | default([]) | join('   ') }}
-    Lists Should Be Equal    ${rec_add_list}    ${exp_add_list}    ignore_order=True    msg=service addresses
+    Log    === Route Global Import {{rt_gl_imp_index}} ===
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.service.vipValue[{{ loop.index0 }}].address.vipVariableName    {{ service.addresses_variable | default("not_defined") }}    msg=service addresses variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.service.vipValue[{{ loop.index0 }}]["svc-type"].vipValue    {{ service.service_type | default("not_defined") }}    msg=service type
-    Should Be Equal Value Json String    ${r_id.json()}    $.service.vipValue[{{ loop.index0 }}]["track-enable"].vipValue    {{ service.track_enable | default("not_defined") | lower() }}    msg=service track enable
-    Should Be Equal Value Json String    ${r_id.json()}    $.service.vipValue[{{ loop.index0 }}]["track-enable"].vipVariableName    {{ service.track_enable_variable | default("not_defined") }}    msg=service track enable variable
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["route-import"].vipValue[{{ rt_gl_imp_index }}].protocol
+    ...    {{ ft_yaml.route_global_imports[rt_gl_imp_index].protocol | default("not_defined") }}
+    ...    {{ ft_yaml.route_global_imports[rt_gl_imp_index].protocol_variable | default("not_defined") }}
+    ...    msg=route_global_imports.protocol
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["route-import"].vipValue[{{ rt_gl_imp_index }}]["route-policy"]
+    ...    {{ ft_yaml.route_global_imports[rt_gl_imp_index].route_policy | default("not_defined") }}
+    ...    {{ ft_yaml.route_global_imports[rt_gl_imp_index].route_policy_variable | default("not_defined") }}
+    ...    msg=route_global_imports.route_policy
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $["route-import"].vipValue[{{ rt_gl_imp_index }}].redistribute.vipValue    {{ ft_yaml.route_global_imports[rt_gl_imp_index].redistributes | default([]) | length }}    msg=route_global_imports.redistributes.length
+
+{% for rt_gl_imp_red_index in range(ft_yaml.route_global_imports[rt_gl_imp_index].redistributes | default([]) | length()) %}
+
+    Log    === Route Global Import {{rt_gl_imp_index}} Redistribute {{rt_gl_imp_red_index}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["route-import"].vipValue[{{ rt_gl_imp_index }}].redistribute.vipValue[{{ rt_gl_imp_red_index }}].protocol
+    ...    {{ ft_yaml.route_global_imports[rt_gl_imp_index].redistributes[rt_gl_imp_red_index].protocol | default("not_defined") }}
+    ...    {{ ft_yaml.route_global_imports[rt_gl_imp_index].redistributes[rt_gl_imp_red_index].protocol_variable | default("not_defined") }}
+    ...    msg=route_global_imports.redistributes.protocol
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["route-import"].vipValue[{{ rt_gl_imp_index }}].redistribute.vipValue[{{ rt_gl_imp_red_index }}]["route-policy"]
+    ...    {{ ft_yaml.route_global_imports[rt_gl_imp_index].redistributes[rt_gl_imp_red_index].route_policy | default("not_defined") }}
+    ...    {{ ft_yaml.route_global_imports[rt_gl_imp_index].redistributes[rt_gl_imp_red_index].route_policy_variable | default("not_defined") }}
+    ...    msg=route_global_imports.redistributes.route_policy
 
 {% endfor %}
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.nat.static.vipValue    {{ vpn.static_nat_rules | default([]) | length }}    msg=static nat rules length
+{% endfor %}
 
-{% for st_nat_rule in vpn.static_nat_rules | default([]) %}
+    Should Be Equal Value Json List Length    ${ft.json()}    $["route-import-from"].vipValue    {{ ft_yaml.route_vpn_imports | default([]) | length }}    msg=route_vpn_imports.length
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["static-nat-direction"].vipValue    {{ st_nat_rule.direction | default("not_defined") }}    msg=static nat rule direction
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["static-nat-direction"].vipVariableName    {{ st_nat_rule.direction_variable | default("not_defined") }}    msg=static nat rule direction variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["pool-name"].vipValue    {{ st_nat_rule.nat_pool_id | default("not_defined") }}    msg=static nat rule nat pool id
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["pool-name"].vipVariableName    {{ st_nat_rule.nat_pool_id_variable | default("not_defined") }}    msg=static nat rule nat pool id variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.static.vipValue[{{ loop.index0 }}].vipOptional    {{ st_nat_rule.optional | default("not_defined") }}    msg=static nat rule optional
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["source-ip"].vipValue    {{ st_nat_rule.source_ip | default("not_defined") }}    msg=static nat rule source ip
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["source-ip"].vipVariableName    {{ st_nat_rule.source_ip_variable | default("not_defined") }}    msg=static nat rule source ip variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["tracker-id"].vipValue    {{ st_nat_rule.tracker_id | default("not_defined") }}    msg=static nat rule tracker id
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["tracker-id"].vipVariableName    {{ st_nat_rule.tracker_id_variable | default("not_defined") }}    msg=static nat rule tracker id variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["translate-ip"].vipValue    {{ st_nat_rule.translate_ip | default("not_defined") }}    msg=static nat rule translate ip
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["translate-ip"].vipVariableName    {{ st_nat_rule.translate_ip_variable | default("not_defined") }}    msg=static nat rule translate ip variable
+{% for rt_vpn_imp_index in range(ft_yaml.route_vpn_imports | default([]) | length()) %}
+
+    Log    === Route VPN Import {{rt_vpn_imp_index}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}].protocol
+    ...    {{ ft_yaml.route_vpn_imports[rt_vpn_imp_index].protocol | default("not_defined") }}
+    ...    {{ ft_yaml.route_vpn_imports[rt_vpn_imp_index].protocol_variable | default("not_defined") }}
+    ...    msg=route_vpn_imports.protocol
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}]["route-policy"]
+    ...    {{ ft_yaml.route_vpn_imports[rt_vpn_imp_index].route_policy | default("not_defined") }}
+    ...    {{ ft_yaml.route_vpn_imports[rt_vpn_imp_index].route_policy_variable | default("not_defined") }}
+    ...    msg=route_vpn_imports.route_policy
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}]["source-vpn"]
+    ...    {{ ft_yaml.route_vpn_imports[rt_vpn_imp_index].source_vpn_id | default("not_defined") }}
+    ...    {{ ft_yaml.route_vpn_imports[rt_vpn_imp_index].source_vpn_id_variable | default("not_defined") }}
+    ...    msg=route_vpn_imports.source_vpn_id
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}].redistribute.vipValue    {{ ft_yaml.route_vpn_imports[rt_vpn_imp_index].redistributes | default([]) | length }}    msg=route_vpn_imports.redistributes.length
+
+{% for rt_vpn_imp_red_index in range(ft_yaml.route_vpn_imports[rt_vpn_imp_index].redistributes | default([]) | length()) %}
+
+    Log    === Route VPN Import {{rt_vpn_imp_index}} Redistribute {{rt_vpn_imp_red_index}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}].redistribute.vipValue[{{ rt_vpn_imp_red_index }}].protocol
+    ...    {{ ft_yaml.route_vpn_imports[rt_vpn_imp_index].redistributes[rt_vpn_imp_red_index].protocol | default("not_defined") }}
+    ...    {{ ft_yaml.route_vpn_imports[rt_vpn_imp_index].redistributes[rt_vpn_imp_red_index].protocol_variable | default("not_defined") }}
+    ...    msg=route_vpn_imports.redistributes.protocol
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $["route-import-from"].vipValue[{{ rt_vpn_imp_index }}].redistribute.vipValue[{{ rt_vpn_imp_red_index }}]["route-policy"]
+    ...    {{ ft_yaml.route_vpn_imports[rt_vpn_imp_index].redistributes[rt_vpn_imp_red_index].route_policy | default("not_defined") }}
+    ...    {{ ft_yaml.route_vpn_imports[rt_vpn_imp_index].redistributes[rt_vpn_imp_red_index].route_policy_variable | default("not_defined") }}
+    ...    msg=route_vpn_imports.redistributes.route_policy
 
 {% endfor %}
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.nat["subnet-static"].vipValue    {{ vpn.static_nat_subnet_rules | default([]) | length }}    msg=static nat subnet rules length
+{% endfor %}
 
-{% for st_nat_sub_rule in vpn.static_nat_subnet_rules | default([]) %}
+    Should Be Equal Value Json List Length    ${ft.json()}    $.service.vipValue    {{ ft_yaml.services | default([]) | length }}    msg=services.length
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["static-nat-direction"].vipValue    {{ st_nat_sub_rule.direction | default("not_defined") }}    msg=static nat subnet rule direction
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["static-nat-direction"].vipVariableName    {{ st_nat_sub_rule.direction_variable | default("not_defined") }}    msg=static nat subnet rule direction variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}].vipOptional    {{ st_nat_sub_rule.optional | default("not_defined") }}    msg=static nat subnet rule optional
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["prefix-length"].vipValue    {{ st_nat_sub_rule.prefix_length | default("not_defined") }}    msg=static nat subnet rule prefix length
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["prefix-length"].vipVariableName    {{ st_nat_sub_rule.prefix_length_variable | default("not_defined") }}    msg=static nat subnet rule prefix length variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["source-ip-subnet"].vipValue    {{ st_nat_sub_rule.source_ip_subnet | default("not_defined") }}    msg=static nat subnet rule source ip subnet
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["source-ip-subnet"].vipVariableName    {{ st_nat_sub_rule.source_ip_subnet_variable | default("not_defined") }}    msg=static nat subnet rule source ip subnet variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["tracker-id"].vipValue    {{ st_nat_sub_rule.tracker_id | default("not_defined") }}    msg=static nat subnet rule tracker id
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["tracker-id"].vipVariableName    {{ st_nat_sub_rule.tracker_id_variable | default("not_defined") }}    msg=static nat subnet rule tracker id variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["translate-ip-subnet"].vipValue    {{ st_nat_sub_rule.translate_ip_subnet | default("not_defined") }}    msg=static nat subnet rule translate ip subnet
-    Should Be Equal Value Json String    ${r_id.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["translate-ip-subnet"].vipVariableName    {{ st_nat_sub_rule.translate_ip_subnet_variable | default("not_defined") }}    msg=static nat subnet rule translate ip subnet variable
+{% for service in ft_yaml.services | default([]) %}
+
+    Log    === Service {{loop.index0}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.service.vipValue[{{ loop.index0 }}].address
+    ...    {{ service.addresses | default("not_defined") }}
+    ...    {{ service.addresses_variable | default("not_defined") }}
+    ...    msg=services.addresses_variable
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.service.vipValue[{{ loop.index0 }}]["svc-type"]
+    ...    {{ service.service_type | default("not_defined") }}
+    ...    {{ service.service_type_variable | default("not_defined") }}
+    ...    msg=services.service_type
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.service.vipValue[{{ loop.index0 }}]["track-enable"]
+    ...    {{ service.track_enable | default("not_defined") | lower }}
+    ...    {{ service.track_enable_variable | default("not_defined") }}
+    ...    msg=services.track_enable
+
+{% endfor %}
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.nat.static.vipValue    {{ ft_yaml.static_nat_rules | default([]) | length }}    msg=static_nat_rules.length
+
+{% for st_nat_rule in ft_yaml.static_nat_rules | default([]) %}
+
+    Log    === Static NAT Rule {{loop.index0}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["static-nat-direction"]
+    ...    {{ st_nat_rule.direction | default("not_defined") }}
+    ...    {{ st_nat_rule.direction_variable | default("not_defined") }}
+    ...    msg=static_nat_rules.direction
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["pool-name"]
+    ...    {{ st_nat_rule.nat_pool_id | default("not_defined") }}
+    ...    {{ st_nat_rule.nat_pool_id_variable | default("not_defined") }}
+    ...    msg=static_nat_rules.nat_pool_id
+
+    Should Be Equal Value Json String    ${ft.json()}    $.nat.static.vipValue[{{ loop.index0 }}].vipOptional    {{ st_nat_rule.optional | default("not_defined") }}    msg=static_nat_rules.optional
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["source-ip"]
+    ...    {{ st_nat_rule.source_ip | default("not_defined") }}
+    ...    {{ st_nat_rule.source_ip_variable | default("not_defined") }}
+    ...    msg=static_nat_rules.source_ip
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["tracker-id"]
+    ...    {{ st_nat_rule.tracker_id | default("not_defined") }}
+    ...    {{ st_nat_rule.tracker_id_variable | default("not_defined") }}
+    ...    msg=static_nat_rules.tracker_id
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat.static.vipValue[{{ loop.index0 }}]["translate-ip"]
+    ...    {{ st_nat_rule.translate_ip | default("not_defined") }}
+    ...    {{ st_nat_rule.translate_ip_variable | default("not_defined") }}
+    ...    msg=static_nat_rules.translate_ip
+
+{% endfor %}
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.nat["subnet-static"].vipValue    {{ ft_yaml.static_nat_subnet_rules | default([]) | length }}    msg=static_nat_subnet_rules.length
+
+{% for st_nat_sub_rule in ft_yaml.static_nat_subnet_rules | default([]) %}
+
+    Log    === Static NAT Subnet Rule {{loop.index0}} ===
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["static-nat-direction"]
+    ...    {{ st_nat_sub_rule.direction | default("not_defined") }}
+    ...    {{ st_nat_sub_rule.direction_variable | default("not_defined") }}
+    ...    msg=static_nat_subnet_rules.direction
+
+    Should Be Equal Value Json String    ${ft.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}].vipOptional    {{ st_nat_sub_rule.optional | default("not_defined") }}    msg=static_nat_subnet_rules.optional
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["prefix-length"]
+    ...    {{ st_nat_sub_rule.prefix_length | default("not_defined") }}
+    ...    {{ st_nat_sub_rule.prefix_length_variable | default("not_defined") }}
+    ...    msg=static_nat_subnet_rules.prefix_length
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["source-ip-subnet"]
+    ...    {{ st_nat_sub_rule.source_ip_subnet | default("not_defined") }}
+    ...    {{ st_nat_sub_rule.source_ip_subnet_variable | default("not_defined") }}
+    ...    msg=static_nat_subnet_rules.source_ip_subnet
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["tracker-id"]
+    ...    {{ st_nat_sub_rule.tracker_id | default("not_defined") }}
+    ...    {{ st_nat_sub_rule.tracker_id_variable | default("not_defined") }}
+    ...    msg=static_nat_subnet_rules.tracker_id
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.nat["subnet-static"].vipValue[{{ loop.index0 }}]["translate-ip-subnet"]
+    ...    {{ st_nat_sub_rule.translate_ip_subnet | default("not_defined") }}
+    ...    {{ st_nat_sub_rule.translate_ip_subnet_variable | default("not_defined") }}
+    ...    msg=static_nat_subnet_rules.translate_ip_subnet
 
 {% endfor %}
 

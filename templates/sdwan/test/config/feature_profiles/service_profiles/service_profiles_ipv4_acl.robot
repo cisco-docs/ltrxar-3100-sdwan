@@ -36,7 +36,7 @@ Get Policy Object Profile
     ${policer_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object/${profile_po_id[0]}/policer
     Set Suite Variable    ${policer_res}
 
-{% for profile in sdwan.feature_profiles.service_profiles | default([]) %}
+{% for profile in sdwan.get('feature_profiles', {}).get('service_profiles', []) %}
 {% if profile.ipv4_acls is defined %}
 
 Verify Feature Profiles Service Profiles {{ profile.name }} IPv4 ACL Feature

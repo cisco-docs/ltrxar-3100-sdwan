@@ -1,5 +1,5 @@
 *** Settings ***
-Documentation   Verify GRE Interface Feature template
+Documentation   Verify GRE Interface Feature Templates
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_templates
@@ -8,60 +8,107 @@ Resource        ../../sdwan_common.resource
 {% if sdwan.edge_feature_templates.gre_interface_templates is defined %}
 
 *** Test Cases ***
-Get GRE Interface Feature template
+Get GRE Interface Feature Templates
     ${r}=    GET On Session    sdwan_manager    /dataservice/template/feature
     ${r}=    Get Value From Json    ${r.json()}    $..data[?(@..templateType=="cisco_vpn_interface_gre")]
     Set Suite Variable    ${r}
 
-{% for gre in sdwan.edge_feature_templates.gre_interface_templates | default([]) %}
+{% for ft_yaml in sdwan.edge_feature_templates.gre_interface_templates | default([]) %}
 
-Verify Edge Feature Template GRE Interface Feature template {{ gre.name }}
-    ${gre_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{gre.name }}")]
-    Should Be Equal Value Json String    ${gre_id}    $..templateName    {{ gre.name }}    msg=name
-    Should Be Equal Value Json Special_String    ${gre_id}    $..templateDescription    {{ gre.description | normalize_special_string }}    msg=description
+Verify Edge Feature Template GRE Interface Feature Template {{ ft_yaml.name }}
+    ${ft_summary_json}=    Get Value From Json    ${r}    $[?(@.templateName="{{ ft_yaml.name }}")]
+    Should Not be Empty   ${ft_summary_json}   msg=Feature Template '{{ft_yaml.name}}' should be present on the Manager
+    Should Be Equal Value Json String    ${ft_summary_json}    $..templateName    {{ ft_yaml.name }}    msg=name
+    Should Be Equal Value Json Special_String    ${ft_summary_json}    $..templateDescription    {{ ft_yaml.description | normalize_special_string }}    msg=description
 
-    {% set dt_list_local = [] %}
-    {% for item in gre.device_types | default(defaults.sdwan.edge_feature_templates.gre_interface_templates.device_types) %}
-    {% set test = "vedge-" ~ item %}
-    {% set _ = dt_list_local.append(test) %}
+    # Device types validation
+    {% set device_types_yaml = [] %}
+    {% for item in ft_yaml.device_types | default(defaults.sdwan.edge_feature_templates.gre_interface_templates.device_types) %}
+    {% set device_type = "vedge-" ~ item %}
+    {% set _ = device_types_yaml.append(device_type) %}
     {% endfor %}
+    ${device_types_json}=    Get Value From Json    ${ft_summary_json}    $..deviceType
+    ${device_types_yaml}=    Create List           {{ device_types_yaml | join('   ') }}
+    Lists Should Be Equal    ${device_types_json}[0]    ${device_types_yaml}    ignore_order=True    msg=device_types
 
-    ${dt_list_remote}=    Get Value From Json    ${gre_id}    $..deviceType
-    ${dt_list_local}=    Create List    {{ dt_list_local | join('   ') }}
-    Lists Should Be Equal    ${dt_list_remote[0]}    ${dt_list_local}    ignore_order=True    msg=device type
+    # Get template definition
+    ${ft_id}=    Get Value From Json    ${r}    $[?(@.templateName="{{ ft_yaml.name }}")].templateId
+    ${ft}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${ft_id[0]}
 
-    ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{gre.name }}")].templateId
-    ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${template_id[0]}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["if-name"]
+    ...    {{ ft_yaml.interface_name | default("not_defined") }}
+    ...    {{ ft_yaml.interface_name_variable | default("not_defined") }}
+    ...    msg=interface_name
 
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["if-name"]    {{ gre.interface_name_variable | default(gre.interface_name | default("not_defined")) }}    msg=interface name
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..description    {{ gre.interface_description_variable | default(gre.interface_description | default("not_defined")) }}    msg=interface description
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..shutdown    {{ gre.shutdown_variable | default(gre.shutdown | default("not_defined") | lower()) }}    msg=shutdown
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["tunnel-destination"]    {{ gre.tunnel_destination_variable | default(gre.tunnel_destination | default("not_defined")) }}    msg=tunnel destination
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["tunnel-source-interface"]    {{ gre.tunnel_source_interface_variable | default(gre.tunnel_source_interface | default("not_defined")) }}    msg=tunnel source interface
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["tunnel-source"]    {{ gre.tunnel_source_ip_variable | default(gre.tunnel_source_ip | default("not_defined")) }}    msg=tunnel source ip
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..ip.address    {{ gre.ip_address_variable | default(gre.ip_address | default("not_defined")) }}    msg=ip address
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..mtu    {{ gre.ip_mtu_variable | default(gre.ip_mtu | default("not_defined")) }}    msg=mtu
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["tcp-mss-adjust"]    {{ gre.tcp_mss_variable | default(gre.tcp_mss | default("not_defined")) }}    msg=tcp mss
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["clear-dont-fragment"]    {{ gre.clear_dont_fragment_variable | default(gre.clear_dont_fragment | default("not_defined") | lower()) }}    msg=clear dont fragment
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["rewrite-rule"]["rule-name"]    {{ gre.rewrite_rule_variable | default(gre.rewrite_rule | default("not_defined")) }}    msg=rewrite rule
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["access-list"].vipValue[?(@.direction.vipValue=="in")]..["acl-name"]    {{ gre.ipv4_ingress_access_list_variable | default(gre.ipv4_ingress_access_list | default("not_defined")) }}    msg=ipv4 ingress access list
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["access-list"].vipValue[?(@.direction.vipValue=="out")]..["acl-name"]    {{ gre.ipv4_egress_access_list_variable | default(gre.ipv4_egress_access_list | default("not_defined")) }}    msg=ipv4 egress access list
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..application    {{ gre.application_variable | default(gre.application | default("not_defined")) }}    msg=application
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..description
+    ...    {{ ft_yaml.interface_description | default("not_defined") }}
+    ...    {{ ft_yaml.interface_description_variable | default("not_defined") }}
+    ...    msg=interface_description
 
-    ${rec_tracker_viptype}=    Get Value From Json    ${r_id.json()}    $.["tracker"].vipType
-    IF    ${rec_tracker_viptype} != []
-       ${rec_tracker}=    Get Value From Json    ${r_id.json()}    $.["tracker"].vipValue
-       ${rec_tracker_variable}=    Get Value From Json    ${r_id.json()}    $.["tracker"].vipVariableName
-       IF    "${rec_tracker_viptype}[0]"=="constant"
-            Should Be Equal As Strings    ${rec_tracker[0][0]}    {{ gre.tracker | default("not_defined") }}    msg=tracker
-       ELSE IF    "${rec_tracker_viptype}[0]"=="variableName"
-            Should Be Equal As Strings    ${rec_tracker_variable[0]}    {{ gre.tracker_variable | default("not_defined") }}    msg=tracker variable
-       ELSE
-            Should Be Equal As Strings    not_defined    {{ gre.tracker_variable | default(g.treracker | default("not_defined")) }}    msg=tracker
-       END
-    ELSE
-       Should Be Equal As Strings    not_defined    {{ gre.tracker_variable | default(gre.tracker | default("not_defined")) }}    msg=tracker
-    END
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..shutdown
+    ...    {{ ft_yaml.shutdown | default("not_defined") }}
+    ...    {{ ft_yaml.shutdown_variable | default("not_defined") }}
+    ...    msg=shutdown
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["tunnel-destination"]
+    ...    {{ ft_yaml.tunnel_destination | default("not_defined") }}
+    ...    {{ ft_yaml.tunnel_destination_variable | default("not_defined") }}
+    ...    msg=tunnel_destination
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["tunnel-source-interface"]
+    ...    {{ ft_yaml.tunnel_source_interface | default("not_defined") }}
+    ...    {{ ft_yaml.tunnel_source_interface_variable | default("not_defined") }}
+    ...    msg=tunnel_source_interface
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["tunnel-source"]
+    ...    {{ ft_yaml.tunnel_source_ip | default("not_defined") }}
+    ...    {{ ft_yaml.tunnel_source_ip_variable | default("not_defined") }}
+    ...    msg=tunnel_source_ip
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..ip.address
+    ...    {{ ft_yaml.ip_address | default("not_defined") }}
+    ...    {{ ft_yaml.ip_address_variable | default("not_defined") }}
+    ...    msg=ip_address
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..mtu
+    ...    {{ ft_yaml.ip_mtu | default("not_defined") }}
+    ...    {{ ft_yaml.ip_mtu_variable | default("not_defined") }}
+    ...    msg=ip_mtu
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["tcp-mss-adjust"]
+    ...    {{ ft_yaml.tcp_mss | default("not_defined") }}
+    ...    {{ ft_yaml.tcp_mss_variable | default("not_defined") }}
+    ...    msg=tcp_mss
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["clear-dont-fragment"]
+    ...    {{ ft_yaml.clear_dont_fragment | default("not_defined") }}
+    ...    {{ ft_yaml.clear_dont_fragment_variable | default("not_defined") }}
+    ...    msg=clear_dont_fragment
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["rewrite-rule"]["rule-name"]
+    ...    {{ ft_yaml.rewrite_rule | default("not_defined") }}
+    ...    {{ ft_yaml.rewrite_rule_variable | default("not_defined") }}
+    ...    msg=rewrite_rule
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["access-list"].vipValue[?(@.direction.vipValue=="in")]..["acl-name"]
+    ...    {{ ft_yaml.ipv4_ingress_access_list | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_ingress_access_list_variable | default("not_defined") }}
+    ...    msg=ipv4_ingress_access_list
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["access-list"].vipValue[?(@.direction.vipValue=="out")]..["acl-name"]
+    ...    {{ ft_yaml.ipv4_egress_access_list | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_egress_access_list_variable | default("not_defined") }}
+    ...    msg=ipv4_egress_access_list
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..application
+    ...    {{ ft_yaml.application | default("not_defined") }}
+    ...    {{ ft_yaml.application_variable | default("not_defined") }}
+    ...    msg=application
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.tracker
+    ...    {{ ft_yaml.tracker | default("not_defined") }}
+    ...    {{ ft_yaml.tracker_variable | default("not_defined") }}
+    ...    msg=tracker
 
 {% endfor %}
 

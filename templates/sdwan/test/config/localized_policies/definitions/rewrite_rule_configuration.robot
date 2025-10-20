@@ -5,7 +5,7 @@ Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags    sdwan    config    localized_policies
 Resource        ../../../sdwan_common.resource
 
-{% if sdwan.localized_policies.definitions.rewrite_rules is defined%}
+{% if sdwan.localized_policies is defined and sdwan.localized_policies.definitions is defined and sdwan.localized_policies.definitions.rewrite_rules is defined %}
 
 *** Test Cases ***
 Get Rewrite Rule Configurations

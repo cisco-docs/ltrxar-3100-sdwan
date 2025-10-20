@@ -14,7 +14,6 @@ Resource        ../../../sdwan_common.resource
   {% set _ = profile_cellular_profile_list.append(profile.name) %}
  {% endif %}
 {% endfor %}
-{% endif %}
 
 {% if profile_cellular_profile_list != [] %}
 
@@ -69,5 +68,7 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Cellular Profile F
 {% endif %}
 
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

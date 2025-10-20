@@ -6,9 +6,9 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_profiles     service_profiles    route_policies
 Resource        ../../../sdwan_common.resource
 
-
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.service_profiles is defined %}
 {% set profile_route_policy_list = [] %}
-{% for profile in sdwan.get('feature_profiles', {}).get('service_profiles', {}) %}
+{% for profile in sdwan.feature_profiles.service_profiles %}
  {% if profile.route_policies is defined %}
   {% set _ = profile_route_policy_list.append(profile.name) %}
  {% endif %}
@@ -179,5 +179,7 @@ Verify Feature Profiles Service Profiles {{ profile.name }} Route Policy Feature
 {% endif %}
 
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

@@ -8,11 +8,13 @@ Resource        ../../../sdwan_common.resource
 
 
 {% set profile_aaa_list = [] %}
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.system_profiles is defined %}
 {% for profile in sdwan.feature_profiles.system_profiles %}
  {% if profile.aaa is defined %}
   {% set _ = profile_aaa_list.append(profile.name) %}
  {% endif %}
 {% endfor %}
+{% endif %}
 
 {% if profile_aaa_list != [] %}
 

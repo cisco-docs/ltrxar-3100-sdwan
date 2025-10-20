@@ -6,6 +6,7 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_profiles    system_profiles    flexible_port_speed 
 Resource        ../../../sdwan_common.resource
 
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.system_profiles is defined %}
 {% set profile_flex_list = [] %}
 {% for profile in sdwan.feature_profiles.system_profiles %}
  {% if profile.flexible_port_speed is defined %}
@@ -38,5 +39,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} Flexible Port Speed F
 
 {% endif %}
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

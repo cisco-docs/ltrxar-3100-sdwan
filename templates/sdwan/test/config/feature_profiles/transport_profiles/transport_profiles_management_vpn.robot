@@ -6,6 +6,7 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_profiles     transport_profiles    management_vpn  
 Resource        ../../../sdwan_common.resource
 
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.transport_profiles is defined %}
 {% set profile_management_vpn = [] %}
 {% for profile in sdwan.feature_profiles.transport_profiles %}
  {% if profile.management_vpn is defined %}
@@ -75,7 +76,7 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
     Should Be Equal Value Json Yaml    ${transport_mngt_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].prefix.subnetMask   {{ route_entry.subnet_mask| default('not_defined') }}     {{ route_entry.subnet_mask_variable| default('not_defined') }}     msg=transport_mngt_vpn route_entry.subnet_mask     var_msg=transport_mngt_vpn route_entry.subnet_mask variable
     ${gateway_raw}=    Evaluate    "{{ route_entry.gateway | default(defaults.sdwan.feature_profiles.transport_profiles.management_vpn.ipv4_static_routes.gateway) }}"
     ${gateway}=    Run Keyword If    '${gateway_raw}' == 'nexthop'    Set Variable    nextHop    ELSE    Set Variable    ${gateway_raw}
-    Should Be Equal Value Json String    ${transport_mngt_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].gateway.value   {{ gateway }}     msg=transport_mngt_vpn route_entry.gateway
+    Should Be Equal Value Json String    ${transport_mngt_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].gateway.value   ${gateway}     msg=transport_mngt_vpn route_entry.gateway
     Should Be Equal Value Json Yaml    ${transport_mngt_vpn[0]}    $..ipv4Route[{{ loop.index0 }}].distance  {{ route_entry.administrative_distance | default('not_defined') }}     {{ route_entry.administrative_distance_variable | default('not_defined') }}     msg=transport_mngt_vpn route_entry.admin_distance     var_msg=transport_mngt_vpn route_entry.admin_distance variable
 
     ${outer_loop_index}=    Set Variable    {{ loop.index0 }}
@@ -112,14 +113,14 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
 
     Should Be Equal Value Json List Length   ${transport_mngt_vpn[0]}  $..ipv6Route[${outer_loop_index}].oneOfIpRoute.nextHopContainer.nextHop  {{ ipv6_route.get('next_hops', []) | length }}    msg=transport_mngt_vpn ipv6 route next_hops length
 
-{% for hop in ipv6_route.next_hops %}
+{% for hop in ipv6_route.next_hops | default([]) %}
 
     Should Be Equal Value Json Yaml    ${transport_mngt_vpn[0]}    $..ipv6Route[${outer_loop_index}].oneOfIpRoute.nextHopContainer.nextHop[{{ loop.index0 }}].address    {{ hop.address | default('not_defined') }}     {{ hop.address_variable | default('not_defined') }}    msg=transport_mngt_vpn wan_vpn nh6_entry.address     var_msg=transport_mngt_vpn nh6_entry.address variable
     Should Be Equal Value Json Yaml    ${transport_mngt_vpn[0]}    $..ipv6Route[${outer_loop_index}].oneOfIpRoute.nextHopContainer.nextHop[{{ loop.index0 }}].distance    {{ hop.administrative_distance | default('not_defined') }}    {{ hop.administrative_distance_variable| default('not_defined') }}    msg=transport_mngt_vpn nh6_entry.admin_distance   var_msg=transport_mngt_vpn nh6_entry.admin_distance_variable
 
 {% endfor %}
 
-    Should Be Equal Value Json String    ${transport_mngt_vpn[0]}    $..ipv6Route[{{ loop.index0 }}].oneOfIpRoute.null0.value    {{ true if ipv6_route.gateway == 'null0' else 'not_defined' }}    msg=transport_mgnt_vpn nh6_entry.null0
+    Should Be Equal Value Json String    ${transport_mngt_vpn[0]}    $..ipv6Route[{{ loop.index0 }}].oneOfIpRoute.null0.value    {{ true if ipv6_route.get("gateway", defaults.sdwan.feature_profiles.transport_profiles.management_vpn.ipv4_static_routes.gateway) == 'null0' else 'not_defined' }}    msg=transport_mgnt_vpn nh6_entry.null0
     ${nat_value}=    Set Variable    {{ ipv6_route.nat | default('not_defined') }}
     Run Keyword If    '${nat_value}' != 'not_defined'    Set Suite Variable    ${nat_value}    ${nat_value.upper()}
     Should Be Equal Value Json String    ${transport_mngt_vpn[0]}    $..ipv6Route[{{ loop.index0 }}].oneOfIpRoute.nat.value    ${nat_value}    msg=transport_mgnt_vpn nh6_entry.nat
@@ -209,4 +210,4 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} Management VPN {{ 
 
 {% endif %}
 
-
+{% endif %}

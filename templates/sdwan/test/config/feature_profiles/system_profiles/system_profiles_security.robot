@@ -6,7 +6,7 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_profiles     system_profiles   security
 Resource        ../../../sdwan_common.resource
 
-
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.system_profiles is defined %}
 {% set profile_security_list = [] %}
 {% for profile in sdwan.feature_profiles.system_profiles %}
  {% if profile.security is defined %}
@@ -97,5 +97,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} Security Feature {{ p
 
 {% endif %}
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

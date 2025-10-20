@@ -5,34 +5,43 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_templates    banner_templates
 Resource        ../../sdwan_common.resource
 
-{% if sdwan.edge_feature_templates.banner_templates is defined %}
+{% if sdwan.edge_feature_templates is defined and sdwan.edge_feature_templates.banner_templates is defined %}
 
 *** Test Cases ***
-Get Banner Template (s)
-    ${r}=   GET On Session   sdwan_manager   /dataservice/template/feature
-    Set Suite Variable   ${r}
+Get Banner Feature Templates
+    ${r}=    GET On Session    sdwan_manager    /dataservice/template/feature
+    ${r}=    Get Value From Json    ${r.json()}    $..data[?(@..templateType=="cisco_banner")]
+    Set Suite Variable    ${r}
 
-{% for banner in sdwan.edge_feature_templates.banner_templates | default([]) %}
+{% for ft_yaml in sdwan.edge_feature_templates.banner_templates | default([]) %}
 
-Verify Banner {{ banner.name }}
-    ${banner_id}=  Get Value From Json   ${r.json()}   $..data[?(@..templateName=="{{ banner.name }}")].templateId
-    Should Not be Empty   ${banner_id}   msg= {{ banner.name }} not present
-    Should Be Equal Value Json Special_String   ${r.json()}   $..data[?(@..templateName=="{{ banner.name }}")].templateDescription   {{ banner.description | normalize_special_string }}  msg=description
-    ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/feature/definition/${banner_id[0]}
-    Set Suite Variable   ${r_id}
+Verify Edge Feature Template Banner Feature Template {{ ft_yaml.name }}
+    ${ft_summary_json}=  Get Value From Json   ${r}   $[?(@.templateName=="{{ ft_yaml.name }}")]
+    Should Not be Empty   ${ft_summary_json}   msg=Feature Template '{{ft_yaml.name}}' should be present on the Manager
+    Should Be Equal Value Json String   ${ft_summary_json}   $..templateName   {{ ft_yaml.name }}   msg=name
+    Should Be Equal Value Json Special_String   ${ft_summary_json}   $..templateDescription   {{ ft_yaml.description | normalize_special_string }}  msg=description
 
-    {% set dt_list_local = [] %}
-    {% for item in banner.device_types | default(defaults.sdwan.edge_feature_templates.banner_templates.device_types) %}
-    {% set test = "vedge-" ~ item %}
-    {% set _ = dt_list_local.append(test) %}
+    # Device types validation
+    {% set device_types_yaml = [] %}
+    {% for item in ft_yaml.device_types | default(defaults.sdwan.edge_feature_templates.banner_templates.device_types) %}
+    {% set device_type = "vedge-" ~ item %}
+    {% set _ = device_types_yaml.append(device_type) %}
     {% endfor %}
+    ${device_types_json}=    Get Value From Json    ${ft_summary_json}    $..deviceType
+    ${device_types_yaml}=    Create List           {{ device_types_yaml | join('   ') }}
+    Lists Should Be Equal    ${device_types_json}[0]    ${device_types_yaml}    ignore_order=True    msg=device_types
 
-    ${dt_list}=  Get Value From Json   ${r.json()}   $..data[?(@..templateName=="{{ banner.name }}")].deviceType
-    ${dt_list_local}=   Create List   {{ dt_list_local | join('   ') }}
-    Lists Should Be Equal    ${dt_list_local}    ${dt_list}[0]   ignore_order=True   msg={{ banner.name }}: device type
+    # Get template definition
+    ${ft_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ ft_yaml.name }}")].templateId
+    ${ft}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${ft_id[0]}
     
-    Should Be Equal Value Json Special_String FT   ${r_id.json()}   $..login    {{ banner.login_variable | default(banner.login | default("not_defined")) | normalize_special_string }}    msg=login banner
-    Should Be Equal Value Json Special_String FT   ${r_id.json()}   $..motd    {{ banner.motd_variable | default(banner.motd | default("not_defined")) | normalize_special_string }}    msg=motd banner
+    # Custom handling to support special characters in banner
+    Should Be Equal Value Json Special_String    ${ft.json()}   $..login.vipValue    {{ ft_yaml.login | default("not_defined") | normalize_special_string }}  msg=login
+    Should Be Equal Value Json Special_String    ${ft.json()}   $..motd.vipValue     {{ ft_yaml.motd | default("not_defined") | normalize_special_string }}  msg=motd
+
+    Should Be Equal Value Json String    ${ft.json()}   $..login.vipVariableName    {{ ft_yaml.login_variable | default("not_defined") }}  msg=login_variable
+    Should Be Equal Value Json String    ${ft.json()}   $..motd.vipVariableName    {{ ft_yaml.motd_variable | default("not_defined") }}  msg=motd_variable
+    # End of custom handling
 
 {% endfor %}
 {% endif %}

@@ -52,12 +52,12 @@ Should Be Equal Value Json String
    [Arguments]   ${json}    ${json_path}   ${value}=${EMPTY}  ${msg}=${EMPTY}
    ${r_value}=   Get Value From Json   ${json}   ${json_path}
    ${r_value}=   Set Variable If    ${r_value} == []    not_defined    ${r_value[0]}
-   Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    values=False    msg=${msg} expected: '${value}' and got: '${r_value}'  
+   Should Be Equal As Strings    ${r_value}    ${value}    values=False    msg=${msg} expected: '${value}' and got: '${r_value}'  
 
 Should Be Equal Value Json List
    [Arguments]   ${json}   ${json_path}   ${value}=${None}   ${msg}=${EMPTY}
    ${r_value}=   Get Value From Json   ${json}   ${json_path}
-   Run Keyword If   "${value}" != "${None}"   Lists Should Be Equal   ${r_value}   ${value}   ignore_order=True    values=False    msg=${msg} expected: '${value}' and got: '${r_value}'    
+   Lists Should Be Equal   ${r_value}   ${value}   ignore_order=True    values=False    msg=${msg} expected: '${value}' and got: '${r_value}'    
 
 Should Be Equal Value Json List Length
    [Arguments]   ${json}   ${json_path}   ${value}=${None}   ${msg}=${EMPTY}
@@ -68,48 +68,69 @@ Should Be Equal Value Json List Length
    ELSE
        ${r_length}=    Get Length     ${r_value}
    END
-   Run Keyword If   "${value}" != "${None}"  Should Be Equal As Integers    ${r_length}    ${value}  values=False  msg=${msg} expected '${value}' items and got: '${r_length}' 
+   Should Be Equal As Integers    ${r_length}    ${value}  values=False  msg=${msg} expected '${value}' items and got: '${r_length}' 
 
-# This keyword is used to extract the right vip value from Feature Template based on vipType
-Should Be Equal Value Json String FT
-   [Arguments]   ${json}    ${json_path}   ${value}=${EMPTY}  ${msg}=${EMPTY}
-   ${r_value_viptype}=   Get Value From Json   ${json}    ${json_path}.vipType
-   IF    ${r_value_viptype} != []
-      ${r_value_vipvalue}=   Get Value From Json   ${json}    ${json_path}.vipValue
-      ${r_value_vipvariable}=   Get Value From Json   ${json}    ${json_path}.vipVariableName
-      IF    "${r_value_viptype}[0]"=="constant"
-         ${r_value_vip}=   Set Variable    ${r_value_vipvalue}
-         ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
-      ELSE IF    "${r_value_viptype}[0]"=="variableName"
-         ${r_value_vip}=  Set Variable    ${r_value_vipvariable}
-         ${r_value_msg_suffix}=  Set Variable    variable
-      ELSE
-         ${r_value_vip}=  Set Variable    [${EMPTY}]
-            ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
-      END
-      ${r_value}=   Set Variable If    ${r_value_vip} == []    not_defined    ${r_value_vip[0]}
-   ELSE
-      ${r_value}=   Set Variable    not_defined
-      ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
+Convert String To List If Needed
+   [Arguments]    ${value}
+   ${is_list_string}=    Run Keyword And Return Status    Should Match Regexp    ${value}    ^\\[.*\\]$
+   IF    $is_list_string and not isinstance($value, list)
+      # Convert input value string to list
+      ${value}=    Evaluate    json.loads(r'''${value}'''.replace("'", '"'))    modules=json
    END
-   Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg} ${r_value_msg_suffix}
+   RETURN    ${value}
 
-# This keyword is used to retrieve the correct VIP value from the Feature Template based on the vipType when the value is provided as a list.
-Should Be Equal Value Json List FT
-   [Arguments]   ${json}    ${json_path}   ${value}=["not_defined"]  ${msg}=${EMPTY}
-   ${l_value_viptype}=    Get Value From Json    ${json}    ${json_path}.vipType
-   IF    ${l_value_viptype} != []
-      ${l_value}=    Get Value From Json    ${json}    ${json_path}.vipValue
-      ${l_value_variable}=    Get Value From Json    ${json}    ${json_path}.vipVariableName
-      IF    "${l_value_viptype}[0]"=="constant"
-         Lists Should Be Equal    ${l_value[0]}    ${value}    ignore_order=True    msg=${msg}
-      ELSE IF    "${l_value_viptype}[0]"=="variableName"
-         Should Be Equal As Strings    ${l_value_variable[0]}    ${value[0]}    msg=${msg} variable
-      ELSE
-         Should Be Equal As Strings    not_defined    ${value[0]}    msg=${msg}
-      END
+Extract Json List Value
+   [Arguments]    ${json}    ${json_path}
+   # Extract value from JSON
+   ${json_value}=    Get Value From Json    ${json}    ${json_path}.vipValue
+   IF    isinstance($json_value[0], list)
+      ${json_list}=    Set Variable If    ${json_value} == []    not_defined    ${json_value[0]}
    ELSE
-      Should Be Equal As Strings    not_defined    ${value[0]}    msg=${msg}
+      # Extract JSON comma-separated string and parse to list
+      ${json_string}=    Get Value From Json    ${json}    ${json_path}.vipValue
+      ${json_list}=    Split String    ${json_string[0]}    separator=,
+      ${json_list}=    Set Variable If    ${json_list} == []    not_defined    ${json_list}
+   END
+   RETURN    ${json_list}
+
+Extract Json String Value
+   [Arguments]    ${json}    ${json_path}
+   # Extract value from JSON
+   ${json_value}=    Get Value From Json    ${json}    ${json_path}.vipValue
+   # If its list with one element and data model is using string, extract this element from json list to string
+   IF    isinstance($json_value, list) and len($json_value) == 1 and isinstance($json_value[0], list)
+      ${json_value}=    Set Variable    ${json_value[0][0]}
+   ELSE
+      ${json_value}=    Set Variable If    ${json_value} == []    not_defined    ${json_value[0]}
+   END
+   RETURN    ${json_value}
+
+Should Be Equal Value Json Yaml UX1
+   [Arguments]    ${json}    ${json_path}    ${value}    ${var_value}    ${msg}
+   ${vip_type}=    Get Value From Json    ${json}    ${json_path}.vipType
+   IF    $vip_type == ['constant']
+      # Verify global value
+      ${value}=    Convert String To List If Needed    ${value}
+      IF    isinstance($value, list)
+         # Verify list value
+         ${json_list}=    Extract Json List Value    ${json}    ${json_path}
+         Lists Should Be Equal    ${json_list}    ${value}    ignore_order=True    values=False    msg=${msg} expected: '${value}' and got: '${json_list}'
+      ELSE
+         # Verify non-list value (int, str, bool)
+         IF    $value in ["True", "False"]
+            # Bool values represented by string needs to be converted to lowercase
+            ${value}=    Set Variable    ${value.lower()}
+         END
+         # Extract value from JSON
+         ${json_value}=    Extract Json String Value    ${json}    ${json_path}
+         Should Be Equal As Strings    ${json_value}    ${value}    values=False    msg=${msg} expected: '${value}' and got: '${json_value}'  
+      END
+   ELSE IF    $vip_type == ['variableName']
+      # Verify variable value
+      Should Be Equal Value Json String    ${json}    ${json_path}.vipVariableName    ${var_value}    msg=${msg}_variable
+   ELSE
+      # Verify default/ignore value
+      Should Be Equal As Strings    not_defined    ${value}    msg=${msg} expected: '${value}' and got: 'not_defined'
    END
 
 Should Be Equal Value Json Yaml
@@ -144,35 +165,4 @@ Should Be Equal Value Json Special_String
    END
    ${r_value}=   normalize escapes spaces    text=${r_value}
    ${value}=   normalize escapes spaces    text=${value}
-   Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg} expected: '${value}' and got: '${r_value}'
-
-# This keyword is same as "Should Be Equal Value Json String FT" but it normalizes the special characters and spaces for robot evaluation
-Should Be Equal Value Json Special_String FT
-   [Arguments]   ${json}    ${json_path}   ${value}=${EMPTY}  ${msg}=${EMPTY}
-   ${r_value_viptype}=   Get Value From Json   ${json}    ${json_path}.vipType
-   IF    ${r_value_viptype} != []
-      ${r_value_vipvalue}=   Get Value From Json   ${json}    ${json_path}.vipValue
-      ${r_value_vipvariable}=   Get Value From Json   ${json}    ${json_path}.vipVariableName
-      IF    "${r_value_viptype}[0]"=="constant"
-         ${r_value_vip}=   Set Variable    ${r_value_vipvalue}
-         ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
-      ELSE IF    "${r_value_viptype}[0]"=="variableName"
-         ${r_value_vip}=  Set Variable    ${r_value_vipvariable}
-         ${r_value_msg_suffix}=  Set Variable    variable
-      ELSE
-         ${r_value_vip}=  Set Variable    [${EMPTY}]
-         ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
-      END
-      ${r_value}=   Set Variable If    ${r_value_vip} == []    not_defined    ${r_value_vip}
-   ELSE
-      ${r_value}=   Set Variable    not_defined
-      ${r_value_msg_suffix}=  Set Variable    ${EMPTY}
-   END
-   TRY
-      ${r_value}=   Set Variable If    ${r_value} == []    not_defined    ${r_value}[0]
-   EXCEPT
-      ${r_value}=   Set Variable    not_defined
-   END
-   ${r_value}=   normalize escapes spaces    text=${r_value}
-   ${value}=   normalize escapes spaces    text=${value}
-   Run Keyword If   "${value}" != "${EMPTY}"   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg} expected: '${value}' and got: '${r_value}'
+   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg} expected: '${value}' and got: '${r_value}'

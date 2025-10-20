@@ -2,10 +2,11 @@ import os
 import shutil
 
 import errorhandler
-import iac_test.pabot
+import nac_test.pabot
 import pytest
 import tftest
 from util import render_templates
+from pathlib import Path
 
 
 pytestmark = pytest.mark.integration
@@ -18,7 +19,7 @@ SDWAN_TEST_TEMPLATES_PATH = "templates/sdwan/test/"
 
 
 def sdwan_render_run_tests(sdwan_url, data_paths, output_path):
-    """Render SDWAN test suites and run them using iac-test"""
+    """Render SDWAN test suites and run them using nac-test"""
     error = render_templates(
         data_paths, output_path, SDWAN_TEST_TEMPLATES_PATH, filters_path=FILTERS_PATH
     )
@@ -26,7 +27,7 @@ def sdwan_render_run_tests(sdwan_url, data_paths, output_path):
         pytest.fail(error)
     os.environ["SDWAN_URL"] = sdwan_url
     try:
-        iac_test.pabot.run_pabot(output_path)
+        nac_test.pabot.run_pabot(output_path)
     except SystemExit as e:
         if e.code != 0:
             return "Robot testing failed."
@@ -50,7 +51,7 @@ def full_sdwan_terraform_test(data_paths, terraform_path, sdwan_url, version, tm
             pytest.fail(output)
 
         # Run tests
-        data_paths.append(os.path.join(terraform_path, "defaults.yaml"))
+        data_paths.append(Path(os.path.join(terraform_path, "defaults.yaml")))
         error = sdwan_render_run_tests(
             sdwan_url, data_paths, os.path.join(tmpdir, "results/")
         )

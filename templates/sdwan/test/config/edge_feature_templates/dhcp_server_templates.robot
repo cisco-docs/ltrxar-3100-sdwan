@@ -1,101 +1,149 @@
 *** Settings ***
-Documentation   Verify DHCP Feature template
+Documentation   Verify DHCP Server Feature Templates
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags    sdwan    config    feature_templates
 Resource        ../../sdwan_common.resource
 
-{% if sdwan.edge_feature_templates.dhcp_server_templates is defined%}
+{% if sdwan.edge_feature_templates is defined and sdwan.edge_feature_templates.dhcp_server_templates is defined %}
 
 *** Test Cases ***
-Get DHCP Feature template
+Get DHCP Server Feature Templates
     ${r}=    GET On Session    sdwan_manager    /dataservice/template/feature
     ${r}=    Get Value From Json    ${r.json()}    $..data[?(@..templateType=="cisco_dhcp_server")]
     Set Suite Variable    ${r}
 
-{% for dhcp_template in sdwan.edge_feature_templates.dhcp_server_templates | default([]) %}
+{% for ft_yaml in sdwan.edge_feature_templates.dhcp_server_templates | default([]) %}
 
-Verify Edge Feature Template DHCP Feature template {{ dhcp_template.name }}
-    ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ dhcp_template.name }}")]
-    Should Be Equal Value Json String    ${template_id}    $..templateName    {{ dhcp_template.name }}    msg=name
-    Should Be Equal Value Json Special_String    ${template_id}    $..templateDescription    {{ dhcp_template.description | normalize_special_string }}    msg=description
+Verify Edge Feature Template DHCP Server Feature Template {{ ft_yaml.name }}
+    ${ft_summary_json}=    Get Value From Json    ${r}    $[?(@.templateName="{{ ft_yaml.name }}")]\
+    Should Not be Empty   ${ft_summary_json}   msg=Feature Template '{{ft_yaml.name}}' should be present on the Manager
+    Should Be Equal Value Json String    ${ft_summary_json}    $..templateName    {{ ft_yaml.name }}    msg=name
+    Should Be Equal Value Json Special_String    ${ft_summary_json}    $..templateDescription    {{ ft_yaml.description | normalize_special_string }}    msg=description
 
-{% set test_list = [] %}
-{% for item in dhcp_template.device_types | default(defaults.sdwan.edge_feature_templates.dhcp_server_templates.device_types) %}
-{% set test = "vedge-" ~ item %}
-{% set _ = test_list.append(test) %}
+    # Device types validation
+    {% set device_types_yaml = [] %}
+    {% for item in ft_yaml.device_types | default(defaults.sdwan.edge_feature_templates.dhcp_server_templates.device_types) %}
+    {% set device_type = "vedge-" ~ item %}
+    {% set _ = device_types_yaml.append(device_type) %}
+    {% endfor %}
+    ${device_types_json}=    Get Value From Json    ${ft_summary_json}    $..deviceType
+    ${device_types_yaml}=    Create List           {{ device_types_yaml | join('   ') }}
+    Lists Should Be Equal    ${device_types_json}[0]    ${device_types_yaml}    ignore_order=True    msg=device_types
+
+    # Get template definition
+    ${ft_id}=    Get Value From Json    ${r}    $[?(@.templateName="{{ ft_yaml.name }}")].templateId
+    ${ft}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${ft_id[0]}
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"address-pool\"]
+    ...    {{ ft_yaml.address_pool | default("not_defined") }}
+    ...    {{ ft_yaml.address_pool_variable | default("not_defined") }}
+    ...    msg=address_pool
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"default-gateway\"]
+    ...    {{ ft_yaml.default_gateway | default("not_defined") }}
+    ...    {{ ft_yaml.default_gateway_variable | default("not_defined") }}
+    ...    msg=default_gateway
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"dns-servers\"]
+    ...    {{ ft_yaml.dns_servers | default("not_defined") }}
+    ...    {{ ft_yaml.dns_servers_variable | default("not_defined") }}
+    ...    msg=dns_servers
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"domain-name\"]
+    ...    {{ ft_yaml.domain_name | default("not_defined") }}
+    ...    {{ ft_yaml.domain_name_variable | default("not_defined") }}
+    ...    msg=domain_name
+
+    # Need custom handling as single JSON field is represented by two data model fields (exclude_addresses and exclude_addresses_ranges)
+    ${exclude_addresses}=    Create List
+    {% for exclude_address in ft_yaml.exclude_addresses | default([]) %}
+    Append To List    ${exclude_addresses}    {{ exclude_address }}
+    {% endfor %}
+
+    {% for exclude_address_range in ft_yaml.exclude_addresses_ranges | default([]) %}
+    {% set test_list = [] %}
+    {% set _ = test_list.append(exclude_address_range.from) %}
+    {% set _ = test_list.append(exclude_address_range.to) %}
+    {% set address_range = '-'.join(test_list | map('string')) %}
+    Append To List    ${exclude_addresses}    {{ address_range }}
+    {% endfor %}
+
+    ${exclude_addresses}=    Set Variable If    ${exclude_addresses} == []    not_defined    ${exclude_addresses}
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..exclude
+    ...    ${exclude_addresses}
+    ...    {{ ft_yaml.exclude_addresses_variable | default("not_defined") }}
+    ...    msg=exclude_addresses|exclude_addresses_ranges
+    # End of custom handling
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"interface-mtu\"]
+    ...    {{ ft_yaml.interface_mtu | default("not_defined") }}
+    ...    {{ ft_yaml.interface_mtu_variable | default("not_defined") }}
+    ...    msg=interface_mtu
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"lease-time\"]
+    ...    {{ ft_yaml.lease_time | default("not_defined") }}
+    ...    {{ ft_yaml.lease_time_variable | default("not_defined") }}
+    ...    msg=lease_time
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $..[\"options\"][\"option-code\"].vipValue    {{ ft_yaml.options | default([]) | length }}    msg=options length
+
+{% for option in ft_yaml.options | default([]) %}
+
+    Log    === Option {{loop.index0}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"options\"][\"option-code\"].vipValue[{{loop.index0}}].code
+    ...    {{ option.option_code | default("not_defined") }}
+    ...    {{ option.option_code_variable | default("not_defined") }}
+    ...    msg=options.option_code
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"options\"][\"option-code\"].vipValue[{{loop.index0}}].ascii
+    ...    {{ option.ascii | default("not_defined") }}
+    ...    {{ option.ascii_variable | default("not_defined") }}
+    ...    msg=options.ascii
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"options\"][\"option-code\"].vipValue[{{loop.index0}}].hex
+    ...    {{ option.hex | default("not_defined") }}
+    ...    {{ option.hex_variable | default("not_defined") }}
+    ...    msg=options.hex
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"options\"][\"option-code\"].vipValue[{{loop.index0}}].ip
+    ...    {{ option.ip_addresses | default("not_defined") }}
+    ...    {{ option.ip_addresses_variable | default("not_defined") }}
+    ...    msg=options.ip_addresses
+
 {% endfor %}
 
-    ${dt_list}=    Get Value From Json    ${template_id}    $..deviceType
-    ${test_list}=   Create List   {{ test_list | join('   ') }}
-    Lists Should Be Equal    ${dt_list[0]}    ${test_list}    ignore_order=True    msg=device types
+    Should Be Equal Value Json List Length    ${ft.json()}    $..[\"static-lease\"].vipValue    {{ ft_yaml.static_leases | default([]) | length }}    msg=static_leases length
 
-    ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ dhcp_template.name }}")].templateId
-    ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${template_id[0]}
+{% for static_lease in ft_yaml.static_leases | default([]) %}
 
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["address-pool"]    {{ dhcp_template.address_pool_variable | default(dhcp_template.address_pool | default("not_defined")) }}    msg=address pool
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["default-gateway"]    {{ dhcp_template.default_gateway_variable | default(dhcp_template.default_gateway | default("not_defined")) }}    msg=default gateway
-    
-    ${dns_servers_value}=    Create List    {{ dhcp_template.dns_servers_variable | default(dhcp_template.dns_servers | default(["not_defined"]) | join('   ')) }}
-    Should Be Equal Value Json List FT    ${r_id.json()}    $..["dns-servers"]    ${dns_servers_value}    msg=dns servers
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["domain-name"]    {{ dhcp_template.domain_name_variable | default(dhcp_template.domain_name | default("not_defined")) }}    msg=domain name
+    Log    === Static Lease {{loop.index0}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"static-lease\"].vipValue[{{loop.index0}}].ip
+    ...    {{ static_lease.ip_address | default("not_defined") }}
+    ...    {{ static_lease.ip_address_variable | default("not_defined") }}
+    ...    msg=static_leases.ip_address
 
-{% set exclude_addresses_range_list = [] %}
-{% for item in dhcp_template.exclude_addresses_ranges | default([]) %}
-{% set test_list = [] %}
-{% set _ = test_list.append(item.from) %}
-{% set _ = test_list.append(item.to) %}
-{% set exclude_addresses_test = '-'.join(test_list | map('string')) %}
-{% set _ = exclude_addresses_range_list.append(exclude_addresses_test) %}
-{% endfor %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"static-lease\"].vipValue[{{loop.index0}}].[\"mac-address\"]
+    ...    {{ static_lease.mac_address | default("not_defined") }}
+    ...    {{ static_lease.mac_address_variable | default("not_defined") }}
+    ...    msg=static_leases.mac_address
 
-{% if dhcp_template.exclude_addresses is defined and dhcp_template.exclude_addresses_ranges is defined%}
-{% set req_addresses = dhcp_template.exclude_addresses  %}
-{% set address_string = req_addresses | map('string') | join(',') %}
-{% set new_addresses_list = address_string.split(',') %}
-{% set exclude_addresses_list = new_addresses_list + exclude_addresses_range_list %}
-    ${list}=   Create List   {{ exclude_addresses_list | join('   ') }}
-    ${rec_exclude_addresses}=    Get Value From Json    ${r_id.json()}    $..exclude.vipValue
-    Lists Should Be Equal    ${rec_exclude_addresses}[0]    ${list}    msg=exclude addresses and ranges
-{% elif dhcp_template.exclude_addresses is defined %}
-    ${list}=   Create List   {{ dhcp_template.exclude_addresses | join('   ') }}
-    ${rec_exclude_addresses}=    Get Value From Json    ${r_id.json()}    $..exclude.vipValue
-    Lists Should Be Equal    ${rec_exclude_addresses}[0]    ${list}    msg=exclude addresses
-{% elif dhcp_template.exclude_addresses_ranges is defined %}
-    ${list} =   Create List   {{ exclude_addresses_range_list | join('   ') }}
-    ${rec_exclude_addresses}=    Get Value From Json    ${r_id.json()}    $..exclude.vipValue
-    Lists Should Be Equal    ${rec_exclude_addresses}[0]    ${list}    msg=exclude addresses ranges
-{% endif %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"static-lease\"].vipValue[{{loop.index0}}].[\"host-name\"]
+    ...    {{ static_lease.hostname | default("not_defined") }}
+    ...    {{ static_lease.hostname_variable | default("not_defined") }}
+    ...    msg=static_leases.hostname
 
-    Should Be Equal Value Json String    ${r_id.json()}    $..["exclude"].vipVariableName    {{ dhcp_template.exclude_addresses_variable | default("not_defined") }}    msg=exclude addresses variable
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["interface-mtu"]    {{ dhcp_template.interface_mtu_variable | default(dhcp_template.interface_mtu | default("not_defined")) }}    msg=interface mtu
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["lease-time"]    {{ dhcp_template.lease_time_variable | default(dhcp_template.lease_time | default("not_defined")) }}    msg=lease time
-
-    Should Be Equal Value Json List Length    ${r_id.json()}   $..["options"]["option-code"].vipValue    {{ dhcp_template.options | length }}    msg=options
-
-{% for option in dhcp_template.options | default([]) %}
-
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].code    {{ option.option_code_variable | default(option.option_code | default("not_defined")) }}    msg=option code
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].ascii    {{ option.ascii_variable | default(option.ascii | default("not_defined")) }}    msg=ascii
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].hex    {{ option.hex_variable | default(option.hex | default("not_defined")) }}    msg=hex
-    ${option_ip_addresses_value}=    Create List    {{ option.ip_addresses_variable | default(option.ip_addresses | default(["not_defined"]) | join('   ')) }}
-    Should Be Equal Value Json List FT    ${r_id.json()}    $..["options"]["option-code"].vipValue[{{loop.index0}}].ip    ${option_ip_addresses_value}    msg=option ip addresses
+    Should Be Equal Value Json String    ${ft.json()}    $..[\"static-lease\"].vipValue[{{loop.index0}}].vipOptional
+    ...    {{ static_lease.optional | default("not_defined") }}
+    ...    msg=static_leases.optional
 
 {% endfor %}
 
-    Should Be Equal Value Json List Length    ${r_id.json()}   $..["static-lease"].vipValue    {{ dhcp_template.static_leases | length }}    msg=static lease
-
-{% for static_lease in dhcp_template.static_leases | default([]) %}
-
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}].ip    {{ static_lease.ip_address_variable | default(static_lease.ip_address | default("not_defined")) }}    msg=ip address
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}]["mac-address"]    {{ static_lease.mac_address_variable | default(static_lease.mac_address | default("not_defined")) }}    msg=mac address
-    Should Be Equal Value Json String FT    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}]["host-name"]    {{ static_lease.hostname_variable | default(static_lease.hostname | default("not_defined")) }}    msg=hostname
-    Should Be Equal Value Json String    ${r_id.json()}    $..["static-lease"].vipValue[{{loop.index0}}]["vipOptional"]    {{ static_lease.optional | default("not_defined") }}    msg=optional
-
-{% endfor %}
-
-    ${tftp_servers_value}=    Create List    {{ dhcp_template.tftp_servers_variable | default(dhcp_template.tftp_servers | default(["not_defined"]) | join('   ')) }}
-    Should Be Equal Value Json List FT    ${r_id.json()}    $..["tftp-servers"]    ${tftp_servers_value}    msg=tftp servers
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..[\"tftp-servers\"]
+    ...    {{ ft_yaml.tftp_servers | default("not_defined") }}
+    ...    {{ ft_yaml.tftp_servers_variable | default("not_defined") }}
+    ...    msg=tftp_servers
 
 {% endfor %}
 

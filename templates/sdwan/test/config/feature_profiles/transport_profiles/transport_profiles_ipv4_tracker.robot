@@ -7,6 +7,7 @@ Default Tags    sdwan    config    feature_profiles     transport_profiles    ip
 Resource        ../../../sdwan_common.resource
 
 
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.transport_profiles is defined %}
 {% set profile_ipv4_tracker_list = [] %}
 {% for profile in sdwan.feature_profiles.transport_profiles %}
  {% if profile.ipv4_trackers is defined %}
@@ -111,5 +112,7 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} IPv4 Tracker Group
 
 
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

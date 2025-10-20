@@ -1,245 +1,659 @@
 *** Settings ***
-Documentation   Verify BGP Feature Template Configuration
+Documentation   Verify BGP Feature Templates
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_templates
 Resource        ../../sdwan_common.resource
 
-{% if sdwan.edge_feature_templates.bgp_templates is defined %}
+{% if sdwan.edge_feature_templates is defined and sdwan.edge_feature_templates.bgp_templates is defined %}
 
 *** Test Cases ***
-Get BGP Feature Template
+Get BGP Feature Templates
     ${r}=    GET On Session    sdwan_manager    /dataservice/template/feature
     ${r}=    Get Value From Json    ${r.json()}    $..data[?(@..templateType=="cisco_bgp")]
     Set Suite Variable    ${r}
 
-{% for bgp in sdwan.edge_feature_templates.bgp_templates | default([]) %}
+{% for ft_yaml in sdwan.edge_feature_templates.bgp_templates | default([]) %}
 
-Verify Edge Feature BGP Configuration Template {{ bgp.name }}
+Verify Edge Feature Template BGP Feature Template {{ ft_yaml.name }}
+    ${ft_summary_json}=    Get Value From Json    ${r}    $[?(@.templateName="{{ ft_yaml.name }}")]
+    Should Not be Empty   ${ft_summary_json}   msg=Feature Template '{{ft_yaml.name}}' should be present on the Manager
+    Should Be Equal Value Json String    ${ft_summary_json}    $..templateName    {{ ft_yaml.name }}    msg=name
+    Should Be Equal Value Json Special_String    ${ft_summary_json}    $..templateDescription    {{ ft_yaml.description | normalize_special_string }}    msg=description
 
-    ${bgp_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{ bgp.name }}")]
-    Should Be Equal Value Json String    ${bgp_id}    $..templateName    {{ bgp.name }}    msg=name
-    Should Be Equal Value Json Special_String    ${bgp_id}    $..templateDescription    {{ bgp.description | normalize_special_string }}    msg=description
+    # Device types validation
+    {% set device_types_yaml = [] %}
+    {% for item in ft_yaml.device_types | default(defaults.sdwan.edge_feature_templates.bgp_templates.device_types) %}
+    {% set device_type = "vedge-" ~ item %}
+    {% set _ = device_types_yaml.append(device_type) %}
+    {% endfor %}
+    ${device_types_json}=    Get Value From Json    ${ft_summary_json}    $..deviceType
+    ${device_types_yaml}=    Create List           {{ device_types_yaml | join('   ') }}
+    Lists Should Be Equal    ${device_types_json}[0]    ${device_types_yaml}    ignore_order=True    msg=device_types
 
-{% set test_list = [] %}
-{% for item in bgp.device_types | default(defaults.sdwan.edge_feature_templates.bgp_templates.device_types) %}
-{% set test = "vedge-" ~ item %}
-{% set _ = test_list.append(test) %}
-{% endfor %}
-
-    ${dt_list}=  Get Value From Json   ${r}   $[?(@..templateName=="{{ bgp.name }}")].deviceType
-    ${test_list}=   Create List   {{ test_list | join('   ') }}
-    Lists Should Be Equal    ${dt_list}[0]    ${test_list}    ignore_order=True    msg= {{ bgp.name }} template device type
-
-    ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{bgp.name }}")].templateId
-    ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${template_id[0]}
+    # Get template definition
+    ${ft_id}=    Get Value From Json    ${r}    $[?(@.templateName="{{ ft_yaml.name }}")].templateId
+    ${ft}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${ft_id[0]}
  
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].best-path.med.always-compare.vipValue    {{ bgp.always_compare_med | default("not_defined") | lower() }}    msg=always compare med
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].best-path.med.always-compare.vipVariableName    {{ bgp.always_compare_med_variable | default("not_defined") }}    msg=always compare med variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].as-num.vipValue    {{ bgp.as_number | default("not_defined") }}    msg=as number
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].as-num.vipVariableName    {{ bgp.as_number_variable | default("not_defined") }}    msg=as number variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].best-path.compare-router-id.vipValue    {{ bgp.compare_router_id | default("not_defined") | lower() }}    msg=compare router id
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].best-path.compare-router-id.vipVariableName    {{ bgp.compare_router_id_variable | default("not_defined") }}    msg=compare router id variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].best-path.med.deterministic.vipValue    {{ bgp.deterministic_med | default("not_defined") | lower() }}    msg=deterministic med
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].best-path.med.deterministic.vipVariableName    {{ bgp.deterministic_med_variable | default("not_defined") }}    msg=deterministic med variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].distance.external.vipValue    {{ bgp.distance_external | default("not_defined") }}    msg=distance external
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].distance.external.vipVariableName    {{ bgp.distance_external_variable | default("not_defined") }}    msg=distance external variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].distance.local.vipValue    {{ bgp.distance_local | default("not_defined") }}    msg=distance local
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].distance.local.vipVariableName    {{ bgp.distance_local_variable | default("not_defined") }}    msg=distance local variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].distance.internal.vipValue    {{ bgp.distance_internal | default("not_defined") }}    msg=distance internal
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].distance.internal.vipVariableName    {{ bgp.distance_internal_variable | default("not_defined") }}    msg=distance internal variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].timers.holdtime.vipValue    {{ bgp.holdtime | default("not_defined") }}    msg=holdtime
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].timers.holdtime.vipVariableName    {{ bgp.holdtime_variable | default("not_defined") }}    msg=holdtime variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].timers.keepalive.vipValue    {{ bgp.keepalive | default("not_defined") }}    msg=keepalive
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].timers.keepalive.vipVariableName    {{ bgp.keepalive_variable | default("not_defined") }}    msg=keepalive variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].best-path.med.missing-as-worst.vipValue    {{ bgp.missing_med_as_worst | default("not_defined") | lower() }}    msg=missing med as worst
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].best-path.med.missing-as-worst.vipVariableName    {{ bgp.missing_med_as_worst_variable | default("not_defined") }}    msg=missing med as worst variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].best-path.as-path.multipath-relax.vipValue    {{ bgp.multipath_relax | default("not_defined") | lower() }}    msg=multipath relax
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].best-path.as-path.multipath-relax.vipVariableName    {{ bgp.multipath_relax_variable | default("not_defined") }}    msg=multipath relax variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].propagate-aspath.vipValue    {{ bgp.propagate_as_path | default("not_defined") | lower() }}    msg=propagate as path
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].propagate-aspath.vipVariableName    {{ bgp.propagate_as_path_variable | default("not_defined") }}    msg=propagate as path variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].propagate-community.vipValue    {{ bgp.propagate_community | default("not_defined") | lower() }}    msg=propagate community
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].propagate-community.vipVariableName    {{ bgp.propagate_community_variable | default("not_defined") }}    msg=propagate community variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].router-id.vipValue    {{ bgp.router_id | default("not_defined") }}    msg=router id
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].router-id.vipVariableName    {{ bgp.router_id_variable | default("not_defined") }}    msg=router id variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].shutdown.vipValue    {{ bgp.shutdown | default("not_defined") | lower() }}    msg=shutdown
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].shutdown.vipVariableName    {{ bgp.shutdown_variable | default("not_defined") }}    msg=shutdown variable
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.best-path.med.always-compare
+    ...    {{ ft_yaml.always_compare_med | default("not_defined") }}
+    ...    {{ ft_yaml.always_compare_med_variable | default("not_defined") }}
+    ...    msg=always_compare_med
 
-{% set ip_list = [] %}
-{% set _ = ip_list.append(bgp.ipv4_address_family) %}
-{% set _ = ip_list.append(bgp.ipv6_address_family) %}
-{% for ip_type in ip_list %}
-{% set ip_index = ip_list.index(ip_type) %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.as-num
+    ...    {{ ft_yaml.as_number | default("not_defined") }}
+    ...    {{ ft_yaml.as_number_variable | default("not_defined") }}
+    ...    msg=as_number
 
-{% if ip_type == bgp.ipv4_address_family %}
-{% set af = 'ipv4_address_family' %}
-{% elif ip_type == bgp.ipv6_address_family %}
-{% set af = 'ipv6_address_family' %}
-{% endif %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.best-path.compare-router-id
+    ...    {{ ft_yaml.compare_router_id | default("not_defined") }}
+    ...    {{ ft_yaml.compare_router_id_variable | default("not_defined") }}
+    ...    msg=compare_router_id
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{loop.index0}}].default-information.originate.vipValue    {{ ip_type.default_information_originate | default("not_defined") | lower()}}    msg= default information originate
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{loop.index0}}].default-information.originate.vipVariableName    {{ ip_type.default_information_originate_variable | default("not_defined") }}    msg=default information originate variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{loop.index0}}].maximum-paths.paths.vipValue    {{ ip_type.maximum_paths| default("not_defined") }}    msg=maximum paths
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{loop.index0}}].maximum-paths.paths.vipVariableName    {{ ip_type.maximum_paths_variable | default("not_defined") }}    msg=maximum paths variable
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.best-path.med.deterministic
+    ...    {{ ft_yaml.deterministic_med | default("not_defined") }}
+    ...    {{ ft_yaml.deterministic_med_variable | default("not_defined") }}
+    ...    msg=deterministic_med
 
-    ${family_type}=    Get Value From Json    ${r_id.json()}    $..["bgp"].address-family.vipValue[{{loop.index0}}].family-type.vipValue
-    IF  $family_type == ['ipv4-unicast']
-        ${aggregate_addresses}=   Set Variable   'aggregate-address'
-    ELSE IF   $family_type == ['ipv6-unicast']
-        ${aggregate_addresses}=   Set Variable   'ipv6-aggregate-address'
-    ELSE IF   $family_type == []
-        ${aggregate_addresses}=   Set Variable   ' '
-    END
-    Should Be Equal Value Json List Length    ${r_id.json()}    $..["bgp"].address-family.vipValue[{{loop.index0}}].${aggregate_addresses}.vipValue    {{ ip_type.aggregate_addresses | length }}    msg=aggregate addresses length
-{% for aggregate in ip_type.aggregate_addresses | default([]) %} 
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{ip_index}}].${aggregate_addresses}.vipValue[{{loop.index0}}].prefix.vipValue    {{ aggregate.prefix | default("not_defined") }}    msg=aggregate prefix
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{ip_index}}].${aggregate_addresses}.vipValue[{{loop.index0}}].prefix.vipVariableName    {{ aggregate.prefix_variable | default("not_defined") }}    msg=aggregate prefix variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{ip_index}}].${aggregate_addresses}.vipValue[{{loop.index0}}].as-set.vipValue    {{ aggregate.as_set_path | default("not_defined") | lower() }}    msg=as set path
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{ip_index}}].${aggregate_addresses}.vipValue[{{loop.index0}}].as-set.vipVariableName    {{ aggregate.as_set_path_variable | default("not_defined") }}    msg=as set path variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{ip_index}}].${aggregate_addresses}.vipValue[{{loop.index0}}].summary-only.vipValue    {{ aggregate.summary_only | default("not_defined") | lower() }}    msg=aggregate summary only
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{ip_index}}].${aggregate_addresses}.vipValue[{{loop.index0}}].summary-only.vipVariableName    {{ aggregate.summary_only_variable | default("not_defined") }}    msg=aggregate summary only variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{ip_index}}].${aggregate_addresses}.vipValue[{{loop.index0}}].vipOptional    {{ aggregate.optional | default("not_defined") }}    msg=aggregate optional
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.distance.external
+    ...    {{ ft_yaml.distance_external | default("not_defined") }}
+    ...    {{ ft_yaml.distance_external_variable | default("not_defined") }}
+    ...    msg=distance_external
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.distance.local
+    ...    {{ ft_yaml.distance_local | default("not_defined") }}
+    ...    {{ ft_yaml.distance_local_variable | default("not_defined") }}
+    ...    msg=distance_local
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.distance.internal
+    ...    {{ ft_yaml.distance_internal | default("not_defined") }}
+    ...    {{ ft_yaml.distance_internal_variable | default("not_defined") }}
+    ...    msg=distance_internal
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.timers.holdtime
+    ...    {{ ft_yaml.holdtime | default("not_defined") }}
+    ...    {{ ft_yaml.holdtime_variable | default("not_defined") }}
+    ...    msg=holdtime
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.timers.keepalive
+    ...    {{ ft_yaml.keepalive | default("not_defined") }}
+    ...    {{ ft_yaml.keepalive_variable | default("not_defined") }}
+    ...    msg=keepalive
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.best-path.med.missing-as-worst
+    ...    {{ ft_yaml.missing_med_as_worst | default("not_defined") }}
+    ...    {{ ft_yaml.missing_med_as_worst_variable | default("not_defined") }}
+    ...    msg=missing_med_as_worst
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.best-path.as-path.multipath-relax
+    ...    {{ ft_yaml.multipath_relax | default("not_defined") }}
+    ...    {{ ft_yaml.multipath_relax_variable | default("not_defined") }}
+    ...    msg=multipath_relax
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.propagate-aspath
+    ...    {{ ft_yaml.propagate_as_path | default("not_defined") }}
+    ...    {{ ft_yaml.propagate_as_path_variable | default("not_defined") }}
+    ...    msg=propagate_as_path
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.propagate-community
+    ...    {{ ft_yaml.propagate_community | default("not_defined") }}
+    ...    {{ ft_yaml.propagate_community_variable | default("not_defined") }}
+    ...    msg=propagate_community
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.router-id
+    ...    {{ ft_yaml.router_id | default("not_defined") }}
+    ...    {{ ft_yaml.router_id_variable | default("not_defined") }}
+    ...    msg=router_id
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.shutdown
+    ...    {{ ft_yaml.shutdown | default("not_defined") }}
+    ...    {{ ft_yaml.shutdown_variable | default("not_defined") }}
+    ...    msg=shutdown
+
+    # Custom handling verifying existing address-families
+    {% set af_yaml = [] %}
+    {% if ft_yaml.ipv4_address_family is defined %}
+        {% set _ = af_yaml.append("ipv4-unicast") %}
+    {% endif %}
+    {% if ft_yaml.ipv6_address_family is defined %}
+        {% set _ = af_yaml.append("ipv6-unicast") %}
+    {% endif %}
+    ${af_yaml}=    Create List    {{ af_yaml | join('    ') if af_yaml else 'not_defined' }}
+
+    ${af_json}=   Get Value From Json   ${ft.json()}    $.bgp.address-family..family-type.vipValue
+    Lists Should Be Equal   ${af_yaml}   ${af_json}   ignore_order=True    values=False    msg=address_families expected: '${af_yaml}' and got: '${af_json}'    
+
+{% if ft_yaml.ipv4_address_family is defined %}
+    Log    === IPv4 Address Family ===
+    
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].default-information.originate
+    ...    {{ ft_yaml.ipv4_address_family.default_information_originate | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv4_address_family.default_information_originate_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.default_information_originate
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].maximum-paths.paths
+    ...    {{ ft_yaml.ipv4_address_family.maximum_paths | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.maximum_paths_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.maximum_paths
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].aggregate-address.vipValue    {{ ft_yaml.ipv4_address_family.aggregate_addresses | default([]) | length }}    msg=ipv4_address_family.aggregate_addresses length
+
+{% for aggregate in ft_yaml.ipv4_address_family.aggregate_addresses | default([]) %}
+
+    Log    === Aggregate Address {{loop.index0}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].aggregate-address.vipValue[{{loop.index0}}].prefix
+    ...    {{ aggregate.prefix | default("not_defined") }}
+    ...    {{ aggregate.prefix_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.aggregate_addresses.prefix
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].aggregate-address.vipValue[{{loop.index0}}].as-set
+    ...    {{ aggregate.as_set_path | default("not_defined") }}
+    ...    {{ aggregate.as_set_path_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.aggregate_addresses.as_set_path
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].aggregate-address.vipValue[{{loop.index0}}].summary-only
+    ...    {{ aggregate.summary_only | default("not_defined") }}
+    ...    {{ aggregate.summary_only_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.aggregate_addresses.summary_only
+
+    Should Be Equal Value Json String    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].aggregate-address.vipValue[{{loop.index0}}].vipOptional
+    ...    {{ aggregate.optional | default("not_defined") }}
+    ...    msg=ipv4_address_family.aggregate_addresses.optional
+
 {% endfor %}
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[0].table-map.name.vipValue    {{ ip_type.table_map_policy| default("not_defined") }}    msg=table map policy
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[0].table-map.name.vipVariableName    {{ ip_type.table_map_policy_variable | default("not_defined") }}    msg=table map policy variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[0].table-map.filter.vipValue    {{ ip_type.table_map_filter| default("not_defined") | lower() }}    msg=table map filter policy
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[0].table-map.filter.vipVariableName    {{ ip_type.table_map_filter_variable | default("not_defined") }}    msg=table map filter policy variable
 
-    IF    $family_type == ['ipv4-unicast']
-        ${ip_type}=   Set Variable   'ipv4-unicast'
-    ELSE IF    $family_type == ['ipv6-unicast']
-        ${ip_type}=   Set Variable   'ipv6-unicast'
-    ELSE IF   $family_type == []
-        ${ip_type}=   Set Variable   ' '
-    END
-    Should Be Equal Value Json List Length    ${r_id.json()}    $..["bgp"].address-family.vipValue[?(@.family-type.vipValue==${ip_type})].redistribute.vipValue    {{ ip_type.redistributes | length }}    msg=redistributes length    
-{% for redistribute in ip_type.redistributes | default([]) %}
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[?(@.family-type.vipValue==${ip_type})].redistribute.vipValue[{{loop.index0}}].protocol.vipValue    {{ redistribute.protocol | default("not_defined") }}    msg=redistribute protocol
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[?(@.family-type.vipValue==${ip_type})].redistribute.vipValue[{{loop.index0}}].protocol.vipVariableName    {{ redistribute.protocol_variable | default("not_defined") }}    msg=redistribute protocol variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[?(@.family-type.vipValue==${ip_type})].redistribute.vipValue[{{loop.index0}}].route-policy.vipValue    {{ redistribute.route_policy | default("not_defined") }}    msg=route policy
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[?(@.family-type.vipValue==${ip_type})].redistribute.vipValue[{{loop.index0}}].route-policy.vipVariableName    {{ redistribute.route_policy_variable | default("not_defined") }}    msg=route policy variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[?(@.family-type.vipValue==${ip_type})].redistribute.vipValue[{{loop.index0}}].vipOptional   {{ redistribute.optional | default("not_defined") }}    msg=redistribute optional
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].table-map.name
+    ...    {{ ft_yaml.ipv4_address_family.table_map_policy | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.table_map_policy_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.table_map_policy
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].table-map.filter
+    ...    {{ ft_yaml.ipv4_address_family.table_map_filter | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.table_map_filter_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.table_map_filter
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].redistribute.vipValue    {{ ft_yaml.ipv4_address_family.redistributes | default([]) | length }}    msg=ipv4_address_family.redistributes length
+
+{% for redistribute in ft_yaml.ipv4_address_family.redistributes | default([]) %}
+
+    Log    === Redistribute {{loop.index0}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].redistribute.vipValue[{{loop.index0}}].protocol
+    ...    {{ redistribute.protocol | default("not_defined") }}
+    ...    {{ redistribute.protocol_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.redistributes.protocol
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].redistribute.vipValue[{{loop.index0}}].route-policy
+    ...    {{ redistribute.route_policy | default("not_defined") }}
+    ...    {{ redistribute.route_policy_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.redistributes.route_policy
+
+    Should Be Equal Value Json String    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].redistribute.vipValue[{{loop.index0}}].vipOptional
+    ...    {{ redistribute.optional | default("not_defined") }}
+    ...    msg=ipv4_address_family.redistributes.optional
+
 {% endfor %}
 
-{% if ip_type == bgp.ipv4_address_family %}
-{% set neighbor1 = 'neighbor' %}
-{% elif ip_type == bgp.ipv6_address_family %}
-{% set neighbor1 = 'ipv6-neighbor' %}
-{% endif %}
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.neighbor.vipValue    {{ ft_yaml.ipv4_address_family.neighbors | default([]) | length }}    msg=ipv4_address_family.neighbors length
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $..["bgp"].{{neighbor1}}.vipValue    {{ ip_type.neighbors | length }}    msg=neighbors length
+{% for neighbor_index in range(ft_yaml.ipv4_address_family.neighbors | default([]) | length()) %}
 
-{% for neighbor in ip_type.neighbors | default([]) %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].address.vipValue    {{ neighbor.address | default("not_defined") }}    msg=neighbor address
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].address.vipVariableName    {{ neighbor.address_variable | default("not_defined") }}    msg=neighbor address variable
+    Log    === IPv4 Neighbor {{neighbor_index}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].address
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.address
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $..["bgp"].{{neighbor1}}.vipValue[{{loop.index0}}].address-family.vipValue    {{ neighbor.address_families | length }}    msg=neighbors address families length
-    {% set parent_index = loop.index0 %}
-    {% for address_family in neighbor.address_families | default([]) %}
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].address-family.vipValue    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families | default([]) | length }}    msg=ipv4_address_family.neighbors.address_families length
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].family-type.vipValue    {{ address_family.family_type | default("not_defined") }}    msg=address family type
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].maximum-prefixes.prefix-num.vipValue    {{ address_family.maximum_prefixes | default("not_defined") }}    msg=address family maximum prefixes
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].maximum-prefixes.prefix-num.vipVariableName    {{ address_family.maximum_prefixes_variable | default("not_defined") }}    msg=address family maximum prefixes variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].maximum-prefixes.restart.vipValue    {{ address_family.maximum_prefixes_restart | default("not_defined") }}    msg=address family maximum prefixes restart
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].maximum-prefixes.restart.vipVariableName    {{ address_family.maximum_prefixes_restart_variable | default("not_defined") }}    msg=address family maximum prefixes restart variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].maximum-prefixes.threshold.vipValue    {{ address_family.maximum_prefixes_threshold | default("not_defined") }}    msg=address family maximum prefixes threshold
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].maximum-prefixes.threshold.vipVariableName    {{ address_family.maximum_prefixes_threshold_variable | default("not_defined") }}    msg=address family maximum prefixes threshold variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].maximum-prefixes.warning-only.vipValue    {{ address_family.maximum_prefixes_warning_only | default("not_defined") | lower() }}    msg=address family maximum prefixes warning only
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].maximum-prefixes.warning-only.vipVariableName    {{ address_family.maximum_prefixes_warning_only_variable | default("not_defined") }}    msg=address family maximum prefixes warning only variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].route-policy.vipValue[?(@.direction.vipValue=="in")]..["pol-name"].vipValue    {{ address_family.route_policy_in | default("not_defined") }}    msg=address family route policy in
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].route-policy.vipValue[?(@.direction.vipValue=="in")]..["pol-name"].vipVariableName    {{ address_family.route_policy_in_variable | default("not_defined") }}    msg=address family family route policy in variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].route-policy.vipValue[?(@.direction.vipValue=="out")]..["pol-name"].vipValue    {{ address_family.route_policy_out | default("not_defined") }}    msg=address family route policy out
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].route-policy.vipValue[?(@.direction.vipValue=="out")]..["pol-name"].vipVariableName    {{ address_family.route_policy_out_variable | default("not_defined") }}    msg=address family family route policy out variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{parent_index}}].address-family.vipValue[{{loop.index0}}].vipOptional   {{ address_family.optional | default("not_defined") }}    msg=address family optional
+{% for af_index in range(ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families | default([]) | length()) %}
+
+    Log    === IPv4 Neighbor {{neighbor_index}} Address Family {{af_index}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].family-type
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].family_type | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].family_type_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.address_families.family_type
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].maximum-prefixes.prefix-num
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.address_families.maximum_prefixes
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].maximum-prefixes.restart
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_restart | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_restart_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.address_families.maximum_prefixes_restart
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].maximum-prefixes.threshold
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_threshold | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_threshold_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.address_families.maximum_prefixes_threshold
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].maximum-prefixes.warning-only
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_warning_only | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_warning_only_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.address_families.maximum_prefixes_warning_only
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].route-policy.vipValue[?(@.direction.vipValue=="in")].pol-name
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].route_policy_in | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].route_policy_in_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.address_families.route_policy_in
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].route-policy.vipValue[?(@.direction.vipValue=="out")].pol-name
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].route_policy_out | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].route_policy_out_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.address_families.route_policy_out
+
+    Should Be Equal Value Json String    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].vipOptional
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].address_families[af_index].optional | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.address_families.optional
+
     {% endfor %}
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].allowas-in.as-number.vipValue    {{ neighbor.allow_as_in | default("not_defined") }}    msg=neighbor allow as
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].allowas-in.as-number.vipVariableName    {{ neighbor.allow_as_in_variable | default("not_defined") }}    msg=variable neighbor allow as
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].as-override.vipValue    {{ neighbor.as_override | default("not_defined") | lower() }}    msg=neighbor as override
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].as-override.vipVariableName    {{ neighbor.as_override_variable | default("not_defined") }}    msg=variable neighbor as override
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].description.vipValue    {{ neighbor.description | default("not_defined") }}    msg=neighbor description
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].description.vipVariableName    {{ neighbor.description_variable | default("not_defined") }}    msg=neighbor description variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].ebgp-multihop.vipValue    {{ neighbor.ebgp_multihop | default("not_defined") }}    msg=neighbor ebgp multihop
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].ebgp-multihop.vipVariableName    {{ neighbor.ebgp_multihop_variable | default("not_defined") }}    msg=neighbor ebgp multihop variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].next-hop-self.vipValue    {{ neighbor.next_hop_self | default("not_defined") | lower() }}    msg=neighbor next hop self
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].next-hop-self.vipVariableName    {{ neighbor.next_hop_self_variable | default("not_defined") }}    msg=neighbor next hop self variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].password.vipValue    {{ neighbor.password | default("not_defined") }}    msg=neighbor password
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].password.vipVariableName    {{ neighbor.password_variable | default("not_defined") }}    msg=neighbor password variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].remote-as.vipValue    {{ neighbor.remote_as | default("not_defined") }}    msg=neighbor remote as
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].remote-as.vipVariableName    {{ neighbor.remote_as_variable | default("not_defined") }}    msg=neighbor remote as variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].send-community.vipValue    {{ neighbor.send_community | default("not_defined") | lower() }}    msg=neighbor send community
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].send-community.vipVariableName    {{ neighbor.send_community_variable | default("not_defined") }}    msg=neighbor send community variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].send-ext-community.vipValue    {{ neighbor.send_extended_community | default("not_defined") | lower() }}    msg=neighbor send extended community
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].send-ext-community.vipVariableName    {{ neighbor.send_extended_community_variable | default("not_defined") }}    msg=neighbor send extended community variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].send-label.vipValue    {{ neighbor.send_label | default("not_defined") | lower() }}    msg=neighbor send label
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].send-label.vipVariableName    {{ neighbor.send_label_variable | default("not_defined") }}    msg=neighbor send label variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].send-label-explicit.vipValue    {{ neighbor.send_label_explicit_null | default("not_defined") | lower() }}    msg=neighbor send label explicit null
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].send-label-explicit.vipVariableName    {{ neighbor.send_label_explicit_null_variable | default("not_defined") }}    msg=neighbor send label explicit null variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].shutdown.vipValue    {{ neighbor.shutdown | default("not_defined") | lower() }}    msg=neighbor shutdown
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].shutdown.vipVariableName    {{ neighbor.shutdown_variable | default("not_defined") }}    msg=neighbor shutdown variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].update-source.if-name.vipValue    {{ neighbor.source_interface | default("not_defined") }}    msg=neighbor source interface
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].update-source.if-name.vipVariableName    {{ neighbor.source_interface_variable | default("not_defined") }}    msg=neighbor source interface variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].timers.keepalive.vipValue    {{ neighbor.keepalive | default("not_defined") }}    msg=neighbor keepalive
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].timers.keepalive.vipVariableName    {{ neighbor.keepalive_variable | default("not_defined") }}    msg=neighbor keepalive variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].timers.holdtime.vipValue    {{ neighbor.holdtime | default("not_defined") }}    msg=neighbor holdtime
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].timers.holdtime.vipVariableName    {{ neighbor.holdtime_variable | default("not_defined") }}    msg=neighbor holdtime variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].{{neighbor1}}.vipValue[{{loop.index0}}].vipOptional   {{ neighbor.optional | default("not_defined") }}    msg=neighbor optional
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].allowas-in.as-number
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].allow_as_in | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].allow_as_in_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.allow_as_in
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].as-override
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].as_override | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].as_override_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.as_override
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].description
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].description | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].description_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.description
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].ebgp-multihop
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].ebgp_multihop | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].ebgp_multihop_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.ebgp_multihop
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].next-hop-self
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].next_hop_self | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].next_hop_self_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.next_hop_self
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].password
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].password | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].password_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.password
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].remote-as
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].remote_as | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].remote_as_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.remote_as
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].send-community
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].send_community | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].send_community_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.send_community
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].send-ext-community
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].send_extended_community | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].send_extended_community_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.send_extended_community
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].send-label
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].send_label | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].send_label_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.send_label
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].send-label-explicit
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].send_label_explicit_null | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].send_label_explicit_null_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.send_label_explicit_null
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].shutdown
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].shutdown | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].shutdown_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.shutdown
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].update-source.if-name
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].source_interface | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].source_interface_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.source_interface
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].timers.keepalive
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].keepalive | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].keepalive_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.keepalive
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].timers.holdtime
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].holdtime | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].holdtime_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.holdtime
+
+    Should Be Equal Value Json String    ${ft.json()}    $.bgp.neighbor.vipValue[{{neighbor_index}}].vipOptional
+    ...    {{ ft_yaml.ipv4_address_family.neighbors[neighbor_index].optional | default("not_defined") }}
+    ...    msg=ipv4_address_family.neighbors.optional
 {% endfor %}
 
-    ${family_type}=    Get Value From Json    ${r_id.json()}    $..["bgp"].address-family.vipValue[{{loop.index0}}].family-type.vipValue
-    IF  $family_type == ['ipv4-unicast']
-        ${network_type}=   Set Variable   'network'
-    ELSE IF   $family_type == ['ipv6-unicast']
-        ${network_type}=   Set Variable   'ipv6-network'
-    ELSE IF   $family_type == []
-        ${network_type}=   Set Variable   ' '
-    END
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].network.vipValue    {{ ft_yaml.ipv4_address_family.networks | default([]) | length }}    msg=ipv4_address_family.networks length
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $..["bgp"].address-family.vipValue[{{loop.index0}}].${network_type}.vipValue    {{ ip_type.networks | length }}    msg=networks length
-{% for network in ip_type.networks | default([]) %}
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{ip_index}}].${network_type}.vipValue[{{loop.index0}}].prefix.vipValue    {{ network.prefix | default("not_defined") }}    msg=network prefix
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{ip_index}}].${network_type}.vipValue[{{loop.index0}}].prefix.vipVariableName    {{ network.prefix_variable | default("not_defined") }}    msg=network prefix variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].address-family.vipValue[{{ip_index}}].${network_type}.vipValue[{{loop.index0}}].vipOptional    {{ network.optional | default("not_defined") }}    msg=network optional
+{% for network in ft_yaml.ipv4_address_family.networks | default([]) %}
+    Log    === IPv4 Network {{loop.index0}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].network.vipValue[{{loop.index0}}].prefix
+    ...    {{ network.prefix | default("not_defined") }}
+    ...    {{ network.prefix_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.networks.prefix
+
+    Should Be Equal Value Json String    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv4-unicast")].network.vipValue[{{loop.index0}}].vipOptional
+    ...    {{ network.optional | default("not_defined") }}
+    ...    msg=ipv4_address_family.networks.optional
 {% endfor %}
 
-{% if ip_type == bgp.ipv4_address_family %}
-{% set target_type = 'route-target-ipv4' %}
-{% elif ip_type == bgp.ipv6_address_family %}
-{% set target_type = 'route-target-ipv6' %}
+    # IPv4 Address Family Route Targets validation
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.target.route-target-ipv4.vipValue    {{ ft_yaml.ipv4_address_family.route_targets | default([]) | length }}    msg=ipv4_address_family.route_targets length
+
+{% for target_index in range(ft_yaml.ipv4_address_family.route_targets | default([]) | length()) %}
+    Log    === IPv4 Route Target {{target_index}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.target.route-target-ipv4.vipValue[{{target_index}}].vpn-id
+    ...    {{ ft_yaml.ipv4_address_family.route_targets[target_index].vpn_id | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.route_targets[target_index].vpn_id_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.route_targets.vpn_id
+
+    Should Be Equal Value Json String    ${ft.json()}    $.bgp.target.route-target-ipv4.vipValue[{{target_index}}].vipOptional
+    ...    {{ ft_yaml.ipv4_address_family.route_targets[target_index].optional | default("not_defined") }}
+    ...    msg=ipv4_address_family.route_targets.optional
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.target.route-target-ipv4.vipValue[{{target_index}}].import.vipValue    {{ ft_yaml.ipv4_address_family.route_targets[target_index].imports | default([]) | length }}    msg=ipv4_address_family.route_targets.imports length
+
+{% for import_index in range(ft_yaml.ipv4_address_family.route_targets[target_index].imports | default([]) | length()) %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.target.route-target-ipv4.vipValue[{{target_index}}].import.vipValue[{{import_index}}].asn-ip
+    ...    {{ ft_yaml.ipv4_address_family.route_targets[target_index].imports[import_index].asn_ip | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.route_targets[target_index].imports[import_index].asn_ip_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.route_targets.imports.asn_ip
+{% endfor %}
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.target.route-target-ipv4.vipValue[{{target_index}}].export.vipValue    {{ ft_yaml.ipv4_address_family.route_targets[target_index].exports | default([]) | length }}    msg=ipv4_address_family.route_targets.exports length
+
+{% for export_index in range(ft_yaml.ipv4_address_family.route_targets[target_index].exports | default([]) | length()) %}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.target.route-target-ipv4.vipValue[{{target_index}}].export.vipValue[{{export_index}}].asn-ip
+    ...    {{ ft_yaml.ipv4_address_family.route_targets[target_index].exports[export_index].asn_ip | default("not_defined") }}
+    ...    {{ ft_yaml.ipv4_address_family.route_targets[target_index].exports[export_index].asn_ip_variable | default("not_defined") }}
+    ...    msg=ipv4_address_family.route_targets.exports.asn_ip
+{% endfor %}
+
+{% endfor %}
+
 {% endif %}
 
-    Should Be Equal Value Json List Length   ${r_id.json()}    $.[bgp].target.{{ target_type }}.vipValue    {{ ip_type.route_targets | length }}    msg=route target length
+    {% if ft_yaml.ipv6_address_family is defined %}
+    Log    === IPv6 Address Family ===
 
-{% for target_index in range(ip_type.route_targets | default([]) | length()) %}
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].target.{{ target_type }}.vipValue[{{ target_index }}].vpn-id.vipValue    {{ ip_type.route_targets[target_index].vpn_id | default("not_defined") }}    msg=route target vpn id
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].target.{{ target_type }}.vipValue[{{ target_index }}].vpn-id.vipVariableName    {{ ip_type.route_targets[target_index].vpn_id_variable | default("not_defined") }}    msg=route target vpn id variable
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].target.{{ target_type }}.vipValue[{{ target_index }}].vipOptional    {{ ip_type.route_targets[target_index].optional | default("not_defined") }}    msg=route target optional
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].default-information.originate
+    ...    {{ ft_yaml.ipv6_address_family.default_information_originate | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv6_address_family.default_information_originate_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.default_information_originate
 
-    Should Be Equal Value Json List Length   ${r_id.json()}    $.[bgp].target.{{ target_type }}.vipValue[{{target_index}}].import.vipValue    {{ ip_type.route_targets[target_index].imports | length }}    msg=route target imports length
-{% for import_index in range(ip_type.route_targets[target_index].imports | default([]) | length()) %}
-{% if ip_type.route_targets[target_index].imports[import_index].asn_ip != not_defined %}    
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].target.{{ target_type }}.vipValue[{{target_index}}].import.vipValue..asn-ip..vipValue    {{ ip_type.route_targets[target_index].imports[import_index].asn_ip | default("not_defined") }}    msg=route target import asn ip
-{% else %}
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].target.{{ target_type }}.vipValue[{{target_index}}].import.vipValue..asn-ip..vipVariableName    {{ ip_type.route_targets[target_index].imports[import_index].asn_ip_variable | default("not_defined") }}    msg=route target import asn ip variable
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].maximum-paths.paths
+    ...    {{ ft_yaml.ipv6_address_family.maximum_paths | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.maximum_paths_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.maximum_paths
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].ipv6-aggregate-address.vipValue    {{ ft_yaml.ipv6_address_family.aggregate_addresses | default([]) | length }}    msg=ipv6_address_family.aggregate_addresses length
+
+{% for aggregate in ft_yaml.ipv6_address_family.aggregate_addresses | default([]) %}
+
+    Log    === IPv6 Aggregate Address {{loop.index0}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].ipv6-aggregate-address.vipValue[{{loop.index0}}].prefix
+    ...    {{ aggregate.prefix | default("not_defined") }}
+    ...    {{ aggregate.prefix_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.aggregate_addresses.prefix
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].ipv6-aggregate-address.vipValue[{{loop.index0}}].as-set
+    ...    {{ aggregate.as_set_path | default("not_defined") }}
+    ...    {{ aggregate.as_set_path_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.aggregate_addresses.as_set_path
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].ipv6-aggregate-address.vipValue[{{loop.index0}}].summary-only
+    ...    {{ aggregate.summary_only | default("not_defined") }}
+    ...    {{ aggregate.summary_only_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.aggregate_addresses.summary_only
+
+    Should Be Equal Value Json String    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].ipv6-aggregate-address.vipValue[{{loop.index0}}].vipOptional
+    ...    {{ aggregate.optional | default("not_defined") }}
+    ...    msg=ipv6_address_family.aggregate_addresses.optional
+
+{% endfor %}
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].table-map.name
+    ...    {{ ft_yaml.ipv6_address_family.table_map_policy | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.table_map_policy_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.table_map_policy
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].table-map.filter
+    ...    {{ ft_yaml.ipv6_address_family.table_map_filter | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.table_map_filter_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.table_map_filter
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].redistribute.vipValue    {{ ft_yaml.ipv6_address_family.redistributes | default([]) | length }}    msg=ipv6_address_family.redistributes length
+
+{% for redistribute in ft_yaml.ipv6_address_family.redistributes | default([]) %}
+
+    Log    === IPv6 Redistribute {{loop.index0}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].redistribute.vipValue[{{loop.index0}}].protocol
+    ...    {{ redistribute.protocol | default("not_defined") }}
+    ...    {{ redistribute.protocol_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.redistributes.protocol
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].redistribute.vipValue[{{loop.index0}}].route-policy
+    ...    {{ redistribute.route_policy | default("not_defined") }}
+    ...    {{ redistribute.route_policy_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.redistributes.route_policy
+
+    Should Be Equal Value Json String    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].redistribute.vipValue[{{loop.index0}}].vipOptional
+    ...    {{ redistribute.optional | default("not_defined") }}
+    ...    msg=ipv6_address_family.redistributes.optional
+
+{% endfor %}
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue    {{ ft_yaml.ipv6_address_family.neighbors | default([]) | length }}    msg=ipv6_address_family.neighbors length
+
+{% for neighbor_index in range(ft_yaml.ipv6_address_family.neighbors | default([]) | length()) %}
+
+    Log    === IPv6 Neighbor {{neighbor_index}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].address
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.address
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].address-family.vipValue    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families | default([]) | length }}    msg=ipv6_address_family.neighbors.address_families length
+
+{% for af_index in range(ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families | default([]) | length()) %}
+
+    Log    === IPv6 Neighbor {{neighbor_index}} Address Family {{af_index}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].family-type
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].family_type | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].family_type_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.address_families.family_type
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].maximum-prefixes.prefix-num
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.address_families.maximum_prefixes
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].maximum-prefixes.restart
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_restart | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_restart_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.address_families.maximum_prefixes_restart
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].maximum-prefixes.threshold
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_threshold | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_threshold_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.address_families.maximum_prefixes_threshold
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].maximum-prefixes.warning-only
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_warning_only | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].maximum_prefixes_warning_only_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.address_families.maximum_prefixes_warning_only
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].route-policy.vipValue[?(@.direction.vipValue=="in")].pol-name
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].route_policy_in | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].route_policy_in_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.address_families.route_policy_in
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].route-policy.vipValue[?(@.direction.vipValue=="out")].pol-name
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].route_policy_out | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].route_policy_out_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.address_families.route_policy_out
+
+    Should Be Equal Value Json String    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].address-family.vipValue[{{af_index}}].vipOptional
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].address_families[af_index].optional | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.address_families.optional
+
+{% endfor %}
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].allowas-in.as-number
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].allow_as_in | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].allow_as_in_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.allow_as_in
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].as-override
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].as_override | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].as_override_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.as_override
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].description
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].description | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].description_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.description
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].ebgp-multihop
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].ebgp_multihop | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].ebgp_multihop_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.ebgp_multihop
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].next-hop-self
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].next_hop_self | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].next_hop_self_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.next_hop_self
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].password
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].password | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].password_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.password
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].remote-as
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].remote_as | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].remote_as_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.remote_as
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].send-community
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].send_community | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].send_community_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.send_community
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].send-ext-community
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].send_extended_community | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].send_extended_community_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.send_extended_community
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].send-label
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].send_label | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].send_label_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.send_label
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].send-label-explicit
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].send_label_explicit_null | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].send_label_explicit_null_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.send_label_explicit_null
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].shutdown
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].shutdown | default("not_defined") | lower() }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].shutdown_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.shutdown
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].update-source.if-name
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].source_interface | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].source_interface_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.source_interface
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].timers.keepalive
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].keepalive | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].keepalive_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.keepalive
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].timers.holdtime
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].holdtime | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].holdtime_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.holdtime
+
+    Should Be Equal Value Json String    ${ft.json()}    $.bgp.ipv6-neighbor.vipValue[{{neighbor_index}}].vipOptional
+    ...    {{ ft_yaml.ipv6_address_family.neighbors[neighbor_index].optional | default("not_defined") }}
+    ...    msg=ipv6_address_family.neighbors.optional
+
+{% endfor %}
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].ipv6-network.vipValue    {{ ft_yaml.ipv6_address_family.networks | default([]) | length }}    msg=ipv6_address_family.networks length
+
+{% for network in ft_yaml.ipv6_address_family.networks | default([]) %}
+
+    Log    === IPv6 Network {{loop.index0}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].ipv6-network.vipValue[{{loop.index0}}].prefix
+    ...    {{ network.prefix | default("not_defined") }}
+    ...    {{ network.prefix_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.networks.prefix
+
+    Should Be Equal Value Json String    ${ft.json()}    $.bgp.address-family.vipValue[?(@.family-type.vipValue=="ipv6-unicast")].ipv6-network.vipValue[{{loop.index0}}].vipOptional
+    ...    {{ network.optional | default("not_defined") }}
+    ...    msg=ipv6_address_family.networks.optional
+
+{% endfor %}
+
+    # IPv6 Address Family Route Targets validation
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.target.route-target-ipv6.vipValue    {{ ft_yaml.ipv6_address_family.route_targets | default([]) | length }}    msg=ipv6_address_family.route_targets length
+
+{% for target_index in range(ft_yaml.ipv6_address_family.route_targets | default([]) | length()) %}
+
+    Log    === IPv6 Route Target {{target_index}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.target.route-target-ipv6.vipValue[{{target_index}}].vpn-id
+    ...    {{ ft_yaml.ipv6_address_family.route_targets[target_index].vpn_id | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.route_targets[target_index].vpn_id_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.route_targets.vpn_id
+
+    Should Be Equal Value Json String    ${ft.json()}    $.bgp.target.route-target-ipv6.vipValue[{{target_index}}].vipOptional
+    ...    {{ ft_yaml.ipv6_address_family.route_targets[target_index].optional | default("not_defined") }}
+    ...    msg=ipv6_address_family.route_targets.optional
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.target.route-target-ipv6.vipValue[{{target_index}}].import.vipValue    {{ ft_yaml.ipv6_address_family.route_targets[target_index].imports | default([]) | length }}    msg=ipv6_address_family.route_targets.imports length
+
+{% for import_index in range(ft_yaml.ipv6_address_family.route_targets[target_index].imports | default([]) | length()) %}
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.target.route-target-ipv6.vipValue[{{target_index}}].import.vipValue[{{import_index}}].asn-ip
+    ...    {{ ft_yaml.ipv6_address_family.route_targets[target_index].imports[import_index].asn_ip | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.route_targets[target_index].imports[import_index].asn_ip_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.route_targets.imports.asn_ip
+
+{% endfor %}
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.target.route-target-ipv6.vipValue[{{target_index}}].export.vipValue    {{ ft_yaml.ipv6_address_family.route_targets[target_index].exports | default([]) | length }}    msg=ipv6_address_family.route_targets.exports length
+
+{% for export_index in range(ft_yaml.ipv6_address_family.route_targets[target_index].exports | default([]) | length()) %}
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.target.route-target-ipv6.vipValue[{{target_index}}].export.vipValue[{{export_index}}].asn-ip
+    ...    {{ ft_yaml.ipv6_address_family.route_targets[target_index].exports[export_index].asn_ip | default("not_defined") }}
+    ...    {{ ft_yaml.ipv6_address_family.route_targets[target_index].exports[export_index].asn_ip_variable | default("not_defined") }}
+    ...    msg=ipv6_address_family.route_targets.exports.asn_ip
+
+{% endfor %}
+
+{% endfor %}
+
 {% endif %}
-{% endfor %}
-    Should Be Equal Value Json List Length   ${r_id.json()}    $.[bgp].target.{{ target_type }}.vipValue[{{target_index}}].export.vipValue    {{ ip_type.route_targets[target_index].exports | length }}    msg=route target exports length
-{% for export_index in range(ip_type.route_targets[target_index].exports | default([]) | length()) %}
-{% if ip_type.route_targets[target_index].exports[export_index].asn_ip != not_defined %}
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].target.{{ target_type }}.vipValue[{{target_index}}].export.vipValue..asn-ip..vipValue    {{ ip_type.route_targets[target_index].exports[export_index].asn_ip | default("not_defined") }}    msg=route target export asn ip
-{% else %}
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].target.{{ target_type }}.vipValue[{{target_index}}].export.vipValue..asn-ip..vipVariableName    {{ ip_type.route_targets[target_index].exports[export_index].asn_ip_variable | default("not_defined") }}    msg=route target export asn ip variable
-{% endif %}
+
+    Should Be Equal Value Json List Length    ${ft.json()}    $.bgp.mpls-interface.vipValue    {{ ft_yaml.mpls_interfaces | default([]) | length }}    msg=mpls_interfaces length
+
+{% for mpls_int in ft_yaml.mpls_interfaces | default([]) %}
+
+    Log    === MPLS Interface {{loop.index0}} ===
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $.bgp.mpls-interface.vipValue[{{loop.index0}}].if-name
+    ...    {{ mpls_int.interface_name | default("not_defined") }}
+    ...    {{ mpls_int.interface_name_variable | default("not_defined") }}
+    ...    msg=mpls_interfaces.interface_name
+
 {% endfor %}
 
 {% endfor %}
-{% endfor %}
 
-    Should Be Equal Value Json List Length    ${r_id.json()}    $.[bgp].mpls-interface.vipValue    {{ bgp.mpls_interfaces | length }}    msg=mpls interfaces length
-{% for mpls_int in bgp.mpls_interfaces | default([]) %}
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].mpls-interface.vipValue[{{loop.index0}}].if-name.vipValue    {{ mpls_int.interface_name | default("not_defined") }}    msg=mpls interfaces list
-    Should Be Equal Value Json String    ${r_id.json()}    $.[bgp].mpls-interface.vipValue[{{loop.index0}}].if-name.vipVariableName    {{ mpls_int.interface_name_variable | default("not_defined") }}    msg=mpls interfaces list variable
-{% endfor %}
-
-{% endfor %}
 {% endif %}

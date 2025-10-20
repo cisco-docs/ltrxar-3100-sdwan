@@ -6,7 +6,7 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_profiles     system_profiles   basic
 Resource        ../../../sdwan_common.resource
 
-
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.system_profiles is defined %}
 {% set profile_basic_list = [] %}
 {% for profile in sdwan.feature_profiles.system_profiles %}
  {% if profile.basic is defined %}
@@ -39,7 +39,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} Basic Feature {{ prof
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.adminTechOnFailure    {{ profile.basic.admin_tech_on_failure | default('not_defined') }}    {{ profile.basic.admin_tech_on_failure_variable | default('not_defined') }}    msg=basic admin tech on failure    var_msg=basic admin tech on failure variable
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.affinityGroupNumber    {{ profile.basic.affinity_group_number | default('not_defined') }}    {{ profile.basic.affinity_group_number_variable | default('not_defined') }}    msg=basic affinity group number    var_msg=basic affinity group number variable
 
-    ${basic_affinity_group_preferences_list}=    Create List    {{ profile.basic.affinity_group_preferences | join('   ') }}
+    ${basic_affinity_group_preferences_list}=    Create List    {{ profile.basic.affinity_group_preferences | default([]) | join('   ') }}
     ${basic_affinity_group_preferences_list}=    Set Variable If    ${basic_affinity_group_preferences_list} == []    not_defined    ${basic_affinity_group_preferences_list}
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.affinityGroupPreference    ${basic_affinity_group_preferences_list}    {{ profile.basic.affinity_group_preferences_variable | default('not_defined') }}    msg=basic affinity group preferences    var_msg=basic affinity group preferences variable
 
@@ -47,11 +47,11 @@ Verify Feature Profiles System Profiles {{ profile.name }} Basic Feature {{ prof
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.consoleBaudRate    {{ profile.basic.console_baud_rate | default('not_defined') }}    {{ profile.basic.console_baud_rate_variable | default('not_defined') }}    msg=basic console baud rate    var_msg=basic console baud rate variable
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.controlSessionPps    {{ profile.basic.control_session_pps | default('not_defined') }}    {{ profile.basic.control_session_pps_variable | default('not_defined') }}    msg=basic control session pps    var_msg=basic control session pps variable
 
-    ${basic_controller_groups_list}=    Create List    {{ profile.basic.controller_groups | join('   ') }}
+    ${basic_controller_groups_list}=    Create List    {{ profile.basic.controller_groups | default([]) | join('   ') }}
     ${basic_controller_groups_list}=    Set Variable If    ${basic_controller_groups_list} == []    not_defined    ${basic_controller_groups_list}
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.controllerGroupList    ${basic_controller_groups_list}    {{ profile.basic.controller_groups_variable | default('not_defined') }}    msg=basic controller groups    var_msg=basic controller groups variable
 
-    ${basic_device_groups_list}=    Create List    {{ profile.basic.device_groups | join('   ') }}
+    ${basic_device_groups_list}=    Create List    {{ profile.basic.device_groups | default([]) | join('   ') }}
     ${basic_device_groups_list}=    Set Variable If    ${basic_device_groups_list} == []    not_defined    ${basic_device_groups_list}
     Should Be Equal Value Json Yaml    ${system_basic[0]}    $.data.deviceGroups    ${basic_device_groups_list}    {{ profile.basic.device_groups_variable | default('not_defined') }}    msg=basic device groups    var_msg=basic device groups variable
 
@@ -102,5 +102,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} Basic Feature {{ prof
 
 {% endif %}
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

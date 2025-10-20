@@ -5,7 +5,7 @@ Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags    sdwan   config   classic_policy_objects
 Resource        ../../sdwan_common.resource
 
-{% if sdwan.policy_objects.site_lists is defined%}
+{% if sdwan.policy_objects is defined and sdwan.policy_objects.site_lists is defined %}
 
 *** Test Cases ***
 Get Site List(s)

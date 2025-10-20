@@ -6,7 +6,7 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_profiles     system_profiles   ntp
 Resource        ../../../sdwan_common.resource
 
-
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.system_profiles is defined %}
 {% set profile_ntp_list = [] %}
 {% for profile in sdwan.feature_profiles.system_profiles %}
  {% if profile.ntp is defined %}
@@ -70,5 +70,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} NTP Feature {{ profil
 {% endif %}
 {% endif %}
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

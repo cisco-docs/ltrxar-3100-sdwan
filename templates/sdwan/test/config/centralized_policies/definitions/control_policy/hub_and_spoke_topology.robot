@@ -45,7 +45,7 @@ Verify Centralized Policies Color Hub and Spoke Topology {{ topology.name }}
 {% for spoke in site_group.spokes | default([]) %}
 
    ${sites}=  GET On Session   sdwan_manager   /dataservice/template/policy/list/site/${site_group_value[0][{{loop.index0}}]['siteList']}
-   Should Be Equal Value Json String   ${sites.json()}   $..name   {{ spoke.siteList }}   msg={{ topology.name }} Topology's {{ site_group.name }} Site group's: Spoke {{ spoke.siteList }}
+   Should Be Equal Value Json String   ${sites.json()}   $..name   {{ spoke.site_list | default("not_defined") }}   msg={{ topology.name }} Topology's {{ site_group.name }} Site group's: Spoke {{ spoke.site_list | default("not_defined") }}
    ${hub_ids}=   Set Variable    ${site_group_value[0][{{loop.index0}}]['hubs']}
    ${hub_numbers}=   Get Length   ${hub_ids}
    Should Be Equal As Integers    ${hub_numbers}   {{ spoke.hubs | length }}   msg={{ site_group.name }}: Spoke's hub numbers
@@ -54,7 +54,7 @@ Verify Centralized Policies Color Hub and Spoke Topology {{ topology.name }}
 
    ${hub_site}=   Get Value From Json   ${hub_ids}   $[{{loop.index0}}].siteList
    ${hub_site_name}=  GET On Session   sdwan_manager   /dataservice/template/policy/list/site/${hub_site}[0]
-   Should Be Equal Value Json String   ${hub_site_name.json()}   $..name   {{ hubs.site_list }}  msg={{ spoke.siteList }} Spokes's:{{ hubs.site_list }} Hub site
+   Should Be Equal Value Json String   ${hub_site_name.json()}   $..name   {{ hubs.site_list }}  msg={{ spoke.site_list | default("not_defined") }} Spokes's:{{ hubs.site_list }} Hub site
 
 {% if hubs.ipv4_prefix_lists | default("not_defined") | string() != "not_defined" %}
    Should Be Equal Value Json List Length   ${hub_ids}  $[{{loop.index0}}].prefixLists  {{ hubs.ipv4_prefix_lists | length }}    msg={{ hubs.site_list }} Hub site's:IPv4 prefixes length

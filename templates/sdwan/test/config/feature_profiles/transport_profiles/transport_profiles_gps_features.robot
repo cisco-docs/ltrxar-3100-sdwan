@@ -14,7 +14,6 @@ Resource        ../../../sdwan_common.resource
   {% set _ = profile_gps_feature_list.append(profile.name) %}
  {% endif %}
 {% endfor %}
-{% endif %}
 
 {% if profile_gps_feature_list != [] %}
 
@@ -61,5 +60,7 @@ Verify Feature Profiles Transport Profiles {{ profile.name }} GPS Feature
 {% endif %}
 
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

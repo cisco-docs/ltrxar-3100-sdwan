@@ -7,6 +7,7 @@ Default Tags    sdwan    config    feature_profiles     system_profiles   ipv4_d
 Resource        ../../../sdwan_common.resource
 
 
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.system_profiles is defined %}
 {% set profile_ipv4_device_access_policy_list = [] %}
 {% for profile in sdwan.feature_profiles.system_profiles %}
  {% if profile.ipv4_device_access_policy is defined %}
@@ -103,5 +104,7 @@ Verify Feature Profiles System Profiles {{ profile.name }} IPv4 Device Access Po
 
 {% endif %}
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

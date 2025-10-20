@@ -5,7 +5,7 @@ Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags    sdwan   config   classic_policy_objects
 Resource        ../../sdwan_common.resource
 
-{% if sdwan.policy_objects.ipv4_data_prefix_lists is defined %}
+{% if sdwan.policy_objects is defined and sdwan.policy_objects.ipv4_data_prefix_lists is defined %}
 
 *** Test Cases ***
 Get IPv4 Data Prefix List(s)

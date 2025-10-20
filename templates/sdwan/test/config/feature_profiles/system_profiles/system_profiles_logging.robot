@@ -6,7 +6,7 @@ Suite Teardown  Run On Last Process    Logout SDWAN Manager
 Default Tags    sdwan    config    feature_profiles     system_profiles logging
 Resource        ../../../sdwan_common.resource
 
-
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.system_profiles is defined %}
 {% set profile_logging_list = [] %}
 {% for profile in sdwan.feature_profiles.system_profiles %}
  {% if profile.logging is defined %}
@@ -92,5 +92,7 @@ Verify Feature Profiles System Profile {{ profile.name }} Logging Feature {{ pro
 
 {% endif %}
 {% endfor %}
+
+{% endif %}
 
 {% endif %}

@@ -5,7 +5,7 @@ Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags    sdwan    config    feature_profiles    cli_profiles
 Resource        ../../sdwan_common.resource
 
-{% if sdwan.feature_profiles.cli_profiles is defined %}
+{% if sdwan.feature_profiles is defined and sdwan.feature_profiles.cli_profiles is defined %}
 
 *** Test Cases ***
 Get CLI Profiles

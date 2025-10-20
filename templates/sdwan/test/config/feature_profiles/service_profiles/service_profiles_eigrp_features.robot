@@ -8,7 +8,7 @@ Resource        ../../../sdwan_common.resource
 
 
 {% set profile_eigrp_list = [] %}
-{% for profile in sdwan.feature_profiles.service_profiles %}
+{% for profile in sdwan.get('feature_profiles', {}).get('service_profiles', {}) %}
  {% if profile.eigrp_features is defined %}
   {% set _ = profile_eigrp_list.append(profile.name) %}
  {% endif %}

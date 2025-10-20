@@ -7,7 +7,7 @@ Default Tags    sdwan    config    feature_profiles    service_profiles    lan_v
 Resource        ../../../sdwan_common.resource
 
 {% set profile_lan_vpns = [] %}
-{% for profile in sdwan.feature_profiles.service_profiles %}
+{% for profile in sdwan.feature_profiles.service_profiles | default([]) %}
  {% if profile.lan_vpns is defined %}
   {% set _ = profile_lan_vpns.append(profile.name) %}
  {% endif %}

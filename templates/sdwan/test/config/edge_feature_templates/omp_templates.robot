@@ -1,70 +1,112 @@
 *** Settings ***
-Documentation   Verify OMP Feature template
+Documentation   Verify OMP Feature Templates
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process   Logout SDWAN Manager
 Default Tags    sdwan    config    feature_templates
 Resource        ../../sdwan_common.resource
 
-{% if sdwan.edge_feature_templates.omp_templates is defined %}
+{% if sdwan.edge_feature_templates is defined and sdwan.edge_feature_templates.omp_templates is defined %}
 
 *** Test Cases ***
-Get OMP Feature template
+Get OMP Feature Templates
     ${r}=    GET On Session    sdwan_manager    /dataservice/template/feature
     ${r}=    Get Value From Json    ${r.json()}    $..data[?(@..templateType=="cisco_omp")]
     Set Suite Variable    ${r}
 
-{% for omp_template in sdwan.edge_feature_templates.omp_templates | default([]) %}
+{% for ft_yaml in sdwan.edge_feature_templates.omp_templates | default([]) %}
 
-Verify Edge Feature Template OMP Feature template {{ omp_template.name }}
-    ${omp_template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{omp_template.name }}")]
-    Should Be Equal Value Json String    ${omp_template_id}    $..templateName    {{ omp_template.name }}    msg=omp template name
-    Should Be Equal Value Json Special_String    ${omp_template_id}    $..templateDescription    {{ omp_template.description | normalize_special_string }}    msg=description
+Verify Edge Feature Template OMP Feature Template {{ ft_yaml.name }}
+    ${ft_summary_json}=    Get Value From Json    ${r}    $[?(@.templateName="{{ ft_yaml.name }}")]
+    Should Not be Empty   ${ft_summary_json}   msg=Feature Template '{{ft_yaml.name}}' should be present on the Manager
+    Should Be Equal Value Json String    ${ft_summary_json}    $..templateName    {{ ft_yaml.name }}    msg=name
+    Should Be Equal Value Json Special_String    ${ft_summary_json}    $..templateDescription    {{ ft_yaml.description | normalize_special_string }}    msg=description
 
-{% set test_list = [] %}
-{% for item in omp_template.device_types | default(defaults.sdwan.edge_feature_templates.omp_templates.device_types) %}
-{% set test = "vedge-" ~ item %}
-{% set _ = test_list.append(test) %}
-{% endfor %}
+    # Device types validation
+    {% set device_types_yaml = [] %}
+    {% for item in ft_yaml.device_types | default(defaults.sdwan.edge_feature_templates.omp_templates.device_types) %}
+    {% set device_type = "vedge-" ~ item %}
+    {% set _ = device_types_yaml.append(device_type) %}
+    {% endfor %}
+    ${device_types_json}=    Get Value From Json    ${ft_summary_json}    $..deviceType
+    ${device_types_yaml}=    Create List           {{ device_types_yaml | join('   ') }}
+    Lists Should Be Equal    ${device_types_json}[0]    ${device_types_yaml}    ignore_order=True    msg=device_types
 
-    ${dt_list}=    Get Value From Json    ${omp_template_id}    $..deviceType
-    ${test_lists}=   Create List   {{ test_list | join('   ') }}
-    Lists Should Be Equal    ${dt_list[0]}    ${test_lists}    ignore_order=True    msg=omp template device type
+    # Get template definition
+    ${ft_id}=    Get Value From Json    ${r}    $[?(@.templateName="{{ ft_yaml.name }}")].templateId
+    ${ft}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${ft_id[0]}
 
-    ${template_id}=    Get Value From Json    ${r}    $[?(@.templateName=="{{omp_template.name }}")].templateId
-    ${r_id}=    GET On Session    sdwan_manager    /dataservice/template/feature/definition/${template_id[0]}
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["timers"]..advertisement-interval
+    ...    {{ ft_yaml.advertisement_interval | default("not_defined") }}
+    ...    {{ ft_yaml.advertisement_interval_variable | default("not_defined") }}
+    ...    msg=advertisement_interval
 
-    Should Be Equal Value Json String    ${r_id.json()}    $..["timers"]..advertisement-interval.vipValue    {{ omp_template.advertisement_interval | default("not_defined") }}    msg=omp advertisement interval
-    Should Be Equal Value Json String    ${r_id.json()}    $..["timers"]..advertisement-interval.vipVariableName    {{ omp_template.advertisement_interval_variable | default("not_defined") }}    msg=omp advertisement interval variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["ecmp-limit"].vipValue    {{ omp_template.ecmp_limit | default("not_defined") }}    msg=omp ecmp limit
-    Should Be Equal Value Json String    ${r_id.json()}    $..["ecmp-limit"].vipVariableName    {{ omp_template.ecmp_limit_variable | default("not_defined") }}    msg=omp ecmp limit variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["timers"]..eor-timer.vipValue    {{ omp_template.eor_timer | default("not_defined") }}    msg=omp eor timer
-    Should Be Equal Value Json String    ${r_id.json()}    $..["timers"]..eor-timer.vipVariableName    {{ omp_template.eor_timer_variable | default("not_defined") }}    msg=omp eor timer variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["graceful-restart"].vipValue    {{ omp_template.graceful_restart | default("not_defined") | lower }}    msg=omp graceful restart
-    Should Be Equal Value Json String    ${r_id.json()}    $..["graceful-restart"].vipVariableName    {{ omp_template.graceful_restart_variable | default("not_defined") }}    msg=omp graceful restart variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["timers"]..graceful-restart-timer.vipValue    {{ omp_template.graceful_restart_timer | default("not_defined") }}    msg=omp graceful restart timer
-    Should Be Equal Value Json String    ${r_id.json()}    $..["timers"]..graceful-restart-timer.vipVariableName    {{ omp_template.graceful_restart_timer_variable | default("not_defined") }}    msg=omp graceful restart timer variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["timers"]..holdtime.vipValue    {{ omp_template.holdtime | default("not_defined") }}    msg=omp holdtime
-    Should Be Equal Value Json String    ${r_id.json()}    $..["timers"]..holdtime.vipVariableName    {{ omp_template.holdtime_variable | default("not_defined") }}    msg=omp holdtime variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["ignore-region-path-length"].vipValue    {{ omp_template.ignore_region_path_length | default("not_defined") }}    msg=ignore region path length
-    Should Be Equal Value Json String    ${r_id.json()}    $..["ignore-region-path-length"].vipVariableName    {{ omp_template.ignore_region_path_length_variable | default("not_defined") }}    msg=ignore region path length variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["omp-admin-distance-ipv4"].vipValue    {{ omp_template.omp_admin_distance_ipv4 | default("not_defined") }}    msg=omp admin distance ipv4
-    Should Be Equal Value Json String    ${r_id.json()}    $..["omp-admin-distance-ipv4"].vipVariableName    {{ omp_template.omp_admin_distance_ipv4_variable | default("not_defined") }}    msg=omp admin distance ipv4 variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["omp-admin-distance-ipv6"].vipValue    {{ omp_template.omp_admin_distance_ipv6 | default("not_defined") }}    msg=omp admin distance ipv6
-    Should Be Equal Value Json String    ${r_id.json()}    $..["omp-admin-distance-ipv6"].vipVariableName    {{ omp_template.omp_admin_distance_ipv6_variable | default("not_defined") }}    msg=omp admin distance ipv6 variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["overlay-as"].vipValue    {{ omp_template.overlay_as | default("not_defined") }}    msg=omp overlay as
-    Should Be Equal Value Json String    ${r_id.json()}    $..["overlay-as"].vipVariableName    {{ omp_template.overlay_as_variable | default("not_defined") }}    msg=omp overlay as variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["send-path-limit"].vipValue    {{ omp_template.send_path_limit | default("not_defined") }}    msg=omp send path limit
-    Should Be Equal Value Json String    ${r_id.json()}    $..["send-path-limit"].vipVariableName    {{ omp_template.send_path_limit_variable | default("not_defined") }}    msg=omp send path limit variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["shutdown"].vipValue    {{ omp_template.shutdown | default("not_defined") | lower }}    msg=omp shutdown
-    Should Be Equal Value Json String    ${r_id.json()}    $..["shutdown"].vipVariableName    {{ omp_template.shutdown_variable | default("not_defined") }}    msg=omp shutdown variable
-    Should Be Equal Value Json String    ${r_id.json()}    $..["transport-gateway"].vipValue    {{ omp_template.transport_gateway | default("not_defined") }}    msg=transport gateway
-    Should Be Equal Value Json String    ${r_id.json()}    $..["transport-gateway"].vipVariableName    {{ omp_template.transport_gateway_variable | default("not_defined") }}    msg=transport gateway variable
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["ecmp-limit"]
+    ...    {{ ft_yaml.ecmp_limit | default("not_defined") }}
+    ...    {{ ft_yaml.ecmp_limit_variable | default("not_defined") }}
+    ...    msg=ecmp_limit
 
-    ${omp_ipv4_advertise_protocols_list}=    Create List    {{ omp_template.ipv4_advertise_protocols | join('   ') | default([]) }}
-    Should Be Equal Value Json List    ${r_id.json()}    $.advertise.vipValue..protocol.vipValue    ${omp_ipv4_advertise_protocols_list}    msg=omp ipv4 advertise protocols
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["timers"]..eor-timer
+    ...    {{ ft_yaml.eor_timer | default("not_defined") }}
+    ...    {{ ft_yaml.eor_timer_variable | default("not_defined") }}
+    ...    msg=eor_timer
 
-    ${omp_ipv6_advertise_protocols_list}=    Create List    {{ omp_template.ipv6_advertise_protocols | join('   ') | default([]) }}
-    Should Be Equal Value Json List    ${r_id.json()}    $["ipv6-advertise"].vipValue..protocol.vipValue    ${omp_ipv6_advertise_protocols_list}    msg=omp ipv6 advertise protocols
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["graceful-restart"]
+    ...    {{ ft_yaml.graceful_restart | default("not_defined") | lower }}
+    ...    {{ ft_yaml.graceful_restart_variable | default("not_defined") }}
+    ...    msg=graceful_restart
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["timers"]..graceful-restart-timer
+    ...    {{ ft_yaml.graceful_restart_timer | default("not_defined") }}
+    ...    {{ ft_yaml.graceful_restart_timer_variable | default("not_defined") }}
+    ...    msg=graceful_restart_timer
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["timers"]..holdtime
+    ...    {{ ft_yaml.holdtime | default("not_defined") }}
+    ...    {{ ft_yaml.holdtime_variable | default("not_defined") }}
+    ...    msg=holdtime
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["ignore-region-path-length"]
+    ...    {{ ft_yaml.ignore_region_path_length | default("not_defined") }}
+    ...    {{ ft_yaml.ignore_region_path_length_variable | default("not_defined") }}
+    ...    msg=ignore_region_path_length
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["omp-admin-distance-ipv4"]
+    ...    {{ ft_yaml.omp_admin_distance_ipv4 | default("not_defined") }}
+    ...    {{ ft_yaml.omp_admin_distance_ipv4_variable | default("not_defined") }}
+    ...    msg=omp_admin_distance_ipv4
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["omp-admin-distance-ipv6"]
+    ...    {{ ft_yaml.omp_admin_distance_ipv6 | default("not_defined") }}
+    ...    {{ ft_yaml.omp_admin_distance_ipv6_variable | default("not_defined") }}
+    ...    msg=omp_admin_distance_ipv6
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["overlay-as"]
+    ...    {{ ft_yaml.overlay_as | default("not_defined") }}
+    ...    {{ ft_yaml.overlay_as_variable | default("not_defined") }}
+    ...    msg=overlay_as
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["send-path-limit"]
+    ...    {{ ft_yaml.send_path_limit | default("not_defined") }}
+    ...    {{ ft_yaml.send_path_limit_variable | default("not_defined") }}
+    ...    msg=send_path_limit
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["shutdown"]
+    ...    {{ ft_yaml.shutdown | default("not_defined") | lower }}
+    ...    {{ ft_yaml.shutdown_variable | default("not_defined") }}
+    ...    msg=shutdown
+
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["transport-gateway"]
+    ...    {{ ft_yaml.transport_gateway | default("not_defined") }}
+    ...    {{ ft_yaml.transport_gateway_variable | default("not_defined") }}
+    ...    msg=transport_gateway
+
+    # Custom handling of protocol fileds
+    ${omp_ipv4_advertise_protocols_list}=    Create List    {{ ft_yaml.ipv4_advertise_protocols | default([]) | join('   ') }}
+    Should Be Equal Value Json List    ${ft.json()}    $.advertise.vipValue..protocol.vipValue    ${omp_ipv4_advertise_protocols_list}    msg=ipv4_advertise_protocols
+
+    ${omp_ipv6_advertise_protocols_list}=    Create List    {{ ft_yaml.ipv6_advertise_protocols | default([]) | join('   ') }}
+    Should Be Equal Value Json List    ${ft.json()}    $["ipv6-advertise"].vipValue..protocol.vipValue    ${omp_ipv6_advertise_protocols_list}    msg=ipv6_advertise_protocols
+    # End of custom handling
 
 {% endfor %}
 {% endif %}
