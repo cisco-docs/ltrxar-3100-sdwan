@@ -390,7 +390,7 @@ objects:
   - name: Application Priority QoS Policy
     template: application_priority_qos_policy
     folder: features_application_priority
-    paths: [sdwan.feature_profiles.application_priority.qos_policies]
+    paths: [sdwan.feature_profiles.application_priority_profiles.qos_policies]
   - name: CLI Config Feature
     template: cli_config
     folder: features_cli
