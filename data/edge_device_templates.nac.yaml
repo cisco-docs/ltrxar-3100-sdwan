@@ -1,0 +1,38 @@
+---
+# Edge Device template data
+sdwan:
+  edge_device_templates:
+    - name: DT-REMOTE-C8000V-01
+      description: "Remote Branch Site | cEdge01"
+      device_model: C8000V
+      aaa_template: FT-REMOTE-EDGE-AAA-01
+      banner_template: FT-REMOTE-EDGE-BANNER-01
+      bfd_template: FT-REMOTE-EDGE-BFD-01
+      cli_template: FT-REMOTE-EDGE-CLI-BGP-BFD-01
+      global_settings_template: FT-REMOTE-EDGE-GLOBAL-01
+      logging_template: FT-REMOTE-EDGE-LOGGING-01
+      ntp_template: FT-REMOTE-EDGE-NTP-01
+      omp_template: FT-REMOTE-EDGE-OMP-01
+      security_template: FT-REMOTE-EDGE-SECURITY-01
+      snmp_template: FT-REMOTE-EDGE-SNMPV3-01
+      system_template: FT-REMOTE-EDGE-SYSTEM-01
+      vpn_0_template:
+        name: FT-REMOTE-VPN0-OVERLAY
+        ethernet_interface_templates:
+          - name: FT-TLOC1-PUBLIC-REMOTE-VPN0
+          - name: FT-TLOC2-PRIVATE-REMOTE-VPN0
+      vpn_service_templates:
+        - name: FT-REMOTE-VPN30-CORP
+          ethernet_interface_templates:
+            - name: FT-ETH3-VPN30
+          svi_interface_templates:
+            - name: FT-SVI301-VPN30
+        - name: FT-REMOTE-VPN40-GUEST
+          ethernet_interface_templates:
+            - name: FT-ETH4-VPN40
+          svi_interface_templates:
+            - name: FT-SVI401-VPN40
+      vpn_512_template:
+        name: FT-REMOTE-VPN512-MGMT
+        ethernet_interface_templates:
+          - name: FT-OOB-REMOTE-VPN512
