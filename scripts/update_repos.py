@@ -30,7 +30,7 @@ REPOS = [
         ],
         "files": [
             {
-                "src": "../schemas/sdwan.yaml",
+                "src": "../schemas/schema.yaml",
                 "dst": "./.schema.yaml",
             },
         ],
@@ -41,8 +41,8 @@ REPOS = [
         "commit_message": "Nac sdwan updates",
         "files": [
             {
-                "src": "../defaults/sdwan.yaml",
-                "dst": "./defaults/sdwan.yaml",
+                "src": "../defaults/defaults.yaml",
+                "dst": "./defaults/defaults.yaml",
             },
         ],
     },
@@ -67,7 +67,7 @@ REPOS = [
         ],
         "files": [
             {
-                "src": "../schemas/sdwan.yaml",
+                "src": "../schemas/schema.yaml",
                 "dst": "./onboarding-data/sdwan/repository-template/.schema.yaml",
             },
         ],

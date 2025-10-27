@@ -7,7 +7,7 @@ pytestmark = pytest.mark.validate
 
 error_handler = errorhandler.ErrorHandler()
 
-SCHEMA_PATH = "schemas/sdwan.yaml"
+SCHEMA_PATH = "schemas/schema.yaml"
 VALIDATION_RULES_PATH = "validation/rules/"
 
 
