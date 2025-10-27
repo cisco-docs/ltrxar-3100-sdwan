@@ -1,4 +1,4 @@
-# Application Priority QoS Policy Feature
+# Application Priority QoS Policy
 
 Configure QoS policies with traffic schedulers to prioritize application traffic and manage bandwidth allocation on interfaces.
 
