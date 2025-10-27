@@ -54,6 +54,12 @@ class Rule:
             'parent_variable_requirement' : [True],
             'variables_jmes_path' : ['ipv4_nat_type'],
         },
+        {
+            'object_jmes_path': 'sdwan.localized_policies.definitions.route_policies[].sequences[]',
+            'parent_jmes_path' : 'match_criterias.standard_community_lists_criteria', 
+            'parent_variable_requirement' : ['or', 'and', 'exact'],
+            'variables_jmes_path' : ['match_criterias.standard_community_lists'],
+        },
     ]
 
     # Loop through the mutually_inclusive_variables_list and check if the mutually inclusive variables are defined

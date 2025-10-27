@@ -80,21 +80,23 @@ Verify Localized Policies Route Policy {{ route_policy.name }}
         Should Be Equal Value Json String    ${prefix_list_match_id.json()}    $..name    {{ sequence.match_criterias.prefix_list | default("not_defined") }}    msg=prefix list
     END
 
-    ${standard_c_list}=    Get Value From Json    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="advancedCommunity")].refs
-    IF    ${standard_c_list} == []
-        Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="advancedCommunity")].refs    {{ sequence.match_criterias.standard_community_lists | default("not_defined") }}    msg=standard community list
-    ELSE
-        Should Be Equal Value Json List Length    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="advancedCommunity")].refs    {{ (sequence.match_criterias.standard_community_lists | default([])) | length }}    msg=standard community list
+    ${standard_c_list}=    Get Value From Json    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=~"advancedCommunity|community")]
+    ${advanced_c_list}=    Get Value From Json    ${standard_c_list}    $..refs
+    ${advanced_c_list}=    Evaluate    list(__import__('itertools').chain.from_iterable(${advanced_c_list}))
+    ${community_list}=   Get Value From Json    ${standard_c_list}    $..ref
+    ${c_list_refs} =    Combine Lists    ${advanced_c_list}    ${community_list}
+    IF   ${c_list_refs} != []
+        Should Be Equal Value Json List Length    ${c_list_refs}    $   {{ (sequence.match_criterias.standard_community_lists | default([])) | length }}    msg=standard community list length
         ${exp_community_list}=    Create List    {{ (sequence.match_criterias.standard_community_lists | default([])) | join('   ') }}
-
-        FOR    ${id}    IN    @{standard_c_list[0]}
+        FOR    ${id}    IN    @{c_list_refs}
             ${list}=    GET On Session    sdwan_manager    /dataservice/template/policy/list/community/${id}
             ${c_name}=    Get Value From Json    ${list.json()}    $.name
             List Should Contain Value    ${exp_community_list}    ${c_name[0]}    msg=standard community lists
         END
+    ELSE
+        Should Be Equal Value Json String    ${standard_c_list}    $..[*]    {{ sequence.match_criterias.standard_community_lists | default("not_defined") }}    msg=standard community list
     END
-
-    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].match.entries[?(@.field=="advancedCommunity")].matchFlag    {{ sequence.match_criterias.standard_community_lists_criteria | default("not_defined") }}    msg=standard community lists criteria
+    Should Be Equal Value Json String    ${standard_c_list}    $.[*].matchFlag    {{ sequence.match_criterias.standard_community_lists_criteria | default("not_defined") }}    msg=standard community lists criteria
 
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@.type=="set")].parameter[?(@.field=="aggregator")].value.aggregator    {{ (sequence.actions | default({})).aggregator | default("not_defined") }}    msg=aggregator
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@.type=="set")].parameter[?(@.field=="aggregator")].value.ipAddress    {{ (sequence.actions | default({})).aggregator_ip | default("not_defined") }}    msg=aggregator ip
