@@ -99,7 +99,7 @@ def delete_configuration(api):
   if policy_objects_profile_id:
     policy_objects_profile = api.get(f"/v1/feature-profile/sdwan/policy-object/{policy_objects_profile_id}")
     for feature in policy_objects_profile.get("associatedProfileParcels", []):
-      if feature.get("createdBy", "") != "system":
+      if feature.get("createdBy", "") != "system" and feature.get("referenceCount", 0) == 0:
         api.delete(
           f"/v1/feature-profile/sdwan/policy-object/{policy_objects_profile['profileId']}/{feature['parcelType']}/{feature['parcelId']}"
         )
