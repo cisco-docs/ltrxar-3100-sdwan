@@ -242,10 +242,15 @@ Verify Edge Feature Template System Feature Template {{ ft_yaml.name }}
     ...    {{ endpoint_tracker.group_criteria_variable | default("not_defined") }}
     ...    msg=endpoint_trackers.group_criteria
 
-    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["tracker"].vipValue[{{loop.index0}}].elements
-    ...    {{ endpoint_tracker.group_trackers | default("not_defined") }}
-    ...    {{ endpoint_tracker.group_trackers_variable | default("not_defined") }}
-    ...    msg=endpoint_trackers.group_trackers
+    # Custom handling for group trackers
+    ${endpoint_group_trackers}=    Get Value From Json    ${ft.json()}    $..["tracker"].vipValue[{{loop.index0}}].elements.vipValue
+    IF    ${endpoint_group_trackers} == []
+        Should Be Equal Value Json String    ${ft.json()}    $..["tracker"].vipValue[{{loop.index0}}].elements.vipValue    {{ endpoint_tracker.group_trackers | default("not_defined") }}    msg=endpoint_trackers.group_trackers
+    ELSE
+        ${group_tracker_list}=    Create List    {{ endpoint_tracker.group_trackers | default([]) | join('   ') }}
+        Lists Should Be Equal    ${endpoint_group_trackers}[0]    ${group_tracker_list}    ignore_order=True    msg=endpoint_trackers.group_trackers
+    END
+    # End of custom handling
 
     Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["tracker"].vipValue[{{loop.index0}}].endpoint-api-url
     ...    {{ endpoint_tracker.endpoint_api_url | default("not_defined") }}
@@ -304,10 +309,22 @@ Verify Edge Feature Template System Feature Template {{ ft_yaml.name }}
     ...    {{ object_tracker.group_criteria_variable | default("not_defined") }}
     ...    msg=object_trackers.group_criteria
 
-    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["object-track"].vipValue[{{loop.index0}}].object.vipValue..number
-    ...    {{ object_tracker.group_trackers | default("not_defined") }}
-    ...    {{ object_tracker.group_trackers_variable | default("not_defined") }}
-    ...    msg=object_trackers.group_trackers
+    # Custom handling for object group trackers
+    ${object_group_trackers}=    Get Value From Json    ${ft.json()}    $..["object-track"].vipValue[{{loop.index0}}].object.vipValue..number.vipValue
+    IF    ${object_group_trackers} == []
+        Should Be Equal Value Json String    ${ft.json()}    $..["object-track"].vipValue[{{loop.index0}}].object.vipValue..number.vipValue    {{ object_tracker.group_trackers | default("not_defined") }}    msg=object_trackers.group_trackers
+    ELSE
+        ${r_object_group_trackers}=   Create List
+        FOR   ${item}    IN   @{object_group_trackers}
+            ${item_int}=   Convert To String   ${item}
+            Append To List   ${r_object_group_trackers}   ${item_int}
+        END
+        ${o_group_tracker}=   Create List   {{ object_tracker.group_trackers | default([]) | join('   ') }}
+        Lists Should Be Equal    ${r_object_group_trackers}    ${o_group_tracker}    msg=object_trackers.group_trackers
+    END
+
+    Should Be Equal Value Json String    ${ft.json()}    $..["object-track"].vipValue[{{loop.index0}}].boolean.vipVariableName    {{ object_tracker.group_trackers_variable | default("not_defined") }}    msg=object_trackers.group_trackers_variable
+    # End of custom handling
 
     Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..["object-track"].vipValue[{{loop.index0}}].object-number
     ...    {{ object_tracker.id | default("not_defined") }}
