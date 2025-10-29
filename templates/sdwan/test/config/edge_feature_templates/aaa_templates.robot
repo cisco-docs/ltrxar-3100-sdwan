@@ -109,7 +109,7 @@ Verify Edge Feature Template AAA Feature Template {{ ft_yaml.name }}
     ...    {{ ft_yaml.dot1x_authentication_variable | default("not_defined") }}
     ...    msg=dot1x_authentication
 
-    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..accounting.dot1x.default.["start-stop"].accounting_groupb
+    Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..accounting.dot1x.default.["start-stop"].accounting_group
     ...    {{ ft_yaml.dot1x_accounting | default("not_defined") | lower }}
     ...    {{ ft_yaml.dot1x_accounting_variable | default("not_defined") }}
     ...    msg=dot1x_accounting
@@ -172,7 +172,7 @@ Verify Edge Feature Template AAA Feature Template {{ ft_yaml.name }}
     ...    msg=radius_server_groups.source_interface
 
     Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..radius.vipValue[{{ radius_index }}].vpn
-    ...    {{ ft_yaml.radius_server_groups[radius_index].vpn_id }}
+    ...    {{ ft_yaml.radius_server_groups[radius_index].vpn_id | default("not_defined") }}
     ...    {{ ft_yaml.radius_server_groups[radius_index].vpn_id_variable | default("not_defined") }}
     ...    msg=radius_server_groups.vpn_id
 
@@ -192,17 +192,17 @@ Verify Edge Feature Template AAA Feature Template {{ ft_yaml.name }}
     ...    msg=radius_server_groups.servers.authentication_port
 
     Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..radius.vipValue[{{ radius_index }}].server.vipValue[{{ server_index }}]["acct-port"]
-    ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].accounting_port }}
+    ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].accounting_port | default("not_defined") }}
     ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].accounting_port_variable | default("not_defined") }}
     ...    msg=radius_server_groups.servers.accounting_port
 
     Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..radius.vipValue[{{ radius_index }}].server.vipValue[{{ server_index }}].timeout
-    ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].timeout }}
+    ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].timeout | default("not_defined") }}
     ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].timeout_variable | default("not_defined") }}
     ...    msg=radius_server_groups.servers.timeout
 
     Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..radius.vipValue[{{ radius_index }}].server.vipValue[{{ server_index }}].retransmit
-    ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].retransmit_count }}
+    ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].retransmit_count | default("not_defined") }}
     ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].retransmit_count_variable | default("not_defined") }}
     ...    msg=radius_server_groups.servers.retransmit_count
 
@@ -212,12 +212,12 @@ Verify Edge Feature Template AAA Feature Template {{ ft_yaml.name }}
     ...    msg=radius_server_groups.servers.key_type
 
     Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..radius.vipValue[{{ radius_index }}].server.vipValue[{{ server_index }}].key
-    ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].key }}
+    ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].key | default("not_defined") }}
     ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].key_variable | default("not_defined") }}
     ...    msg=radius_server_groups.servers.key
 
     Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..radius.vipValue[{{ radius_index }}].server.vipValue[{{ server_index }}]["secret-key"]
-    ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].secret_key }}
+    ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].secret_key | default("not_defined") }}
     ...    {{ ft_yaml.radius_server_groups[radius_index].servers[server_index].secret_key_variable | default("not_defined") }}
     ...    msg=radius_server_groups.servers.secret_key
 
@@ -246,7 +246,7 @@ Verify Edge Feature Template AAA Feature Template {{ ft_yaml.name }}
     ...    msg=tacacs_server_groups.name
 
     Should Be Equal Value Json Yaml UX1    ${ft.json()}    $..tacacs.vipValue[{{ tacacs_index }}].vpn
-    ...    {{ ft_yaml.tacacs_server_groups[tacacs_index].vpn_id }}
+    ...    {{ ft_yaml.tacacs_server_groups[tacacs_index].vpn_id | default("not_defined") }}
     ...    {{ ft_yaml.tacacs_server_groups[tacacs_index].vpn_id_variable | default("not_defined") }}
     ...    msg=tacacs_server_groups.vpn_id
 
