@@ -1,5 +1,6 @@
 # SDWAN-as-code YAML schema
 sdwan: include('sdwan', required=False)
+defaults: any(required=False)
 ---
 sdwan:
   edge_feature_templates: include("edge_feature_templates", required=False)
