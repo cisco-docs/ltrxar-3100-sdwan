@@ -378,6 +378,24 @@ class Rule:
         "snmp.communities",
         "snmp.views",
     ]
+    
+    # Here is the minimum required set of configuration group feature profile parcels for a deployment.
+    # Schema: '<profile_key_in_configuration_group>:<profile_key_in_feature_profiles>':'<list_of_required_parcel_names>'
+    # Sample-1: 'system_profile:system_profiles':['aaa', 'basic']'
+    # Sample-2: 'policy_object_profile:policy_object_profile':['application_lists']'
+    req_profile_parcels_for_deploy = {
+        'system_profile:system_profiles': [
+            'aaa',
+            'basic',
+            'bfd',
+            'global',
+            'logging',
+            'omp'
+        ],
+        'transport_profile:transport_profiles': [
+            'wan_vpn'
+        ]
+    }
 
     @classmethod
     def get_features_names(cls, item, path, features, skip_key=True):
@@ -859,4 +877,36 @@ class Rule:
                             + " - unnecessary variables: "
                             + ", ".join(unnecessary_variables)
                         )
+                # Validate that if configuration_group_deploy is true, minimum required profiles and parcels defined for deployment.
+                if 'configuration_group' in router and router.get('configuration_group_deploy', True):
+                    config_group_name = router.get('configuration_group')
+                    config_group = next((cg for cg in inventory.get('sdwan', {}).get('configuration_groups', []) if cg.get('name') == config_group_name), None)
+                    if config_group:
+                            for (feature_profile_type, parcels) in  cls.req_profile_parcels_for_deploy.items():
+                                cfg_grp_profile_type, feature_profile_type = feature_profile_type.split(':')
+                                # Verify if minimal required profile is assigned
+                                if cfg_grp_profile_type not in config_group:
+                                    results.append(f"sdwan.sites.{site['id']}.routers.{router['chassis_id']} - configuration_group '{config_group_name}' is missing required profile: {cfg_grp_profile_type} for deployment.")
+                                elif feature_profile_type and parcels:
+                                    # Verify if minimal required profile features is created
+                                    feature_profiles = inventory.get('sdwan', {}).get('feature_profiles', {}).get(feature_profile_type, [])
+                                    feature_profiles = feature_profiles if type(feature_profiles) is list else [feature_profiles]
+                                    find_profile = next((p for p in feature_profiles if p.get('name') == config_group.get(cfg_grp_profile_type)), None)
+                                    if find_profile:
+                                        missing_parcels = list(parcels - find_profile.keys())
+                                        if missing_parcels:
+                                            results.append(f"sdwan.sites.{site['id']}.routers.{router['chassis_id']} - configuration_group '{config_group_name}' is missing required '{cfg_grp_profile_type}' features: " + ", ".join(missing_parcels) + " for deployment.")
+                                    # Additional checks for transport profile
+                                    if feature_profile_type == 'transport_profiles':
+                                        # Verify ethernet interface config
+                                        transport_profile_name = config_group.get('transport_profile')
+                                        transport_profile = next((tp for tp in feature_profiles if tp.get('name') == transport_profile_name), None)
+                                        if transport_profile:
+                                            ethernet_interfaces = transport_profile.get('wan_vpn', {}).get('ethernet_interfaces', [])
+                                            if not ethernet_interfaces:
+                                                results.append(f"sdwan.sites.{site['id']}.routers.{router['chassis_id']} - transport profile '{transport_profile_name}' is missing ethernet_interfaces configuration for deployment.")
+                                            else:
+                                                find_active_int = [eth_intf for eth_intf in ethernet_interfaces if eth_intf.get('shutdown', True) == False and 'tunnel_interface' in eth_intf]
+                                                if not find_active_int:
+                                                    results.append(f"sdwan.sites.{site['id']}.routers.{router['chassis_id']} - transport profile '{transport_profile_name}' does not have any active (shutdown: false) ethernet_interface with tunnel_interface configured for deployment.")
         return results
