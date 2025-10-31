@@ -24,10 +24,8 @@ sdwan:
                 - address: 10.1.1.1
                   port: 49
                   key: $CRYPT_CLUSTER$jq34CKAzT5KGdEjIpYarKg==$MZkY/AdOWzm/kiLHOsKHJg==
-                  secret_key: 070c285f4d06485744
                 - address: 10.1.1.2
                   key: $CRYPT_CLUSTER$jq34CKAzT5KGdEjIpYarKg==$MZkY/AdOWzm/kiLHOsKHJg==
-                  secret_key: 070c285f4d06485744
           users:
             - name: admin
               password: $6$Oz2ydqNXLLDIsPSG$LhogoactFVb9eJgqgv/O/Zb.FHg74drK4maijc.Q9q/KhyDcPfwrHx9Vy6G9hY7oKWbyas4XKms7f7Znl/ndF.

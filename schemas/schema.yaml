@@ -4217,8 +4217,6 @@ feature_profiles_system_aaa_radius_group_server:
   key_type_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
   retransmit: int(min=1, max=100, required=False)
   retransmit_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
-  secret_key: str(min=1, max=150, required=False)
-  secret_key_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
   timeout: int(min=1, max=1000, required=False)
   timeout_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
 feature_profiles_system_aaa_tacacs_group:
@@ -4231,7 +4229,6 @@ feature_profiles_system_aaa_tacacs_group_server:
   key: str(min=1)
   port: int(min=1, max=65535, required=False)
   port_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
-  secret_key: str(min=1, max=150)
   timeout: int(min=1, max=1000, required=False)
   timeout_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
 feature_profiles_system_aaa_user:

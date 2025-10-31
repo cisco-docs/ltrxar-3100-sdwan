@@ -960,7 +960,6 @@ sdwan:
                   key: xafmir-tanfeT-6zusty
                   key_type: key
                   retransmit: 50
-                  secret_key: 070c285f4d06485744
                   timeout: 200
               source_interface_variable: radius_source_interface
               vpn: 0
@@ -971,7 +970,6 @@ sdwan:
                 - address: 10.1.1.1
                   port: 49
                   key: xafmir-tanfeT-6zusty
-                  secret_key: 070c285f4d06485744
                   timeout: 200
           users:
             - name: admin

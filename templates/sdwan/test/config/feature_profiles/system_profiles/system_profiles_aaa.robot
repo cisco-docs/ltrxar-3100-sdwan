@@ -110,7 +110,6 @@ Verify Feature Profiles System Profile {{ profile.name }} AAA Feature {{ profile
     Should Be Equal Value Json Yaml    ${system_aaa[0]}    $.data.radius[${outer_loop_index}].server[{{ loop.index0 }}].timeout   {{ server_entry.timeout | default("not_defined") }}    {{ server_entry.timeout_variable| default('not_defined') }}     msg=aaa radius server timeout    var_msg=aaa radius server timeout variable
     Should Be Equal Value Json Yaml    ${system_aaa[0]}    $.data.radius[${outer_loop_index}].server[{{ loop.index0 }}].retransmit   {{ server_entry.retransmit | default("not_defined") }}    {{ server_entry.retransmit_variable| default('not_defined') }}     msg=aaa radius server retransmit    var_msg=aaa radius server retransmit variable
     Should Be Equal Value Json Yaml    ${system_aaa[0]}    $.data.radius[${outer_loop_index}].server[{{ loop.index0 }}].keyType   {{ server_entry.key_type | default("not_defined") }}    {{ server_entry.key_type_variable| default('not_defined') }}     msg=aaa radius server key_type    var_msg=aaa radius server key_type variable
-    Should Be Equal Value Json Yaml    ${system_aaa[0]}    $.data.radius[${outer_loop_index}].server[{{ loop.index0 }}].secretKey   {{ server_entry.secret_key | default("not_defined") }}    {{ server_entry.secret_key_variable| default('not_defined') }}     msg=aaa radius server secret_key    var_msg=aaa radius server secret_key variable
 
 {% endfor %}
 
@@ -137,7 +136,6 @@ Verify Feature Profiles System Profile {{ profile.name }} AAA Feature {{ profile
     Should Be Equal Value Json String    ${system_aaa[0]}    $.data.tacacs[${outer_loop_index}].server[{{ loop.index0 }}].address.value   {{ server_entry.address | default("not_defined") }}    msg=aaa tacacs server address
     Should Be Equal Value Json Yaml    ${system_aaa[0]}    $.data.tacacs[${outer_loop_index}].server[{{ loop.index0 }}].port   {{ server_entry.port | default("not_defined") }}    {{ server_entry.port_variable| default('not_defined') }}     msg=aaa tacacs server port    var_msg=aaa tacacs server port variable
     Should Be Equal Value Json Yaml    ${system_aaa[0]}    $.data.tacacs[${outer_loop_index}].server[{{ loop.index0 }}].timeout   {{ server_entry.timeout | default("not_defined") }}    {{ server_entry.timeout_variable| default('not_defined') }}     msg=aaa tacacs server timeout    var_msg=aaa tacacs server timeout variable
-    Should Be Equal Value Json Yaml    ${system_aaa[0]}    $.data.tacacs[${outer_loop_index}].server[{{ loop.index0 }}].secretKey   {{ server_entry.secret_key | default("not_defined") }}    {{ server_entry.secret_key_variable| default('not_defined') }}     msg=aaa tacacs server secret_key    var_msg=aaa tacacs server secret_key variable
 
 {% endfor %}
 
