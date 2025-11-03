@@ -1,5 +1,5 @@
 class Rule:
-    id = "417"
+    id = "418"
     description = "Validate application priority profile features"
     severity = "HIGH"
 

@@ -13,6 +13,7 @@ sdwan:
   security_policies: include("security_policies", required=False)
   configuration_groups: list(include("configuration_group"), required=False)
   feature_profiles: include("feature_profiles", required=False)
+  policy_groups: list(include("policy_group"), required=False)
 # Edge Feature Templates
 edge_feature_templates:
   aaa_templates: list(include("edge_feature_templates_aaa"), required=False)
@@ -2673,10 +2674,13 @@ edge_router:
   chassis_id: str()
   configuration_group: regex('^[^<>!&" ]{1,128}$', required=False)
   configuration_group_deploy: bool(required=False)
+  policy_group: regex('^[^<>!&" ]{1,128}$', required=False)
+  policy_group_deploy: bool(required=False)
   tags: list(regex('^[^<>!&" ]{1,128}$'), required=False)
   model: enum("ASR-1001-HX", "ASR-1001-X", "ASR-1002-HX", "ASR-1002-X", "ASR-1006-X", "C1101-4P", "C1101-4PLTEP", "C1101-4PLTEPW", "C1109-2PLTEGB", "C1109-2PLTEUS", "C1109-2PLTEVZ", "C1109-4PLTE2P", "C1109-4PLTE2PW", "C1111-4P", "C1111-4PLTEEA", "C1111-4PLTELA", "C1111-4PW", "C1111-8P", "C1111-8PLTEEA", "C1111-8PLTEEAW", "C1111-8PLTELA", "C1111-8PLTELAW", "C1111-8PW", "C1111X-8P", "C1112-8P", "C1112-8PLTEEA", "C1112-8PLTEEAWE", "C1112-8PWE", "C1113-8P", "C1113-8PLTEEA", "C1113-8PLTEEAW", "C1113-8PLTELA", "C1113-8PLTELAWZ", "C1113-8PLTEW", "C1113-8PM", "C1113-8PMLTEEA", "C1113-8PMWE", "C1113-8PW", "C1116-4P", "C1116-4PLTEEA", "C1116-4PLTEEAWE", "C1116-4PWE", "C1117-4P", "C1117-4PLTEEA", "C1117-4PLTEEAW", "C1117-4PLTELA", "C1117-4PLTELAWZ", "C1117-4PM", "C1117-4PMLTEEA", "C1117-4PMLTEEAWE", "C1117-4PMWE", "C1117-4PW", "C1118-8P", "C1121-4P", "C1121-4PLTEP", "C1121-8P", "C1121-8PLTEP", "C1121-8PLTEPW", "C1121X-8P", "C1121X-8PLTEP", "C1121X-8PLTEPW", "C1126-8PLTEP", "C1126X-8PLTEP", "C1127-8PLTEP", "C1127-8PMLTEP", "C1127X-8PLTEP", "C1127X-8PMLTEP", "C1128-8PLTEP", "C1131-8PLTEPW", "C1131-8PW", "C1131X-8PLTEPW", "C1131X-8PW", "C1161-8P", "C1161-8PLTEP", "C1161X-8P", "C1161X-8PLTEP", "C8000V", "C8200-1N-4T", "C8200L-1N-4T", "C8300-1N1S-4T2X", "C8300-1N1S-6T", "C8300-2N2S-4T2X", "C8300-2N2S-6T", "C8500-12X", "C8500-12X4QC", "C8500-20X6C", "C8500L-8S4X", "IR-1101", "IR-1821", "IR-1831", "IR-1833", "IR-1835", "IR-8140H", "IR-8140H-P", "IR-8340", "ISR-4221", "ISR-4221X", "ISR-4321", "ISR-4331", "ISR-4351", "ISR-4431", "ISR-4451-X", "ISR-4461", "ISR1100-4G-XE", "ISR1100-4GLTEGB-XE", "ISR1100-4GLTENA-XE", "ISR1100-6G-XE", "ISR1100X-4G-XE", "ISR1100X-6G-XE", required=False)
   device_template: regex('^[^<>!&" ]{1,128}$', required=False)
   device_variables: map(key=str(), required=False)
+  policy_variables: map(key=str(), required=False)
 # SD-WAN Multi-Region Fabric
 multi_region_fabric:
   enabled: bool()
@@ -5544,3 +5548,7 @@ feature_profiles_transport_wan_vpn_nat_64_v4_pool:
   range_end_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
   range_start: ip(version=4, required=False)
   range_start_variable: regex('^[./\[\]a-zA-Z0-9_-]{1,64}$', required=False)
+policy_group:
+  name: regex('^[^&<>! \"]{1,128}$')
+  description: str(required=False)
+  application_priority: regex('^[^&<>! \"]{1,128}$', required=False)

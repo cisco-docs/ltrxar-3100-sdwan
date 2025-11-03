@@ -1,5 +1,5 @@
 class Rule:
-    id = "411"
+    id = "412"
     description = "Validate trackers"
     severity = "HIGH"
 

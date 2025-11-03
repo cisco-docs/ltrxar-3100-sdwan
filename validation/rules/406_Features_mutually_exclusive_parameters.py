@@ -1,7 +1,7 @@
 import ruamel.yaml
 
 class Rule:
-    id = "405"
+    id = "406"
     description = "Features mutually exclusive parameters"
     severity = "HIGH"
 

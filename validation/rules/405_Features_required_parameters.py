@@ -1,5 +1,5 @@
 class Rule:
-    id = "404"
+    id = "405"
     description = "Features required parameters"
     severity = "HIGH"
 

@@ -1,0 +1,5 @@
+sdwan:
+  policy_groups:
+    - name: pg1
+      description: policy group
+      application_priority: app_priority1

@@ -6,10 +6,7 @@ This includes site and device specific configuration including device variables.
 
 ### Examples
 
-Example-1: The example below shows how to assign router to a single device configuration group, list variables for device-specific fields in features under this configuration group and specify configuration should not be deployed to the device.
-
-!!! info
-    For variables under Security Policies, they are defined a bit differently with a `vedgePolicy/` prefix. For example, a variable named `zbfw_dip_pl_1` in security policy will be defined as `vedgePolicy/zbfw_dip_pl_1`
+Example-1: The example below shows how to assign router to a single device configuration group, list variables for device-specific fields in features under this configuration group and specify configuration should not be deployed to the device. This also include association of policy group with policy variables.
 
 ```yaml
 sdwan:
@@ -19,6 +16,8 @@ sdwan:
         - chassis_id: C8K-3D1A8960-6E76-532C-DA93-50626FC5797E
           configuration_group: branch_type1
           configuration_group_deploy: false
+          policy_group: emea_branches
+          policy_group_deploy: false
           device_variables:
             system_ip: 10.0.0.1
             site_id: 1
@@ -40,7 +39,10 @@ sdwan:
             vpn512_mgmt_int_ip: 192.168.254.1
             vpn512_mgmt_int_mask: 255.255.255.0
             vpn512_mgmt_int_ipv6: fd02::1/64
-            vedgePolicy/zbfw_dip_pl_1: 10.10.99.0/24
+          policy_variables:
+            target_qos_interfaces:
+              - GigabitEthernet1
+              - GigabitEthernet2
 ```
 
 Example-2: The example below shows how to assign router to a dual device configuration group, assign the tag required for dual device configuration group, list variables for device-specific fields in features under this configuration group and specify configuration should be deployed to the device.
@@ -80,6 +82,9 @@ sdwan:
 
 Example-3: The example below shows how to assign router to a device template and list all the variables required for template assignement.
 
+!!! info
+For variables under Security Policies, they are defined a bit differently with a `vedgePolicy/` prefix. For example, a variable named `zbfw_dip_pl_1` in security policy will be defined as `vedgePolicy/zbfw_dip_pl_1`
+
 ```yaml
 sdwan:
   sites:
@@ -113,4 +118,5 @@ sdwan:
             vpn0_tloc01_if_description: INET-1
             vpn0_tloc01_if_shutdown: false
             vpn0_tloc01_shaping_rate: 1000000
+            vedgePolicy/zbfw_dip_pl_1: 10.10.99.0/24
 ```

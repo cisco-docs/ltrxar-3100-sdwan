@@ -338,6 +338,10 @@ objects:
     template: configuration_group
     folder: configuration_groups
     paths: [sdwan.configuration_groups]
+  - name: Policy Group
+    template: policy_group
+    folder: policy_groups
+    paths: [sdwan.policy_groups]
   - name: Application Priority Profile
     template: application_priority
     folder: feature_profiles
