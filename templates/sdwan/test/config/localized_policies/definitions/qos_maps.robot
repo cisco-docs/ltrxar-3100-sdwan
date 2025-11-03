@@ -27,21 +27,24 @@ Verify Localized Policies QoS Map {{ qos_map.name }}
 
 {% for qos in qos_map.qos_schedulers | default([]) %}
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.definition.qosSchedulers[{{ loop.index0 }}].queue    {{ qos.queue }}    msg=queue
+    ${qos_scheduler}=    Get Value From Json    ${r_id.json()}    $..definition.qosSchedulers[?(@.queue=="{{ qos.queue }}")]
+    Run Keyword If    ${qos_scheduler} == []    Fail    QoS Map {{ qos_map.name }} scheduler for queue {{ qos.queue }} should be present on the Manager
 
-    ${qos_class_id}=    Get Value From Json    ${r_id.json()}    $.definition.qosSchedulers[{{ loop.index0 }}].classMapRef
+    Should Be Equal Value Json String    ${qos_scheduler[0]}    $.queue    {{ qos.queue }}    msg=queue
+
+    ${qos_class_id}=    Get Value From Json    ${qos_scheduler[0]}    $.classMapRef
     IF    ${qos_class_id} == []
-        Should Be Equal Value Json String    ${r_id.json()}    $.definition.qosSchedulers[{{ loop.index0 }}].classMapRef    {{ qos.class_map }}    msg=class map
+        Should Be Equal Value Json String    ${qos_scheduler[0]}    $.classMapRef    {{ qos.class_map }}    msg=class map
     ELSE
         ${qos_class_details}=    GET On Session    sdwan_manager    /dataservice/template/policy/list/class/${qos_class_id[0]}
         Should Be Equal Value Json String    ${qos_class_details.json()}    $.name    {{ qos.class_map }}    msg=class map
     END
 
-    Should Be Equal Value Json String    ${r_id.json()}    $.definition.qosSchedulers[{{ loop.index0 }}].bandwidthPercent    {{ qos.bandwidth_percent }}    msg=bandwidth percent
-    Should Be Equal Value Json String    ${r_id.json()}    $.definition.qosSchedulers[{{ loop.index0 }}].bufferPercent    {{ qos.buffer_percent }}    msg=buffer percent
-    Should Be Equal Value Json String    ${r_id.json()}    $.definition.qosSchedulers[{{ loop.index0 }}].burst    {{ qos.burst_bytes | default("not_defined") }}    msg=burst bytes
-    Should Be Equal Value Json String    ${r_id.json()}    $.definition.qosSchedulers[{{ loop.index0 }}].scheduling    {{ qos.scheduling_type }}    msg=scheduling type
-    Should Be Equal Value Json String    ${r_id.json()}    $.definition.qosSchedulers[{{ loop.index0 }}].drops    {{ qos.drop_type }}    msg=drop type
+    Should Be Equal Value Json String    ${qos_scheduler[0]}    $.bandwidthPercent    {{ qos.bandwidth_percent }}    msg=bandwidth percent
+    Should Be Equal Value Json String    ${qos_scheduler[0]}    $.bufferPercent    {{ qos.buffer_percent }}    msg=buffer percent
+    Should Be Equal Value Json String    ${qos_scheduler[0]}    $.burst    {{ qos.burst_bytes | default("not_defined") }}    msg=burst bytes
+    Should Be Equal Value Json String    ${qos_scheduler[0]}    $.scheduling    {{ qos.scheduling_type }}    msg=scheduling type
+    Should Be Equal Value Json String    ${qos_scheduler[0]}    $.drops    {{ qos.drop_type }}    msg=drop type
 
 {% endfor %}
 
