@@ -8,6 +8,7 @@ class Rule:
         results = []
         for feature_profile_type in ["transport_profiles", "service_profiles"]:
             for feature_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get(feature_profile_type, []):
+                # For IPv4 ACLS
                 for acl in feature_profile.get("ipv4_acls", []):
                     for sequence in acl.get("sequences"):
                         if sequence.get("match_entries", {}).get("icmp_messages"):
@@ -25,4 +26,13 @@ class Rule:
                                     invalid_actions.append(action)
                             if invalid_actions:
                                 results.append(f"sdwan.feature_profiles.{feature_profile_type}['{feature_profile['name']}'].ipv4_acls['{acl['name']}'].sequences['{sequence['id']}'] has base_action 'drop' but also has actions: {', '.join(invalid_actions)}")
+                # For IPv6 ACLS
+                for acl in feature_profile.get("ipv6_acls", []):
+                    for sequence in acl.get("sequences"):
+                        if sequence.get("base_action") == "drop":
+                            # Some actions should not be allowed when base_action is drop
+                            valid_actions_v6 = ["log", "counter_name"]
+                            for action in sequence.get("actions", {}).keys():
+                                if action not in valid_actions_v6:
+                                    results.append(f"sdwan.feature_profiles.{feature_profile_type}['{feature_profile['name']}'].ipv6_acls['{acl['name']}'].sequences['{sequence['id']}'] has base_action 'drop' but also has invalid action: {action}")
         return results

@@ -535,6 +535,10 @@ objects:
     template: transport_ipv4_tracker
     folder: features_transport
     paths: [sdwan.feature_profiles.transport_profiles.ipv4_trackers]
+  - name: Transport IPv6 ACL Feature
+    template: transport_ipv6_acl
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ipv6_acls]
   - name: Transport IPv6 Tracker Group Feature
     template: transport_ipv6_tracker_group
     folder: features_transport

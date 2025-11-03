@@ -196,6 +196,11 @@ sdwan:
           prefixes:
             - fc00::/7
             - fd00::/8
+        - name: ipv6_dpl_2
+          description: ipv6 data prefix list
+          prefixes:
+            - fe80::/10
+            - 2001:db8::/32
       ipv6_prefix_lists:
         - name: ipv6_pl_private
           description: ipv6 prefix list
@@ -1539,6 +1544,103 @@ sdwan:
             multiplier: 1
             endpoint_dns_name: example.com
             tracker_name: transport_ipv4_dns_tracker
+        ipv6_acls:
+          - name: transport_ipv6_acl_in
+            description: test desc ak
+            default_action: accept
+            sequences:
+              - id: 1
+                name: "Allow-ICMPv6"
+                base_action: accept
+                match_entries:
+                  destination_data_prefix: 2001:db8:1::/64
+                  source_data_prefix: 2001:db8:2::/64
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_class:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  traffic_class: 46
+                  ipv6_next_hop: 2001:db8:3::1
+                  counter_name: "AKTFv6ACLCounter"
+              - id: 2
+                name: "Allow-ICMPv6-2"
+                base_action: accept
+                match_entries:
+                  destination_data_prefix_list: ipv6_dpl_2
+                  source_data_prefix_list: ipv6_dpl
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_class:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  traffic_class: 46
+                  mirror: mirror
+                  policer: branch_policer
+          - name: transport_ipv6_acl_out
+            description: test2
+            default_action: accept
+            sequences:
+              - id: 1
+                name: "Allow-ICMPv6"
+                base_action: drop
+                match_entries:
+                  destination_data_prefix: 2001:db8:1::/64
+                  source_data_prefix: 2001:db8:2::/64
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_class:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  counter_name: "AKTFv6ACLCounter1"
+              - id: 2
+                name: "Allow-ICMPv6-2"
+                base_action: drop
+                match_entries:
+                  destination_data_prefix_list: ipv6_dpl
+                  source_data_prefix_list: ipv6_dpl_2
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_class:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  counter_name: "AKTFv6ACLCounter2"
         ipv6_tracker_groups:
           - name: ipv6_tracker_group
             tracker_name: ipv6_tracker_group
@@ -1791,8 +1893,8 @@ sdwan:
               ipv4_subnet_mask_variable: vpn0_inet_mask
               ipv6_configuration_type: static
               ipv6_address_variable: vpn0_inet_ipv6
-              # ipv6_egress_acl: vpn0_ipv6_acl_out
-              # ipv6_ingress_acl: vpn0_ipv6_acl_in
+              ipv6_egress_acl: transport_ipv6_acl_out
+              ipv6_ingress_acl: transport_ipv6_acl_in
               ipv6_secondary_addresses:
                 - address_variable: vpn0_ipv6_sec1_ip
               ipv6_tracker_group: ipv6_tracker_group

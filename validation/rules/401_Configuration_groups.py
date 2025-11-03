@@ -371,6 +371,7 @@ class Rule:
         "bgp_features.mpls_interfaces",
         "ipv4_acls.sequences",
         "ipv4_device_access_policy.sequences",
+        "ipv6_acls.sequences",
         "ipv6_device_access_policy.sequences",
         "logging.tls_profiles",
         "ospf_features.areas.interfaces",
@@ -877,6 +878,7 @@ class Rule:
                             + " - unnecessary variables: "
                             + ", ".join(unnecessary_variables)
                         )
+
                 # Validate that if configuration_group_deploy is true, minimum required profiles and parcels defined for deployment.
                 if 'configuration_group' in router and router.get('configuration_group_deploy', True):
                     config_group_name = router.get('configuration_group')

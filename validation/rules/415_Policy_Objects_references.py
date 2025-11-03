@@ -59,7 +59,9 @@ class Rule:
             "type": "ipv6_data_prefix_lists",
             "paths": [
                 "sdwan.feature_profiles.system_profiles.ipv6_device_access_policy.sequences.match_entries.destination_data_prefix_list",
-                "sdwan.feature_profiles.system_profiles.ipv6_device_access_policy.sequences.match_entries.source_data_prefix_list"
+                "sdwan.feature_profiles.system_profiles.ipv6_device_access_policy.sequences.match_entries.source_data_prefix_list",
+                "sdwan.feature_profiles.transport_profiles.ipv6_acls.sequences.match_entries.destination_data_prefix_list",
+                "sdwan.feature_profiles.transport_profiles.ipv6_acls.sequences.match_entries.source_data_prefix_list",
             ]
         },
         {
@@ -76,6 +78,7 @@ class Rule:
             "paths": [
                 "sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.actions.mirror",
                 "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.actions.mirror",
+                "sdwan.feature_profiles.transport_profiles.ipv6_acls.sequences.actions.mirror",
             ]
         },
         {
@@ -83,6 +86,7 @@ class Rule:
             "paths": [
                 "sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.actions.policer",
                 "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.actions.policer",
+                "sdwan.feature_profiles.transport_profiles.ipv6_acls.sequences.actions.policer",
             ]
         },
         {
