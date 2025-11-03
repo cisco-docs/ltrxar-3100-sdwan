@@ -23,6 +23,8 @@ sdwan:
                 name_variable: ospf_area0_if_name
                 passive_interface: false
         default_information_originate: true
+        default_information_originate_metric: 100
+        default_information_originate_metric_type: type1
         redistributes:
           - protocol: omp
             route_policy_variable: ospf_redistribute_omp_route_policy
