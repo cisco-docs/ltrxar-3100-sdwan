@@ -6,6 +6,18 @@ labels: "feature"
 assignees: ""
 ---
 
+### Associated Customer
+
+_No response_
+
+### Is this a customer of Services as Code (LCS)?
+
+_No response_
+
+### Services as Code PID/DID
+
+_No response_
+
 ### Pre-requisites
 
 Please update with the URL from terraform provider documentation for the tracked feature, replacing (#) and mark as complete once it's there.
