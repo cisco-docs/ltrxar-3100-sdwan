@@ -173,8 +173,7 @@ sdwan:
         application_aware_routing:
           - name: Test_application_aware_routing_number2
             description: Test_application_aware_routing_number2
-            default_action_type:
-              sla_class_list: default
+            default_action_sla_class_list: DEFAULT-ACTION-SLA
             sequences:
               - id: 1
                 name: App Route

@@ -327,6 +327,10 @@ sdwan:
         fallback_best_tunnel_jitter: 1
         fallback_best_tunnel_latency: 50
         fallback_best_tunnel_loss: 10
+      - name: DEFAULT-ACTION-SLA
+        jitter_ms: 100
+        latency_ms: 250
+        loss_percentage: 10
     standard_community_lists:
       - name: ST_COMMUNITY
         standard_communities:

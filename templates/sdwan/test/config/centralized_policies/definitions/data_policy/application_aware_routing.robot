@@ -21,6 +21,14 @@ Verify Centralized Policies Data Policy Application Aware Routing {{ aar.name }}
     Should Be Equal Value Json String    ${r_id.json()}    $..name    {{ aar.name }}    msg=name
     Should Be Equal Value Json Special_String    ${r_id.json()}    $..description    {{ aar.description | normalize_special_string }}    msg=description
 
+    ${default_action_ref_id}=    Get Value From Json    ${r_id.json()}    $..defaultAction.ref
+    IF    ${default_action_ref_id} == []
+        Should Be Equal Value Json String    ${r_id.json()}    $..defaultAction.ref    {{ aar.default_action_sla_class_list | default("not_defined") }}    msg=default action sla class list
+    ELSE
+        ${default_sla_class_match}=   GET On Session   sdwan_manager   /dataservice/template/policy/list/sla/${default_action_ref_id[0]}
+        Should Be Equal Value Json String    ${default_sla_class_match.json()}    $..name    {{ aar.default_action_sla_class_list | default("not_defined") }}    msg=default action sla class list
+    END
+
     ${sequence_items}=    Get Value From Json    ${r_id.json()}    $.sequences
     ${sequence_length}=    Get Length    ${sequence_items[0]}
     Should Be Equal As Integers    ${sequence_length}    {{ aar.sequences | default([]) | length }}    msg=sequences
