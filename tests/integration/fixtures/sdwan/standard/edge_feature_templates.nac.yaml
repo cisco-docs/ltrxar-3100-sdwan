@@ -868,6 +868,36 @@ sdwan:
         extended_anti_replay_window: 256
         rekey_interval: 345600
         replay_window: 4096
+      - name: FT-CEDGE-SECURITY-04
+        description: Security template with full configuration
+        authentication_types:
+          - none
+        extended_anti_replay_window: 256
+        rekey_interval: 86400
+        replay_window: 64
+        pairwise_keying: true
+        key_chains:
+          - name: CHAIN1
+            key_id: 1
+        keys:
+          - id: 1
+            key_chain_name: CHAIN1
+            send_id: 0
+            receive_id: 0
+            crypto_algorithm: hmac-sha-256
+            key_string_variable: key_string_var1
+            send_lifetime: true
+            send_lifetime_start_time_epoch: 1672531140
+            send_lifetime_end_time_format: infinite
+            send_lifetime_duration_seconds: 1000
+            send_lifetime_end_time_epoch: 1999999999
+            accept_lifetime: true
+            accept_lifetime_start_time_epoch: 1672531140
+            accept_lifetime_end_time_format: infinite
+            accept_lifetime_duration_seconds: 1000
+            accept_lifetime_end_time_epoch: 1999999999
+            include_tcp_options: false
+            accept_ao_mismatch: true
     snmp_templates:
       - name: FT-CEDGE-SNMPV3-01
         description: SNMPv3 template
