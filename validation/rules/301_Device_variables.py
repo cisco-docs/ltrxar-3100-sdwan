@@ -38,7 +38,7 @@ class Rule:
     def get_device_feature_templates_policies(cls, object, inventory='none'):
         feature_template_types_in_device_template = ["aaa_template", "banner_template", "bfd_template", "bgp_template", "cli_template", "dhcp_server_template", "ethernet_interface_templates", "global_settings_template", "igmp_template", "ipsec_interface_templates", "logging_template", "multicast_template", "ntp_template", "omp_template", "ospf_template", "pim_template", "secure_internet_gateway_template", "security_template", "sig_credentials_template", "snmp_template", "svi_interface_templates", "switchport_templates", "system_template", "thousandeyes_template", "vpn_0_template", "vpn_512_template", "vpn_service_templates", "gre_interface_templates", "cellular_interface_templates", "cellular_controller_templates", "cellular_profile_templates"]
         feature_policy_types_in_device_template = ["security_policy"]
-        definitions_in_feature_policy = ["firewall_policies"]
+        definitions_in_feature_policy = ["firewall_policies","unified_firewall_policies"]
         definitions_in_localized_policy = ["ipv4_access_control_lists", "ipv4_device_access_policies", "ipv6_access_control_lists", "ipv6_device_access_policies", "rewrite_rules", "route_policies", "qos_maps"]
         results = []
         if isinstance(object, dict):
@@ -69,13 +69,22 @@ class Rule:
                             if fp.get('name') == security_policy_name:
                                 for policy_key, policy_obj in fp.items():
                                     if policy_key in definitions_in_feature_policy:
-                                        if isinstance(policy_obj, str):
-                                            if not policy_obj in results:
-                                                results.append(policy_obj)
-                                        elif isinstance(policy_obj, list):
-                                            for obj_entry in policy_obj:
-                                                if not obj_entry in results:
-                                                    results.append(obj_entry)
+                                        if fp.get('mode','security') == 'security': # This is for Security Policy with mode Security
+                                            if isinstance(policy_obj, str):
+                                                if not policy_obj in results:
+                                                    results.append(policy_obj)
+                                            elif isinstance(policy_obj, list):
+                                                for obj_entry in policy_obj:
+                                                    if not obj_entry in results:
+                                                        results.append(obj_entry)
+                                        if fp.get('mode','security') == 'unified': # This is for Security Policy with mode Unified
+                                            for upolicy_obj in policy_obj:
+                                                if isinstance(upolicy_obj, dict):
+                                                    for key2, obj2 in upolicy_obj.items():
+                                                        if key2 == 'firewall_policy':
+                                                            if isinstance(obj2, str):
+                                                                if not obj2 in results:
+                                                                    results.append(obj2)
                                 break
                 elif key == "localized_policy":
                     for lp in inventory.get('sdwan', {}).get('localized_policies', {}).get('feature_policies', {}):
@@ -157,6 +166,9 @@ class Rule:
                     results.append("Feature template/policy not found: " + feature_template)
             device_template_var_dict[deviceTemplate['name']] = device_template_vars
             device_template_security_vars_dict[deviceTemplate['name']] = device_template_security_vars
+        
+
+
         # Verify the presence of the required device variables in each site and router
         for site in inventory.get('sdwan', {}).get('sites', {}):
             for router in site['routers']:
@@ -180,7 +192,7 @@ class Rule:
                         acceptable_vars = required_vars.copy()
                         for req_var in security_policy_vars:
                             acceptable_vars.add(f"vedgePolicy/{req_var}")
-                        
+
                         for var in router['device_variables']:
                             # Remove vedgePolicy/ prefix for comparison if it exists
                             base_var = var.replace("vedgePolicy/", "") if var.startswith("vedgePolicy/") else var

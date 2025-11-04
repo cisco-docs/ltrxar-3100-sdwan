@@ -3025,11 +3025,13 @@ security_policy_zone_based_firewall:
   name: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
   description: str()
   default_action_type: enum("pass", "drop")
+  mode: enum("security", "unified", required=False)
   rules: list(include("security_policy_zone_based_firewall_rules"), required=False)
-  zone_pairs: list(include("security_policy_zone_based_firewall_zone_pairs"))
+  zone_pairs: list(include("security_policy_zone_based_firewall_zone_pairs"), required=False)
 security_policy_zone_based_firewall_rules:
   id: int(min=1, max=65534)
   name: str()
+  ip_type: enum("ipv4", "ipv6", required=False)
   base_action: enum("pass", "drop", "inspect")
   match_criterias: include("security_policy_zone_based_firewall_rules_match_criterias", required=False)
   actions: include("security_policy_zone_based_firewall_rules_actions", required=False)
@@ -3073,6 +3075,7 @@ security_policy_zone_based_firewall_zone_pairs:
 security_policy_feature_policies:
   name: regex('^[A-Za-z0-9\-_]{1,32}$')
   description: str()
+  mode: enum("security", "unified", required=False)
   use_case: enum("custom")
   firewall_policies: list(regex('^[A-Za-z0-9\-_]{1,32}$'), required=False)
   intrusion_prevention_policy: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
@@ -3080,6 +3083,7 @@ security_policy_feature_policies:
   # advanced_malware_protection_policy: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # Wait for Advanced Malware Protection Policy Definition
   # dns_security_policy: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # Wait for DNS Security Policy Definition
   # tls_ssl_decryption_policy: regex('^[A-Za-z0-9\-_]{1,32}$', required=False) # Wait for TLS/SSL Decryption Policy Definition
+  unified_firewall_policies: list(include("security_policy_feature_policies_unified_firewall_policies"), required=False)
   additional_settings: include("security_policy_feature_policies_additional_settings", required=False)
 security_policy_feature_policies_additional_settings:
   firewall: include("security_policy_feature_policies_additional_settings_firewall", required=False)
@@ -3090,6 +3094,12 @@ security_policy_feature_policies_additional_settings_firewall:
   high_speed_logging: include("security_policy_feature_policies_additional_settings_firewall_high_speed_logging", required=False)
   audit_trail: bool(required=False)
   match_stats_per_filter: bool(required=False)
+  max_incomplete_icmp_limit: int(min=1, max=4294967295, required=False)
+  max_incomplete_tcp_limit: int(min=1, max=4294967295, required=False)
+  max_incomplete_udp_limit: int(min=1, max=4294967295, required=False)
+  unified_logging: enum("on", "off", required=False)
+  session_reclassify_allow: enum("on", "off", required=False)
+  icmp_unreachable_allow: enum("on", "off", required=False)
 security_policy_feature_policies_additional_settings_firewall_high_speed_logging:
   vpn_id: int(min=0, max=65530)
   server_ip: ip(version=4)
@@ -3100,6 +3110,12 @@ security_policy_feature_policies_additional_settings_ips_url_amp:
 security_policy_feature_policies_additional_settings_ips_url_amp_external_syslog_server:
   vpn_id: int(min=0, max=65530)
   server_ip: ip(version=4)
+security_policy_feature_policies_unified_firewall_policies:
+  firewall_policy: regex('^[A-Za-z0-9\-_]{1,32}$')
+  zones: list(include("security_policy_feature_policies_unified_firewall_policies_zones"))
+security_policy_feature_policies_unified_firewall_policies_zones:
+  source_zone: any(enum('self_zone'), regex('^[A-Za-z0-9\-_]{1,32}$'))
+  destination_zone: any(enum('self_zone'), regex('^[A-Za-z0-9\-_]{1,32}$'))
 security_policy_intrusion_prevention:
   name: regex('^[A-Za-z0-9\-_]{1,32}$', required=False)
   description: str()

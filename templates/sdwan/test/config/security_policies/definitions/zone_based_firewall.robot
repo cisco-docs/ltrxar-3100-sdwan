@@ -39,7 +39,8 @@ Verify Security Policies Zone Based Firewall {{ zbf.name }}
     Should Be Equal Value Json String    ${r_id.json()}   $..sequences[{{loop.index0}}].match.entries[?(@.field=="destinationFqdn")].value    {{ rule.match_criterias.destination_fqdn | default("not_defined") }}    msg=destination fqdn
     Should Be Equal Value Json String    ${r_id.json()}   $..sequences[{{loop.index0}}].match.entries[?(@.field=="sourceIp")].vipVariableName    {{ rule.match_criterias.source_ip_prefix_variable | default("not_defined") }}    msg=source ip prefix variable
     Should Be Equal Value Json String    ${r_id.json()}   $..sequences[{{loop.index0}}].match.entries[?(@.field=="destinationIp")].vipVariableName    {{ rule.match_criterias.destination_ip_prefix_variable | default("not_defined") }}    msg=destination ip prefix variable
-    
+
+{% if zbf.mode is not defined or zbf.mode == "security" %}
     ${app_list_id}=   Get Value From Json   ${r_id.json()}   $..sequences[{{loop.index0}}].match.entries[?(@.field=="appList")].ref
     IF   ${app_list_id} == []
        Should Be Equal Value Json String   ${r_id.json()}   $..sequences[{{loop.index0}}].match.entries[?(@.field=="appList")].ref   {{ rule.match_criterias.local_application_list | default("not_defined") }}    msg=local application list
@@ -47,9 +48,22 @@ Verify Security Policies Zone Based Firewall {{ zbf.name }}
        ${r_app_list_id}=    GET On Session   sdwan_manager   /dataservice/template/policy/list/localapp/${app_list_id[0]}
         Should Be Equal Value Json String    ${r_app_list_id.json()}   $..name   {{ rule.match_criterias.local_application_list | default("not_defined") }}    msg=local application list
     END
+{% elif zbf.mode == "unified" %}
+    ${app_list_id}=   Get Value From Json   ${r_id.json()}   $..sequences[{{loop.index0}}].match.entries[?(@.field=="appListFlat")].ref
+    IF    ${app_list_id} == []
+       Should Be Equal Value Json String   ${r_id.json()}   $..sequences[{{loop.index0}}].match.entries[?(@.field=="appListFlat")].ref   {{ rule.match_criterias.local_application_list | default("not_defined") }}    msg=local application list
+    ELSE
+       ${r_app_list_id}=    GET On Session   sdwan_manager   /dataservice/template/policy/list/localapp/${app_list_id[0]}
+        Should Be Equal Value Json String    ${r_app_list_id.json()}   $..name   {{ rule.match_criterias.local_application_list | default("not_defined") }}    msg=local application list
+    END
+{% endif %}
 
 {% if rule.actions is defined and rule.actions.log is defined and rule.actions.log == True %}
+{% if (zbf.mode | default(defaults.sdwan.security_policies.definitions.zone_based_firewall.mode)) == "security" %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@.type=="log")].type     log    msg= log
+{% elif (zbf.mode | default(defaults.sdwan.security_policies.definitions.zone_based_firewall.mode)) == "unified" %}
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@.type=="connectionEvents")].type     connectionEvents    msg= log
+{% endif %}
 {% elif rule.actions is defined and rule.actions.log is defined and rule.actions.log == False %}
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].actions[?(@.type=="log")].type     false    msg= log
 {% else %}

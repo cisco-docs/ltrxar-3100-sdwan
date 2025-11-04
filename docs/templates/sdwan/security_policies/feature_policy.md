@@ -191,3 +191,40 @@ sdwan:
               destination_zone: vpn300
 ```
 
+Example-4: Referencing the NextGen Firewall (Unified Firewall) Policy in the Unified Security Policy
+
+The Unified Security Policy can be defined as mentioned in the YAML below. The mode element determines the Security Policy mode is Unified or Security.
+The source and destination zones for referenced Firewall Policy is also defined in Unified security policy. Unlike in security policy where the same would be defined in the Zone based firewall definition.
+The Next gen firewall or zone based firewall with mode unified can only be referenced in Unified security policy as shown below.
+
+```yaml
+sdwan:
+  security_policies:
+    feature_policies:
+      - name: U-SECURITY-POLICY
+        description: SECURITY-POLICY-TEMPLATE-01
+        mode: unified
+        use_case: custom
+        unified_firewall_policies:
+          - firewall_policy: NGFW-TF-AK
+            zones:
+              - source_zone: self_zone
+                destination_zone: Test_zone_2_uni1
+              - source_zone: Test_zone_2_uni1
+                destination_zone: self_zone
+          - firewall_policy: NGFW-TF-AK2
+            zones:
+              - source_zone: Test_zone_1_uni1
+                destination_zone: Test_zone_2_uni1
+        additional_settings:
+          firewall:
+            max_incomplete_icmp_limit: 5000
+            max_incomplete_tcp_limit: 2000
+            max_incomplete_udp_limit: 3000
+            unified_logging: on
+            session_reclassify_allow: on
+            icmp_unreachable_allow: on
+            tcp_syn_flood_limit: 1239
+            audit_trail: true
+```
+The above Unified Security Policy expects that the firewall policies NGFW-TF-AK and NGFW-TF-AK2 are created in zone_based_firewall section with mode unified and the source, destination zones are also created in the policy_objects section respectively.

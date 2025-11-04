@@ -144,3 +144,41 @@ sdwan:
           - 443
           - 80
 ```
+
+Example-4: The NextGen Firewall (Unified Firewall) Policy
+
+The next gen firewall is a zone based firewall with mode defined as unified. The local_application_list element defined here would reference the application list under a given rule unlike in zone based firewall policy in security mode, where this element used to refer application list to block.
+When the mode field is not defined, it would consider the zone based firewall policy in default security mode.
+Only the Next Gen Firewall i.e. Zone based Firewall with mode unified can be referenced in Unified Security Policy.
+
+```yaml
+sdwan:
+  security_policies:
+    definitions:
+      zone_based_firewall:
+        - name: NGFW-TF-AK
+          description: NextGen FW for Unified Security Policy
+          mode: unified
+          default_action_type: pass
+          rules:
+            - id: 1
+              name: Rule 1
+              base_action: inspect
+              match_criterias:
+                source_data_prefix_lists:
+                  - ZBFW_SDPL_1_uni1
+                  - ZBFW_SDPL_2_uni1
+                source_fqdn_lists:
+                  - ZBFW_SFL_1_uni1
+                  - ZBFW_SFL_2_uni1
+                source_geo_locations:
+                  - DZA
+                  - AGO
+                destination_port_ranges:
+                  - from: 8443
+                    to: 8447
+                local_application_list: ZBFW_LAL_1_uni1
+              actions:
+                log: true
+```
+The unified firewall policy YAML mentioned above will only be effective only if the respective YAML for policy objects is created for elements referenced under source_data_prefix_lists, source_fqdn_lists, local_application_list.
