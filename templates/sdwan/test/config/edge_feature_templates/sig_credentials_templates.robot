@@ -15,9 +15,9 @@ Get SIG Credential Feature Templates
 
 {% for ft_yaml in sdwan.edge_feature_templates.sig_credentials_templates | default([]) %}
 
-{% if ft_yaml.name == "umbrella" %}
+{% if ft_yaml.name in ["umbrella", "Cisco-Umbrella-Global-Credentials"] %}
 {% set sigc_value = "Cisco-Umbrella-Global-Credentials" %}
-{% elif ft_yaml.name == "zscaler" %}
+{% elif ft_yaml.name in ["zscaler", "Cisco-Zscaler-Global-Credentials"] %}
 {% set sigc_value = "Cisco-Zscaler-Global-Credentials" %}
 {% endif %}
 

@@ -1332,7 +1332,7 @@ edge_feature_templates_security_key:
   receive_id_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
 # Edge SIG Credentials Feature Template
 edge_feature_templates_sig_credentials:
-  name: enum("umbrella", "zscaler")
+  name: enum("Cisco-Umbrella-Global-Credentials", "Cisco-Zscaler-Global-Credentials")
   umbrella_api_key: regex('^[0-9a-z]{1,32}$', required=False)
   umbrella_api_key_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
   umbrella_api_secret: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128, required=False) # vManage-encrypted string
