@@ -1133,6 +1133,14 @@ sdwan:
         description: CEDGE VPN512
         vpn_name: OOB
         vpn_id: 512
+      - name: SERVICE_VPN10
+        description: Service VPN10 Template
+        ipv4_primary_dns_server_variable: vpn0_dns_primary
+        ipv4_secondary_dns_server_variable: vpn0_dns_secondary
+        vpn_name_variable: service_vpn10_name_var
+        vpn_id: 10
+        omp_advertise_ipv4_routes:
+          - protocol: bgp
     secure_internet_gateway_templates:
       - name: FT-CEDGE-SIG-UMBRELLA01
         description: Umbrella SIG 1x HA Tunnel
