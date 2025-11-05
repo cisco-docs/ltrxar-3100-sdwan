@@ -2561,7 +2561,7 @@ localized_policies_definitions_qos_map_qos_scheduler:
   burst_bytes: int(min=5000, max=10000000, required=False)
   scheduling_type: enum("llq", "wrr")
   drop_type: enum("tail-drop", "red-drop")
-  class_map: regex('^[A-Za-z0-9-_]{1,128}$')
+  class_map: regex('^[A-Za-z0-9-_]{1,128}$', required=False)
 # Feature Localized Policy template schema
 localized_policies_feature_policies:
   name: regex('^[A-Za-z0-9-_]{1,128}$')

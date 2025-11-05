@@ -33,11 +33,11 @@ Verify Localized Policies QoS Map {{ qos_map.name }}
     Should Be Equal Value Json String    ${qos_scheduler[0]}    $.queue    {{ qos.queue }}    msg=queue
 
     ${qos_class_id}=    Get Value From Json    ${qos_scheduler[0]}    $.classMapRef
-    IF    ${qos_class_id} == []
-        Should Be Equal Value Json String    ${qos_scheduler[0]}    $.classMapRef    {{ qos.class_map }}    msg=class map
+    IF    ${qos_class_id} == [] or ${qos_class_id} == ['']
+        Should Be Equal Value Json Special_String    ${qos_scheduler[0]}    $.classMapRef    {{ qos.get("class_map", "not_defined") }}    msg=class map
     ELSE
         ${qos_class_details}=    GET On Session    sdwan_manager    /dataservice/template/policy/list/class/${qos_class_id[0]}
-        Should Be Equal Value Json String    ${qos_class_details.json()}    $.name    {{ qos.class_map }}    msg=class map
+        Should Be Equal Value Json String    ${qos_class_details.json()}    $.name    {{ qos.get("class_map", "not_defined") }}    msg=class map
     END
 
     Should Be Equal Value Json String    ${qos_scheduler[0]}    $.bandwidthPercent    {{ qos.bandwidth_percent }}    msg=bandwidth percent

@@ -147,6 +147,39 @@ sdwan:
               scheduling_type: wrr
               drop_type: red-drop
               class_map: CLASS-SCAVENGER
+        - name: QOS-MAP-1P4Q-Q0
+          description: 1-prio 4-red queue qos-map | queue 0 without class-map
+          qos_schedulers:
+            - queue: 0
+              bandwidth_percent: 10
+              buffer_percent: 10
+              burst_bytes: 200000
+              scheduling_type: llq
+              drop_type: tail-drop
+            - queue: 1
+              bandwidth_percent: 15
+              buffer_percent: 15
+              scheduling_type: wrr
+              drop_type: red-drop
+              class_map: CLASS-NETCONTROL
+            - queue: 2
+              bandwidth_percent: 40
+              buffer_percent: 40
+              scheduling_type: wrr
+              drop_type: red-drop
+              class_map: CLASS-DEFAULT
+            - queue: 3
+              bandwidth_percent: 30
+              buffer_percent: 30
+              scheduling_type: wrr
+              drop_type: red-drop
+              class_map: CLASS-CRITICALDATA
+            - queue: 4
+              bandwidth_percent: 5
+              buffer_percent: 5
+              scheduling_type: wrr
+              drop_type: red-drop
+              class_map: CLASS-SCAVENGER
       rewrite_rules:
         - name: REWRITE-RULE-MPLS
           description: DCSP rewrite for MPLS underlay

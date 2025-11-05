@@ -136,7 +136,12 @@ class Rule:
                 # QoS maps: check qos_schedulers/class_map
                 if def_type == 'qos_maps' and 'qos_schedulers' in definition:
                     for sched in definition['qos_schedulers']:
-                        if 'class_map' in sched:
+                        queue = sched.get('queue')
+                        if 'class_map' not in sched:
+                            if queue != 0:
+                                results.append(f"class_map is required for queue {queue} in qos_maps definition '{def_name}' (only queue 0 may omit class_map in data model)")
+                        else:
+                            # Validate reference if class_map is present
                             v = sched['class_map']
                             defined_names = obj_dict.get('class_maps', set())
                             if v not in defined_names:
