@@ -846,7 +846,6 @@ class Rule:
                                     var_name = re.sub(r"{{|}}|\s", "", var)
                                     cli_profile_variables.append(var_name)
                                     if var_name not in router["device_variables"]:
-                                        # missing_variables.append(var_name + f' (sdwan.feature_profiles.cli_profiles[{configuration_group["cli_profile"]}].config.cli_configuration)')
                                         missing_variables.append(var_name)
                         # Verify unnecessary variables
                         for variable in router["device_variables"]:
@@ -878,6 +877,19 @@ class Rule:
                             + " - unnecessary variables: "
                             + ", ".join(unnecessary_variables)
                         )
+                    for cli_var in cli_profile_variables:
+                        if cli_var in feature_profile_variables:
+                            results.append(
+                                router["chassis_id"]
+                                + f" - duplicated device variable name '{cli_var}' is not allowed in CLI and non-CLI feature profiles"
+                            )
+                        if cli_var in router.get("device_variables", {}):
+                            cli_var_value = router.get("device_variables", {}).get(cli_var)
+                            if not isinstance(cli_var_value, str):
+                                results.append(
+                                    router["chassis_id"]
+                                    + f" - CLI variable '{cli_var}' must be a string, got {type(cli_var_value).__name__}"
+                                )
 
                 # Validate that if configuration_group_deploy is true, minimum required profiles and parcels defined for deployment.
                 if 'configuration_group' in router and router.get('configuration_group_deploy', True):
