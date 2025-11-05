@@ -26,7 +26,7 @@ Verify Localized Policies Route Policy {{ route_policy.name }}
 {% for sequence in route_policy.sequences | default([]) %}
 
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceId    {{ sequence.id }}    msg=id
-    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceName    {{ sequence.name | default("Route") }}    msg=name
+    Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceName    {{ sequence.name | default((defaults.sdwan.localized_policies.definitions.route_policies.sequences.name) if defaults is defined else "not_defined") }}    msg=name
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].sequenceIpType    {{ sequence.ip_type | default((defaults.sdwan.localized_policies.definitions.route_policies.sequences.ip_type) if defaults is defined else "not_defined") }}    msg=ip type
     Should Be Equal Value Json String    ${r_id.json()}    $..sequences[{{loop.index0}}].baseAction    {{ sequence.base_action }}    msg=base action
 
