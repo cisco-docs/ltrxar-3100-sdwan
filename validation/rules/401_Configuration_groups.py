@@ -908,7 +908,23 @@ class Rule:
                                             if not ethernet_interfaces:
                                                 results.append(f"sdwan.sites.{site['id']}.routers.{router['chassis_id']} - transport profile '{transport_profile_name}' is missing ethernet_interfaces configuration for deployment.")
                                             else:
-                                                find_active_int = [eth_intf for eth_intf in ethernet_interfaces if eth_intf.get('shutdown', True) == False and 'tunnel_interface' in eth_intf]
-                                                if not find_active_int:
+                                                # Verify at least one active ethernet interface with tunnel_interface configured
+                                                found_active_interface = False
+                                                for interface in ethernet_interfaces:
+                                                    if "shutdown" in interface:
+                                                        if interface.get('shutdown', True) == False and 'tunnel_interface' in interface:
+                                                            found_active_interface = True
+                                                            break
+                                                    elif "shutdown_variable" in interface:
+                                                        shutdown_var_name = interface.get('shutdown_variable')
+                                                        # Check if shutdown variable is defined and set to false
+                                                        shutdown_var = next(
+                                                            (var_value for var_name, var_value in router.get("device_variables", {}).items() if var_name == shutdown_var_name), 
+                                                            None
+                                                        )
+                                                        if shutdown_var is not None and shutdown_var == False and 'tunnel_interface' in interface:
+                                                            found_active_interface = True
+                                                            break
+                                                if not found_active_interface:
                                                     results.append(f"sdwan.sites.{site['id']}.routers.{router['chassis_id']} - transport profile '{transport_profile_name}' does not have any active (shutdown: false) ethernet_interface with tunnel_interface configured for deployment.")
         return results

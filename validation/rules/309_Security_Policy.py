@@ -22,6 +22,8 @@ class Rule:
         result = []
         path = "sdwan.security_policies.definitions.zone_based_firewall[].rules[].match_criterias[]"
         match_criteria = jmespath.search(path, inventory)
+        if match_criteria is None:
+            match_criteria = []
         for idx, criteria in enumerate(match_criteria):
             protocols = criteria.get("protocols")
             source_port_ranges = criteria.get("source_port_ranges")
@@ -46,7 +48,10 @@ class Rule:
                 element = validation["element"]
                 found_elements = jmespath.search(f"{path}.{element}", inventory)
                 if found_elements:
-                    for idx, rule in enumerate(jmespath.search(path, inventory)):
+                    path_results = jmespath.search(path, inventory)
+                    if path_results is None:
+                        path_results = []
+                    for idx, rule in enumerate(path_results):
                         if element in rule and rule[element] is not None:
                             result.append(f"ERROR in {path}[{idx}].{element} , invalid value of {element} : {rule[element]} . Element '{element}' should not be present in mode '{mode}'")
         return result
