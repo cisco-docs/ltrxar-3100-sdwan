@@ -1347,7 +1347,7 @@ edge_feature_templates_sig_credentials:
   zscaler_username_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
   zscaler_password: str(starts_with="$CRYPT_CLUSTER$", min=1, max=128, required=False) # vManage-encrypted string
   zscaler_password_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
-  zscaler_partner_api_key: regex('^[0-9a-z]{1,12}$', required=False)
+  zscaler_partner_api_key: str(min=1, max=12, required=False)
   zscaler_partner_api_key_variable: regex('^[^"~`$&+,]{1,255}$', required=False)
 # Edge SNMP Feature Template
 edge_feature_templates_snmp:
