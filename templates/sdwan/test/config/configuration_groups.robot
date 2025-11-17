@@ -19,8 +19,8 @@ Verify Configuration Group {{ configuration_group.name }}
     Run Keyword If    ${cfg} == []    Fail    Configuration Group '{{configuration_group.name}}' should be present on the Manager
     ${cfg_id}=    Get Value From Json    ${cfg}    $..id
 
-    Should Be Equal Value Json String    ${cfg[0]}    $..name    {{ configuration_group.name }}    msg=name
-    Should Be Equal Value Json Special_String    ${cfg[0]}    $..description    {{ configuration_group.description | default('not_defined') | normalize_special_string }}    msg=description
+    Should Be Equal Value Json String    ${cfg[0]}    $.name    {{ configuration_group.name }}    msg=name
+    Should Be Equal Value Json Special_String    ${cfg[0]}    $.description    {{ configuration_group.description | default('not_defined') | normalize_special_string }}    msg=description
 
     Should Be Equal Value Json String    ${cfg[0]}    $.profiles[?(@.type=='cli')].name    {{ configuration_group.cli_profile | default('not_defined') }}    msg=cli_profile
     Should Be Equal Value Json String    ${cfg[0]}    $.profiles[?(@.type=='other')].name    {{ configuration_group.other_profile | default('not_defined') }}    msg=other_profile
