@@ -431,6 +431,10 @@ objects:
     template: service_ipv4_tracker
     folder: features_service
     paths: [sdwan.feature_profiles.service_profiles.ipv4_trackers]
+  - name: Service IPv6 ACL Feature
+    template: service_ipv6_acl
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.ipv6_acls]
   - name: Service LAN VPN Feature
     template: service_lan_vpn
     folder: features_service

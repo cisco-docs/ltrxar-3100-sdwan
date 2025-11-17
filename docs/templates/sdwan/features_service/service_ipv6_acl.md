@@ -1,4 +1,4 @@
-# Transport IPv6 Access Control List Feature
+# Service IPv6 Access Control List Feature
 
 Configure IPv6 access control lists (ACLs) to influence the traffic flowing in or out the interfaces.
 
@@ -6,16 +6,16 @@ Configure IPv6 access control lists (ACLs) to influence the traffic flowing in o
 
 ### Examples
 
-Example-1: The example below demonstrates how to configure transport IPv6 access list with default action accept and two sequences. Sequence 1 matches all web traffic destined to 2001:db8:1::/64 coming with traffic class value of 46, from 2001:db8:2::/64 with specific source ports 1023, 60000-65535. This traffic is logged and counter is applied. Sequence 2 matches all traffic coming with traffic class 48, remarks to traffic class 46 with log and counter applied.
+Example-1: The example below demonstrates how to configure service IPv6 access list with default action accept and two sequences. Sequence 1 matches all web traffic destined to 2001:db8:1::/64 coming with traffic class value of 46, from 2001:db8:2::/64 with specific source ports 1023, 60000-65535. This traffic is logged and counter is applied. Sequence 2 matches all traffic coming with traffic class 48, remarks to traffic class 46 with log and counter applied.
 
 ```yaml
 sdwan:
   feature_profiles:
-    transport_profiles:
-      - name: basic_transport
+    service_profiles:
+      - name: basic_service
         ipv6_acls:
-          - name: vpn0_ipv6_acl_out
-            description: "control vpn 0 outbound traffic"
+          - name: vpn10_ipv6_acl_out
+            description: "Service side outbound traffic"
             default_action: accept
             sequences:
               - id: 1

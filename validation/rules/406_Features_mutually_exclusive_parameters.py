@@ -23,12 +23,28 @@ class Rule:
             "parameter_names" : ["hex", "ascii", "ip_addresses"],
         },
         {
+            "path": "sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.match_entries",
+            "parameter_names": ["destination_data_prefix_list", "destination_data_prefix"],
+        },
+        {
+            "path": "sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.match_entries",
+            "parameter_names": ["source_data_prefix_list", "source_data_prefix"],
+        },
+        {
             "path": "sdwan.feature_profiles.service_profiles.ipv4_trackers",
             "parameter_names" : ["endpoint_ip", "endpoint_url"],
         },
         {
             "path": "sdwan.feature_profiles.service_profiles.ipv4_trackers",
             "parameter_names" : ["endpoint_port", "endpoint_url"],
+        },
+        {
+            "path": "sdwan.feature_profiles.service_profiles.ipv6_acls.sequences.match_entries",
+            "parameter_names": ["destination_data_prefix_list", "destination_data_prefix"],
+        },
+        {
+            "path": "sdwan.feature_profiles.service_profiles.ipv6_acls.sequences.match_entries",
+            "parameter_names": ["source_data_prefix_list", "source_data_prefix"],
         },
         {
             "path": "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces",
@@ -71,8 +87,24 @@ class Rule:
             "parameter_names": ["communities", "users"],
         },
         {
+            "path": "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.match_entries",
+            "parameter_names": ["destination_data_prefix_list", "destination_data_prefix" ],
+        },
+        {
+            "path": "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.match_entries",
+            "parameter_names": ["source_data_prefix_list", "source_data_prefix"],
+        },
+        {
             "path": "sdwan.feature_profiles.transport_profiles.ipv4_trackers",
             "parameter_names" : ["endpoint_ip", "endpoint_api_url", "endpoint_dns_name"],
+        },
+        {
+            "path": "sdwan.feature_profiles.transport_profiles.ipv6_acls.sequences.match_entries",
+            "parameter_names": ["destination_data_prefix_list", "destination_data_prefix"],
+        },
+        {
+            "path": "sdwan.feature_profiles.transport_profiles.ipv6_acls.sequences.match_entries",
+            "parameter_names": ["source_data_prefix_list", "source_data_prefix"],
         },
         {
             "path": "sdwan.feature_profiles.transport_profiles.ipv6_trackers",
@@ -85,7 +117,7 @@ class Rule:
         {
             "path": "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces",
             "parameter_names" : ["ipv6_tracker", "ipv6_tracker_group"],
-        }
+        },
     ]
 
     @classmethod

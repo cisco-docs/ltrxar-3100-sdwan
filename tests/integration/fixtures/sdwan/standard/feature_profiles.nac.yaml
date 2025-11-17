@@ -529,6 +529,103 @@ sdwan:
             endpoint_port: 80
             endpoint_protocol: tcp
             tracker_name: service_ipv4_tcp_tracker
+        ipv6_acls:
+          - name: AK-TF-v6-SACL-1
+            description: test desc ak
+            default_action: drop
+            sequences:
+              - id: 1
+                name: "Allow-ICMPv6"
+                base_action: accept
+                match_entries:
+                  destination_data_prefix: 2001:db8:1::/64
+                  source_data_prefix: 2001:db8:2::/64
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_classes:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  traffic_class: 46
+                  ipv6_next_hop: 2001:db8:3::1
+                  counter_name: "AKTFv6ACLCounter"
+              - id: 2
+                name: "Allow-ICMPv6-2"
+                base_action: accept
+                match_entries:
+                  destination_data_prefix_list: ipv6_dpl_2
+                  source_data_prefix_list: ipv6_dpl_2
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_classes:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  traffic_class: 46
+                  mirror: mirror
+                  policer: branch_policer
+          - name: AK-TF-v6-SACL-2
+            description: test2
+            default_action: accept
+            sequences:
+              - id: 1
+                name: "Allow-ICMPv6"
+                base_action: drop
+                match_entries:
+                  destination_data_prefix: 2001:db8:1::/64
+                  source_data_prefix: 2001:db8:2::/64
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_classes:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  counter_name: "AKTFv6ACLCounter1"
+              - id: 2
+                name: "Allow-ICMPv6-2"
+                base_action: drop
+                match_entries:
+                  destination_data_prefix_list: ipv6_dpl_2
+                  source_data_prefix_list: ipv6_dpl_2
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_classes:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  counter_name: "AKTFv6ACLCounter2"
         lan_vpns:
           - name: service_lan_vpn1
             description: lan_vpn1_test
@@ -575,6 +672,8 @@ sdwan:
                       - tracker_object: object_route_tracker
                         action: decrement
                         decrement_value: 20
+                ipv6_ingress_acl: AK-TF-v6-SACL-2
+                ipv6_egress_acl: AK-TF-v6-SACL-2
                 ipv6_configuration_type: static
                 ipv6_address: 2001:db8::1/64
                 ipv6_secondary_addresses:
@@ -1561,7 +1660,7 @@ sdwan:
                   destination_ports:
                     - 80
                     - 443-444
-                  traffic_class:
+                  traffic_classes:
                     - 46
                     - 48
                   next_header: 6
@@ -1584,7 +1683,7 @@ sdwan:
                   destination_ports:
                     - 80
                     - 443-444
-                  traffic_class:
+                  traffic_classes:
                     - 46
                     - 48
                   next_header: 6
@@ -1611,7 +1710,7 @@ sdwan:
                   destination_ports:
                     - 80
                     - 443-444
-                  traffic_class:
+                  traffic_classes:
                     - 46
                     - 48
                   next_header: 6
@@ -1632,7 +1731,7 @@ sdwan:
                   destination_ports:
                     - 80
                     - 443-444
-                  traffic_class:
+                  traffic_classes:
                     - 46
                     - 48
                   next_header: 6

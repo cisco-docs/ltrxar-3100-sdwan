@@ -38,6 +38,8 @@ Get Service Profiles
     Set Suite Variable    ${tracker_objs}
     ${ipv4_acls}=    Get Value From Json    ${service_profile_features[0]}  $[?(@.parcelType=='ipv4-acl')]
     Set Suite Variable    ${ipv4_acls}
+    ${ipv6_acls}=    Get Value From Json    ${service_profile_features[0]}  $[?(@.parcelType=='ipv6-acl')]
+    Set Suite Variable    ${ipv6_acls}
     ${dhcp_server}=    Get Value From Json    ${service_profile_features[0]}  $[?(@.parcelType=='dhcp-server')]
     Set Suite Variable    ${ipv4_acls}    
     ${service_lan_vpn_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/service/${profile_id[0]}/lan/vpn
@@ -401,6 +403,22 @@ Verify Feature Profiles Service Profiles {{ profile.name }} {{lan_vpn.name}} Eth
     ...    ${configured_ipv4_ingress_acl}    $..name
     ...    {{ intf_entry.ipv4_ingress_acl | default('not_defined') }}
     ...    msg=wan_vpn.ethernet_interfaces_ipv4_ingress_acl
+
+    ${configured_ipv6_egress_acl_refid_raw}=    Get Value From Json    ${r_interface_name[0]}    $..aclQos.ipv6AclEgress.refId.value
+    ${configured_ipv6_egress_acl_refid}=    Set Variable If    ${configured_ipv6_egress_acl_refid_raw} == []    not_defined    ${configured_ipv6_egress_acl_refid_raw[0]}
+    ${configured_ipv6_egress_acl}=    Get Value From Json    ${ipv6_acls}    $[?(@.parcelId=='${configured_ipv6_egress_acl_refid}')]
+    Should Be Equal Value Json String
+    ...    ${configured_ipv6_egress_acl}    $..name
+    ...    {{ intf_entry.ipv6_egress_acl | default('not_defined') }}
+    ...    msg=wan_vpn.ethernet_interfaces_ipv6_egress_acl
+    ${configured_ipv6_ingress_acl_refid_raw}=    Get Value From Json    ${r_interface_name[0]}    $..aclQos.ipv6AclIngress.refId.value
+    ${configured_ipv6_ingress_acl_refid}=    Set Variable If    ${configured_ipv6_ingress_acl_refid_raw} == []    not_defined    ${configured_ipv6_ingress_acl_refid_raw[0]}
+    ${configured_ipv6_ingress_acl}=    Get Value From Json    ${ipv6_acls}    $[?(@.parcelId=='${configured_ipv6_ingress_acl_refid}')]
+    Should Be Equal Value Json String
+    ...    ${configured_ipv6_ingress_acl}    $..name
+    ...    {{ intf_entry.ipv6_ingress_acl | default('not_defined') }}
+    ...    msg=wan_vpn.ethernet_interfaces_ipv6_ingress_acl
+
 
     Log    ===========TrustSec Features===========
 

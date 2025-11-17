@@ -4,6 +4,41 @@ class Rule:
     severity = "HIGH"
 
     @classmethod
+    def verify_acl_references(cls, inventory):
+        results = []
+        feature_profiles_types = ["service_profiles", "transport_profiles"]
+        acls_definition = ["ipv4_acls", "ipv6_acls"]
+        acls_references = ["ipv4_ingress_acl", "ipv4_egress_acl", "ipv6_ingress_acl", "ipv6_egress_acl"]
+
+        for feature_profile_type in feature_profiles_types:
+             
+            for profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get(feature_profile_type, []):
+                defined_acls = {}
+                # Collect defined ACLs
+                for acl_def in acls_definition:
+                    defined_acls[acl_def] = []
+                    for acl in profile.get(acl_def, []):
+                        defined_acls[acl_def].append(acl["name"])
+
+                # Validate ACL references
+                if feature_profile_type == "transport_profiles":
+                    for interface in profile.get("wan_vpn", {}).get("ethernet_interfaces", []):
+                            for acl_ref in acls_references:
+                                if interface.get(acl_ref, None):
+                                    acl_type = "ipv4_acls" if "ipv4" in acl_ref else "ipv6_acls"
+                                    if interface.get(acl_ref) not in defined_acls[acl_type]:
+                                        results.append(f"{acl_ref} {interface.get(acl_ref)} is not defined in sdwan.feature_profiles.{feature_profile_type}[{profile['name']}].{acl_type}, but is referenced in the sdwan.feature_profiles.{feature_profile_type}[{profile['name']}].wan_vpn.ethernet_interfaces[{interface['name']}]")
+                elif feature_profile_type == "service_profiles":
+                    for lan_vpn in profile.get("lan_vpns", []):
+                        for interface in lan_vpn.get("ethernet_interfaces", []):
+                            for acl_ref in acls_references:
+                                if interface.get(acl_ref, None):
+                                    acl_type = "ipv4_acls" if "ipv4" in acl_ref else "ipv6_acls"
+                                    if interface.get(acl_ref) not in defined_acls[acl_type]:
+                                        results.append(f"{acl_ref} {interface.get(acl_ref)} is not defined in sdwan.feature_profiles.{feature_profile_type}[{profile['name']}].{acl_type}, but is referenced in the sdwan.feature_profiles.{feature_profile_type}[{profile['name']}].lan_vpns[{lan_vpn['name']}].ethernet_interfaces[{interface['name']}]")
+        return results
+
+    @classmethod
     def match(cls, inventory):
         results = []
         for service_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get("service_profiles", []):
@@ -170,4 +205,7 @@ class Rule:
                 for feature_type in feature_types:
                     if interface.get(feature_type) and interface.get(feature_type) not in defined_elements[feature_type]:
                         results.append(f"{feature_type} {interface.get(feature_type)} is not defined in sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].{feature_type}s, but is referenced in the sdwan.feature_profiles.transport_profiles[{transport_profile['name']}].wan_vpn.ethernet_interfaces[{interface['name']}]")
+
+        results += cls.verify_acl_references(inventory)
+
         return results
