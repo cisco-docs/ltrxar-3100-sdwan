@@ -1,5 +1,5 @@
 ---
-image: danischm/nac:0.1.4
+image: danischm/nac:latest
 stages:
   - validate
   - plan
