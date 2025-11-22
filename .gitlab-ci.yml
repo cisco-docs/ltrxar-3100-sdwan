@@ -116,7 +116,7 @@ deploy:
 test-integration:
   stage: test
   script:
-    - set -o pipefail && iac-test -d ./data -d ./defaults.yaml -t ./tests/templates -f ./tests/filters -o ./tests/results/sdwan |& tee test_output.txt
+    - set -o pipefail && iac-test -d ./data -d ./defaults.yaml -t ./templates/sdwan/test -o ./tests/results/sdwan |& tee test_output.txt
   artifacts:
     when: always
     paths:
