@@ -3,7 +3,7 @@
 sdwan:
   edge_device_templates:
     - name: DT-REMOTE-C8000V-01
-      description: "Remote Branch Site1 - cEdge01"
+      description: "Remote Branch Site2 - cEdge01"
       device_model: C8000V
       aaa_template: FT-REMOTE-EDGE-AAA-01
       banner_template: FT-REMOTE-EDGE-BANNER-01
