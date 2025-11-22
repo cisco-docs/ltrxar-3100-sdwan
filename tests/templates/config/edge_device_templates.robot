@@ -79,11 +79,11 @@ Verify Edge Device Templates {{ edt.name }}
     END
 
     ${lp_policy_id}=    Get Value From Json    ${r_id.json()}    $..policyId
-    IF    ${lp_policy_id} == ['']
+    IF    ${lp_policy_id} == [] or ${lp_policy_id} == ['']
         Should Be Equal Value Json String    ${r_id.json()}    $..policyId    {{ edt.localized_policy }}    msg=localized policy
     ELSE
-        ${localized_pilicies}=   GET On Session   sdwan_manager   /dataservice/template/policy/vedge/definition/${lp_policy_id[0]}
-        Should Be Equal Value Json String    ${localized_pilicies.json()}    $..policyName    {{ edt.localized_policy | default("not_defined") }}    msg=localized policy
+        ${localized_policies}=   GET On Session   sdwan_manager   /dataservice/template/policy/vedge/definition/${lp_policy_id[0]}
+        Should Be Equal Value Json String    ${localized_policies.json()}    $..policyName    {{ edt.localized_policy | default("not_defined") }}    msg=localized policy
     END
 
     ${sp_policy_id}=    Get Value From Json    ${r_id.json()}    $..securityPolicyId
