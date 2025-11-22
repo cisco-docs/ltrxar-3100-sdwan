@@ -1,0 +1,2167 @@
+sdwan:
+  feature_profiles:
+    application_priority_profiles:
+      - name: app_priority1
+        qos_policies:
+          - name: qos_policy1
+            target_interfaces:
+              - GigabitEthernet1
+              - GigabitEthernet2
+            qos_schedulers:
+              - bandwidth_percent: 20
+                drops: tail-drop
+                forwarding_class: realtime
+              - bandwidth_percent: 25
+                forwarding_class: transactional
+                drops: red-drop
+              - bandwidth_percent: 30
+                drops: red-drop
+                forwarding_class: default
+              - bandwidth_percent: 25
+                drops: red-drop
+                forwarding_class: bulk
+    cli_profiles:
+      - name: cli1
+        config:
+          cli_configuration: |
+            logging discriminator auth mnemonics drops AUTH_PASSED
+      - name: cli2
+        description: test cli profile with bgp configuration
+        config:
+          name: cli-config
+          description: cli config feature
+          cli_configuration: |
+            ! This template is using variables
+            router bgp {{bgp_as_number}}
+              address-family ipv4 unicast vrf 10
+              neighbor {{bgp_neighbor_ip}} local-as {{bgp_neighbor_local_as}}
+            !
+    other_profiles:
+      - name: other1
+        description: full profile
+        thousandeyes:
+          name: thousandeyes-static
+          description: thousandeyes feature
+          account_group_token_variable: te_token
+          agent_default_gateway: 10.0.0.1
+          hostname: te-hostname
+          management_ip: 10.0.0.2
+          management_subnet_mask: 255.255.255.252
+          name_server_ip: 1.1.1.1
+          proxy_type: static
+          static_proxy_host: 10.0.0.254
+          static_proxy_port: 1000
+          vpn_id: 0
+        ucse:
+          name: ucse-shared
+          description: ucse feature
+          bay: 1
+          slot: 2
+          cimc_access_port_dedicated: false
+          cimc_access_port_shared_failover_type: ge2
+          cimc_access_port_shared_type: failover
+          cimc_ipv4_address_variable: imc_ip_mask
+          cimc_default_gateway_variable: imc_gw
+          cimc_vlan_id: 100
+          cimc_assign_priority: 5
+          interfaces:
+            - interface_name: ucse1
+              vpn_id: 1
+              ipv4_address_variable: ucse1_ip_mask
+      - name: other2
+        thousandeyes:
+          name: thousandeyes-pac
+          description: thousandeyes feature
+          account_group_token_variable: te_token
+          agent_default_gateway: 10.0.0.1
+          hostname: te-hostname
+          management_ip: 10.0.0.2
+          management_subnet_mask: 255.255.255.252
+          name_server_ip: 1.1.1.1
+          proxy_type: pac
+          pac_proxy_url: https://pac.example.com
+          vpn_id: 0
+        ucse:
+          name: ucse-dedicated
+          description: ucse feature
+          bay: 1
+          slot: 2
+          cimc_access_port_dedicated: true
+          cimc_ipv4_address_variable: imc_ip_mask
+          cimc_default_gateway_variable: imc_gw
+          cimc_vlan_id: 100
+          cimc_assign_priority: 5
+          interfaces:
+            - interface_name: ucse1
+              vpn_id: 1
+              ipv4_address_variable: ucse1_ip_mask
+    policy_object_profile:
+      name: policy_objects
+      description: basic policy object profile
+      app_probe_classes:
+        - name: app_probe1
+          forwarding_class: bulk
+          mappings:
+            - color: blue
+              dscp: 46
+        - name: app_probe2
+          forwarding_class: realtime
+          mappings:
+            - color: mpls
+      application_lists:
+        - name: Social-Media
+          applications:
+            - facebook
+            - twitter
+            - youtube
+            - instagram
+            - linkedin
+        - name: APPF-CRITICALDATA
+          application_families:
+            - application-service
+            - database
+            - erp
+            - microsoft-office
+            - middleware
+            - network-management
+      as_path_lists:
+        - name: aspath_list10
+          id: 10
+          as_paths:
+            - ^65100
+            - ^65101
+      color_lists:
+        - name: CL-INTERNET
+          colors:
+            - custom1
+            - custom2
+        - name: COLOR-INTERNET-CCT-TEST
+          colors:
+            - custom1
+            - custom2
+        - name: COLOR-INTERNET-CCT-TEST2
+          colors:
+            - gold
+            - silver
+      expanded_community_lists:
+        - name: community_legacy_wan
+          description: expanded community list
+          expanded_communities:
+            - 65001:101
+            - 65002:102
+            - 65003:103
+      extended_community_lists:
+        - name: ext_community_list
+          description: extended community list
+          extended_communities:
+            - soo 1:1
+            - rt 1:1
+      forwarding_classes:
+        - name: realtime
+          description: realtime forwarding class
+          queue: 0
+        - name: transactional
+          description: transactional forwarding class
+          queue: 1
+        - name: default
+          description: default forwarding class
+          queue: 2
+        - name: bulk
+          description: bulk forwarding class
+          queue: 3
+      ipv4_data_prefix_lists:
+        - name: ipv4_dpl
+          description: ipv4 data prefix list
+          prefixes:
+            - 10.0.0.0/8
+            - 172.16.0.0/12
+            - 192.168.0.0/16
+      ipv4_prefix_lists:
+        - name: ipv4_pl_private
+          description: ipv4 prefix list
+          entries:
+            - prefix: 10.0.0.0/8
+            - prefix: 172.16.0.0/12
+              le: 30
+            - prefix: 192.168.0.0/16
+              ge: 24
+              le: 28
+        - name: ipv4_pl_service
+          description: ipv4 prefix list
+          entries:
+            - prefix: 10.10.10.10/32
+      ipv6_data_prefix_lists:
+        - name: ipv6_dpl
+          description: ipv6 data prefix list
+          prefixes:
+            - fc00::/7
+            - fd00::/8
+        - name: ipv6_dpl_2
+          description: ipv6 data prefix list
+          prefixes:
+            - fe80::/10
+            - 2001:db8::/32
+      ipv6_prefix_lists:
+        - name: ipv6_pl_private
+          description: ipv6 prefix list
+          entries:
+            - prefix: fe40:5657:6df1:d34f::/64
+              le: 100
+            - prefix: fc00::/7
+              ge: 64
+              le: 120
+      mirrors:
+        - name: mirror
+          description: mirror
+          remote_destination_ip: 10.0.0.1
+          source_ip: 192.168.1.100
+      policers:
+        - name: branch_policer
+          description: branch policer
+          burst_bytes: 2000000
+          exceed_action: remark
+          rate_bps: 250000000
+      preferred_color_groups:
+        - name: preferred_color_group1
+          description: Preferred Color Group 1
+          primary_colors:
+            - default
+            - mpls
+          primary_path_preference: all-paths
+          secondary_colors:
+            - custom1
+            - custom2
+          secondary_path_preference: direct-path
+          tertiary_colors:
+            - biz-internet
+            - custom3
+          tertiary_path_preference: multi-hop-path
+        - name: preferred_color_group2
+          description: Preferred Color Group 2
+          primary_colors:
+            - private1
+            - private2
+          primary_path_preference: direct-path
+          secondary_colors:
+            - private3
+            - private4
+          secondary_path_preference: multi-hop-path
+          tertiary_colors:
+            - metro-ethernet
+            - mpls
+          tertiary_path_preference: all-paths
+      sla_classes:
+        - name: sla_default
+          app_probe_class: app_probe1
+          jitter_ms: 300
+          latency_ms: 500
+          loss_percentage: 5
+          fallback_best_tunnel_criteria: loss-latency-jitter
+          fallback_best_tunnel_jitter_variance: 1
+          fallback_best_tunnel_latency_variance: 50
+          fallback_best_tunnel_loss_variance: 10
+      standard_community_lists:
+        - name: standard_community_list
+          standard_communities:
+            - no-export
+            - local-as
+            - 1000:1000
+            - 1000:1002
+      tloc_lists:
+        - name: emea_hub_tlocs
+          description: emea hub tloc list
+          tlocs:
+            - color: custom1
+              encapsulation: ipsec
+              tloc_ip: 10.0.2.101
+              preference: 100
+            - color: custom2
+              encapsulation: ipsec
+              tloc_ip: 10.0.2.101
+              preference: 50
+    service_profiles:
+      - name: service1
+        description: full profile
+        bgp_features:
+          - name: service_bgp
+            description: bgp full
+            always_compare_med: true
+            as_number: 65000
+            compare_router_id: true
+            deterministic_med: true
+            external_routes_distance: 20
+            hold_time: 180
+            internal_routes_distance: 200
+            ipv4_aggregate_addresses:
+              - as_set_path: true
+                network_address: 10.0.0.0
+                subnet_mask: 255.0.0.0
+                summary_only: false
+            ipv4_default_originate: true
+            ipv4_eibgp_maximum_paths: 4
+            ipv4_neighbors:
+              - address_variable: vpn_service_bgp_neighbor_ipv4
+                address_families:
+                  - family_type: ipv4-unicast
+                    maximum_prefixes_reach_policy: restart
+                    maximum_prefixes_number: 10000
+                    maximum_prefixes_restart_interval: 1000
+                    maximum_prefixes_threshold: 50
+                    route_policy_in: service_rpl
+                    route_policy_out: service_rpl
+                allowas_in_number: 2
+                as_override: false
+                description: service bgp ipv4
+                ebgp_multihop: 4
+                hold_time: 180
+                keepalive_time: 60
+                local_as: 65002
+                next_hop_self: false
+                password: sch927TQ52fx3mh
+                remote_as: 65001
+                send_community: true
+                send_extended_community: true
+                send_label: false
+                shutdown: false
+                source_interface: GigabitEthernet1
+            ipv4_networks:
+              - network_address: 10.0.0.0
+                subnet_mask: 255.255.255.0
+            ipv4_redistributes:
+              - protocol: connected
+                route_policy: service_rpl
+            ipv4_table_map_filter: false
+            ipv4_table_map_route_policy: service_rpl
+            ipv6_aggregate_addresses:
+              - as_set_path: false
+                prefix: fc00::/12
+                summary_only: false
+            ipv6_default_originate: false
+            ipv6_eibgp_maximum_paths: 4
+            ipv6_neighbors:
+              - address_variable: vpn_service_bgp_neighbor_ipv6
+                address_families:
+                  - family_type: ipv6-unicast
+                    maximum_prefixes_reach_policy: restart
+                    maximum_prefixes_number: 10000
+                    maximum_prefixes_restart_interval: 1000
+                    maximum_prefixes_threshold: 50
+                    route_policy_in: service_rpl
+                    route_policy_out: service_rpl
+                allowas_in_number: 2
+                as_override: false
+                description: service bgp ipv6
+                ebgp_multihop: 4
+                hold_time: 180
+                keepalive_time: 60
+                local_as: 65002
+                next_hop_self: false
+                password: sch927TQ52fx3mh
+                remote_as: 65001
+                send_community: true
+                send_extended_community: true
+                shutdown: false
+                source_interface: GigabitEthernet1
+            ipv6_networks:
+              - prefix: fc00::/12
+            ipv6_redistributes:
+              - protocol: connected
+                route_policy: service_rpl
+            ipv6_table_map_filter: false
+            ipv6_table_map_route_policy: service_rpl
+            keepalive_time: 60
+            local_routes_distance: 200
+            missing_med_as_worst: false
+            multipath_relax: false
+            propagate_as_path: true
+            propagate_community: true
+            router_id_variable: vpn_service_bgp_router_id
+        dhcp_servers:
+          - name: dhcp_server_vpn1
+            description: LAN DHCP Server VPN 1
+            pool_network_address: 10.10.10.0
+            pool_subnet_mask: "255.255.255.0"
+            default_gateway: 10.10.10.1
+            dns_servers:
+              - 1.1.1.1
+              - 9.9.9.9
+            domain_name: "test.com"
+            lease_time: 6000
+            interface_mtu: 1500
+            tftp_servers:
+              - 10.11.11.11
+            exclude_addresses:
+              - 10.10.10.100
+              - 10.10.10.1-10.10.10.5
+              - 10.10.10.10-10.10.10.15
+            static_leases:
+              - mac_address_variable: vpn1_static_lease_mac1
+                ip_address_variable: vpn1_static_lease_ip1
+              - mac_address: 52:54:00:04:ce:de
+                ip_address: 10.10.10.100
+            options:
+              - code: 43
+                hex: f305ac10011802
+              - code: 60
+                ascii: test.com
+              - code: 240
+                ip_addresses:
+                  - 10.10.11.11
+        eigrp_features:
+          - name: service_eigrp
+            description: service eigrp feature
+            autonomous_system_id: 111
+            networks:
+              - network_address: 100.2.2.0
+                subnet_mask: 255.255.255.0
+            authentication_type: md5
+            md5_keys:
+              - key_id: 2
+                key_string: password123
+            filter: false
+            hello_interval: 10
+            hold_time: 30
+            interfaces:
+              - name: GigabitEthernet4
+                shutdown: false
+                summary_addresses:
+                  - network_address: 10.0.0.0
+                    subnet_mask: 255.255.255.0
+            redistributes:
+              - protocol: connected
+                route_policy: service_rpl
+            route_policy: service_rpl
+        ipv4_acls:
+          - name: service_ipv4_acl
+            description: service ipv4 access control list
+            default_action: accept
+            sequences:
+              - id: 1
+                name: acl
+                base_action: accept
+                match_entries:
+                  destination_data_prefix: 172.16.100.0/24
+                  source_data_prefix: 172.16.101.0/24
+                  destination_ports:
+                    - 80
+                    - 443
+                    - 8080-8090
+                  dscps:
+                    - 16
+                    - 32
+                  source_ports:
+                    - 1024-65535
+                actions:
+                  counter_name: service_accept
+                  dscp: 8
+                  ipv4_next_hop: 172.16.254.10
+                  log: true
+                  mirror: mirror
+                  policer: branch_policer
+              - id: 2
+                name: acl
+                base_action: drop
+                match_entries:
+                  destination_data_prefix_variable: service_drop_dst_prefix
+                  source_data_prefix_variable: service_drop_src_prefix
+                  packet_length: 64
+                  tcp_state: syn
+                actions:
+                  log: true
+                  counter_name: service_drop
+          - name: service_ipv4_acl_in
+            description: service ipv4 access control list ingress
+            default_action: drop
+            sequences:
+              - id: 1
+                name: acl
+                base_action: accept
+                match_entries:
+                  destination_data_prefix: 192.168.0.0/16
+                  source_data_prefix: 192.168.0.0/16
+                actions:
+                  counter_name: service_accept
+                  dscp: 8
+                  log: true
+          - name: service_ipv4_acl_out
+            description: service ipv4 access control list egress
+            default_action: accept
+            sequences:
+              - id: 1
+                name: acl
+                base_action: accept
+                match_entries:
+                  destination_data_prefix: 192.168.0.0/16
+                  source_data_prefix: 192.168.0.0/16
+                  destination_ports:
+                    - 8080
+                actions:
+                  counter_name: service_accept
+                  dscp: 10
+                  log: true
+        ipv4_tracker_groups:
+          - name: service_ipv4_tracker_group
+            tracker_boolean: or
+            trackers:
+              - static_route_ip_tracker
+              - static_route_url_tracker
+        ipv4_trackers:
+          - name: static_route_ip_tracker
+            description: Static Route IP Tracker
+            endpoint_ip: 1.1.1.1
+            interval: 60
+            multiplier: 2
+            threshold: 500
+            tracker_name: service_ipv4_ip_tracker
+          - name: static_route_url_tracker
+            description: Static Route URL Tracker
+            threshold: 300
+            interval: 20
+            multiplier: 1
+            endpoint_url: https://url.example.com
+            tracker_name: service_ipv4_url_tracker
+          - name: static_route_tcp_tracker
+            description: Static Route TCP Tracker
+            threshold: 300
+            interval: 20
+            multiplier: 1
+            endpoint_ip: 8.8.8.8
+            endpoint_port: 80
+            endpoint_protocol: tcp
+            tracker_name: service_ipv4_tcp_tracker
+        ipv6_acls:
+          - name: AK-TF-v6-SACL-1
+            description: test desc ak
+            default_action: drop
+            sequences:
+              - id: 1
+                name: "Allow-ICMPv6"
+                base_action: accept
+                match_entries:
+                  destination_data_prefix: 2001:db8:1::/64
+                  source_data_prefix: 2001:db8:2::/64
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_classes:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  traffic_class: 46
+                  ipv6_next_hop: 2001:db8:3::1
+                  counter_name: "AKTFv6ACLCounter"
+              - id: 2
+                name: "Allow-ICMPv6-2"
+                base_action: accept
+                match_entries:
+                  destination_data_prefix_list: ipv6_dpl_2
+                  source_data_prefix_list: ipv6_dpl_2
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_classes:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  traffic_class: 46
+                  mirror: mirror
+                  policer: branch_policer
+          - name: AK-TF-v6-SACL-2
+            description: test2
+            default_action: accept
+            sequences:
+              - id: 1
+                name: "Allow-ICMPv6"
+                base_action: drop
+                match_entries:
+                  destination_data_prefix: 2001:db8:1::/64
+                  source_data_prefix: 2001:db8:2::/64
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_classes:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  counter_name: "AKTFv6ACLCounter1"
+              - id: 2
+                name: "Allow-ICMPv6-2"
+                base_action: drop
+                match_entries:
+                  destination_data_prefix_list: ipv6_dpl_2
+                  source_data_prefix_list: ipv6_dpl_2
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_classes:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  counter_name: "AKTFv6ACLCounter2"
+        lan_vpns:
+          - name: service_lan_vpn1
+            description: lan_vpn1_test
+            vpn_id: 1
+            vpn_name: VPN1
+            bgp: service_bgp
+            eigrp: service_eigrp
+            ethernet_interfaces:
+              - name: lan_interface_static
+                description: LAN Interface
+                dhcp_server: dhcp_server_vpn1
+                ipv4_tracker: static_route_ip_tracker
+                interface_name: GigabitEthernet3
+                interface_description: Full LAN Interface
+                arp_timeout: 1200
+                arp_entries:
+                  - ip_address: 10.0.0.10
+                    mac_address: 00:0C:29:11:22:33
+                ipv4_egress_acl: service_ipv4_acl_out
+                ipv4_ingress_acl: service_ipv4_acl_in
+                ipv4_configuration_type: static
+                ipv4_address: 10.0.0.1
+                ipv4_subnet_mask: 255.255.255.0
+                ipv4_secondary_addresses:
+                  - address: 10.0.0.2
+                    subnet_mask: 255.255.255.0
+                  - address: 10.1.0.12
+                    subnet_mask: 255.255.255.0
+                ipv4_dhcp_helpers:
+                  - 10.0.1.1
+                  - 10.0.1.2
+                ipv4_vrrp_groups:
+                  - id: 10
+                    priority: 120
+                    timer: 1000
+                    track_omp: false
+                    address: 10.0.0.254
+                    secondary_addresses:
+                      - address: 10.0.0.253
+                        subnet_mask: 255.255.255.0
+                    tloc_preference_change: true
+                    tloc_preference_change_value: 100
+                    tracking_objects:
+                      - tracker_object: object_route_tracker
+                        action: decrement
+                        decrement_value: 20
+                ipv6_ingress_acl: AK-TF-v6-SACL-2
+                ipv6_egress_acl: AK-TF-v6-SACL-2
+                ipv6_configuration_type: static
+                ipv6_address: 2001:db8::1/64
+                ipv6_secondary_addresses:
+                  - address: 2001:db8::2/64
+                ipv6_dhcp_helpers:
+                  - address: 2001:db8:ffff::1
+                    vpn_id: 1
+                ipv6_vrrp_groups:
+                  - id: 20
+                    priority: 120
+                    timer: 1000
+                    track_omp: false
+                    link_local_address: fe80::1
+                    global_prefix: 2001:db8::ffff/64
+                mac_address: 00:0C:29:A1:B2:C3
+                interface_mtu: 1500
+                ip_mtu: 1500
+                autonegotiate: true
+                shutdown: false
+                icmp_redirect_disable: true
+                load_interval: 30
+                tcp_mss: 1460
+                trustsec_enable_enforced_propogation: false
+                trustsec_enable_sgt_propogation: false
+                trustsec_enforced_sgt: 200
+                trustsec_propogate: true
+                trustsec_sgt: 100
+                xconnect: test
+                shaping_rate: 10000
+            ipv4_omp_admin_distance: 1
+            ipv4_omp_advertise_routes:
+              - protocol: bgp
+              - protocol: connected
+              - protocol: static
+                route_policy: service_rpl
+              - protocol: network
+                networks:
+                  - network_address: 10.10.1.0
+                    subnet_mask: 255.255.255.0
+                  - network_address: 10.10.2.0
+                    subnet_mask: 255.255.255.0
+              - protocol: aggregate
+                aggregates:
+                  - aggregate_address: 10.10.0.0
+                    subnet_mask: 255.255.255.0
+                    aggregate_only: true
+            ipv4_primary_dns_address: 10.2.1.1
+            ipv4_secondary_dns_address: 10.2.3.52
+            ipv6_omp_admin_distance: 1
+            ipv6_omp_advertise_routes:
+              - protocol: bgp
+              - protocol: connected
+              - protocol: static
+              - protocol: aggregate
+                aggregates:
+                  - aggregate_prefix: 2001:0:0:1::/64
+                    aggregate_only: false
+            ipv6_primary_dns_address: 2001:0:0:1::1
+            ipv6_secondary_dns_address: 2001:0:0:2::2
+            sdwan_remote_access: false
+            host_mappings:
+              - hostname: HOSTMAPPING1
+                ips:
+                  - 1.2.3.4
+                  - 10.1.1.1
+              - hostname: HOSTMAPPING2
+                ips:
+                  - 2.2.2.2
+                  - 2001:0:0:1::2
+            ipv4_static_routes:
+              - network_address: 10.10.10.0
+                subnet_mask: 255.255.255.0
+                gateway: nexthop
+                next_hops:
+                  - address: 10.2.1.4
+                    administrative_distance: 10
+                  - address: 10.2.2.1
+              - network_address: 10.10.11.0
+                subnet_mask: 255.255.255.0
+                gateway: null0
+              - network_address: 10.10.12.0
+                subnet_mask: 255.255.255.0
+                gateway: vpn
+              - network_address: 10.10.13.0
+                subnet_mask: 255.255.255.0
+                gateway: dhcp
+              - network_address: 10.10.15.0
+                subnet_mask: 255.255.255.0
+                gateway: nexthop
+                next_hops_with_tracker:
+                  - address: 10.1.1.1
+                    administrative_distance: 10
+                    tracker: static_route_ip_tracker
+            ipv6_static_routes:
+              - prefix: 2001:0:0:2::0/64
+                gateway: nexthop
+                next_hops:
+                  - address: 2001:0:0:1::1
+                    administrative_distance: 1
+              - prefix: 2001:1111:0:2::0/64
+                gateway: nat
+                nat: nat64
+            ospf: service_ospf
+            services:
+              - service_type: fw
+                ipv4_addresses:
+                  - 1.2.3.4
+                track_enable: true
+              - service_type: te
+                ipv4_addresses:
+                  - 10.0.0.1
+            service_routes:
+              - network_address: 1.2.3.0
+                subnet_mask: 255.255.255.0
+                service: sig
+            # to be added when gre and ipsec interfaces are supported
+            # gre_routes:
+            #   - network_address: 10.2.3.0
+            #     subnet_mask: 255.255.255.0
+            #     interfaces:
+            #       - gre1
+            #       - gre2
+            # ipsec_routes:
+            #   - network_address: 10.2.3.0
+            #     subnet_mask: 255.255.255.0
+            #     interfaces:
+            #       - ipsec1
+            #       - ipsec2
+            nat_pools:
+              - id: 1
+                prefix_length: 24
+                range_start: 10.0.0.100
+                range_end: 10.0.0.112
+                overload: true
+                direction: inside
+                tracker_object: object_route_tracker
+              - id: 2
+                prefix_length: 24
+                range_start: 10.1.0.100
+                range_end: 10.1.0.122
+                overload: true
+                direction: inside
+            nat_port_forwards:
+              - nat_pool_id: 1
+                source_port: 122
+                translate_port: 330
+                source_ip: 192.168.1.99
+                translate_ip: 10.0.0.123
+                protocol: tcp
+            static_nat_entries:
+              - nat_pool_id: 1
+                direction: inside
+                source_ip: 192.168.100.100
+                translate_ip: 10.0.0.110
+                tracker_object: object_route_tracker
+            nat64_pools:
+              - name: natpool64
+                range_start: 10.1.1.10
+                range_end: 10.1.1.100
+                overload: true
+            route_leaks_to_global:
+              - protocol: static
+                # redistributions:
+                #   - protocol: bgp
+            route_leaks_from_global:
+              - protocol: connected
+              - protocol: static
+            route_leaks_from_service:
+              - source_vpn: 2
+                protocol: static
+                route_policy: service_rpl2
+            ipv4_import_route_targets:
+              - route_target: 1.1.1.1:200
+            ipv4_export_route_targets:
+              - route_target: 1.1.1.2:200
+              - route_target: 1.1.1.2:300
+            ipv6_import_route_targets:
+              - route_target: 1.1.1.3:200
+            ipv6_export_route_targets:
+              - route_target: 1.1.1.3:400
+          - name: service_lan_vpn2
+            description: Branch LAN VPN 2
+            ethernet_interfaces:
+              - name: lan_interface_vpn2
+                description: LAN Interface
+                interface_name: GigabitEthernet4
+                interface_description: LAN Interface vpn2
+                ipv4_configuration_type: dynamic
+                ipv4_dhcp_distance: 1
+                ipv6_configuration_type: dynamic
+                ipv6_dhcp_secondary_addresses:
+                  - address: 2001:db9::2/64
+                  - address: 2001:db9::3/64
+            ipv4_primary_dns_address: 10.2.1.1
+            ipv4_omp_advertise_routes:
+              - protocol: connected
+              - protocol: static
+            ipv4_secondary_dns_address: 10.2.1.2
+            ipv4_static_routes:
+              - network_address: 10.10.10.0
+                subnet_mask: 255.255.255.0
+                gateway: nexthop
+                next_hops:
+                  - address: 10.2.1.1
+                    administrative_distance: 1
+            ipv6_omp_advertise_routes:
+              - protocol: connected
+              - protocol: static
+            ipv6_primary_dns_address: 2001:0:0:1::1
+            ipv6_secondary_dns_address: 2001:0:0:2::2
+            ipv6_static_routes:
+              - prefix: 2001:0:0:2::0/64
+                gateway: nexthop
+                next_hops:
+                  - address: 2001:0:0:1::1
+                    administrative_distance: 1
+            vpn_id: 2
+            vpn_name: VPN2
+        object_tracker_groups:
+          - name: object_tracker_group
+            description: Tracker Group
+            id: 10
+            tracker_boolean: and
+            trackers:
+              - object_interface_tracker
+              - object_route_tracker
+        object_trackers:
+          - name: object_interface_tracker
+            description: Interface Tracker
+            id: 1
+            type: interface
+            interface_name: GigabitEthernet1
+          - name: object_sig_tracker
+            description: SIG Tracker
+            id: 2
+            type: sig
+          - name: object_route_tracker
+            description: Route Tracker
+            id: 3
+            type: route
+            route_ip: 10.0.0.0
+            route_mask: 255.0.0.0
+            vpn_id: 1
+        ospf_features:
+          - name: service_ospf
+            description: service ospf feature
+            areas:
+              - number: 0
+                interfaces:
+                  - name: GigabitEthernet3
+                    authentication_message_digest_key: VzBgdxMK3Lksfaf
+                    authentication_message_digest_key_id: 1
+                    authentication_type: message-digest
+                    cost: 10
+                    hello_interval: 10
+                    dead_interval: 40
+                    designated_router_priority: 100
+                    lsa_retransmit_interval: 100
+                    network_type: broadcast
+                    passive: false
+                ranges:
+                  - cost: 50
+                    network_address: 192.168.8.0
+                    no_advertise: false
+                    subnet_mask: 255.255.255.0
+              - number: 1
+                type: stub
+                no_summary: true
+            default_originate: true
+            default_originate_always: true
+            default_originate_metric: 200
+            default_originate_metric_type: type2
+            distance_external: 110
+            distance_inter_area: 110
+            distance_intra_area: 110
+            redistributes:
+              - protocol: connected
+                route_policy: service_rpl
+              - protocol: nat
+                dia: true
+            reference_bandwidth: 10000
+            rfc1583_compatibility: true
+            route_policy: service_rpl
+            router_id_variable: ospf_router_id
+            router_lsa_advertisement_time: 10000
+            router_lsa_advertisement_type: on-startup
+            spf_calculation_delay: 10000
+            spf_initial_hold_time: 10000
+            spf_maximum_hold_time: 20000
+        route_policies:
+          - name: service_rpl
+            description: service_rpl
+            default_action: accept
+            sequences:
+              - id: 1
+                name: route
+                base_action: accept
+                protocol: ipv4
+                match_entries:
+                  as_path_list: aspath_list10
+                  bgp_local_preference: 100
+                  extended_community_list: ext_community_list
+                  ipv4_address_prefix_list: ipv4_pl_private
+                  ipv4_next_hop_prefix_list: ipv4_pl_private
+                  metric: 100
+                  omp_tag: 100
+                  ospf_tag: 100
+                  standard_community_lists:
+                    - standard_community_list
+                  standard_community_lists_criteria: or
+                actions:
+                  communities:
+                    - internet
+                    - 65001:101
+                  communities_additive: true
+                  ipv4_next_hop: 192.168.1.1
+                  bgp_local_preference: 200
+                  metric: 200
+                  metric_type: type1
+                  omp_tag: 200
+                  origin: incomplete
+                  ospf_tag: 200
+                  prepend_as_paths:
+                    - 65100
+                    - 65101
+                  weight: 100
+              - id: 2
+                name: route
+                base_action: accept
+                protocol: ipv6
+                match_entries:
+                  expanded_community_list: community_legacy_wan
+                  ipv6_address_prefix_list: ipv6_pl_private
+                  ipv6_next_hop_prefix_list: ipv6_pl_private
+                actions:
+                  communities_variable: transport_rpl_communities
+                  communities_additive: false
+                  ipv6_next_hop: 2001:db8::1
+              - id: 3
+                name: route
+                base_action: reject
+                protocol: both
+                match_entries:
+                  ospf_tag: 300
+          - name: service_rpl2
+            description: service_rpl2
+            default_action: reject
+            sequences:
+              - id: 1
+                name: route
+                base_action: accept
+                protocol: ipv4
+                match_entries:
+                  ipv4_address_prefix_list: ipv4_pl_service
+      - name: service2
+    system_profiles:
+      - name: system1
+        description: full profile
+        aaa:
+          name: aaa_full
+          description: AAA feature with full configuration
+          accounting_rules:
+            - groups:
+                - tacacs-511
+              id: rule1
+              level: 1
+              method: exec
+              start_stop: true
+          auth_order:
+            - tacacs-511
+            - local
+          authorization_rules:
+            - authenticated: true
+              groups:
+                - tacacs-511
+              id: rule1
+              level: 15
+              method: commands
+          authorization_config_commands: true
+          authorization_console: false
+          dot1x_accounting: true
+          dot1x_authentication: true
+          radius_groups:
+            - servers:
+                - accounting_port: 1000
+                  address: 10.0.0.1
+                  authentication_port: 1001
+                  key: xafmir-tanfeT-6zusty
+                  key_type: key
+                  retransmit: 50
+                  timeout: 200
+              source_interface_variable: radius_source_interface
+              vpn: 0
+          tacacs_groups:
+            - vpn: 511
+              source_interface_variable: tacacs_source_interface
+              servers:
+                - address: 10.1.1.1
+                  port: 49
+                  key: xafmir-tanfeT-6zusty
+                  timeout: 200
+          users:
+            - name: admin
+              password: $6$Oz2ydqNXLLDIsPSG$LhogoactFVb9eJgqgv/O/Zb.FHg74drK4maijc.Q9q/KhyDcPfwrHx9Vy6G9hY7oKWbyas4XKms7f7Znl/ndF.
+              privilege: 15
+            - name: failsafe
+              password: $6$v0UN8x4fkvZd0Lnj$hq13MC.W5ElstGlolO38fshGEYxSechW4K5zEdrJD1trSH30AaNKvL4VUlOtxersGmIDNefPwyrSqbJpCpXGJ.
+              privilege: 15
+              public_key_chains:
+                - AAAAB3NzaC1yc2EAAAADAQABAAACAQDOeSUjLRhVpL+hf3FDm846GJSzi3muWztewThuovwvDwq3AicP6Q2ZTvHTuD8pT3zOZyYp8W2OJE8XcYu/UlayccWzJD6/behqJ7x1Zxm0wgPekpgl7swXHubUY9GoJmfqfdv8qHqrxovUXU0nwevFU+RpLXIeAl262dm19EUgSRjMeZfYLeRKE2qRaiNhVclHveYhu/mm52MDQa2QzxcNToPL3emEWMMYw2rkY7W6tMcveEC1r83FTRfaRx+So1nAqDqgHLqwPEgRfLBMeOog7fWzUP46BVm9qdHnCoWhMfiNKups/Zs3OJBTIyWIGLf9g/EJh/SBdaGy2OvHXmnJGTVyysqZx1P4J7mZSF7zrDXf2L/OThK2F/YadQVxKJwKkec/V+lSziG/AulsmJLCqPhCyBVNLGm6zJnLwd9o3iO/LyEcI4FBxN8dU/neyjo11D1zhrWSYej2rgLA5fV4V1f/EPUbqeL86jg7lpBPT4r0fPYP1Qmul9KjHUtQA2+q5AMJTusgKTev7VIkKcPep4IWiPwDjWlGvXRekNjB9nnzDCgO1Dz94l6NzmR9+yW4yb9R4crxkpfrawS+GOmMzfIAyG7eMpv59rFIXpW+chsVQG2pMESQzCv4Cc3NDpgfX9FfTwRjlN1FokGxO4rxDAJQXDdAPVQH+hhMhIdusw==
+        banner:
+          name: banner_full
+          description: banner feature with full configuration
+          login: |
+            This is line 1 of banner\n
+            This is line 2 of banner\n
+          motd_variable: motd_banner
+        basic:
+          name: basic_full
+          description: basic feature with full configuration
+          admin_tech_on_failure: true
+          affinity_group_number: 1
+          affinity_group_preferences:
+            - 1
+            - 2
+            - 3
+          affinity_per_vrfs:
+            - affinity_group_number: 10
+              vrf_range: 1-9
+          affinity_preference_auto: true
+          console_baud_rate: 9600
+          control_session_pps: 10000
+          controller_groups:
+            - 20
+            - 21
+          device_groups:
+            - emea
+            - branch
+          enhanced_app_aware_routing: moderate
+          geo_fencing_enable: true
+          geo_fencing_sms_enable: true
+          geo_fencing_sms_mobile_numbers:
+            - number: "+123456789"
+          idle_timeout: 300
+          latitude: 50
+          location: Krakow
+          longitude: 19
+          max_omp_sessions: 2
+          multitenant: false
+          on_demand_tunnel: true
+          on_demand_tunnel_idle_timeout: 1200
+          overlay_id: 1
+          port_hopping: false
+          port_offset: 0
+          site_types:
+            - type-1
+            - branch
+          system_description: branch
+          timezone: Europe/Warsaw
+          track_default_gateway: true
+          track_interface_tag: 11
+          track_transport: true
+          transport_gateway: false
+        bfd:
+          name: bfd_full
+          description: BFD feature with full configuration
+          colors:
+            - color: custom1
+              default_dscp: 0
+              hello_interval: 100000
+              multiplier: 3
+              path_mtu_discovery: true
+          default_dscp: 46
+          multiplier: 5
+          poll_interval: 36000
+        flexible_port_speed:
+          name: flexible_port_speed_full
+          description: flexible port speed feature with full configuration
+          port_type: 8 ports of 1/10GE + 4 ports of 40GE
+        global:
+          name: global_full
+          description: global feature with full configuration
+          arp_proxy: true
+          cdp: true
+          console_logging: true
+          domain_lookup: false
+          ftp_passive: false
+          http_authentication: local
+          http_server: false
+          https_server: true
+          ignore_bootp: true
+          ip_source_routing: true
+          lldp: true
+          nat64_udp_timeout: 10000
+          nat64_tcp_timeout: 10000
+          rsh_rcp: true
+          snmp_ifindex_persist: true
+          source_interface: Loopback0
+          ssh_version: 2
+          tcp_keepalives_in: false
+          tcp_keepalives_out: false
+          tcp_small_servers: true
+          telnet_outbound: false
+          udp_small_servers: true
+          vty_logging: true
+        ipv4_device_access_policy:
+          name: ipv4_device_access_policy
+          description: "Device access policy"
+          default_action: accept
+          sequences:
+            - id: 1
+              base_action: drop
+              name: acl-sequence1
+              match_entries:
+                destination_data_prefix_list: ipv4_dpl
+                destination_port: 22
+                source_data_prefix_list: ipv4_dpl
+                source_ports:
+                  - 2001
+                  - 2002
+            - id: 2
+              base_action: accept
+              name: acl-sequence2
+              match_entries:
+                destination_data_prefixes:
+                  - 192.168.1.0/24
+                  - 192.168.2.0/24
+                destination_port: 22
+                source_data_prefixes:
+                  - 192.168.3.0/24
+                  - 192.168.4.0/24
+            - id: 3
+              base_action: accept
+              name: acl-sequence3
+              match_entries:
+                destination_data_prefixes_variable: device_access_destination_prefixes
+                destination_port: 22
+                source_data_prefixes_variable: device_access_source_prefixes
+            - id: 4
+              base_action: accept
+              name: acl-sequence4
+              match_entries:
+                destination_port: 161
+        ipv6_device_access_policy:
+          name: ipv6_device_access_policy
+          description: "Device access policy"
+          default_action: accept
+          sequences:
+            - id: 1
+              base_action: drop
+              name: acl-sequence1
+              match_entries:
+                destination_data_prefix_list: ipv6_dpl
+                destination_port: 22
+                source_data_prefix_list: ipv6_dpl
+                source_ports:
+                  - 2001
+                  - 2002
+            - id: 2
+              base_action: accept
+              name: acl-sequence2
+              match_entries:
+                destination_data_prefixes:
+                  - fc01::/64
+                  - fc02::/64
+                destination_port: 161
+                source_data_prefixes:
+                  - fc03::/64
+                  - fc04::/64
+        logging:
+          name: logging_full
+          description: logging feature with full configuration
+          disk_file_size: 15
+          disk_file_rotate: 5
+          ipv4_servers:
+            - hostname_ip: 10.0.0.1
+              severity: informational
+              source_interface: GigabitEthernet3
+              tls_enable: true
+              tls_properties_custom_profile: true
+              tls_properties_profile: tls1
+              vpn_id: 1
+          ipv6_servers:
+            - hostname_ip: fc00::1
+              severity: error
+              source_interface: GigabitEthernet3
+              tls_enable: true
+              tls_properties_custom_profile: true
+              tls_properties_profile: tls1
+              vpn_id: 1
+          tls_profiles:
+            - cipher_suites:
+                - aes-128-cbc-sha
+                - aes-256-cbc-sha
+                - rsa-aes-cbc-sha2
+              name: tls1
+              tls_version: TLSv1.2
+        ntp:
+          name: ntp_full
+          description: NTP feature with full configuration
+          # authentication_keys: ! uncomment when encrypted strings are handled properly in the provider
+          #   - id: 1
+          #     md5_value: jYbmu7-honpyq-gamtyk
+          authoritative_ntp_server: true
+          authoritative_ntp_server_source_interface: GigabitEthernet3
+          authoritative_ntp_server_stratum: 5
+          servers:
+            - authentication_key: 1
+              hostname_ip: 10.0.0.1
+              prefer: true
+              source_interface: GigabitEthernet3
+              ntp_version: 4
+              vpn_id: 1
+          trusted_keys:
+            - 1
+        omp:
+          name: omp_full
+          description: OMP feature with full configuration
+          advertise_ipv4_bgp: true
+          advertise_ipv4_connected: true
+          advertise_ipv4_eigrp: false
+          advertise_ipv4_isis: false
+          advertise_ipv4_lisp: false
+          advertise_ipv4_ospf: true
+          advertise_ipv4_ospf_v3: true
+          advertise_ipv4_static: false
+          advertise_ipv6_bgp: true
+          advertise_ipv6_connected: true
+          advertise_ipv6_eigrp: false
+          advertise_ipv6_isis: false
+          advertise_ipv6_lisp: false
+          advertise_ipv6_ospf: true
+          advertise_ipv6_static: true
+          advertisement_interval: 10000
+          ecmp_limit: 16
+          eor_timer: 3600
+          graceful_restart: true
+          graceful_restart_timer: 86400
+          holdtime: 10000
+          ignore_region_path_length: false
+          omp_admin_distance_ipv4: 251
+          omp_admin_distance_ipv6: 251
+          overlay_as: 65000
+          send_path_limit: 16
+          shutdown: false
+          site_types:
+            - type-1
+            - branch
+          transport_gateway: prefer
+        performance_monitoring:
+          name: perfmonitor
+          description: performance monitoring feature with full configuration
+          app_perf_monitor_app_groups:
+            - amazon-group
+            - apple-group
+            - box-group
+          app_perf_monitor_enabled: true
+          event_driven_config_enabled: true
+          event_driven_events:
+            - sla_change
+            - pmtu_change
+          monitoring_config_enabled: true
+          monitoring_config_interval: 60
+        security:
+          name: security_full
+          description: security feature with full configuration
+          anti_replay_window: 8192
+          extended_anti_replay_window: 2048
+          integrity_types:
+            - esp
+            - ip-udp-esp
+          ipsec_pairwise_keying: true
+          key_chains:
+            - key_id: 1
+              name: key1
+          keys:
+            - id: 1
+              accept_ao_mismatch: true
+              accept_life_time_duration: 10000
+              accept_life_time_local: true
+              accept_life_time_start_epoch: 1714125354
+              crypto_algorithm: aes-128-cmac
+              include_tcp_options: true
+              key_chain_name: key1
+              key_string: fUPXTH0Z87sKcKy
+              receiver_id: 1
+              send_id: 1
+              send_life_time_infinite: true
+              send_life_time_local: true
+              send_life_time_start_epoch: 1714125354
+          rekey_time: 172800
+        snmp:
+          name: snmpv3_full
+          description: snmp feature with full configuration
+          contact_person: person1
+          groups:
+            - name: group1
+              security_level: no-auth-no-priv
+              view: test_view
+          location: test location
+          shutdown: false
+          trap_target_servers:
+            - ip: 10.1.1.1
+              port: 9999
+              source_interface: GigabitEthernet1
+              user: user1
+              vpn_id: 0
+          users:
+            - authentication_password: 31CMd8v0LZZXgmfmB
+              authentication_protocol: sha
+              group: group1
+              name: user1
+              privacy_password: 8DEiOQ2t6bHte1IiN
+              privacy_protocol: aes-cfb-128
+          views:
+            - name: test_view
+              oids:
+                - exclude: false
+                  id: 1.3.6.1
+      - name: system2
+        aaa:
+          users:
+            - name: admin
+              password: $6$Oz2ydqNXLLDIsPSG$LhogoactFVb9eJgqgv/O/Zb.FHg74drK4maijc.Q9q/KhyDcPfwrHx9Vy6G9hY7oKWbyas4XKms7f7Znl/ndF.
+        banner:
+          login: "simple login banner"
+        basic:
+          name: basic
+        bfd:
+          name: bfd
+        global:
+          name: global
+        logging:
+          name: logging
+        # Cannot be tested when MRF is disabled in settings
+        mrf:
+          name: mrf_full
+          description: multi-region fabric feature with full configuration
+          migration_to_mrf: enabled
+          migration_bgp_community: 65000
+          role: edge-router
+          secondary_region_id_variable: secondary_region_id
+        omp:
+          name: omp
+        performance_monitoring:
+          name: perfmonitor
+        security:
+          name: security
+          integrity_types:
+            - esp
+            - ip-udp-esp
+        snmp:
+          name: snmpv2
+          communities:
+            - authorization: read-only
+              name: JpKWRdzbvLeN9NE
+              user_label: com1
+              view: test_view
+          contact_person: person1
+          location: test location
+          shutdown: false
+          trap_target_servers:
+            - ip: 10.1.1.1
+              port: 9999
+              source_interface: Loopback0
+              user_label: com1
+              vpn_id: 1
+          views:
+            - name: test_view
+              oids:
+                - exclude: false
+                  id: 1.3.6.1
+    transport_profiles:
+      - name: transport1
+        description: full profile
+        bgp_features:
+          - name: transport_bgp
+            description: bgp full
+            always_compare_med: true
+            as_number: 65000
+            compare_router_id: true
+            deterministic_med: true
+            external_routes_distance: 20
+            hold_time: 180
+            internal_routes_distance: 200
+            ipv4_aggregate_addresses:
+              - as_set_path: true
+                network_address: 10.0.0.0
+                subnet_mask: 255.0.0.0
+                summary_only: false
+            ipv4_default_originate: true
+            ipv4_eibgp_maximum_paths: 4
+            ipv4_neighbors:
+              - address_variable: vpn0_bgp_neighbor_ipv4
+                address_families:
+                  - family_type: ipv4-unicast
+                    maximum_prefixes_reach_policy: restart
+                    maximum_prefixes_number: 10000
+                    maximum_prefixes_restart_interval: 1000
+                    maximum_prefixes_threshold: 50
+                    route_policy_in: transport_rpl
+                    route_policy_out: transport_rpl
+                allowas_in_number: 2
+                as_override: false
+                description: transport bgp ipv4
+                ebgp_multihop: 4
+                hold_time: 180
+                keepalive_time: 60
+                local_as: 65002
+                next_hop_self: false
+                password: sch927TQ52fx3mh
+                remote_as: 65001
+                send_community: true
+                send_extended_community: true
+                send_label: false
+                send_label_explicit_null: false
+                shutdown: false
+                source_interface: GigabitEthernet1
+            ipv4_networks:
+              - network_address: 10.0.0.0
+                subnet_mask: 255.255.255.0
+            ipv4_redistributes:
+              - protocol: connected
+                route_policy: transport_rpl
+            ipv4_table_map_filter: false
+            ipv4_table_map_route_policy: transport_rpl
+            ipv6_aggregate_addresses:
+              - as_set_path: false
+                prefix: fc00::/12
+                summary_only: false
+            ipv6_default_originate: false
+            ipv6_eibgp_maximum_paths: 4
+            ipv6_neighbors:
+              - address_variable: vpn0_bgp_neighbor_ipv6
+                address_families:
+                  - family_type: ipv6-unicast
+                    maximum_prefixes_reach_policy: restart
+                    maximum_prefixes_number: 10000
+                    maximum_prefixes_restart_interval: 1000
+                    maximum_prefixes_threshold: 50
+                    route_policy_in: transport_rpl
+                    route_policy_out: transport_rpl
+                allowas_in_number: 2
+                as_override: false
+                description: transport bgp ipv6
+                ebgp_multihop: 4
+                hold_time: 180
+                keepalive_time: 60
+                local_as: 65002
+                next_hop_self: false
+                password: sch927TQ52fx3mh
+                remote_as: 65001
+                send_community: true
+                send_extended_community: true
+                shutdown: false
+                source_interface: GigabitEthernet1
+            ipv6_networks:
+              - prefix: fc00::/12
+            ipv6_redistributes:
+              - protocol: connected
+                route_policy: transport_rpl
+            ipv6_table_map_filter: false
+            ipv6_table_map_route_policy: transport_rpl
+            keepalive_time: 60
+            local_routes_distance: 200
+            missing_med_as_worst: false
+            mpls_interfaces:
+              - name: GigabitEthernet2
+            multipath_relax: false
+            propagate_as_path: true
+            propagate_community: true
+            router_id_variable: vpn0_bgp_router_id
+        cellular_profiles:
+          - name: cellular_profiles_with_auth
+            description: cellular profile
+            access_point_name: apn.com
+            authentication_enable: true
+            authentication_type: pap
+            profile_id: 2
+            profile_username: username
+            profile_password: pwd
+            packet_data_network_type: ipv4
+            no_overwrite: false
+        gps_features:
+          - name: gps1
+            gps_enable: true
+            gps_mode: standalone
+            nmea_enable: true
+            nmea_source_address: 10.10.10.1
+            nmea_destination_address: 10.10.10.100
+            nmea_destination_port: 12345
+        ipv4_acls:
+          - name: transport_ipv4_acl
+            description: ipv4 access control list
+            default_action: accept
+            sequences:
+              - id: 1
+                name: acl
+                base_action: accept
+                match_entries:
+                  destination_data_prefix: 172.16.200.0/24
+                  source_data_prefix: 172.16.201.0/24
+                  destination_ports:
+                    - 10
+                    - 50-100
+                  dscps:
+                    - 10
+                    - 20
+                  source_ports:
+                    - 10
+                    - 50-100
+                actions:
+                  counter_name: accept_prefix
+                  dscp: 0
+                  ipv4_next_hop: 172.16.254.1
+                  log: true
+                  mirror: mirror
+                  policer: branch_policer
+              - id: 2
+                name: acl
+                base_action: drop
+                match_entries:
+                  destination_data_prefix_variable: drop_dst_prefix
+                  source_data_prefix_variable: drop_src_prefix
+                  packet_length: 100
+                  tcp_state: syn
+                actions:
+                  log: true
+                  counter_name: drop_prefix
+              - id: 3
+                name: acl
+                base_action: accept
+                match_entries:
+                  destination_data_prefix_list: ipv4_dpl
+                  source_data_prefix_list: ipv4_dpl
+                  packet_length: 100-1500
+                  protocols:
+                    - 1
+                  icmp_messages:
+                    - option-missing
+                    - timestamp-reply
+        ipv4_tracker_groups:
+          - name: ipv4_tracker_group
+            tracker_boolean: or
+            trackers:
+              - ipv4_ip_tracker
+              - ipv4_api_tracker
+        ipv4_trackers:
+          - name: ipv4_ip_tracker
+            description: IP Tracker
+            endpoint_ip: 10.0.0.1
+            interval: 60
+            multiplier: 2
+            threshold: 500
+            tracker_name: transport_ipv4_ip_tracker
+          - name: ipv4_api_tracker
+            description: API URL Tracker
+            threshold: 300
+            interval_variable: api_tracker_interval
+            multiplier: 1
+            endpoint_api_url: https://api.example.com
+            tracker_name: transport_ipv4_api_tracker
+          - name: ipv4_dns_tracker
+            description: DNS Tracker
+            threshold: 300
+            interval: 20
+            multiplier: 1
+            endpoint_dns_name: example.com
+            tracker_name: transport_ipv4_dns_tracker
+        ipv6_acls:
+          - name: transport_ipv6_acl_in
+            description: test desc ak
+            default_action: accept
+            sequences:
+              - id: 1
+                name: "Allow-ICMPv6"
+                base_action: accept
+                match_entries:
+                  destination_data_prefix: 2001:db8:1::/64
+                  source_data_prefix: 2001:db8:2::/64
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_classes:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  traffic_class: 46
+                  ipv6_next_hop: 2001:db8:3::1
+                  counter_name: "AKTFv6ACLCounter"
+              - id: 2
+                name: "Allow-ICMPv6-2"
+                base_action: accept
+                match_entries:
+                  destination_data_prefix_list: ipv6_dpl_2
+                  source_data_prefix_list: ipv6_dpl
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_classes:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  traffic_class: 46
+                  mirror: mirror
+                  policer: branch_policer
+          - name: transport_ipv6_acl_out
+            description: test2
+            default_action: accept
+            sequences:
+              - id: 1
+                name: "Allow-ICMPv6"
+                base_action: drop
+                match_entries:
+                  destination_data_prefix: 2001:db8:1::/64
+                  source_data_prefix: 2001:db8:2::/64
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_classes:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  counter_name: "AKTFv6ACLCounter1"
+              - id: 2
+                name: "Allow-ICMPv6-2"
+                base_action: drop
+                match_entries:
+                  destination_data_prefix_list: ipv6_dpl
+                  source_data_prefix_list: ipv6_dpl_2
+                  source_ports:
+                    - 1024-65535
+                    - 1023
+                  destination_ports:
+                    - 80
+                    - 443-444
+                  traffic_classes:
+                    - 46
+                    - 48
+                  next_header: 6
+                  packet_length: 64-128
+                  tcp_state: syn
+                actions:
+                  log: true
+                  counter_name: "AKTFv6ACLCounter2"
+        ipv6_tracker_groups:
+          - name: ipv6_tracker_group
+            tracker_name: ipv6_tracker_group
+            tracker_boolean: and
+            trackers:
+              - ipv6_ip_tracker
+              - ipv6_api_tracker
+        ipv6_trackers:
+          - name: ipv6_ip_tracker
+            description: IP Tracker
+            endpoint_ip: fc00::1
+            interval: 60
+            multiplier: 2
+            threshold: 500
+            tracker_name: transport_ipv6_ip_tracker
+          - name: ipv6_api_tracker
+            description: API URL Tracker
+            threshold: 300
+            interval_variable: api_tracker_interval
+            multiplier: 1
+            endpoint_api_url: https://api.example.com
+            tracker_name: transport_ipv6_api_tracker
+          - name: ipv6_dns_tracker
+            description: DNS Tracker
+            threshold: 300
+            interval: 20
+            multiplier: 1
+            endpoint_dns_name: example.com
+            tracker_name: transport_ipv6_dns_tracker
+        management_vpn:
+          name: management_vpn
+          description: management vpn 512
+          ethernet_interfaces:
+            - name: management_interface
+              description: management interface
+              arp_entries:
+                - ip_address: 192.168.100.1
+                  mac_address: 00:00:00:00:00:01
+              arp_timeout: 300
+              auto_detect_bandwidth: false
+              autonegotiate: false
+              icmp_redirect_disable: false
+              interface_description: management interface
+              interface_mtu: 1500
+              interface_name: GigabitEthernet6
+              ip_directed_broadcast: false
+              ip_mtu: 1500
+              iperf_server: 51.158.1.21
+              ipv4_address_variable: vpn512_mgmt_int_ip
+              ipv4_configuration_type: static
+              ipv4_dhcp_helpers:
+                - 192.168.100.2
+                - 192.168.100.3
+              ipv4_secondary_addresses:
+                - address: 192.168.100.101
+                  subnet_mask: 255.255.255.0
+              ipv4_subnet_mask_variable: vpn512_mgmt_int_mask
+              ipv6_configuration_type: static
+              ipv6_address_variable: vpn512_mgmt_int_ipv6
+              load_interval: 30
+              mac_address: 00:00:00:00:00:02
+              shutdown: false
+              speed: 10000
+              tcp_mss: 1460
+          host_mappings:
+            - hostname: server1
+              ips:
+                - 192.168.1.1
+                - 192.168.1.2
+          ipv4_primary_dns_address: 1.1.1.1
+          ipv4_secondary_dns_address: 1.0.0.1
+          ipv4_static_routes:
+            - gateway: nexthop
+              network_address: 192.168.100.0
+              next_hops:
+                - address: 192.168.1.1
+                  administrative_distance: 10
+              subnet_mask: 255.255.255.0
+            - administrative_distance: 10
+              gateway: null0
+              network_address: 192.168.254.254
+              subnet_mask: 255.255.255.255
+          ipv6_primary_dns_address: 2001:4860:4860::8888
+          ipv6_secondary_dns_address: 2001:4860:4860::8844
+          ipv6_static_routes:
+            - nat: nat66
+              gateway: nat
+              prefix: fc01::/64
+            - prefix: fc03::/64
+              gateway: null0
+            - prefix: fc04::/64
+              next_hops:
+                - address: fd01::1
+                  administrative_distance: 11
+          vpn_description: management vpn 512
+        ospf_features:
+          - name: transport_ospf
+            description: transport ospf feature
+            areas:
+              - number: 0
+                interfaces:
+                  - name: GigabitEthernet1
+                    authentication_message_digest_key: VzBgdxMK3Lksfaf
+                    authentication_message_digest_key_id: 1
+                    authentication_type: message-digest
+                    cost: 10
+                    hello_interval: 10
+                    dead_interval: 40
+                    designated_router_priority: 100
+                    lsa_retransmit_interval: 100
+                    network_type: broadcast
+                    passive: false
+                ranges:
+                  - cost: 50
+                    network_address: 192.168.9.0
+                    no_advertise: false
+                    subnet_mask: 255.255.255.0
+              - number: 1
+                no_summary: true
+                type: stub
+            default_originate: true
+            default_originate_always: true
+            default_originate_metric: 200
+            default_originate_metric_type: type2
+            distance_external: 110
+            distance_inter_area: 110
+            distance_intra_area: 110
+            redistributes:
+              - protocol: connected
+                route_policy: transport_rpl
+              - protocol: nat
+                dia: true
+            reference_bandwidth: 10000
+            rfc1583_compatibility: true
+            route_policy: transport_rpl
+            router_id_variable: ospf_router_id
+            router_lsa_advertisement_time: 10000
+            router_lsa_advertisement_type: on-startup
+            spf_calculation_delay: 10000
+            spf_initial_hold_time: 10000
+            spf_maximum_hold_time: 20000
+        route_policies:
+          - name: transport_rpl
+            description: transport_rpl
+            default_action: accept
+            sequences:
+              - id: 1
+                name: route
+                base_action: accept
+                protocol: ipv4
+                match_entries:
+                  as_path_list: aspath_list10
+                  bgp_local_preference: 100
+                  extended_community_list: ext_community_list
+                  ipv4_address_prefix_list: ipv4_pl_private
+                  ipv4_next_hop_prefix_list: ipv4_pl_private
+                  metric: 100
+                  omp_tag: 100
+                  ospf_tag: 100
+                  standard_community_lists:
+                    - standard_community_list
+                  standard_community_lists_criteria: or
+                actions:
+                  bgp_local_preference: 200
+                  communities:
+                    - internet
+                    - local-as
+                    - 65001:101
+                  communities_additive: true
+                  ipv4_next_hop: 192.168.1.1
+                  metric: 200
+                  metric_type: type1
+                  omp_tag: 200
+                  origin: incomplete
+                  ospf_tag: 200
+                  prepend_as_paths:
+                    - 65100
+                    - 65101
+                  weight: 100
+              - id: 2
+                name: route
+                base_action: accept
+                protocol: ipv6
+                match_entries:
+                  expanded_community_list: community_legacy_wan
+                  ipv6_address_prefix_list: ipv6_pl_private
+                  ipv6_next_hop_prefix_list: ipv6_pl_private
+                actions:
+                  communities_variable: transport_rpl_communities
+                  communities_additive: false
+                  ipv6_next_hop: 2001:db8::1
+              - id: 3
+                name: route
+                base_action: reject
+                protocol: both
+                match_entries:
+                  ospf_tag: 300
+        wan_vpn:
+          name: wan_vpn
+          description: VPN 0 configuration
+          bgp: transport_bgp
+          ospf: transport_ospf
+          enhance_ecmp_keying: true
+          ethernet_interfaces:
+            - name: inet_tloc
+              description: Internet TLOC
+              adaptive_qos: true
+              adaptive_qos_period: 400
+              adaptive_qos_shaping_rate_downstream:
+                default: 500000
+                maximum: 1000000
+                minimum: 200000
+              adaptive_qos_shaping_rate_upstream:
+                default: 500000
+                maximum: 1000000
+                minimum: 200000
+              arp_entries:
+                - ip_address: 172.16.1.111
+                  mac_address: 00:00:00:00:00:01
+              arp_timeout: 600
+              auto_detect_bandwidth: true
+              autonegotiate: true
+              bandwidth_downstream: 1000000
+              bandwidth_upstream: 1000000
+              block_non_source_ip: false
+              icmp_redirect_disable: false
+              interface_mtu: 1500
+              interface_name: GigabitEthernet1
+              interface_description: Internet TLOC
+              iperf_server_variable: gi1_iperf_server
+              ip_directed_broadcast: false
+              ip_mtu: 1500
+              ipv4_address_variable: vpn0_inet_ip
+              ipv4_configuration_type: static
+              ipv4_dhcp_helpers:
+                - 172.16.1.254
+                - 172.16.1.253
+              ipv4_egress_acl: transport_ipv4_acl
+              ipv4_ingress_acl: transport_ipv4_acl
+              ipv4_nat: true
+              ipv4_nat_type: interface
+              ipv4_nat_tcp_timeout: 1200
+              ipv4_nat_udp_timeout: 1200
+              ipv4_nat_static_entries:
+                - direction: inside
+                  source_ip_variable: vpn0_ipv4_nat_source_ip
+                  source_vpn_id: 1
+                  translate_ip_variable: vpn0_ipv4_nat_translate_ip
+              ipv4_tracker_group: ipv4_tracker_group
+              ipv4_subnet_mask_variable: vpn0_inet_mask
+              ipv6_configuration_type: static
+              ipv6_address_variable: vpn0_inet_ipv6
+              ipv6_egress_acl: transport_ipv6_acl_out
+              ipv6_ingress_acl: transport_ipv6_acl_in
+              ipv6_secondary_addresses:
+                - address_variable: vpn0_ipv6_sec1_ip
+              ipv6_tracker_group: ipv6_tracker_group
+              load_interval: 30
+              service_provider: sp1
+              shutdown: false
+              tcp_mss: 1460
+              tunnel_interface:
+                allow_service_all: false
+                allow_service_bfd: false
+                allow_service_bgp: true
+                allow_service_dhcp: false
+                allow_service_dns: true
+                allow_service_https: false
+                allow_service_icmp: true
+                allow_service_netconf: false
+                allow_service_ntp: false
+                allow_service_ospf: false
+                allow_service_snmp: false
+                allow_service_ssh: false
+                allow_service_stun: false
+                border: false
+                carrier: default
+                clear_dont_fragment: false
+                color: custom1
+                cts_sgt_propagation: false
+                exclude_controller_groups:
+                  - 1
+                  - 2
+                gre_encapsulation: true
+                gre_preference: 200
+                gre_weight: 200
+                group: 1
+                hello_interval: 1000
+                hello_tolerance: 12
+                ipsec_encapsulation: true
+                ipsec_preference: 200
+                ipsec_weight: 200
+                last_resort_circuit: false
+                low_bandwidth_link: false
+                max_control_connections: 2
+                nat_refresh_interval: 60
+                network_broadcast: false
+                port_hop: false
+                restrict: false
+                tcp_mss: 1460
+                vbond_as_stun_server: false
+                vmanage_connection_preference: 5
+            - name: mpls_tloc
+              description: MPLS TLOC
+              interface_name: GigabitEthernet2
+              ipv4_address_variable: vpn0_mpls_ip
+              ipv4_subnet_mask_variable: vpn0_mpls_mask
+          host_mappings:
+            - hostname: vbond-tmp.local
+              ips:
+                - 10.0.0.1
+                - 10.0.0.2
+          ipv4_primary_dns_address: 172.16.1.254
+          ipv4_secondary_dns_address: 172.16.2.254
+          ipv4_static_routes:
+            - gateway: nexthop
+              network_address: 0.0.0.0
+              subnet_mask: 0.0.0.0
+              next_hops:
+                - address: 172.16.1.254
+                  administrative_distance: 1
+                - address: 172.16.2.254
+                  administrative_distance: 1
+            - administrative_distance: 200
+              network_address: 192.168.254.0
+              subnet_mask: "255.255.255.0"
+              gateway: null0
+          services:
+            - te
+          ipv6_primary_dns_address: 2001:4860:4860::8888
+          ipv6_secondary_dns_address: 2001:4860:4860::8844
+          ipv6_static_routes:
+            - prefix: ::/0
+              gateway: nexthop
+              next_hops:
+                - address: 2001:db8:2::1
+                  administrative_distance: 1
+            - prefix: fc02::0/64
+              gateway: null0
+          nat_64_v4_pools:
+            - name: natpool1
+              overload: true
+              range_end: 192.168.100.100
+              range_start: 192.168.100.1
+      - name: transport2
+        ipv4_trackers:
+          - name: ipv4_ip_tracker
+            description: IP Tracker
+            endpoint_ip: 10.0.0.1
+            interval: 60
+            multiplier: 2
+            threshold: 500
+            tracker_name: transport_ipv4_ip_tracker
+        ipv6_trackers:
+          - name: ipv6_ip_tracker
+            description: IP Tracker
+            endpoint_ip: fc00::1
+            interval: 60
+            multiplier: 2
+            threshold: 500
+            tracker_name: transport_ipv6_ip_tracker
+        management_vpn:
+          name: management_vpn
+          ethernet_interfaces:
+            - name: management_interface
+              duplex: full
+              interface_name: GigabitEthernet6
+              ipv4_configuration_type: dynamic
+              ipv4_dhcp_distance: 1
+              ipv6_configuration_type: dynamic
+              media_type: auto-select
+        wan_vpn:
+          ethernet_interfaces:
+            - name: inet_tloc_with_nat_loopback
+              duplex: full
+              interface_name: GigabitEthernet1
+              ipv4_configuration_type: dynamic
+              ipv4_dhcp_distance: 1
+              ipv4_nat: true
+              ipv4_nat_type: loopback
+              ipv4_nat_loopback_interface: Loopback0
+              ipv4_tracker: ipv4_ip_tracker
+              ipv6_configuration_type: dynamic
+              ipv6_secondary_addresses:
+                - address_variable: vpn0_ipv6_sec1_ip
+              ipv6_nat: true
+              ipv6_nat_type: nat64
+              ipv6_tracker: ipv6_ip_tracker
+              mac_address: 00:00:00:00:00:22
+              media_type: auto-select
+              shaping_rate: 1000000
+              tloc_extension: GigabitEthernet2
+              tunnel_interface:
+                bind_loopback_tunnel: Loopback1
+                gre_tunnel_destination_ip_variable: vpn0_gre_tunnel_dest_ip
+                per_tunnel_qos: true
+                per_tunnel_qos_bandwidth_percent: 50
+                per_tunnel_qos_mode: hub
+            - name: inet_tloc_with_nat_pool
+              interface_name: GigabitEthernet2
+              gre_tloc_extension_source_ip_variable: gi1_gre_tloc_ext_src_ip
+              gre_tloc_extension_xconnect_variable: gi1_gre_tloc_ext_xconnect
+              ipv4_configuration_type: static
+              ipv4_address_variable: vpn0_inet_ip
+              ipv4_subnet_mask_variable: vpn0_inet_mask
+              ipv4_nat: true
+              ipv4_nat_type: pool
+              ipv4_nat_pool_overload: true
+              ipv4_nat_pool_prefix_length_variable: ipv4_nat_pool_pfx_len
+              ipv4_nat_pool_range_end_variable: ipv4_nat_pool_range_end
+              ipv4_nat_pool_range_start_variable: ipv4_nat_pool_range_start
+              ipv4_secondary_addresses:
+                - address_variable: vpn0_inet_sec1_ip
+                  subnet_mask_variable: vpn0_inet_sec1_mask
+              ipv6_nat: true
+              ipv6_nat_type: nat66
+              ipv6_nat66_static_entries:
+                - source_prefix_variable: vpn0_ipv6_nat66_source_prefix
+                  source_vpn_id: 10
+                  translate_prefix_variable: vpn0_ipv6_nat66_translate_prefix
+              speed: 1000
+          ipv6_static_routes:
+            - prefix: fc01::0/64
+              gateway: nat
+              nat: nat66

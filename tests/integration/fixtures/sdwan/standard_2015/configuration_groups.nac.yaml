@@ -1,0 +1,11 @@
+sdwan:
+  configuration_groups:
+    - name: cg1
+      system_profile: system1
+      transport_profile: transport1
+      device_tags:
+        - name: primary-router
+          features:
+            - service_rpl # this will not work in 20.12
+            - transport_rpl # this will not work in 20.12
+        - name: secondary-router

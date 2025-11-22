@@ -1,0 +1,649 @@
+---
+objects:
+  - name: Edge AAA
+    template: aaa
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.aaa_templates]
+  - name: Edge Banner
+    template: banner
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.banner_templates]
+  - name: Edge BFD
+    template: bfd
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.bfd_templates]
+  - name: Edge BGP
+    template: bgp
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.bgp_templates]
+  - name: Edge CLI Feature Template
+    template: cli_template
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.cli_templates]
+  - name: Edge DHCP Server
+    template: dhcp_server
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.dhcp_server_templates]
+  - name: Edge Global Settings
+    template: global_settings
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.global_settings_templates]
+  - name: Edge IGMP
+    template: igmp
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.igmp_templates]
+  - name: Edge Logging
+    template: logging
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.logging_templates]
+  - name: Edge Multicast
+    template: multicast
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.multicast_templates]
+  - name: Edge NTP
+    template: ntp
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.ntp_templates]
+  - name: Edge OMP
+    template: omp
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.omp_templates]
+  - name: Edge OSPF
+    template: ospf
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.ospf_templates]
+  - name: Edge PIM
+    template: pim
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.pim_templates]
+  - name: Edge Secure Internet Gateway
+    template: secure_internet_gateway
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.secure_internet_gateway_templates]
+  - name: Edge Security
+    template: security
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.security_templates]
+  - name: Edge SIG Credentials
+    template: sig_credentials
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.sig_credentials_templates]
+  - name: Edge SNMP
+    template: snmp
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.snmp_templates]
+  - name: Edge VPN Interface SVI
+    template: svi_interface
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.svi_interface_templates]
+  - name: Edge Switchport
+    template: switchport
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.switchport_templates]
+  - name: Edge System
+    template: system
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.system_templates]
+  - name: Edge ThousandEyes
+    template: thousandeyes
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.thousandeyes_templates]
+  - name: Edge VPN
+    template: vpn
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.vpn_templates]
+  - name: Edge VPN Interface Ethernet
+    template: ethernet_interface
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.ethernet_interface_templates]
+  - name: Edge VPN Interface IPsec
+    template: ipsec_interface
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.ipsec_interface_templates]
+  - name: Edge Secure App Hosting
+    template: secure_app_hosting
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.secure_app_hosting_templates]
+  - name: Edge VPN Interface GRE
+    template: gre_interface
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.gre_interface_templates]
+  - name: Edge VPN Interface Cellular
+    template: cellular_interface
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.cellular_interface_templates]
+  - name: Edge Cellular Controller
+    template: cellular_controller
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.cellular_controller_templates]
+  - name: Edge Cellular Profile
+    template: cellular_profile
+    folder: edge_feature_templates
+    paths: [sdwan.edge_feature_templates.cellular_profile_templates]
+  - name: Device Template
+    template: device_template
+    folder: edge_device_templates
+    paths: [sdwan.edge_device_templates]
+  - name: App Probe Class
+    template: app_probe_class
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.app_probe_classes]
+  - name: Application List
+    template: application_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.application_lists]
+  - name: AS Path List
+    template: as_path_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.as_path_lists]
+  - name: Class Map
+    template: class_map
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.class_maps]
+  - name: Color List
+    template: color_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.color_lists]
+  - name: Expanded Community List
+    template: expanded_community_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.expanded_community_lists]
+  - name: Extended Community List
+    template: extended_community_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.extended_community_lists]
+  - name: IPv4 Data Prefix List
+    template: ipv4_data_prefix_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.ipv4_data_prefix_lists]
+  - name: IPv4 Prefix List
+    template: ipv4_prefix_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.ipv4_prefix_lists]
+  - name: IPv6 Data Prefix List
+    template: ipv6_data_prefix_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.ipv6_data_prefix_lists]
+  - name: IPv6 Prefix List
+    template: ipv6_prefix_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.ipv6_prefix_lists]
+  - name: Mirror List
+    template: mirror_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.mirror_lists]
+  - name: Policer
+    template: policer
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.policers]
+  - name: Preferred Color Group
+    template: preferred_color_group
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.preferred_color_groups]
+  - name: Region List
+    template: region_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.region_lists]
+  - name: Site List
+    template: site_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.site_lists]
+  - name: SLA Class
+    template: sla_class
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.sla_classes]
+  - name: Standard Community List
+    template: standard_community_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.standard_community_lists]
+  - name: TLOC List
+    template: tloc_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.tloc_lists]
+  - name: VPN List
+    template: vpn_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.vpn_lists]
+  - name: IPv4 Access Control List Definition
+    template: ipv4_access_control_list_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.ipv4_access_control_lists]
+  - name: IPv6 Access Control List Definition
+    template: ipv6_access_control_list_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.ipv6_access_control_lists]
+  - name: IPv4 Device Access Policy Definition
+    template: ipv4_device_access_policy_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.ipv4_device_access_policies]
+  - name: IPv6 Device Access Policy Definition
+    template: ipv6_device_access_policy_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.ipv6_device_access_policies]
+  - name: QoS Map Definition
+    template: qos_map_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.qos_maps]
+  - name: Rewrite Rule Definition
+    template: rewrite_rule_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.rewrite_rules]
+  - name: Route Policy Definition
+    template: route_policy_definition
+    folder: localized_policies
+    paths: [sdwan.localized_policies.definitions.route_policies]
+  - name: Feature Localized Policy
+    template: localized_policy_feature_policy
+    folder: localized_policies
+    paths: [sdwan.localized_policies.feature_policies]
+  - name: Site
+    template: site
+    folder: sites
+    paths: [sdwan.sites]
+  - name: Hub and Spoke Topology Definition
+    template: hubandspoke_definition
+    folder: centralized_policies
+    paths:
+      [
+        sdwan.centralized_policies.definitions.control_policy.hub_and_spoke_topology,
+      ]
+  - name: Mesh Topology Definition
+    template: mesh_definition
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.control_policy.mesh_topology]
+  - name: Custom Control Topology Definition
+    template: custom_control_definition
+    folder: centralized_policies
+    paths:
+      [
+        sdwan.centralized_policies.definitions.control_policy.custom_control_topology,
+      ]
+  - name: VPN Membership Definition
+    template: vpn_membership_definition
+    folder: centralized_policies
+    paths:
+      [sdwan.centralized_policies.definitions.control_policy.vpn_membership]
+  - name: Traffic Data Service Chaining Definition
+    template: traffic_data_service_chaining
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.data_policy.traffic_data]
+  - name: Traffic Data QOS Definition
+    template: traffic_data_qos
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.data_policy.traffic_data]
+  - name: Traffic Data Application Firewall Definition
+    template: traffic_data_application_firewall
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.data_policy.traffic_data]
+  - name: Traffic Data Traffic Engineering Definition
+    template: traffic_data_traffic_engineering
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.data_policy.traffic_data]
+  - name: Traffic Data Custom Definition
+    template: traffic_data_custom
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.data_policy.traffic_data]
+  - name: Cflowd Definition
+    template: cflowd
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.definitions.data_policy.cflowd]
+  - name: Feature Policy
+    template: feature_policy
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.feature_policies]
+  # - name: CLI Policy
+  #   template: cli_policy
+  #   folder: centralized_policies
+  #   paths: [sdwan.centralized_policies.cli_policies]
+  - name: Activation
+    template: activation
+    folder: centralized_policies
+    paths: [sdwan.centralized_policies.activated_policy]
+  - name: Application Aware Routing
+    template: application_aware_routing
+    folder: centralized_policies
+    paths:
+      [
+        sdwan.centralized_policies.definitions.data_policy.application_aware_routing,
+      ]
+  - name: Zone-Based Firewall Definition
+    template: zone_based_firewall_definition
+    folder: security_policies
+    paths: [sdwan.security_policies.definitions.zone_based_firewall]
+  - name: Security Policy
+    template: feature_policy
+    folder: security_policies
+    paths: [sdwan.security_policies.feature_policies]
+  - name: FQDN List
+    template: fqdn_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.fqdn_lists]
+  - name: Port List
+    template: port_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.port_lists]
+  - name: Zone List
+    template: zone_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.zones]
+  - name: Local Application List
+    template: local_application_list
+    folder: classic_policy_objects
+    paths: [sdwan.policy_objects.local_application_lists]
+  - name: Intrusion Prevention Definition
+    template: intrusion_prevention_definition
+    folder: security_policies
+    paths: [sdwan.security_policies.definitions.intrusion_prevention]
+  - name: Configuration Group
+    template: configuration_group
+    folder: configuration_groups
+    paths: [sdwan.configuration_groups]
+  - name: Policy Group
+    template: policy_group
+    folder: policy_groups
+    paths: [sdwan.policy_groups]
+  - name: Application Priority Profile
+    template: application_priority
+    folder: feature_profiles
+    paths: [
+      sdwan.feature_profiles.application_priority_profiles.name,
+      sdwan.feature_profiles.application_priority_profiles.description,
+    ]
+  - name: CLI Profile
+    template: cli
+    folder: feature_profiles
+    paths: [
+      sdwan.feature_profiles.cli_profiles.name,
+      sdwan.feature_profiles.cli_profiles.description,
+      ]
+  - name: Other Profile
+    template: other
+    folder: feature_profiles
+    paths: [
+      sdwan.feature_profiles.other_profiles.name,
+      sdwan.feature_profiles.other_profiles.description,
+      ]
+  - name: Policy Object Profile
+    template: policy_object
+    folder: feature_profiles
+    paths: [
+      sdwan.feature_profiles.policy_object_profile.name,
+      sdwan.feature_profiles.policy_object_profile.description,
+    ]
+  - name: Service Profile
+    template: service
+    folder: feature_profiles
+    paths: [
+      sdwan.feature_profiles.service_profiles.name,
+      sdwan.feature_profiles.service_profiles.description,
+    ]
+  - name: System Profile
+    template: system
+    folder: feature_profiles
+    paths: [
+      sdwan.feature_profiles.system_profiles.name,
+      sdwan.feature_profiles.system_profiles.description,
+    ]
+  - name: Transport Profile
+    template: transport
+    folder: feature_profiles
+    paths: [
+      sdwan.feature_profiles.transport_profiles.name,
+      sdwan.feature_profiles.transport_profiles.description,
+    ]
+  - name: Application Priority QoS Policy
+    template: application_priority_qos_policy
+    folder: policies_application_priority
+    paths: [sdwan.feature_profiles.application_priority_profiles.qos_policies]
+  - name: CLI Config Feature
+    template: cli_config
+    folder: features_cli
+    paths: [sdwan.feature_profiles.cli_profiles.config]
+  - name: Other ThousandEyes Feature
+    template: other_thousandeyes
+    folder: features_other
+    paths: [sdwan.feature_profiles.other_profiles.thousandeyes]
+  - name: Other UCSE Feature
+    template: other_ucse
+    folder: features_other
+    paths: [sdwan.feature_profiles.other_profiles.ucse]
+  - name: Service BGP Feature
+    template: service_bgp
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.bgp_features]
+  - name: Service DHCP Server Feature
+    template: service_dhcp_server
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.dhcp_servers]
+  - name: Service EIGRP Feature
+    template: service_eigrp
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.eigrp_features]
+  - name: Service IPv4 ACL Feature
+    template: service_ipv4_acl
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.ipv4_acls]
+  - name: Service IPv4 Tracker Group Feature
+    template: service_ipv4_tracker_group
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.ipv4_tracker_groups]
+  - name: Service IPv4 Tracker Feature
+    template: service_ipv4_tracker
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.ipv4_trackers]
+  - name: Service IPv6 ACL Feature
+    template: service_ipv6_acl
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.ipv6_acls]
+  - name: Service LAN VPN Feature
+    template: service_lan_vpn
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.lan_vpns]
+  - name: Service LAN VPN Ethernet Interface Feature
+    template: service_lan_vpn_ethernet_interface
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces]
+  - name: Service Object Tracker Group Feature
+    template: service_object_tracker_group
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.object_tracker_groups]
+  - name: Service Object Tracker Feature
+    template: service_object_tracker
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.object_trackers]
+  - name: Service OSPF Feature
+    template: service_ospf
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.ospf_features]
+  - name: Service Route Policy Feature
+    template: service_route_policy
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.route_policies]
+  - name: System AAA Feature
+    template: system_aaa
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.aaa]
+  - name: System Banner Feature
+    template: system_banner
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.banner]
+  - name: System Basic Feature
+    template: system_basic
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.basic]
+  - name: System BFD Feature
+    template: system_bfd
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.bfd]
+  - name: System Flexible Port Speed Feature
+    template: system_flexible_port_speed
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.flexible_port_speed]
+  - name: System Global Feature
+    template: system_global
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.global]
+  - name: System IPv4 Device Access Policy Feature
+    template: system_ipv4_device_access_policy
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.ipv4_device_access_policy]
+  - name: System IPv6 Device Access Policy Feature
+    template: system_ipv6_device_access_policy
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.ipv6_device_access_policy]
+  - name: System Logging Feature
+    template: system_logging
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.logging]
+  - name: System Multi-Region Fabric Feature
+    template: system_mrf
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.mrf]
+  - name: System NTP Feature
+    template: system_ntp
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.ntp]
+  - name: System OMP Feature
+    template: system_omp
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.omp]
+  - name: System Performance Monitoring Feature
+    template: system_performance_monitoring
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.performance_monitoring]
+  - name: System Security Feature
+    template: system_security
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.security]
+  - name: System SNMP Feature
+    template: system_snmp
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.snmp]
+  - name: Transport BGP Feature
+    template: transport_bgp
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.bgp_features]
+  - name: Transport Cellular Profile Feature
+    template: transport_cellular_profile
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.cellular_profiles]
+  - name: Transport GPS Feature
+    template: transport_gps
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.gps_features]
+  - name: Transport IPv4 ACL Feature
+    template: transport_ipv4_acl
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ipv4_acls]
+  - name: Transport IPv4 Tracker Group Feature
+    template: transport_ipv4_tracker_group
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ipv4_tracker_groups]
+  - name: Transport IPv4 Tracker Feature
+    template: transport_ipv4_tracker
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ipv4_trackers]
+  - name: Transport IPv6 ACL Feature
+    template: transport_ipv6_acl
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ipv6_acls]
+  - name: Transport IPv6 Tracker Group Feature
+    template: transport_ipv6_tracker_group
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ipv6_tracker_groups]
+  - name: Transport IPv6 Tracker Feature
+    template: transport_ipv6_tracker
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ipv6_trackers]
+  - name: Transport Management VPN Feature
+    template: transport_management_vpn
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.management_vpn]
+  - name: Transport Management VPN Ethernet Interface Feature
+    template: transport_management_vpn_ethernet_interface
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces]
+  - name: Transport OSPF Feature
+    template: transport_ospf
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.ospf_features]
+  - name: Transport Route Policy Feature
+    template: transport_route_policy
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.route_policies]
+  - name: Transport WAN VPN Feature
+    template: transport_wan_vpn
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.wan_vpn]
+  - name: Transport WAN VPN Ethernet Interface Feature
+    template: transport_wan_vpn_ethernet_interface
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces]
+  - name: App Probe Class
+    template: app_probe_class
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.app_probe_classes]
+  - name: Application List
+    template: application_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.application_lists]
+  - name: AS Path List
+    template: as_path_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.as_path_lists]
+  - name: Color List
+    template: color_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.color_lists]
+  - name: Expanded Community List
+    template: expanded_community_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.expanded_community_lists]
+  - name: Extended Community List
+    template: extended_community_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.extended_community_lists]
+  - name: Forwarding Class
+    template: forwarding_class
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.forwarding_classes]
+  - name: IPv4 Data Prefix List
+    template: ipv4_data_prefix_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.ipv4_data_prefix_lists]
+  - name: IPv4 Prefix List
+    template: ipv4_prefix_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.ipv4_prefix_lists]
+  - name: IPv6 Data Prefix List
+    template: ipv6_data_prefix_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.ipv6_data_prefix_lists]
+  - name: IPv6 Prefix List
+    template: ipv6_prefix_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.ipv6_prefix_lists]
+  - name: Mirror
+    template: mirror
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.mirrors]
+  - name: Policer
+    template: policer
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.policers]
+  - name: Preferred Color Group
+    template: preferred_color_group
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.preferred_color_groups]
+  - name: SLA Class
+    template: sla_class
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.sla_classes]
+  - name: Standard Community List
+    template: standard_community_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.standard_community_lists]
+  - name: TLOC List
+    template: tloc_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.tloc_lists]

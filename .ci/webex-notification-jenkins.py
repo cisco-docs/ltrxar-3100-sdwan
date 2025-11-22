@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Copyright: (c) 2022, Daniel Schmidt <danischm@cisco.com>
+# Copyright: (c) 2023, Daniel Schmidt <danischm@cisco.com>
 
 # Expects the following environment variables:
 # - WEBEX_TOKEN
@@ -8,7 +8,6 @@
 # - JOB_NAME
 # - BUILD_DISPLAY_NAME
 # - RUN_DISPLAY_URL
-# - BUILD_URL
 # - GIT_COMMIT_MESSAGE
 # - GIT_URL
 # - GIT_COMMIT_AUTHOR
@@ -37,54 +36,9 @@ TEMPLATE = """[**[{status}] {job_name} {build}**]({url})
     event=os.getenv("GIT_EVENT"),
 )
 
-FMT_OUTPUT = """\n**Terraform FMT Errors**
-```
-"""
-
-VALIDATE_OUTPUT = """\n**Validate Errors**
-```
-"""
-
-PLAN_OUTPUT = """\n[**Terraform Plan**]({})
-```
-""".format(
-    os.getenv("RUN_ARTIFACTS_DISPLAY_URL")
-)
-
-TEST_OUTPUT = """\n[**Testing**]({}artifact/tests/results/sdwan/log.html)
-```
-""".format(
-    os.getenv("BUILD_URL")
-)
-
 
 def main():
     message = TEMPLATE
-    if os.path.isfile("./fmt_output.txt"):
-        with open("./fmt_output.txt", "r") as fmt_file:
-            fmt_output = fmt_file.read()
-            if len(fmt_output.strip()):
-                message += FMT_OUTPUT + fmt_output + "\n```\n"
-    if os.path.isfile("./validate_output.txt"):
-        with open("./validate_output.txt", "r") as validate_file:
-            validate_output = validate_file.read()
-            if len(validate_output.strip()):
-                message += VALIDATE_OUTPUT + validate_output + "\n```\n"
-    if os.path.isfile("./plan.txt"):
-        with open("./plan.txt", "r") as in_file:
-            plan = in_file.read()
-        for line in plan.split("\n"):
-            if line.startswith("Plan:"):
-                message += PLAN_OUTPUT + line[6:-1] + "\n```\n"
-    if os.path.isfile("./test_output.txt"):
-        with open("./test_output.txt", "r") as in_file:
-            tests = in_file.read()
-        tests_line = ""
-        for line in tests.split("\n"):
-            if "tests, " in line:
-                tests_line = line
-        if tests_line:
-            message += TEST_OUTPUT + tests_line[0:-1] + "\n```\n"
 
     body = {"roomId": os.getenv("WEBEX_ROOM_ID"), "markdown": message}
     headers = {

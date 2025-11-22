@@ -1,0 +1,1470 @@
+---
+# Edge feature templates
+sdwan:
+  edge_feature_templates:
+    aaa_templates:
+      - name: FT-CEDGE-AAA-01
+        description: Local auth
+        authentication_and_authorization_order:
+          - local
+        users:
+          - name: admin
+            optional: false
+            password: $6$Oz2ydqNXLLDIsPSG$LhogoactFVb9eJgqgv/O/Zb.FHg74drK4maijc.Q9q/KhyDcPfwrHx9Vy6G9hY7oKWbyas4XKms7f7Znl/ndF.
+            privilege_level: 15
+            secret: $9$dU74jedMCjuogb$tt5nj1PRM1sTfPVHdfng/skm5F5SVmZh8kdqskY4T9I
+          - name: failsafe
+            optional: false
+            password: $6$v0UN8x4fkvZd0Lnj$hq13MC.W5ElstGlolO38fshGEYxSechW4K5zEdrJD1trSH30AaNKvL4VUlOtxersGmIDNefPwyrSqbJpCpXGJ.
+            privilege_level: 15
+            secret: $9$g1yhfB7cvGL5R8$8lUWXWGnaLHosXIcJ/eYr1C26nJyFNXkXHhDKILO4YQ
+      - name: FT-CEDGE-AAA-02
+        description: TACACS, Local auth
+        authentication_and_authorization_order:
+          - TACACS-GROUP1
+          - TACACS-GROUP2
+          - local
+        tacacs_server_groups:
+          - name: TACACS-GROUP1
+            source_interface: Loopback511
+            vpn_id: 511
+            servers:
+              - address: 10.1.1.1
+                port: 49
+                timeout: 120
+                key: $CRYPT_CLUSTER$0A8/tHNPjmeM6FwSrCCU2Q==$4XN7WfJqZ7TgJWwt2Ob50A==
+                secret_key: 00071a1507545a545c
+              - address: 10.1.1.2
+                key: $CRYPT_CLUSTER$0A8/tHNPjmeM6FwSrCCU2Q==$4XN7WfJqZ7TgJWwt2Ob50A==
+                port: 49
+                secret_key: 00071a1507545a545c
+          - name: TACACS-GROUP2
+            source_interface: Loopback511
+            vpn_id: 511
+            servers:
+              - address: 10.1.1.3
+                key: $CRYPT_CLUSTER$0A8/tHNPjmeM6FwSrCCU2Q==$4XN7WfJqZ7TgJWwt2Ob50A==
+                port: 49
+                secret_key: 00071a1507545a545c
+        users:
+          - name: admin
+            optional: false
+            password: $6$Oz2ydqNXLLDIsPSG$LhogoactFVb9eJgqgv/O/Zb.FHg74drK4maijc.Q9q/KhyDcPfwrHx9Vy6G9hY7oKWbyas4XKms7f7Znl/ndF.
+            privilege_level: 15
+            secret: $9$dU74jedMCjuogb$tt5nj1PRM1sTfPVHdfng/skm5F5SVmZh8kdqskY4T9I
+          - name: failsafe
+            password: $6$v0UN8x4fkvZd0Lnj$hq13MC.W5ElstGlolO38fshGEYxSechW4K5zEdrJD1trSH30AaNKvL4VUlOtxersGmIDNefPwyrSqbJpCpXGJ.
+            privilege_level: 15
+            secret: $9$g1yhfB7cvGL5R8$8lUWXWGnaLHosXIcJ/eYr1C26nJyFNXkXHhDKILO4YQ
+            optional: false
+      - name: FT-CEDGE-AAA-03
+        description: RADIUS, Local auth
+        authentication_and_authorization_order:
+          - RADIUS-GROUP1
+          - RADIUS-GROUP2
+          - local
+        radius_server_groups:
+          - name: RADIUS-GROUP1
+            source_interface: Loopback511
+            vpn_id: 511
+            servers:
+              - address: 10.1.1.1
+                accounting_port: 1813
+                authentication_port: 1812
+                key: $CRYPT_CLUSTER$ENUwbbutISa31iAXuryRqQ==$CVy9EkMrtaPjTUFxNPv/QA==
+                retransmit_count: 3
+                secret_key: 0802455d0a165445415f59
+                timeout: 5
+              - address: 10.1.1.2
+                accounting_port: 1813
+                authentication_port: 1812
+                key: $CRYPT_CLUSTER$ENUwbbutISa31iAXuryRqQ==$CVy9EkMrtaPjTUFxNPv/QA==
+                retransmit_count: 3
+                secret_key: 0802455d0a165445415f59
+                timeout: 5
+          - name: RADIUS-GROUP2
+            source_interface: Loopback511
+            vpn_id: 511
+            servers:
+              - address: 10.1.1.3
+                accounting_port: 1813
+                authentication_port: 1812
+                key: $CRYPT_CLUSTER$ENUwbbutISa31iAXuryRqQ==$CVy9EkMrtaPjTUFxNPv/QA==
+                retransmit_count: 3
+                secret_key: 0802455d0a165445415f59
+                timeout: 5
+        users:
+          - name: admin
+            optional: false
+            password: $6$Oz2ydqNXLLDIsPSG$LhogoactFVb9eJgqgv/O/Zb.FHg74drK4maijc.Q9q/KhyDcPfwrHx9Vy6G9hY7oKWbyas4XKms7f7Znl/ndF.
+            privilege_level: 15
+            secret: $9$dU74jedMCjuogb$tt5nj1PRM1sTfPVHdfng/skm5F5SVmZh8kdqskY4T9I
+          - name: failsafe
+            password: $6$v0UN8x4fkvZd0Lnj$hq13MC.W5ElstGlolO38fshGEYxSechW4K5zEdrJD1trSH30AaNKvL4VUlOtxersGmIDNefPwyrSqbJpCpXGJ.
+            privilege_level: 15
+            secret: $9$g1yhfB7cvGL5R8$8lUWXWGnaLHosXIcJ/eYr1C26nJyFNXkXHhDKILO4YQ
+            optional: false
+    banner_templates:
+      - name: FT-CEDGE-BANNER-01
+        description: Banner template with Carriage return, Line Feed
+        device_types:
+          - C8000V
+        login: "login banner: new\n"
+        motd: "motd banner:\r\nNo message today\n"
+      - name: FT-CEDGE-BANNER-02
+        description: Banner template with Carriage return, Line Feed and horizontal tab
+        login: "login banner: new\ttest\n"
+        motd: "motd banner:\r\nNo message today\n"
+      - name: FT-CEDGE-BANNER-03
+        description: Banner template text only single line
+        login: "login banner plain text"
+        motd: "motd banner plain text"
+      - name: FT-CEDGE-BANNER-04
+        description: Banner template using variable references
+        login_variable: login_banner_variable1
+        motd_variable: motd_banner_variable1
+      - name: FT-CEDGE-BANNER-05
+        description: Typical Multiline banner using Carriage return, Line Feed
+        login: "*************************************************************\n*************************************************************\n**\n** UNAUTHORIZED USE PROHIBITED\n** UNAUTHORIZED ACCESS PROHIBITED\n **\n** Log out immediately\n** XXXXXXXXXX\n **\n*************************************************************\n*************************************************************"
+      - name: FT-CEDGE-BANNER-06
+        description: "Multiline banner template example"
+        login: |
+          ***********************************************************
+          ***********************************************************
+          ** UNAUTHORIZED USE PROHIBITED
+          ** UNAUTHORIZED ACCESS PROHIBITED
+          **
+          ** MANAGED BY:
+          ** XXXXXXXXXX
+          **
+          ***********************************************************
+          ***********************************************************
+      - name: FT-CEDGE-BANNER-07
+        description: Banner template with ASCII Carriage return, Line Feed and horizontal tab
+        device_types:
+          - C8000V
+          - ISR-4331
+        login: "Login**********************************************************************\x0d\x0aLogin next line"
+        motd: "MOTD***************************************************************\x0D\x0AMOTD next\x09line"
+    bfd_templates:
+      - name: FT-CEDGE-BFD-01
+        description: BFD base template
+        colors:
+          - color: custom1
+          - color: custom2
+          - color: private1
+          - color: private2
+      - name: FT-CEDGE-BFD-02
+        description: BFD base  template double spaced description
+        colors:
+          - color: custom1
+          - color: private2
+    bgp_templates:
+      - name: FT-CEDGE-BGP-VPN1-ACTIVE
+        description: VPN 1 BGP
+        ipv4_address_family:
+          default_information_originate: false
+          maximum_paths_variable: vpn1_bgp_ipv4_maximum_paths
+          redistributes:
+            - protocol: omp
+              optional: false
+              route_policy: RM-SITE-BGP-OUT-ACTIVE
+          neighbors:
+            - address_variable: vpn1_bgp_ipv4_neighbor1_address
+              address_families:
+                - family_type: ipv4-unicast
+                  maximum_prefixes: 1000
+              next_hop_self: false
+              password_variable: vpn1_bgp_ipv4_neighbor1_password
+              remote_as_variable: vpn1_bgp_ipv4_neighbor1_remote_as
+              shutdown_variable: vpn1_bgp_ipv4_neighbor1_shutdown
+              optional: true
+            - address_variable: vpn1_bgp_ipv4_neighbor2_address
+              address_families:
+                - family_type: ipv4-unicast
+                  maximum_prefixes: 1000
+              password_variable: vpn1_bgp_ipv4_neighbor2_password
+              remote_as_variable: vpn1_bgp_ipv4_neighbor2_remote_as
+              shutdown_variable: vpn1_bgp_ipv4_neighbor2_shutdown
+              optional: true
+        as_number_variable: vpn1_bgp_as_number
+        shutdown_variable: vpn1_bgp_shutdown
+        holdtime: 3
+        keepalive: 1
+      - name: FT-CEDGE-BGP-VPN1-STANDBY
+        description: VPN 1 BGP
+        ipv4_address_family:
+          default_information_originate: false
+          maximum_paths_variable: vpn1_bgp_ipv4_maximum_paths
+          redistributes:
+            - protocol: omp
+              optional: false
+              route_policy: RM-SITE-BGP-OUT-STANDBY
+          neighbors:
+            - address_variable: vpn1_bgp_ipv4_neighbor1_address
+              address_families:
+                - family_type: ipv4-unicast
+                  maximum_prefixes: 1000
+              next_hop_self: false
+              password_variable: vpn1_bgp_ipv4_neighbor1_password
+              remote_as_variable: vpn1_bgp_ipv4_neighbor1_remote_as
+              shutdown_variable: vpn1_bgp_ipv4_neighbor1_shutdown
+              optional: true
+            - address_variable: vpn1_bgp_ipv4_neighbor2_address
+              address_families:
+                - family_type: ipv4-unicast
+                  maximum_prefixes: 1000
+                  route_policy_in: RM-SITE-BGP-OUT-STANDBY
+                  route_policy_out: RM-SITE-BGP-OUT-ACTIVE
+              password_variable: vpn1_bgp_ipv4_neighbor2_password
+              remote_as_variable: vpn1_bgp_ipv4_neighbor2_remote_as
+              shutdown_variable: vpn1_bgp_ipv4_neighbor2_shutdown
+              optional: true
+        as_number_variable: vpn1_bgp_as_number
+        shutdown_variable: vpn1_bgp_shutdown
+        holdtime: 3
+        keepalive: 1
+    cli_templates:
+      - name: FT-EDGE-CLI-LOGGING
+        description: "Edge CLI Template to disable DAUTH logs"
+        cli_config: |
+          logging discriminator auth mnemonics drops AUTH_PASSED
+          logging console discriminator auth
+      - name: FT-EDGE-CLI-BGP
+        description: "Edge CLI Template to set BGP local AS"
+        cli_config: |
+          ! This template is using variables
+          router bgp {{bgp_as_number}}
+            address-family ipv4 unicast vrf 10
+            neighbor {{bgp_neighbor_ip}} local-as {{bgp_neighbor_local_as}}
+          !
+      - name: FT-EDGE-CLI-DUALCPE-ACTIVE
+        description: "Edge CLI Template to set PIM configuration and Edge CLI Template to disable DAUTH logs"
+        cli_config: |
+          logging discriminator auth mnemonics drops AUTH_PASSED
+          logging console discriminator auth
+          ip access-list standard 10
+            10 permit 224.1.1.1
+            11 permit 224.1.1.2
+            12 permit 10.0.0.1
+          !
+    dhcp_server_templates:
+      - name: FT-CEDGE-DHCPSERVER-VPN2-V01
+        description: Internet DHCP Server
+        address_pool_variable: vpn2_dhcp_address_pool
+        exclude_addresses_variable: vpn2_dhcp_exclude_addresses
+        lease_time: 3600
+        default_gateway_variable: vpn2_dhcp_default_gateway
+        dns_servers_variable: vpn2_dhcp_dns_servers
+    ethernet_interface_templates:
+      - name: FT-CEDGE-WAN-TLOC1
+        description: CEDGE TLOC1 with dynamic IP Settings, NAT enabled
+        interface_description_variable: vpn0_tloc01_if_description
+        interface_name_variable: vpn0_tloc01_if_name
+        ipv4_address_dhcp: true
+        dhcp_distance: 1
+        ipv4_nat: true
+        ipv4_nat_type: interface
+        shaping_rate_variable: vpn0_tloc01_shaping_rate
+        shutdown_variable: vpn0_tloc01_if_shutdown
+        tunnel_interface:
+          allow_service_bgp: false
+          allow_service_dhcp: true
+          allow_service_dns: true
+          allow_service_https: false
+          allow_service_icmp: true
+          allow_service_netconf: false
+          allow_service_ntp: true
+          allow_service_ospf: false
+          allow_service_snmp: false
+          allow_service_ssh: false
+          allow_service_stun: false
+          clear_dont_fragment: false
+          color_variable: vpn0_tloc01_tunnel_color
+          restrict_variable: vpn0_tloc01_tunnel_restrict
+          ipsec_encapsulation: true
+          ipsec_preference_variable: vpn0_tloc01_tunnel_ipsec_preference
+          ipsec_weight_variable: vpn0_tloc01_tunnel_weight
+          group_variable: vpn0_tloc01_tunnel_group
+          hello_interval: 1000
+          hello_tolerance: 12
+          vmanage_connection_preference_variable: vpn0_tloc01_tunnel_vmanage_connection_preference
+      - name: FT-CEDGE-WAN-TLOC2
+        description: CEDGE TLOC2 with dynamic IP Settings, NAT enabled
+        interface_description_variable: vpn0_tloc02_if_description
+        interface_name_variable: vpn0_tloc02_if_name
+        ipv4_address_dhcp: true
+        dhcp_distance: 1
+        ipv4_nat: true
+        ipv4_nat_type: interface
+        shaping_rate_variable: vpn0_tloc02_shaping_rate
+        shutdown_variable: vpn0_tloc02_if_shutdown
+        tunnel_interface:
+          allow_service_bgp: false
+          allow_service_dhcp: true
+          allow_service_dns: true
+          allow_service_https: false
+          allow_service_icmp: true
+          allow_service_netconf: false
+          allow_service_ntp: true
+          allow_service_ospf: false
+          allow_service_snmp: false
+          allow_service_ssh: false
+          allow_service_stun: false
+          clear_dont_fragment: false
+          color_variable: vpn0_tloc02_tunnel_color
+          restrict_variable: vpn0_tloc02_tunnel_restrict
+          ipsec_encapsulation: true
+          ipsec_preference_variable: vpn0_tloc02_tunnel_ipsec_preference
+          ipsec_weight_variable: vpn0_tloc02_tunnel_weight
+          group_variable: vpn0_tloc02_tunnel_group
+          hello_interval: 1000
+          hello_tolerance: 12
+          vmanage_connection_preference_variable: vpn0_tloc02_tunnel_vmanage_connection_preference
+      - name: FT-CEDGE-WAN-TLOC1-STATIC
+        description: CEDGE TLOC1 with static IP Settings, NAT enabled
+        interface_description_variable: vpn0_tloc01_if_description
+        interface_name_variable: vpn0_tloc01_if_name
+        ipv4_address_variable: vpn0_tloc01_if_ipv4_address
+        ipv4_nat: true
+        ipv4_nat_type: interface
+        qos_map: QOS-MAP-1P4Q
+        rewrite_rule: REWRITE-RULE-MPLS
+        shaping_rate_variable: vpn0_tloc01_shaping_rate
+        shutdown_variable: vpn0_tloc01_if_shutdown
+        tunnel_interface:
+          allow_service_bgp: false
+          allow_service_dhcp: true
+          allow_service_dns: true
+          allow_service_https: false
+          allow_service_icmp: true
+          allow_service_netconf: false
+          allow_service_ntp: true
+          allow_service_ospf: false
+          allow_service_snmp: false
+          allow_service_ssh: false
+          allow_service_stun: false
+          clear_dont_fragment: false
+          color_variable: vpn0_tloc01_tunnel_color
+          restrict_variable: vpn0_tloc01_tunnel_restrict
+          ipsec_encapsulation: true
+          ipsec_preference_variable: vpn0_tloc01_tunnel_ipsec_preference
+          ipsec_weight_variable: vpn0_tloc01_tunnel_weight
+          group_variable: vpn0_tloc01_tunnel_group
+          hello_interval: 1000
+          hello_tolerance: 12
+          vmanage_connection_preference_variable: vpn0_tloc01_tunnel_vmanage_connection_preference
+      - name: FT-CEDGE-WAN-TLOC2-STATIC
+        description: CEDGE TLOC2 with static IP Settings, NAT enabled
+        interface_description_variable: vpn0_tloc02_if_description
+        interface_name_variable: vpn0_tloc02_if_name
+        ipv4_address_variable: vpn0_tloc02_if_ipv4_address
+        ipv4_nat: true
+        ipv4_nat_type: interface
+        shaping_rate_variable: vpn0_tloc02_shaping_rate
+        shutdown_variable: vpn0_tloc02_if_shutdown
+        tunnel_interface:
+          allow_service_bgp: false
+          allow_service_dhcp: true
+          allow_service_dns: true
+          allow_service_https: false
+          allow_service_icmp: true
+          allow_service_netconf: false
+          allow_service_ntp: true
+          allow_service_ospf: false
+          allow_service_snmp: false
+          allow_service_ssh: false
+          allow_service_stun: false
+          clear_dont_fragment: false
+          color_variable: vpn0_tloc02_tunnel_color
+          restrict_variable: vpn0_tloc02_tunnel_restrict
+          ipsec_encapsulation: true
+          ipsec_preference_variable: vpn0_tloc02_tunnel_ipsec_preference
+          ipsec_weight_variable: vpn0_tloc02_tunnel_weight
+          group_variable: vpn0_tloc02_tunnel_group
+          hello_interval: 1000
+          hello_tolerance: 12
+          vmanage_connection_preference_variable: vpn0_tloc02_tunnel_vmanage_connection_preference
+      - name: FT-CEDGE-WAN-TLOCEXT1
+        description: CEDGE TLOC-Extension 1; static IP Settings
+        interface_description_variable: vpn0_tlocext1_if_description
+        interface_name_variable: vpn0_tlocext1_if_name
+        ipv4_address_variable: vpn0_tlocext1_if_ipv4_address
+        shutdown_variable: vpn0_tlocext1_if_shutdown
+        tloc_extension_variable: vpn0_tlocext1_if_tloc_extension
+      - name: FT-CEDGE-LAN-PHYS1
+        description: CEDGE Physical LAN interface
+        interface_description_variable: vpn0_int1_if_description
+        interface_name_variable: vpn0_int1_if_name
+        shutdown_variable: vpn0_int1_if_shutdown
+      - name: FT-CEDGE-LAN-PHYS2
+        description: CEDGE Physical LAN interface
+        interface_description_variable: vpn0_int2_if_description
+        interface_name_variable: vpn0_int2_if_name
+        shutdown_variable: vpn0_int2_if_shutdown
+      - name: FT-CEDGE-VPN1-LAN1
+        description: CEDGE, VPN 1, L3 LAN1
+        interface_description_variable: vpn1_int1_if_description
+        interface_name_variable: vpn1_int1_if_name
+        ipv4_address_variable: vpn1_int1_if_ipv4_address
+        shutdown_variable: vpn1_int1_if_shutdown
+        ip_mtu: 1500
+        mtu: 1500
+      - name: FT-CEDGE-VPN1-LAN1-VRRP
+        description: CEDGE, VPN 1, L3 LAN1, VRRP
+        interface_description_variable: vpn1_int1_if_description
+        interface_name_variable: vpn1_int1_if_name
+        ipv4_address_variable: vpn1_int1_if_ipv4_address
+        shutdown_variable: vpn1_int1_if_shutdown
+        ipv4_vrrp_groups:
+          - id_variable: vpn1_int1_vrrp_group_id
+            address_variable: vpn1_int1_vrrp_group_ip
+            priority_variable: vpn1_int1_vrrp_group_priority
+            timer_variable: vpn1_int1_vrrp_group_timer
+            tloc_preference_change: false
+            track_omp: true
+      - name: FT-CEDGE-VPN511-LOOPBACK511
+        description: CEDGE, VPN 511, Loopback511
+        interface_description_variable: vpn511_int1_if_description
+        interface_name_variable: vpn511_int1_if_name
+        ipv4_address_variable: vpn511_int1_if_ipv4_address
+        shutdown_variable: vpn511_int1_if_shutdown
+      - name: FT-CEDGE-VPN512-OOB
+        description: CEDGE, VPN 512, L3 OOB interface
+        interface_description_variable: vpn512_int1_if_description
+        interface_name_variable: vpn512_int1_if_name
+        shutdown_variable: vpn512_int1_if_shutdown
+        ipv4_address_dhcp: true
+        dhcp_distance: 1
+      - name: FT-CEDGE-ETH-SAMPLE1
+        description: "Ethernet Interface Template"
+        device_types:
+          - ASR-1002-X
+        vpn_qos_map_variable: qosmapvar1
+        shaping_rate: 1000
+        static_sgt: 11
+        ipv6_address: 2000::1/64
+        ipv6_dhcp_helpers:
+          - address: 2001::2
+            vpn_id: 1
+          - address: 2001::3
+            vpn_id_variable: ipv6dhcpvar1
+        ipv6_secondary_addresses:
+          - address: 2002::4/64
+          - address_variable: ipv6secaddvar1
+        ipv6_vrrp_groups:
+          - id: 2
+            global_prefix: 2000::3/64
+            link_local_address: fe80::1
+            priority: 101
+            timer: 500
+            track_prefix_list: tracklist1
+          - id: 1
+            global_prefix: 2000::4/64
+            link_local_address: fe80::2
+            priority: 103
+            timer: 400
+            track_omp: true
+            optional: true
+        interface_description: Ethernet1/0 description
+        interface_name: GigabitEthernet0/1
+        ipv4_address_dhcp: false
+        ipv4_address: 192.168.1.2/24
+        ipv4_dhcp_helpers:
+          - 172.16.18.1
+        block_non_source_ip: true
+        bandwidth_upstream: 2000
+        bandwidth_downstream: 2000
+        bandwidth_auto_detect: true
+        iperf_server: 10.1.1.1
+        ipv4_nat: true
+        ipv4_nat_overload: true
+        ipv4_nat_pool_prefix_length: 16
+        ipv4_nat_pool_range_end: 10.10.10.100
+        ipv4_nat_pool_range_start: 10.10.10.1
+        ipv4_nat_type: pool
+        ipv4_nat_udp_timeout: 200
+        ipv4_nat_tcp_timeout: 200
+        ipv4_static_nat_rules:
+          - optional: false
+            source_ip: 10.1.1.1
+            translate_ip: 10.2.2.2
+            source_vpn_id: 2
+          - source_ip: 10.0.0.1
+            translate_ip: 10.0.0.3
+            source_vpn_id: 1
+        ipv4_port_forwarding_rules:
+          - protocol: udp
+            source_ip: 10.1.1.11
+            source_port: 20
+            translate_ip: 20.1.1.1
+            translate_port: 2020
+            source_vpn_id: 2
+          - optional: false
+            protocol: udp
+            source_ip: 10.1.1.1
+            source_port: 20
+            translate_ip: 20.1.1.1
+            translate_port: 2020
+            source_vpn_id: 2
+        ipv4_secondary_addresses:
+          - address: 10.10.45.67/24
+          - address: 10.10.54.76/24
+          - address_variable: ipv4secaddvar1
+        mtu: 1500
+        arp_timeout: 1200
+        load_interval: 30
+        icmp_redirect_disable: true
+        shutdown_variable: vpn0_tloc01_if_shutdown
+        adaptive_qos: true
+        adaptive_qos_period: 60
+        adaptive_qos_shaping_rate_downstream:
+          default: 19
+          maximum: 22
+          minimum: 16
+        adaptive_qos_shaping_rate_upstream:
+          default: 19
+          maximum: 22
+          minimum: 16
+        rewrite_rule: rule1
+        ipv4_egress_access_list: egress1
+        ipv4_ingress_access_list: ingress1
+        ipv6_egress_access_list: ip6egress1
+        ipv6_ingress_access_list: ip6ingress1
+        enable_sgt: true
+        sgt_propagation: true
+        sgt_enforcement_tag: 3
+        sgt_trusted: true
+        sgt_enforcement: true
+        duplex: auto
+        mac_address: 8d:d5:e6:25:5c:44
+        tcp_mss: 1400
+        speed: 1000
+        autonegotiate: true
+        media_type: sfp
+        tloc_extension: test-tloc
+        tracker: test-tracker
+        gre_tunnel_source_ip: 10.3.1.2
+        gre_tunnel_xconnect: xconnect-test
+        ip_directed_broadcast: true
+        tunnel_interface:
+          allow_service_all: false
+          allow_service_bgp: false
+          allow_service_dhcp: true
+          allow_service_dns: true
+          allow_service_https: true
+          allow_service_icmp: true
+          allow_service_netconf: false
+          allow_service_ntp: true
+          allow_service_ospf: false
+          allow_service_snmp: false
+          allow_service_ssh: false
+          allow_service_stun: false
+          border: true
+          clear_dont_fragment: true
+          color: custom1
+          restrict: true
+          gre_encapsulation: true
+          gre_preference: 2
+          gre_weight: 3
+          ipsec_encapsulation: true
+          ipsec_preference: 3
+          ipsec_weight: 4
+          max_control_connections: 2
+          network_broadcast: true
+          hello_interval: 1000
+          hello_tolerance: 12
+          low_bandwidth_link: true
+          propagate_sgt: true
+          tcp_mss: 1400
+          vbond_as_stun_server: true
+          vmanage_connection_preference: 5
+          port_hop: true
+          carrier: carrier1
+          bind_loopback_tunnel: loop1
+          last_resort_circuit: true
+          nat_refresh_interval: 5
+          gre_tunnel_destination_ip: 20.2.2.2
+        static_arps:
+          - optional: false
+            ip_address: 10.3.3.3
+            mac_address: 16:7f:d9:b4:01:d7
+          - optional: false
+            ip_address: 10.4.4.4
+            mac_address: 16:7f:d9:b4:01:d8
+      - name: FT-CEDGE-ETH-SAMPLE2
+        description: "Ethernet Interface Template 2"
+        device_types:
+          - ASR-1002-X
+        vpn_qos_map_variable: qosmapvar1
+        shaping_rate: 1000
+        ipv6_address: 2000::1/64
+        ipv6_vrrp_groups:
+          - id: 2
+            global_prefix: 2000::3/64
+            link_local_address: fe80::1
+            priority: 101
+            timer: 500
+            track_prefix_list: tracklist1
+          - id: 1
+            global_prefix: 2000::4/64
+            link_local_address: fe80::2
+            priority: 103
+            timer: 400
+            track_omp: true
+            optional: true
+        interface_description: Ethernet1/0 description
+        interface_name: GigabitEthernet0/1
+        ipv4_address: 192.168.1.2/24
+        ipv4_dhcp_helpers:
+          - 172.16.18.1
+        ipv4_vrrp_groups:
+          - id: 2
+            priority: 101
+            timer: 500
+            track_omp: true
+            address: 10.1.1.2
+            tloc_preference_change: true
+            tloc_preference_change_value: 10000
+            tracking_objects:
+              - action: decrement
+                decrement_value: 2
+                id: 2
+              - action: shutdown
+                id: 1
+          - id: 1
+            priority: 103
+            timer: 400
+            track_omp: true
+            address: 10.0.1.3
+            tloc_preference_change: false
+            secondary_addresses:
+              - address: 10.10.45.67/24
+              - address: 10.10.54.76/24
+              - address_variable: ipv4secaddvar1
+    global_settings_templates:
+      - name: FT-CEDGE-GLOBAL-01
+        description: Base cEdge Global Settings
+        cdp_variable: global_cdp_enable
+        domain_lookup_variable: global_ip_domain_lookup_enable
+        lldp_variable: global_lldp_enable
+    igmp_templates:
+      - name: FT-CEDGE-IGMP-01
+        description: Basic cEdge IGMP Feature Template
+        device_types:
+          - C8000V
+        interfaces:
+          - name: GigabitEthernet6
+            join_groups:
+              - group_address: 224.1.1.1
+                source: 10.10.10.10
+    ipsec_interface_templates:
+      - name: FT-CEDGE-IPSEC101-V01
+        description: IPSec Tunnel1 to Zscaler - manual
+        dead_peer_detection_interval: 20
+        interface_description: Zscaler Tunnel ZEN1
+        interface_name: ipsec101
+        ike:
+          pre_shared_key_local_id: localid@acme.com
+          pre_shared_key: presharedsecret
+          ciphersuite: aes256-cbc-sha1
+          group: 14
+          rekey_interval: 14400
+          version: 2
+        ipsec:
+          ciphersuite: null-sha1
+          rekey_interval: 28800
+          perfect_forward_secrecy: none
+        mtu: 1400
+        shutdown: false
+        tcp_mss: 1360
+        tunnel_destination_variable: vpn0_ipsec101_tunnel_dest_ip
+        tunnel_source_interface_variable: vpn0_ipsec101_source_wan_if
+    logging_templates:
+      - name: FT-CEDGE-LOGGING-01
+        description: Base Logging template; no TLS
+        ipv4_servers:
+          - hostname_ip: 172.16.0.11
+            logging_level: warn
+            source_interface_variable: logging_server_source_interface
+            vpn_id: 511
+          - hostname_ip: 172.16.0.12
+            logging_level: warn
+            source_interface_variable: logging_server_source_interface
+            vpn_id: 511
+    multicast_templates:
+      - name: FT-CEDGE-MULTICAST-01
+        description: Base Multicast template
+        device_types:
+          - C8000V
+          - C8200-1N-4T
+          - C8200L-1N-4T
+          - C8300-1N1S-4T2X
+          - C8300-1N1S-6T
+          - C8300-2N2S-4T2X
+          - C8300-2N2S-6T
+          - C8500-12X
+          - C8500-12X4QC
+          - C8500-20X6C
+          - C8500L-8S4X
+        local_replicator: true
+        threshold: 20
+      - name: FT-CEDGE-MULTICAST-02
+        description: Base Multicast template 02
+        device_types:
+          - C8000V
+          - C8200-1N-4T
+          - C8200L-1N-4T
+          - C8300-1N1S-4T2X
+          - C8300-1N1S-6T
+          - C8300-2N2S-4T2X
+          - C8300-2N2S-6T
+          - C8500-12X
+          - C8500-12X4QC
+          - C8500-20X6C
+          - C8500L-8S4X
+        spt_only: true
+        local_replicator_variable: vpn1_multicast_02_local
+        threshold_variable: vpn1_multicast_02_threshold
+    ntp_templates:
+      - name: FT-CEDGE-NTP-01
+        description: Base NTP template; no auth key; no ntp master
+        servers:
+          - hostname_ip: 172.16.0.11
+            prefer: true
+            source_interface_variable: ntp_server_source_interface
+            vpn_id: 0
+          - hostname_ip: time-pnp.cisco.com
+            prefer: false
+            source_interface_variable: ntp_server_source_interface
+            vpn_id: 0
+    omp_templates:
+      - name: FT-CEDGE-OMP-01
+        description: OMP base template
+        ipv4_advertise_protocols:
+          - connected
+        ecmp_limit: 16
+        graceful_restart: true
+        send_path_limit: 16
+        graceful_restart_timer: 86400
+    ospf_templates:
+      - name: FT-CEDGE-OSPF-01
+        description: OSPF base template
+        router_id: 1.2.3.4
+        auto_cost_reference_bandwidth: 100000
+        compatible_rfc1583: true
+        default_information_originate: true
+        default_information_originate_always: true
+        default_information_originate_metric: 100
+        default_information_originate_metric_type: type1
+        distance_external: 111
+        distance_inter_area: 111
+        distance_intra_area: 112
+        timers_spf_delay: 300
+        timers_spf_initial_hold: 2000
+        timers_spf_max_hold: 20000
+        route_policy: POLICY1
+        redistributes:
+          - protocol: static
+            route_policy: RP1
+            nat_dia: true
+        max_metric_router_lsas:
+          - type: on-startup
+            time: 100
+        areas:
+          - area_number: 1
+            area_type: nssa
+            no_summary: true
+            interfaces:
+              - name: e1
+                hello_interval: 20
+                dead_interval: 60
+                retransmit_interval: 10
+                cost: 100
+                priority: 10
+                network_type: point-to-point
+                passive_interface: true
+                authentication_type: message-digest
+                authentication_message_digest_key_id: 1
+                authentication_message_digest_key: cisco123
+            ranges:
+              - address: 1.1.1.0/24
+                cost: 100
+                no_advertise: true
+    pim_templates:
+      - name: FT-CEDGE-PIM-01
+        description: The cEdge PIM Feature Template with Auto RP and RP announces and discovery included
+        device_types:
+          - C8000V
+          - C8200-1N-4T
+          - C8200L-1N-4T
+          - C8300-1N1S-4T2X
+          - C8300-1N1S-6T
+          - C8300-2N2S-4T2X
+          - C8300-2N2S-6T
+          - C8500-12X
+          - C8500-12X4QC
+          - C8500-20X6C
+          - C8500L-8S4X
+        auto_rp: true
+        interfaces:
+          - interface_name: Loopback511
+            join_prune_interval: 60
+            query_interval: 30
+        rp_addresses:
+          - ip_address: 10.0.0.2
+            access_list: "27"
+            override: false
+        rp_candidates:
+          - interface_name: Loopback511
+        rp_announces:
+          - interface_name: Loopback511
+            scope: 1
+        rp_discovery_interface: Loopback511
+        rp_discovery_scope: 1
+        spt_threshold: "0"
+        ssm_access_list_range: "27"
+        ssm_default: True
+      - name: FT-CEDGE-PIM-02
+        description: The cEdge PIM Feature Template with no auto RP and BSR included
+        device_types:
+          - C8000V
+        auto_rp: false
+        bsr_candidate_interface: GigabitEthernet6
+        bsr_candidate_hash_mask_length: 32
+        bsr_candidate_priority: 1
+        bsr_candidate_rp_access_list: "10"
+        interfaces:
+          - interface_name: GigabitEthernet6
+            join_prune_interval: 60
+            query_interval: 30
+        rp_addresses:
+          - ip_address: 10.0.0.1
+            access_list: "10"
+            override: false
+        rp_candidates:
+          - interface_name: GigabitEthernet6
+            access_list: "10"
+            priority: 2
+            interval: 100
+        spt_threshold: "0"
+        ssm_access_list_range: "10"
+        ssm_default: True
+    security_templates:
+      - name: FT-CEDGE-SECURITY-01
+        description: Base SD-WAN data-plane security
+        rekey_interval: 172800
+      - name: FT-CEDGE-SECURITY-02
+        description: WAN Edge Security Template
+        authentication_types:
+          - ip-udp-esp
+          - esp
+        extended_anti_replay_window: 256
+        rekey_interval: 345600
+        replay_window: 4096
+      - name: FT-CEDGE-SECURITY-03
+        description: WAN Edge Security Template
+        authentication_types_variable: authentication_types_var1
+        extended_anti_replay_window: 256
+        rekey_interval: 345600
+        replay_window: 4096
+      - name: FT-CEDGE-SECURITY-04
+        description: Security template with full configuration
+        authentication_types:
+          - none
+        extended_anti_replay_window: 256
+        rekey_interval: 86400
+        replay_window: 64
+        pairwise_keying: true
+        key_chains:
+          - name: CHAIN1
+            key_id: 1
+        keys:
+          - id: 1
+            key_chain_name: CHAIN1
+            send_id: 0
+            receive_id: 0
+            crypto_algorithm: hmac-sha-256
+            key_string_variable: key_string_var1
+            send_lifetime: true
+            send_lifetime_start_time_epoch: 1672531140
+            send_lifetime_end_time_format: infinite
+            send_lifetime_duration_seconds: 1000
+            send_lifetime_end_time_epoch: 1999999999
+            accept_lifetime: true
+            accept_lifetime_start_time_epoch: 1672531140
+            accept_lifetime_end_time_format: infinite
+            accept_lifetime_duration_seconds: 1000
+            accept_lifetime_end_time_epoch: 1999999999
+            include_tcp_options: false
+            accept_ao_mismatch: true
+    snmp_templates:
+      - name: FT-CEDGE-SNMPV3-01
+        description: SNMPv3 template
+        contact_variable: snmp_contact
+        groups:
+          - name: GROUP_NOAUTH_NOPRIV
+            security_level: no-auth-no-priv
+            view: VIEW_ALL
+          - name: GROUP_AUTH_NOPRIV
+            security_level: auth-no-priv
+            view: VIEW_ALL
+          - name: GROUP_AUTH_PRIV
+            security_level: auth-priv
+            view: VIEW_ALL
+        location_variable: snmp_location
+        shutdown_variable: snmp_shutdown
+        trap_target_servers:
+          - ip: 172.16.0.11
+            udp_port: 514
+            community_name: $CRYPT_CLUSTER$MVeouqBXy9Od6dAYMJ6eTQ==$z0Pl/8UAxXkt1lXOnayv8A==
+            source_interface_variable: snmp_trap_source_interface
+            user: user01
+            vpn_id: 511
+        users:
+          - name: user01
+            group: GROUP_NOAUTH_NOPRIV
+          - name: user02
+            group: GROUP_AUTH_NOPRIV
+            authentication_protocol: sha
+            authentication_password: $CRYPT_CLUSTER$ENUwbbutISa31iAXuryRqQ==$CVy9EkMrtaPjTUFxNPv/QA==
+          - name: user03
+            group: GROUP_AUTH_PRIV
+            authentication_protocol: sha
+            authentication_password: $CRYPT_CLUSTER$ENUwbbutISa31iAXuryRqQ==$CVy9EkMrtaPjTUFxNPv/QA==
+            privacy_protocol: aes-cfb-128
+            privacy_password: $CRYPT_CLUSTER$ENUwbbutISa31iAXuryRqQ==$CVy9EkMrtaPjTUFxNPv/QA==
+        views:
+          - name: VIEW_ALL
+            oids:
+              - id: "1.3"
+                exclude: false
+          - name: VIEW_ALL2
+            oids:
+              - id: "1.3"
+                exclude: false
+    system_templates:
+      - name: FT-CEDGE-SYSTEM-01
+        description: Base Cisco System template
+        timezone_variable: timezone
+        system_description_variable: system_description
+        latitude_variable: system_latitude
+        longitude_variable: system_longitude
+        hostname_variable: system_hostname
+        idle_timeout: 300
+        location_variable: system_location
+        on_demand_tunnel_variable: ondemand_tunnel_enable
+        on_demand_tunnel_idle_timeout_variable: ondemand_tunnel_idle_timeout
+        site_id_variable: site_id
+        system_ip_variable: system_ip
+        endpoint_trackers:
+          - name: tracker1
+            endpoint_api_url: http://test.com
+            type: interface
+        enhanced_app_aware_routing: conservative
+      - name: FT-CEDGE-SYSTEM-02
+        description: Tracker example configs
+        console_baud_rate: 9600
+        timezone_variable: timezone
+        system_description_variable: system_description
+        hostname_variable: system_hostname
+        idle_timeout: 300
+        location_variable: system_location
+        site_id_variable: system_site_id
+        system_ip_variable: system_system_ip
+        endpoint_trackers:
+          - name: tracker_google_ip
+            endpoint_ip: 142.251.36.36
+            interval: 60
+            multiplier: 3
+            threshold: 300
+            type: interface
+          - name: tracker_google_ip_route
+            endpoint_ip: 142.251.36.36
+            type: static-route
+          - name: tracker_google_url
+            endpoint_api_url: http://www.google.com
+            type: interface
+          - name: tracker_microsoft_url
+            endpoint_api_url: http://www.microsoft.com
+            type: interface
+          - name: tracker_google_dns
+            endpoint_dns_name: www.google.com
+          - name: tracker_group_internet
+            group_trackers:
+              - tracker_google_url
+              - tracker_microsoft_url
+            group_criteria: and
+    svi_interface_templates:
+      - name: FT-EDGE-VPN10-SVI1
+        description: "EDGE SVI Interface"
+        arp_timeout: 14400
+        ip_directed_broadcast: false
+        ip_mtu: 1350
+        interface_description_variable: vpn10_svi1_if_description
+        interface_name_variable: vpn10_svi1_if_name
+        ipv4_address_variable: vpn10_svi1_ipv4_address
+        ipv4_ingress_access_list: QOS_ACL_IN
+        ipv4_egress_access_list_variable: vpn10_svi1_egress_acl
+        ipv6_ingress_access_list: QOS_ACL_IN_6
+        ipv6_egress_access_list: QOS_ACL_OUT_6
+        ipv6_address_variable: vpn10_svi1_ipv6_address
+        mtu: 9000
+        shutdown: false
+        tcp_mss: 1360
+        ipv4_secondary_addresses:
+          - address: 10.10.1.2
+          - address_variable: ipv4_secondary_address
+        ipv4_dhcp_helpers:
+          - 10.10.10.4
+          - 10.10.10.5
+        ipv6_dhcp_helpers:
+          - address: 2001:db8:1::1
+            vpn_id: 10
+          - address_variable: vpn10_svi1_ipv6_dhcp_helper
+            vpn_id_variable: vpn10_svi1_ipv6_dhcp_helper_vpn_id
+        ipv6_secondary_addresses:
+          - address: 2001:db8:1::2
+          - address: 2001:db8:1::3
+        static_arps:
+          - ip_address: 10.10.54.96
+            mac_address: 00:00:00:00:00:04
+          - ip_address_variable: vpn10_svi1_static_arp_ip
+            mac_address_variable: vpn10_svi1_static_arp_mac
+        ipv4_vrrp_groups:
+          - address_variable: vpn10_svi1_ipv4_vrrp_ip
+            id: 1
+            optional: false
+            priority_variable: vpn10_svi1_ipv4_vrrp_priority
+            secondary_addresses:
+              - address: 2.2.2.2
+              - address: 3.3.3.3
+              - address: 3.4.5.6
+              - address_variable: abcd
+            timer: 1000
+            tloc_preference_change: true
+            tloc_preference_change_value: 5
+            track_prefix_list: abcd
+            track_omp: false
+            tracking_objects:
+              - action: decrement
+                decrement_value: 3
+                id: 1
+        ipv6_vrrp_groups:
+          - link_local_address: fe80::1
+            id: 1
+            optional: false
+            priority: 100
+            secondary_addresses:
+              - address: 2001:db8:1::2
+              - address_variable: vpn10_svi1_ipv6_vrrp_group_secondary_addresses
+            timer: 1000
+            track_prefix_list: abcd
+            track_omp: false
+    vpn_templates:
+      - name: FT-CEDGE-VPN0-01
+        description: CEDGE VPN0 with dynamic IP settings
+        enhance_ecmp_keying_variable: vpn0_layer4_ecmp_enable
+        vpn_name: VPN0
+        vpn_id: 0
+      - name: FT-CEDGE-VPN0-02
+        description: CEDGE VPN0 with static IP settings
+        ipv4_primary_dns_server_variable: vpn0_dns_primary
+        ipv4_secondary_dns_server_variable: vpn0_dns_secondary
+        enhance_ecmp_keying_variable: vpn0_layer4_ecmp_enable
+        vpn_name: VPN0
+        vpn_id: 0
+        ipv4_static_routes:
+          - prefix: 0.0.0.0/0
+            optional: false
+            next_hops:
+              - address_variable: vpn0_nexthop1_ip
+              - address_variable: vpn0_nexthop2_ip
+        services:
+          - service_type: TE
+      - name: FT-CEDGE-VPN0-03
+        description: CEDGE VPN0 with static IP routes
+        enhance_ecmp_keying_variable: vpn0_layer4_ecmp_enable
+        vpn_name: VPN0
+        vpn_id: 0
+        ipv4_static_routes:
+          - prefix_variable: vpn0_ipv4_route1_prefix
+            optional: true
+            next_hops:
+              - address_variable: vpn0_ipv4_route1_nexthop1_ip
+                distance_variable: vpn0_ipv4_route1_nexthop1_distance
+          - prefix_variable: vpn0_ipv4_route2_prefix
+            optional: true
+            next_hops:
+              - address_variable: vpn0_ipv4_route2_nexthop1_ip
+                distance_variable: vpn0_ipv4_route2_nexthop1_distance
+      - name: FT-CEDGE-VPN1-01
+        description: CEDGE VPN1 CORPORATE
+        vpn_name: CORPORATE
+        vpn_id: 1
+        ipv4_static_routes:
+          - prefix_variable: vpn1_ipv4_route1_prefix
+            optional: true
+            next_hops:
+              - address_variable: vpn1_ipv4_route1_nexthop1_ip
+                distance_variable: vpn1_ipv4_route1_nexthop1_distance
+          - prefix_variable: vpn1_ipv4_route2_prefix
+            optional: true
+            next_hops:
+              - address_variable: vpn1_ipv4_route2_nexthop1_ip
+                distance_variable: vpn1_ipv4_route2_nexthop1_distance
+          - prefix_variable: vpn1_ipv4_route3_prefix
+            optional: true
+            next_hops:
+              - address_variable: vpn1_ipv4_route3_nexthop1_ip
+                distance_variable: vpn1_ipv4_route3_nexthop1_distance
+          - prefix_variable: vpn1_ipv4_route4_prefix
+            optional: true
+            next_hops:
+              - address_variable: vpn1_ipv4_route4_nexthop1_ip
+                distance_variable: vpn1_ipv4_route4_nexthop1_distance
+        omp_admin_distance_ipv4: 251
+        omp_advertise_ipv4_routes:
+          - protocol: bgp
+          - protocol: static
+          - protocol: connected
+      - name: FT-CEDGE-VPN1-ACTIVE-01
+        description: VPN1 Active
+        omp_advertise_ipv4_routes:
+          - protocol: bgp
+            route_policy: RM-SITE-BGP-TO-OMP-ACTIVE
+          - protocol: connected
+        vpn_id: 1
+        vpn_name: Corporate
+      - name: FT-CEDGE-VPN1-STANDBY-01
+        description: VPN1 Standby
+        omp_advertise_ipv4_routes:
+          - protocol: bgp
+            route_policy: RM-SITE-BGP-TO-OMP-STANDBY
+          - protocol: connected
+        vpn_id: 1
+        vpn_name: Corporate
+      - name: FT-CEDGE-VPN2-01
+        description: VPN 2 INTERNET
+        vpn_name: INTERNET
+        vpn_id: 2
+        ipv4_static_routes:
+          - prefix: 0.0.0.0/0
+            next_hop_dia: true
+        route_global_exports:
+          - protocol: eigrp
+      - name: FT-CEDGE-VPN511-01
+        description: CEDGE VPN511
+        vpn_name: INBAND-MGMT
+        vpn_id: 511
+        omp_advertise_ipv4_routes:
+          - protocol: connected
+      - name: FT-CEDGE-VPN512-01
+        description: CEDGE VPN512
+        vpn_name: OOB
+        vpn_id: 512
+      - name: SERVICE_VPN10
+        description: Service VPN10 Template
+        ipv4_primary_dns_server_variable: vpn0_dns_primary
+        ipv4_secondary_dns_server_variable: vpn0_dns_secondary
+        vpn_name_variable: service_vpn10_name_var
+        vpn_id: 10
+        omp_advertise_ipv4_routes:
+          - protocol: bgp
+    secure_internet_gateway_templates:
+      - name: FT-CEDGE-SIG-UMBRELLA01
+        description: Umbrella SIG 1x HA Tunnel
+        sig_provider: umbrella
+        tracker_source_ip: 192.168.1.1
+        zscaler_aup_enabled: true
+        zscaler_authentication_required: false
+        umbrella_primary_data_center_variable: abc
+        trackers:
+          - name: test1
+            endpoint_api_url: http://test.com/abcd
+            interval: 25
+            multiplier: 3
+            threshold: 120
+          - name: test2
+            endpoint_api_url: http://test2.com/abcd
+            multiplier: 3
+            threshold: 150
+        interfaces:
+          - dpd_interval: 10
+            dpd_retries: 3
+            name: ipsec1
+            description: Umbrealla Tunnel 1
+            ike_rekey_interval: 14400
+            ike_group: 2
+            mtu: 1400
+            tcp_mss: 1360
+            tunnel_dc_preference: primary-dc
+            shutdown: false
+            track: true
+            tunnel_destination: 3.5.1.2
+            tunnel_source_interface: GigabitEthernet0/0/0
+            tunnel_type: ipsec
+          - dpd_interval: 10
+            dpd_retries: 3
+            name: ipsec2
+            description: Umbrella Tunnel 2
+            ike_rekey_interval: 14400
+            ike_group: 2
+            mtu: 1400
+            tcp_mss: 1360
+            tunnel_dc_preference: primary-dc
+            shutdown: false
+            track: true
+            tunnel_destination: 3.5.1.2
+            tunnel_source_interface: GigabitEthernet0/0/0
+            tunnel_type: ipsec
+        high_availability_interface_pairs:
+          - active_interface: ipsec2
+            active_interface_weight: 1
+            backup_interface: ipsec1
+            backup_interface_weight: 2
+    switchport_templates:
+      - name: FT-CEDGE-SWITCHPORT-V01
+        description: "Switchport Template"
+        device_types:
+          - C8000V
+        age_out_time: 500
+        slot: 0
+        sub_slot: 1
+        module_type: 8
+        interfaces:
+          - name_variable: switchport_if_if_name_0_test
+            mode: trunk
+            duplex: full
+            optional: false
+            shutdown: false
+            speed: 1000
+            trunk_native_vlan: 100
+            trunk_allowed_vlans:
+              - 4
+              - 5
+            trunk_allowed_vlans_ranges:
+              - from: 10
+                to: 20
+            voice_vlan: 30
+            dot1x:
+              enable: true
+              control_direction: both
+              critical_vlan: 40
+              enable_criticial_voice_vlan: true
+              enable_pae: false
+              enable_periodic_reauth: true
+              guest_vlan: 20
+              host_mode: multi-domain
+              mac_authentication_bypass: false
+              periodic_reauth_inactivity_timeout: 500
+              periodic_reauth_interval: 300
+              port_control_mode: auto
+              restricted_vlan: 50
+          - name_variable: switchport_if_if_name_0_test_1
+            mode: access
+            access_vlan: 10
+            optional: false
+            shutdown: false
+          - name_variable: switchport_if_if_name_0_test_3
+            mode: access
+            optional: false
+        static_mac_addresses:
+          - mac_address: 00:00:00:00:00:02
+            vlan: 1000
+            interface_name: GigabitEthernet0/0/0
+            optional: false
+          - mac_address: 00:00:00:00:00:03
+            vlan: 1000
+            interface_name: GigabitEthernet0/0/1
+            optional: false
+          - mac_address: 00:00:00:00:00:04
+            vlan: 1000
+            interface_name: GigabitEthernet0/0/2
+            optional: true
+    secure_app_hosting_templates:
+      - name: FT-CEDGE-CONTAINER-PROFILE-01
+        description: utd production profile 1
+        nat: true
+        download_url_database_on_device: false
+        resource_profile: low
+      - name: FT-CEDGE-CONTAINER-PROFILE-02
+        description: utd production profile 2
+        nat_variable: utd_nat_var_1
+        download_url_database_on_device_variable: utd_url_var_1
+        resource_profile_variable: utd_rp_1
+    cellular_controller_templates:
+      - name: FT-CEDGE-CELL_CNTRL101-V01
+        description: "Cellular Controller #1"
+        cellular_interface_id: 0/1/0
+        primary_sim_slot: 1
+        sim_failover_retries: 3
+        sim_failover_timeout: 4
+      - name: FT-CEDGE-CELL_CNTRL101-V02
+        description: "Cellular Controller #2"
+        cellular_interface_id_variable: cel_int_id_v02_var1
+        primary_sim_slot_variable: cel_pri_slot_v02_var1
+        sim_failover_retries_variable: cel_sim_fo_ret_v02_var1
+        sim_failover_timeout_variable: cel_sim_fo_to_v02_var1
+    cellular_profile_templates:
+      - name: FT-CEDGE-CELL_PROF101-V01
+        description: "Cellular Profile #1"
+        profile_id: 1
+        access_point_name: data4all
+        packet_data_network_type: ipv4
+        authentication_type: pap
+        profile_username: user1
+        profile_password: pass1
+      - name: FT-CEDGE-CELL_PROF101-V02
+        description: "Cellular Profile #2"
+        profile_id_variable: cel_prof_id_v02_var1
+        access_point_name_variable: cel_apn_v02_var1
+        packet_data_network_type_variable: cel_pkt_data_net_v02_var1
+        authentication_type_variable: cel_auth_type_v02_var1
+        profile_username_variable: cel_prof_user_v02_var1
+        profile_password_variable: cel_prof_pass_v02_var1
+    gre_interface_templates:
+      - name: FT-CEDGE-GRE_INTF101-V01
+        description: "GRE Interface #1"
+        interface_name: gre1
+        interface_description: "GRE Interface to Site ABC"
+        shutdown: false
+        tunnel_source_ip: 10.10.1.1
+        tunnel_destination: 10.10.2.1
+        ip_address: 10.10.33.1/30
+        ip_mtu: 1500
+        tcp_mss: 1400
+        clear_dont_fragment: true
+        rewrite_rule: REWRITE-RULE-MPLS
+        ipv4_egress_access_list: ACL-TLOCEXT-DSCP
+        ipv4_ingress_access_list: ACL-NETCONF830-DROP
+        tracker: tracker1
+        application: sig
+      - name: FT-CEDGE-GRE_INTF101-V02
+        description: "GRE Interface #2"
+        device_types:
+          - C8200L-1N-4T
+        interface_name_variable: gre_intf_name_v02_var1
+        interface_description_variable: gre_intf_desc_v02_var1
+        shutdown_variable: gre_intf_shut_v02_var1
+        tunnel_source_interface_variable: gre_tun_src_intf_v02_var1
+        tunnel_destination_variable: gre_tun_dest_ip_v02_var1
+        ip_address_variable: gre_ip_addr_v02_var1
+        ip_mtu_variable: gre_ip_mtu_v02_var1
+        tcp_mss_variable: gre_tcp_mss_v02_var1
+        clear_dont_fragment_variable: gre_clear_df_v02_var1
+        rewrite_rule_variable: gre_rew_rule_v02_var1
+        ipv4_egress_access_list_variable: gre_ipv4_egress_acl_v02_var1
+        ipv4_ingress_access_list_variable: gre_ipv4_ingress_acl_v02_var1
+        tracker_variable: gre_tracker_v02_var1
+        application_variable: gre_app_v02_var1
+    cellular_interface_templates:
+      - name: FT-CEDGE-CELL_INTF101-V01
+        description: "Cellular Interface #1"
+        interface_name: cellular0/1/0
+        interface_description: "Cellular Interface to Site ABC"
+        shutdown: false
+        dhcp_helpers:
+          - 10.3.3.3
+          - 10.7.3.3
+          - 10.10.2.4
+        bandwidth_downstream: 100000
+        bandwidth_upstream: 500000
+        ip_mtu: 1500
+        tunnel_interface:
+          per_tunnel_qos_mode: spoke
+          color: custom2
+          restrict: true
+          group: 10
+          border: true
+          max_control_connections: 5
+          vbond_as_stun_server: true
+          exclude_controller_groups:
+            - 1
+            - 2
+          vmanage_connection_preference: 5
+          port_hop: true
+          low_bandwidth_link: true
+          tcp_mss: 1300
+          clear_dont_fragment: false
+          network_broadcast: true
+          allow_service_bgp: false
+          allow_service_dhcp: true
+          allow_service_dns: true
+          allow_service_https: false
+          allow_service_icmp: true
+          allow_service_netconf: false
+          allow_service_ntp: true
+          allow_service_ospf: false
+          allow_service_snmp: false
+          allow_service_ssh: false
+          allow_service_stun: false
+          gre_encapsulation: true
+          gre_preference: 1
+          gre_weight: 5
+          ipsec_encapsulation: true
+          ipsec_preference: 2
+          ipsec_weight: 6
+          carrier: carrier1
+          bind_loopback_tunnel: Ge1/0
+          last_resort_circuit: true
+          nat_refresh_interval: 10
+          hello_interval: 100
+          hello_tolerance: 12
+        nat: true
+        nat_refresh_mode: outbound
+        nat_tcp_timeout: 10
+        nat_udp_timeout: 10
+        nat_block_icmp: true
+        nat_respond_to_ping: false
+        nat_port_forwarding_rules:
+          - port_range_start: 1000
+            port_range_end: 2000
+            protocol: tcp
+            vpn: 1
+            private_ip: 10.10.99.1
+          - port_range_start: 2000
+            port_range_end: 3000
+            protocol: udp
+            vpn: 2
+            private_ip: 10.10.99.2
+      - name: FT-CEDGE-CELL_INTF101-V02
+        description: "Cellular Interface #2"
+        interface_name: cellular0/2/0
+        interface_description: "Cellular Interface to Site DEF"
+        shutdown: false
+        dhcp_helpers:
+          - 10.3.3.3
+          - 10.7.3.3
+        bandwidth_downstream: 100000
+        bandwidth_upstream: 500000
+        ip_mtu: 1500
+        adaptive_qos_period: 60
+        adaptive_qos_shaping_rate_downstream:
+          default: 100000
+          maximum: 200000
+          minimum: 50000
+        adaptive_qos_shaping_rate_upstream:
+          default: 500000
+          maximum: 1000000
+          minimum: 250000
+        shaping_rate: 100000
+        qos_map: QOS-MAP-1P4Q
+        rewrite_rule: REWRITE-RULE-MPLS
+        ipv4_egress_access_list: ACL-TLOCEXT-DSCP
+        ipv4_ingress_access_list: ACL-NETCONF830-DROP
+        ingress_policer_name: POLICER-TD-TEST1
+        egress_policer_name: POLICER-TD-TEST2
+        static_arps:
+          - ip_address: 10.10.77.3
+            mac_address: 00:00:00:00:00:03
+          - ip_address: 10.10.77.4
+            mac_address: 00:00:00:00:00:04
+        path_mtu_discovery: true
+        tcp_mss: 1400
+        clear_dont_fragment: true
+        static_ingress_qos: 4
+        autonegotiate: true
+        tloc_extension: mpls
+        tracker: tracker1
+        ip_directed_broadcast: true

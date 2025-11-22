@@ -1,76 +1,85 @@
 pipeline {
     agent {
         docker {
-            image 'danischm/nac:0.1.4'
+            image 'danischm/nac:0.1.6'
             label 'digidev'
+            args '-u root'
         }
     }
 
+    triggers {
+        cron(env.BRANCH_NAME == 'master' ? '0 4 * * *' : '')
+    }
+
     environment {
-        TF_TOKEN_app_terraform_io = credentials('TF_TOKEN_app_terraform_io')
-        SDWAN_URL = credentials('SDWAN_URL')
+        DD_GITHUB_TOKEN = credentials('DD_GITHUB_TOKEN')
+        DD_INTERNAL_GITHUB_TOKEN = credentials('DD_INTERNAL_GITHUB_TOKEN')
         SDWAN_USERNAME = credentials('SDWAN_USERNAME')
         SDWAN_PASSWORD = credentials('SDWAN_PASSWORD')
         WEBEX_TOKEN = credentials('WEBEX_TOKEN')
         WEBEX_ROOM_ID = 'Y2lzY29zcGFyazovL3VzL1JPT00vNTFmMGNmODAtYjI0My0xMWU5LTljZjUtNWY0NGQ2ZTlmYWY0'
-        GITHUB_TOKEN = credentials('GITHUB_TOKEN')
-        REPO = env.GIT_URL.replaceFirst(/^.*?(?::\/\/.*?\/|:)(.*).git$/, '$1')
-        GIT_COMMIT_MESSAGE = "${sh(returnStdout: true, script: 'git log -1 --pretty=%B ${GIT_COMMIT}').trim()}"
+        GIT_COMMIT_MESSAGE = "${sh(returnStdout: true, script: 'git config --global --add safe.directory "*" && git log -1 --pretty=%B ${GIT_COMMIT}').trim()}"
         GIT_COMMIT_AUTHOR = "${sh(returnStdout: true, script: 'git show -s --pretty=%an').trim()}"
         GIT_EVENT = "${(env.CHANGE_ID != null) ? 'Pull Request' : 'Push'}"
     }
 
     options {
         disableConcurrentBuilds()
+        newContainerPerStage()
+        timeout(time: 1, unit: 'HOURS')
     }
 
     stages {
-        stage('Setup') {
+        stage('Lint') {
             steps {
-                sh 'terraform init -input=false'
+                sh 'yamllint -s .'
+                sh 'pytest -m validate'
             }
         }
-        stage('Validate') {
-            steps {
-                sh 'set -o pipefail && terraform fmt -check |& tee fmt_output.txt'
-                sh 'set -o pipefail && iac-validate ./data/ |& tee validate_output.txt'
-            }
-        }
-        stage('Plan') {
-            steps {
-                sh 'terraform plan -out=plan.tfplan -input=false'
-                sh 'terraform show -no-color plan.tfplan > plan.txt'
-                sh 'terraform show -json plan.tfplan > plan.json'
-                sh 'python3 .ci/github-comment.py'
-                archiveArtifacts 'plan.*'
-            }
-        }
-        stage('Deploy') {
+        stage('Publish Documentation') {
             when {
                 branch 'master'
             }
             steps {
-                sh 'terraform apply -input=false -auto-approve plan.tfplan'
+                build job: '/netascode/netascode/master', wait: false
+            }
+        }
+        stage('Prepare') {
+            steps {
+                sh "pip install cisco-sdwan"
+                lock(resource: 'nac-ci-sdwan1') {
+                    sh 'python3 scripts/sdwan_lab_cleanup.py https://10.50.202.6'
+                }
+                lock(resource: 'nac-ci-sdwan2') {
+                    sh 'python3 scripts/sdwan_lab_cleanup.py https://10.50.202.8'
+                }
             }
         }
         stage('Test') {
-            when {
-                branch 'master'
-            }
             parallel {
-                stage('Test Idempotency') {
+                stage('Test SDWAN 20.12 Terraform') {
                     steps {
-                        sh 'terraform plan -input=false -detailed-exitcode'
-                    }
-                }
-                stage('Test Integration') {
-                    steps {
-                        sh 'set -o pipefail && iac-test -d ./data -d ./defaults.yaml -t ./tests/templates -f ./tests/filters -o ./tests/results/sdwan |& tee test_output.txt'
+                        lock(resource: 'nac-ci-sdwan1') {
+                            sh 'pytest -m sdwan_2012'
+                        }
                     }
                     post {
                         always {
-                            archiveArtifacts 'tests/results/sdwan/log.html, tests/results/sdwan/output.xml, tests/results/sdwan/report.html, tests/results/sdwan/xunit.xml'
-                            junit 'tests/results/sdwan/xunit.xml'
+                            junit 'sdwan_tf_20.12_xunit.xml'
+                            archiveArtifacts 'sdwan_tf_20.12_*.html, sdwan_tf_20.12_*.xml'
+                        }
+                    }
+                }
+                stage('Test SDWAN 20.15 Terraform') {
+                    steps {
+                        lock(resource: 'nac-ci-sdwan2') {
+                            sh 'pytest -m sdwan_2015'
+                        }
+                    }
+                    post {
+                        always {
+                            junit 'sdwan_tf_20.15_xunit.xml'
+                            archiveArtifacts 'sdwan_tf_20.15_*.html, sdwan_tf_20.15_*.xml'
                         }
                     }
                 }
@@ -80,8 +89,15 @@ pipeline {
 
     post {
         always {
-            sh "BUILD_STATUS=${currentBuild.currentResult} python3 .ci/webex-notification-jenkins.py"
-            sh 'rm -rf plan.* *.txt tests/results'
+            script {
+                if (env.TAG_NAME) {
+                    sh 'cd scripts && python3 update_repos.py --release'
+                } else if (env.BRANCH_NAME == "master") {
+                    sh 'cd scripts && python3 update_repos.py'
+                }
+            }
+            sh "BUILD_STATUS=${currentBuild.currentResult} python .ci/webex-notification-jenkins.py"
+            cleanWs()
         }
     }
 }

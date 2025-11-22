@@ -1,0 +1,502 @@
+---
+# Localized Policies
+sdwan:
+  policy_objects:
+    app_probe_classes:
+      - name: PROBE_CLASS
+        forwarding_class: transactional-data
+        mappings:
+          - color: custom1
+            dscp: 0
+          - color: private1
+            dscp: 41
+          - color: private2
+            dscp: 42
+    application_lists:
+      - name: OFFICE365
+        applications:
+          - ms-ocs-file-transfer
+          - ms-office-365
+          - ms-office-web-apps
+          - ms-live-accounts
+          - exchange
+          - ms-teams
+          - ms-teams-audio
+          - ms-teams-media
+          - ms-teams-video
+          - netshow
+          - msnp
+          - ms-lync
+          - ms-lync-audio
+          - ms-lync-control
+          - ms-lync-video
+          - skype
+          - skydrive
+          - share-point
+          - outlook-web-service
+      - name: APPF-CRITICALDATA
+        application_families:
+          - application-service
+          - database
+          - erp
+          - microsoft-office
+          - middleware
+          - network-management
+      - name: APP-LIST-TD-TEST1
+        applications:
+          - amazon
+          - amazon-web-services
+          - amazon-instant-video
+          - amazon-cloudfront
+          - amazon-ec2
+          - amazon-s3
+      - name: APP-LIST-TD-TEST2
+        applications:
+          - amazon
+          - amazon-web-services
+      - name: APP-LIST-TD-TEST3
+        applications:
+          - amazon
+    as_path_lists:
+      - name: '100'
+        as_paths:
+          - ^65100
+          - ^65101
+    class_maps:
+      - name: CLASS-REALTIME
+        queue: 0
+      - name: CLASS-NETCONTROL
+        queue: 1
+      - name: CLASS-DEFAULT
+        queue: 2
+      - name: CLASS-CRITICALDATA
+        queue: 3
+      - name: CLASS-SCAVENGER
+        queue: 4
+    color_lists:
+      - name: CL-INTERNET
+        colors:
+          - custom1
+          - custom2
+      - name: COLOR-INTERNET-CCT-TEST
+        colors:
+          - custom1
+          - custom2
+      - name: COLOR-INTERNET-CCT-TEST2
+        colors:
+          - gold
+          - silver
+    expanded_community_lists:
+      - name: EXP_COMMUNITY
+        expanded_communities:
+          - 1000:1000
+          - 2000:2000
+      - name: EXP-COMMUNITY-CCT-TEST
+        expanded_communities:
+          - 1500:1700
+          - 1500:1800
+    extended_community_lists:
+      - name: EXT_COMMUNITY
+        extended_communities:
+          - soo 1:1
+          - rt 1:1
+    ipv4_data_prefix_lists:
+      - name: DPL-DEFAULT
+        prefixes:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+      - name: PREFIX-LIST-TD-TEST1
+        prefixes:
+          - 12.12.13.0/24
+          - 174.16.31.0/30
+      - name: PREFIX-LIST-TD-TEST2
+        prefixes:
+          - 13.12.13.0/24
+          - 175.16.31.0/30
+      - name: PREFIX-LIST-AAR-TEST3
+        prefixes:
+          - 12.12.13.0/24
+          - 174.16.31.0/30
+      - name: PREFIX-LIST-AAR-TEST4
+        prefixes:
+          - 13.12.13.0/24
+          - 175.16.31.0/30
+      - name: ZBFW_SDPL_1_uni1
+        prefixes:
+          - 10.0.0.0/8
+          - 172.16.0.0/12
+      - name: ZBFW_SDPL_2_uni1
+        prefixes:
+          - 12.12.13.0/24
+          - 174.16.31.0/30
+      - name: ZBFW_DDPL_1_uni1
+        prefixes:
+          - 13.12.13.0/24
+          - 175.16.31.0/30
+      - name: ZBFW_DDPL_2_uni1
+        prefixes:
+          - 12.12.13.0/24
+          - 174.16.31.0/30
+    ipv4_prefix_lists:
+      - name: PLV4-PRIVATE-RANGES
+        entries:
+          - prefix: 10.0.0.0/8
+          - prefix: 172.16.0.0/12
+            le: 30
+          - prefix: 192.168.0.0/16
+            ge: 24
+            le: 28
+          - prefix: 172.16.0.0/23
+      - name: PREFIX-LIST-CCT-TEST
+        entries:
+          - prefix: 10.12.13.0/24
+          - prefix: 172.16.31.0/30
+      - name: PREFIX-LIST-HST-TEST
+        entries:
+          - prefix: 11.12.13.0/24
+          - prefix: 173.16.31.0/30
+      - name: PREFIX-LIST-TD-TEST1
+        entries:
+          - prefix: 12.12.13.0/24
+          - prefix: 174.16.31.0/30
+      - name: PREFIX-LIST-TD-TEST2
+        entries:
+          - prefix: 13.12.13.0/24
+          - prefix: 175.16.31.0/30
+    ipv6_data_prefix_lists:
+      - name: DPL-PRIVATE
+        prefixes:
+          - fe40:5657:6df1:d34f::/64
+          - fc00::/7
+    ipv6_prefix_lists:
+      - name: PLV6-PRIVATE-RANGES
+        entries:
+          - prefix: fe40:5657:6df1:d34f::/64
+          - prefix: fc00::/7
+            ge: 120
+    mirror_lists:
+      - name: MIR1
+        remote_destination_ip: 10.0.0.1
+        source_ip: 192.168.1.100
+    policers:
+      - name: POLICER-TEST
+        burst_bytes: 2000000
+        exceed_action: remark
+        rate_bps: 250000000
+      - name: POLICER-TD-TEST1
+        burst_bytes: 2000000
+        exceed_action: remark
+        rate_bps: 250000000
+      - name: POLICER-TD-TEST2
+        burst_bytes: 2000000
+        exceed_action: remark
+        rate_bps: 240000000
+    port_lists:
+      - name: Test_Additional_Ports
+        ports:
+          - 65535
+      - name: Test_Device_access_ports
+        ports:
+          - 22
+          - 23
+      - name: Test_Management_Ports
+        ports:
+          - 8080-8082
+          - 65529-65534
+      - name: Test_Web_Ports
+        ports:
+          - 80
+          - 443
+    preferred_color_groups:
+      - name: PREFER_MPLS
+        primary_colors:
+          - private1
+          - private2
+          - private3
+        primary_path: direct-path
+        secondary_colors:
+          - custom1
+          - custom2
+          - custom3
+        secondary_path: multi-hop-path
+        tertiary_colors:
+          - lte
+          - 3g
+        tertiary_path: all-paths
+    site_lists:
+      - name: SL-EMEA
+        site_ids:
+          - 1000
+          - 1001
+        site_id_ranges:
+          - from: 1500
+            to: 1999
+      - name: SL_AMER
+        site_id_ranges:
+          - from: 2000
+            to: 2999
+      - name: TEXAS-CCT-TEST
+        site_ids:
+          - 24
+          - 25
+        site_id_ranges:
+          - from: 21
+            to: 22
+      - name: CHICAGO-CCT-TEST
+        site_ids:
+          - 19
+          - 20
+        site_id_ranges:
+          - from: 15
+            to: 17
+      - name: DENVER-CCT-TEST
+        site_ids:
+          - 28
+        site_id_ranges:
+          - from: 26
+            to: 27
+      - name: ATLANTA-CCT-TEST
+        site_ids:
+          - 8
+        site_id_ranges:
+          - from: 5
+            to: 6
+      - name: CALIFORNIA-HST-TEST
+        site_id_ranges:
+          - from: 29
+            to: 30
+      - name: BOSTON-HST-TEST
+        site_id_ranges:
+          - from: 31
+            to: 32
+      - name: NEWYORK-HST-TEST
+        site_id_ranges:
+          - from: 33
+            to: 34
+      - name: WASHINGTON-HST-TEST
+        site_id_ranges:
+          - from: 35
+            to: 36
+      - name: KENTUCKY-HST-TEST
+        site_id_ranges:
+          - from: 37
+            to: 38
+      - name: PHOENIX-MT-TEST
+        site_id_ranges:
+          - from: 39
+            to: 40
+      - name: HOSUTON-MT-TEST
+        site_id_ranges:
+          - from: 41
+            to: 42
+      - name: MADISON-MT-TEST
+        site_id_ranges:
+          - from: 43
+            to: 44
+      - name: KANSAS-MT-TEST
+        site_id_ranges:
+          - from: 45
+            to: 46
+      - name: DELHI-VPNM-TEST
+        site_id_ranges:
+          - from: 47
+            to: 48
+      - name: MUMBAI-VPNM-TEST
+        site_id_ranges:
+          - from: 49
+            to: 50
+      - name: GOA-TD-TEST
+        site_id_ranges:
+          - from: 51
+            to: 52
+      - name: CHENNAI-TD-TEST
+        site_id_ranges:
+          - from: 53
+            to: 54
+      - name: MY-CFLOW-TEST
+        site_id_ranges:
+          - from: 55
+            to: 56
+    sla_classes:
+      - name: SLA-DEFAULT
+        jitter_ms: 500
+        latency_ms: 500
+        loss_percentage: 5
+        app_probe_class: PROBE_CLASS
+        fallback_best_tunnel_criteria: latency
+        fallback_best_tunnel_jitter: 1
+        fallback_best_tunnel_latency: 50
+        fallback_best_tunnel_loss: 10
+      - name: DEFAULT-ACTION-SLA
+        jitter_ms: 100
+        latency_ms: 250
+        loss_percentage: 10
+    standard_community_lists:
+      - name: ST_COMMUNITY
+        standard_communities:
+          - 1000:1000
+          - 1000:1002
+      - name: COMMUNITY-REGION1
+        standard_communities:
+          - 1000:10000
+      - name: COMMUNITY-REGION-CCT-TEST
+        standard_communities:
+          - 1000:10000
+    tloc_lists:
+      - name: TLOC-EMEA-HUB
+        tlocs:
+          - color: custom1
+            encapsulation: ipsec
+            tloc_ip: 10.0.2.101
+            preference: 100
+          - color: custom2
+            encapsulation: ipsec
+            tloc_ip: 10.0.2.101
+      - name: TLOC-LIST-CCT-TEST1
+        tlocs:
+          - color: 3g
+            encapsulation: ipsec
+            tloc_ip: 10.10.54.98
+          - color: custom2
+            encapsulation: ipsec
+            tloc_ip: 10.10.54.99
+      - name: TLOC-LIST-CCT-TEST2
+        tlocs:
+          - color: 3g
+            encapsulation: ipsec
+            tloc_ip: 10.10.54.96
+          - color: custom2
+            encapsulation: ipsec
+            tloc_ip: 10.10.54.97
+      - name: TLOC-LIST-HST-TEST1
+        tlocs:
+          - color: 3g
+            encapsulation: ipsec
+            tloc_ip: 10.10.54.94
+          - color: custom2
+            encapsulation: ipsec
+            tloc_ip: 10.10.54.95
+      - name: TLOC-LIST-HST-TEST2
+        tlocs:
+          - color: 3g
+            encapsulation: ipsec
+            tloc_ip: 10.10.54.93
+      - name: TLOC-LIST-TD-TEST1
+        tlocs:
+          - color: 3g
+            encapsulation: ipsec
+            tloc_ip: 10.10.53.1
+    vpn_lists:
+      - name: VPN-MGMT
+        vpn_ids:
+          - 511
+        vpn_id_ranges:
+          - from: 51
+            to: 52
+      - name: VPN-LIST-CCT-TEST1
+        vpn_ids:
+          - 62
+        vpn_id_ranges:
+          - from: 70
+            to: 75
+      - name: VPN-LIST-CCT-TEST2
+        vpn_ids:
+          - 69
+        vpn_id_ranges:
+          - from: 80
+            to: 81
+      - name: VPN-LIST-HST-TEST1
+        vpn_ids:
+          - 12
+        vpn_id_ranges:
+          - from: 14
+            to: 15
+      - name: VPN-LIST-MT-TEST1
+        vpn_ids:
+          - 13
+        vpn_id_ranges:
+          - from: 16
+            to: 18
+      - name: VPN-LIST-VPNM-TEST1
+        vpn_ids:
+          - 101
+        vpn_id_ranges:
+          - from: 103
+            to: 104
+      - name: VPN-LIST-VPNM-TEST2
+        vpn_ids:
+          - 105
+        vpn_id_ranges:
+          - from: 107
+            to: 108
+      - name: VPN-LIST-VPNM-TEST3
+        vpn_ids:
+          - 119
+        vpn_id_ranges:
+          - from: 111
+            to: 112
+      - name: VPN-LIST-TD-TEST1
+        vpn_ids:
+          - 101
+        vpn_id_ranges:
+          - from: 103
+            to: 104
+      - name: VPN-LIST-TD-TEST2
+        vpn_ids:
+          - 105
+        vpn_id_ranges:
+          - from: 107
+            to: 108
+    fqdn_lists:
+      - name: ZBFW_SFL_1_uni1
+        fqdns:
+          - cisco.com
+          - '*.service-now.com'
+          - '*.noc.demo.net'
+      - name: ZBFW_SFL_2_uni1
+        fqdns:
+          - cisco.com
+          - '*.noc.demo.net'
+      - name: ZBFW_DFL_1_uni1
+        fqdns:
+          - cisco.com
+          - '*.service-now.com'
+      - name: ZBFW_DFL_2_uni1
+        fqdns:
+          - cisco.com
+    local_application_lists:
+      - name: ZBFW_LAL_1_uni1
+        applications:
+          - ftps-data
+          - concur
+          - ms-teams-audio
+          - ms-teams-media
+          - ms-teams-video
+        application_families:
+          - audio-video
+          - authentication
+    zones:
+      - name: Test_zone_1_uni1
+        vpn_ids:
+          - 0
+          - 10
+      - name: Test_zone_2_uni1
+        vpn_ids:
+          - 1
+          - 11
+      - name: Test_zone_3_uni1
+        vpn_ids:
+          - 2
+          - 12
+      - name: Test_zone_4_uni1
+        vpn_ids:
+          - 3
+          - 13
+      - name: Test_zone_5_uni1
+        interfaces:
+          - Ethernet0/1
+          - GigabitEthernet1/10
+      - name: Test_zone_6_uni1
+        interfaces:
+          - Ethernet0/2
+          - GigabitEthernet1/11

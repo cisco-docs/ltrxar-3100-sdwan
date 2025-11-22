@@ -1,0 +1,361 @@
+---
+# Security Policies
+sdwan:
+  security_policies:
+    definitions:
+      zone_based_firewall:
+        - name: ZONE-BASED-FIREWALL-01
+          description: ZONE-BASED-FIREWALL-01
+          default_action_type: pass
+          rules:
+            - id: 1
+              name: Rule_1
+              base_action: pass
+              match_criterias:
+                source_data_prefix_lists:
+                  - ZBFW_SDPL_1_uni1
+                  - ZBFW_SDPL_2_uni1
+                source_fqdn_lists:
+                  - ZBFW_SFL_1_uni1
+                  - ZBFW_SFL_2_uni1
+                source_geo_locations:
+                  - DZA
+                  - AGO
+                source_ports:
+                  - 1045
+                  - 1657
+                source_port_ranges:
+                  - from: 1331
+                    to: 1442
+                  - from: 1511
+                    to: 1631
+                destination_data_prefix_lists:
+                  - ZBFW_DDPL_1_uni1
+                  - ZBFW_DDPL_2_uni1
+                destination_fqdn_lists:
+                  - ZBFW_DFL_1_uni1
+                  - ZBFW_DFL_2_uni1
+                destination_geo_locations:
+                  - IND
+                  - LKA
+                destination_ports:
+                  - 8443
+                  - 5061
+                destination_port_ranges:
+                  - from: 8443
+                    to: 8447
+              actions:
+                log: true
+            - id: 2
+              name: Rule_2
+              base_action: inspect
+              match_criterias:
+                source_ip_prefix: 10.0.0.0/12 10.20.98.0/24
+                source_fqdn: example.com
+                destination_ip_prefix: 192.168.0.0/16 10.30.98.0/24
+                destination_fqdn: test.com
+                local_application_list: ZBFW_LAL_1_uni1
+            - id: 3
+              name: Rule_3
+              base_action: drop
+              match_criterias:
+                source_fqdn: cisco.com
+                source_ip_prefix: 10.10.98.0/24
+                destination_ip_prefix_variable: ZBFW_DIP_PL_1_uni1
+                destination_fqdn: example.com
+              actions:
+                log: true
+            - id: 4
+              name: Rule_4
+              base_action: inspect
+              match_criterias:
+                protocols:
+                  - 6
+                  - 17
+            - id: 5
+              name: Rule_5
+              base_action: inspect
+              match_criterias:
+                destination_ports:
+                  - 5190
+                  - 3020
+                protocols:
+                  - 6
+                  - 17
+                protocol_names:
+                  - aol
+                  - cifs
+            - id: 6
+              name: Rule_6
+              base_action: pass
+              match_criterias:
+                source_data_prefix_lists:
+                  - ZBFW_SDPL_1_uni1
+                  - ZBFW_SDPL_2_uni1
+                source_fqdn_lists:
+                  - ZBFW_SFL_1_uni1
+                  - ZBFW_SFL_2_uni1
+                source_geo_locations:
+                  - DZA
+                  - AGO
+                source_port_lists:
+                  - Test_Additional_Ports
+                  - Test_Management_Ports
+                destination_data_prefix_lists:
+                  - ZBFW_DDPL_1_uni1
+                  - ZBFW_DDPL_2_uni1
+                destination_fqdn_lists:
+                  - ZBFW_DFL_1_uni1
+                  - ZBFW_DFL_2_uni1
+                destination_geo_locations:
+                  - IND
+                  - LKA
+                destination_port_lists:
+                  - Test_Device_access_ports
+                  - Test_Web_Ports
+              actions:
+                log: true
+          zone_pairs:
+            - source_zone: Test_zone_1_uni1
+              destination_zone: Test_zone_2_uni1
+            - source_zone: Test_zone_3_uni1
+              destination_zone: Test_zone_4_uni1
+        - name: ZONE-BASED-FIREWALL-02
+          description: ZONE-BASED-FIREWALL-02
+          default_action_type: pass
+          rules:
+            - id: 1
+              name: Rule 1
+              base_action: inspect
+              match_criterias:
+                protocols:
+                  - 1
+                  - 50
+            - id: 2
+              name: Rule 2
+              base_action: drop
+          zone_pairs:
+            - source_zone: self_zone
+              destination_zone: Test_zone_2_uni1
+        - name: ZONE-BASED-FIREWALL-03
+          description: ZONE-BASED-FIREWALL-03
+          default_action_type: drop
+          rules:
+            - id: 1
+              name: Rule_1
+              base_action: drop
+              match_criterias:
+                protocols:
+                  - 1
+                  - 50
+              actions:
+                log: true
+          zone_pairs:
+            - source_zone: self_zone
+              destination_zone: Test_zone_2_uni1
+        - name: NGFW-TF-AK2
+          description: NGFW-TF-AK
+          mode: unified
+          default_action_type: pass
+          rules:
+            - id: 1
+              name: Rule 1
+              base_action: inspect
+              match_criterias:
+                source_data_prefix_lists:
+                  - ZBFW_SDPL_1_uni1
+                  - ZBFW_SDPL_2_uni1
+                source_fqdn_lists:
+                  - ZBFW_SFL_1_uni1
+                  - ZBFW_SFL_2_uni1
+                source_geo_locations:
+                  - DZA
+                  - AGO
+                source_ports:
+                  - 1045
+                  - 1657
+                source_port_ranges:
+                  - from: 1331
+                    to: 1442
+                  - from: 1511
+                    to: 1631
+                destination_data_prefix_lists:
+                  - ZBFW_DDPL_1_uni1
+                  - ZBFW_DDPL_2_uni1
+                destination_fqdn_lists:
+                  - ZBFW_DFL_1_uni1
+                  - ZBFW_DFL_2_uni1
+                destination_geo_locations:
+                  - IND
+                  - LKA
+                destination_ports:
+                  - 8443
+                  - 5061
+                destination_port_ranges:
+                  - from: 8443
+                    to: 8447
+                local_application_list: ZBFW_LAL_1_uni1
+              actions:
+                log: true
+        - name: NGFW-TF-AK
+          description: NGFW-TF-AK
+          mode: unified
+          default_action_type: pass
+          rules:
+            - id: 1
+              name: Rule 1
+              base_action: inspect
+              match_criterias:
+                source_data_prefix_lists:
+                  - ZBFW_SDPL_1_uni1
+                  - ZBFW_SDPL_2_uni1
+                source_fqdn_lists:
+                  - ZBFW_SFL_1_uni1
+                  - ZBFW_SFL_2_uni1
+                source_geo_locations:
+                  - DZA
+                  - AGO
+                source_ports:
+                  - 1045
+                  - 1657
+                source_port_ranges:
+                  - from: 1331
+                    to: 1442
+                  - from: 1511
+                    to: 1631
+                destination_data_prefix_lists:
+                  - ZBFW_DDPL_1_uni1
+                  - ZBFW_DDPL_2_uni1
+                destination_fqdn_lists:
+                  - ZBFW_DFL_1_uni1
+                  - ZBFW_DFL_2_uni1
+                destination_geo_locations:
+                  - IND
+                  - LKA
+                destination_ports:
+                  - 8443
+                  - 5061
+                destination_port_ranges:
+                  - from: 8443
+                    to: 8447
+                local_application_list: ZBFW_LAL_1_uni1
+              actions:
+                log: true
+            - id: 2
+              name: Rule 2
+              base_action: inspect
+              match_criterias:
+                protocols:
+                  - 6
+                  - 17
+                source_ip_prefix: 10.0.0.0/12 10.20.98.0/24
+                source_fqdn: example.com
+                destination_ip_prefix: 192.168.0.0/16 10.30.98.0/24
+                destination_fqdn: test.com
+            - id: 3
+              name: Rule 3
+              base_action: drop
+              match_criterias:
+                source_fqdn: cisco.com
+                source_ip_prefix: 10.10.98.0/24
+                destination_ip_prefix: 10.10.99.0/24
+                destination_fqdn: example.com
+                source_port_lists:
+                  - Test_Additional_Ports
+                destination_port_lists:
+                  - Test_Management_Ports
+            - id: 4
+              name: Rule 4
+              base_action: inspect
+              match_criterias:
+                source_ip_prefix_variable: src_ip_var
+                destination_ip_prefix_variable: dest_ip_var
+            - id: 5
+              name: Rule_5
+              base_action: inspect
+              match_criterias:
+                destination_ports:
+                  - 5190
+                  - 3020
+                protocols:
+                  - 6
+                  - 17
+                protocol_names:
+                  - aol
+                  - cifs
+      intrusion_prevention:
+        - name: IPS-POLICY-01
+          description: IPS-POLICY-01
+          mode: security
+          inspection_mode: protection
+          log_level: alert
+          signature_set: balanced
+          target_vpns:
+            - 10
+            - 20
+    feature_policies:
+      - name: SECURITY-POLICY-TEMPLATE-01
+        description: SECURITY-POLICY-TEMPLATE-01
+        use_case: custom
+        firewall_policies:
+          - ZONE-BASED-FIREWALL-01
+          - ZONE-BASED-FIREWALL-02
+        additional_settings:
+          firewall:
+            direct_internet_applications: true
+            tcp_syn_flood_limit: 1239
+            high_speed_logging:
+              vpn_id: 1
+              server_ip: 1.1.1.1
+              server_port: 2055
+            audit_trail: true
+            match_stats_per_filter: true
+      - name: SECURITY-POLICY-TEMPLATE-02
+        description: SECURITY-POLICY-TEMPLATE-02
+        use_case: custom
+        mode: security
+        firewall_policies:
+          - ZONE-BASED-FIREWALL-01
+          - ZONE-BASED-FIREWALL-02
+        intrusion_prevention_policy: IPS-POLICY-01
+        additional_settings:
+          firewall:
+            direct_internet_applications: true
+            tcp_syn_flood_limit: 1239
+            high_speed_logging:
+              vpn_id: 1
+              server_ip: 1.1.1.1
+              server_port: 2055
+            audit_trail: true
+            match_stats_per_filter: true
+          ips_url_amp:
+            external_syslog_server:
+              vpn_id: 2
+              server_ip: 2.2.2.2
+            failure_mode: open
+      - name: U-SECURITY-POLICY
+        description: SECURITY-POLICY-TEMPLATE-01
+        mode: unified
+        use_case: custom
+        unified_firewall_policies:
+          - firewall_policy: NGFW-TF-AK
+            zones:
+              - source_zone: self_zone
+                destination_zone: Test_zone_2_uni1
+              - source_zone: Test_zone_2_uni1
+                destination_zone: self_zone
+          - firewall_policy: NGFW-TF-AK2
+            zones:
+              - source_zone: Test_zone_1_uni1
+                destination_zone: Test_zone_2_uni1
+        additional_settings:
+          firewall:
+            max_incomplete_icmp_limit: 5000
+            max_incomplete_tcp_limit: 2000
+            max_incomplete_udp_limit: 3000
+            unified_logging: on
+            session_reclassify_allow: on
+            icmp_unreachable_allow: on
+            tcp_syn_flood_limit: 1239
+            # HSL NOT SUPPORTED YET IN UNIFIED MODE FOR NAC
+            audit_trail: true

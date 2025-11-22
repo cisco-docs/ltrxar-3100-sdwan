@@ -205,6 +205,12 @@ share/python-wheels/
 *.egg
 MANIFEST
 
+<<<<<<< HEAD
+=======
+#Virtual Environment
+venv/
+
+>>>>>>> upstream/master
 # PyInstaller
 #  Usually these files are written by a python script from a template
 #  before PyInstaller builds the exe, so as to inject date/other infos into it.
@@ -389,9 +395,12 @@ $RECYCLE.BIN/
 # vsCode
 .vscode
 
+<<<<<<< HEAD
 # Ansible Collection tarball
 cisco-aac-*.tar.gz
 
+=======
+>>>>>>> upstream/master
 # Test Results
 test_results/
 
@@ -401,6 +410,7 @@ test_results/
 # temp folder
 tmp/
 
+<<<<<<< HEAD
 # Ansible Collections
 ansible_collections/
 
@@ -410,18 +420,45 @@ site/
 # Terraform
 .terraform/
 .terraform.lock.hcl
+=======
+# Terraform
+.terraform/
+.terraform.lock.hcl
+.terraform.tfstate.lock.info
+>>>>>>> upstream/master
 *.tfstate
 *.tfstate.backup
 *.tfplan
 
+<<<<<<< HEAD
 # key
 key
 
 # Test results
 tests/results/
+=======
+# Rendered Documentation
+site/
+>>>>>>> upstream/master
 
 # Pabot
 .pabotsuitenames
 
+<<<<<<< HEAD
 # defaults.yaml
 defaults.yaml
+=======
+# Test logs
+sdwan_*.html
+sdwan_*.xml
+
+# Debug logs
+*.log
+
+# Envrc
+.envrc
+
+# Prettier
+.prettierignore
+
+>>>>>>> upstream/master
