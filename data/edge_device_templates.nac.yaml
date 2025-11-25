@@ -2,7 +2,7 @@
 # Edge Device template data
 sdwan:
   edge_device_templates:
-    - name: DT-REMOTE-C8000V-01
+    - name: DT-COH-REMOTE-C8000V-01
       description: "Remote Branch Site - cEdge01"
       device_model: C8000V
       aaa_template: FT-REMOTE-EDGE-AAA-01
