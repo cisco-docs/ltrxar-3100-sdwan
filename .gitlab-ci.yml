@@ -68,7 +68,7 @@ before_script:
   - git config --global https.proxy "$https_proxy"
 
 cache:
-  key: terraform_modules_and_lock
+  key: terraform_modules_and_lock_v2
   paths:
     - .terraform
     - .terraform.lock.hcl
