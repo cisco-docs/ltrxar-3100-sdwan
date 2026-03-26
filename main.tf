@@ -8,7 +8,7 @@ module "sdwan" {
 }
 
 terraform {
-    required_providers {
+  required_providers {
     sdwan = {
       source = "CiscoDevNet/sdwan"
       version = "0.11.0"
