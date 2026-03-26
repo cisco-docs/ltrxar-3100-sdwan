@@ -1,0 +1,114 @@
+---
+# SD-WAN Sites
+sdwan:
+  sites:
+    - id: 100
+      routers:
+        - chassis_id: C8K-E5FA8EFC-7B65-C148-2D23-2C72D2745EFA
+          model: C8000V
+          device_template: DT-SAC-Demo-REMOTE-C8000V-01
+          device_variables:
+            # System template (FT-REMOTE-EDGE-SYSTEM-01)
+            site_id: 100
+            system_ip: 10.0.0.10
+            system_hostname: SD-SITE100-C8KV-01
+            controller_groups: 1,2
+            timezone: UTC
+            system_description: Site 100 C8KV01
+            system_location: Site100
+            system_latitude: 38.1
+            system_longitude: -1.9
+            ondemand_tunnel_enable: false
+            ondemand_tunnel_idle_timeout: 10
+
+            # Global settings template (FT-REMOTE-EDGE-GLOBAL-01)
+            global_cdp_enable: true
+            global_lldp_enable: false
+            global_ip_domain_lookup_enable: true
+
+            # Logging template (FT-REMOTE-EDGE-LOGGING-01)
+            logging_server_source_interface: Loopback10
+
+            # NTP template (FT-REMOTE-EDGE-NTP-01)
+            ntp_server_source_interface: GigabitEthernet1
+
+            # SNMP template (FT-REMOTE-EDGE-SNMPV3-01)
+            snmp_contact: sac-admin@cisco.com
+            snmp_location: Location Site100
+            snmp_shutdown: false
+            snmp_trap_source_interface: Loopback10
+
+            # VPN0 template (FT-REMOTE-VPN0-OVERLAY)
+            vpn0_dns_primary: 172.16.1.254
+            vpn0_dns_secondary: 172.16.2.254
+            vpn0_layer4_ecmp_enable: true
+            vpn0_ipv4_route1_nexthop1_ip: 172.16.1.254
+            vpn0_ipv4_route1_nexthop1_distance: 1
+            vpn0_ipv4_route1_nexthop2_ip: 172.16.2.254
+            vpn0_ipv4_route1_nexthop2_distance: 1
+
+            # TLOC1 - Public/INET interface (FT-TLOC1-PUBLIC-REMOTE-VPN0)
+            vpn0_tloc01_if_name: GigabitEthernet1
+            vpn0_tloc01_if_description: INET-1
+            vpn0_tloc01_if_ipv4_address: 172.16.1.20/24
+            vpn0_tloc01_if_shutdown: false
+            vpn0_tloc01_shaping_rate: 1000000
+            vpn0_tloc01_tunnel_color: biz-internet
+            vpn0_tloc01_tunnel_restrict: false
+            vpn0_tloc01_tunnel_ipsec_preference: 1000
+            vpn0_tloc01_tunnel_weight: 1
+            vpn0_tloc01_tunnel_group: 100
+            vpn0_tloc01_tunnel_vmanage_connection_preference: 5
+
+            # TLOC2 - Private/MPLS interface (FT-TLOC2-PRIVATE-REMOTE-VPN0)
+            vpn0_tloc02_if_name: GigabitEthernet2
+            vpn0_tloc02_if_description: MPLS-1
+            vpn0_tloc02_if_ipv4_address: 172.16.2.20/24
+            vpn0_tloc02_if_shutdown: false
+            vpn0_tloc02_shaping_rate: 1000000
+            vpn0_tloc02_tunnel_color: mpls
+            vpn0_tloc02_tunnel_restrict: false
+            vpn0_tloc02_tunnel_ipsec_preference: 1000
+            vpn0_tloc02_tunnel_weight: 1
+            vpn0_tloc02_tunnel_group: 200
+            vpn0_tloc02_tunnel_vmanage_connection_preference: 5
+
+            # VPN30 CORP service (FT-REMOTE-VPN30-CORP)
+            vpn30_default_route_prefix: 0.0.0.0/0
+            vpn30_default_route_next_hop: 10.30.100.254
+            vpn30_default_route_distance: 1
+
+            # VPN30 LAN ethernet interface (FT-ETH3-VPN30)
+            vpn30_eth3_if_name: GigabitEthernet3
+            vpn30_eth3_desc: VPN30 LAN
+            vpn30_eth3_if_shutdown: false
+
+            # VPN30 SVI interface (FT-SVI301-VPN30)
+            svi301_vpn30_if_name: Vlan30
+            svi301_desc: VPN30 SVI
+            svi301_ipv4: 10.30.100.1/24
+
+            # VPN40 GUEST service (FT-REMOTE-VPN40-GUEST)
+            vpn40_default_route_prefix: 0.0.0.0/0
+            vpn40_default_route_next_hop: 10.40.100.254
+            vpn40_default_route_distance: 1
+
+            # VPN40 LAN ethernet interface (FT-ETH4-VPN40)
+            # Note: template uses vpn20_* variable names (typo in feature template definition)
+            vpn40_eth4_if_name: GigabitEthernet4
+            vpn20_eth4_desc: VPN40 LAN
+            vpn20_eth4_if_shutdown: false
+
+            # VPN40 SVI interface (FT-SVI401-VPN40)
+            svi401_vpn_40_if_name: Vlan40
+            svi401_desc: VPN40 SVI
+            svi401_ipv4: 10.40.100.1/24
+
+            # VPN512 OOB management interface (FT-OOB-REMOTE-VPN512)
+            vpn512_oob_if_name: GigabitEthernet8
+            vpn512_oob_if_description: OOB-mgmt
+            vpn512_oob_if_shutdown: false
+
+            # CLI template Jinja variables (FT-REMOTE-EDGE-CLI-BGP-BFD-01)
+            vpn10_bgp_as_number_cli: 4000000100
+            vpn10_bgp_ipv4_neighbor1_address_cli: 10.30.100.10

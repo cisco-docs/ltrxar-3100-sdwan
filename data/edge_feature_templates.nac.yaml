@@ -251,7 +251,7 @@ sdwan:
     snmp_templates:
       - name: FT-REMOTE-EDGE-SNMPV3-01
         description: SNMPv3 template
-        contact_variable: cl-nac-demo-admin
+        contact_variable: snmp_contact
         groups:
           - name: GROUP_NOAUTH_NOPRIV
             security_level: no-auth-no-priv
@@ -262,7 +262,7 @@ sdwan:
           - name: GROUP_AUTH_PRIV
             security_level: auth-priv
             view: VIEW_ALL
-        location_variable: cisco-live
+        location_variable: snmp_location
         shutdown_variable: snmp_shutdown
         trap_target_servers:
           - ip: 172.16.0.11
