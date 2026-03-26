@@ -12,7 +12,7 @@ terraform {
 }
 
 module "sdwan" {
-  source  = "github.com/netascode/terraform-sdwan-nac-sdwan"
+  source = "github.com/netascode/terraform-sdwan-nac-sdwan"
 
   yaml_directories = ["data/"]
 
