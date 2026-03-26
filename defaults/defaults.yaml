@@ -13,6 +13,8 @@ defaults:
         ipv4_flow_visibility: false
         ipv6_flow_visibility: false
         implicit_acl_logging: false
+        cloud_qos: false
+        cloud_qos_service_side: false
     security_policies:
       definitions:
         zone_based_firewall:
@@ -434,6 +436,10 @@ defaults:
         configuration_group_deploy: true
         policy_group_deploy: true
     feature_profiles:
+      application_priority_profiles:
+        traffic_policies:
+          sequences:
+            protocol: ipv4
       cli_profiles:
         config:
           name: config
@@ -444,6 +450,11 @@ defaults:
           name: ucse
       policy_object_profile:
         name: policy_objects
+        security_intrusion_prevention_profiles:
+          alert_log_level: error
+          custom_signature_set: false
+        security_url_filtering_profiles:
+          block_page_content_body: Please contact your Network Administrator
       service_profiles:
         bgp_features:
           ipv4_neighbors:
@@ -459,9 +470,6 @@ defaults:
           sequences:
             name: acl
         lan_vpns:
-          ethernet_interfaces:
-            ipv4_configuration_type: static
-            ipv6_configuration_type: none
           ipv4_static_routes:
             gateway: nexthop
           ipv6_static_routes:
@@ -481,6 +489,8 @@ defaults:
           name: basic
         bfd:
           name: bfd
+        ca_certificate:
+          name: ca_certificate
         flexible_port_speed:
           name: flexible_port_speed
         global:
@@ -525,9 +535,6 @@ defaults:
             name: acl
         management_vpn:
           name: management_vpn
-          ethernet_interfaces:
-            ipv4_configuration_type: static
-            ipv6_configuration_type: none
           ipv4_static_routes:
             gateway: nexthop
           ipv6_static_routes:
@@ -539,8 +546,6 @@ defaults:
         wan_vpn:
           name: wan_vpn
           ethernet_interfaces:
-            ipv4_configuration_type: static
-            ipv6_configuration_type: none
             tunnel_interface:
               ipsec_encapsulation: true
           ipv4_static_routes:
