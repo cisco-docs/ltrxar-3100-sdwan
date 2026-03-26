@@ -8,6 +8,12 @@ module "sdwan" {
 }
 
 terraform {
+    required_providers {
+    sdwan = {
+      source = "CiscoDevNet/sdwan"
+      version = "0.11.0"
+    }
+  }
   backend "http" {
     skip_cert_verification = true
   }
