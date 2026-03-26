@@ -68,7 +68,7 @@ before_script:
   - git config --global https.proxy "$https_proxy"
 
 cache:
-  key: terraform_modules_and_lock_v2
+  key: terraform_modules_and_lock_v3
   paths:
     - .terraform
     - .terraform.lock.hcl
@@ -235,6 +235,7 @@ success:
 
 destroy:
   stage: destroy
+  resource_group: sdwan
   dependencies: []
   variables:
     TF_HTTP_PASSWORD: "${GITLAB_TOKEN}"
