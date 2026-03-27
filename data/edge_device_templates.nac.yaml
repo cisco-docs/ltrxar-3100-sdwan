@@ -25,14 +25,8 @@ sdwan:
         - name: FT-REMOTE-VPN30-CORP
           ethernet_interface_templates:
             - name: FT-ETH3-VPN30
-          # svi_interface_templates:
-          #   - name: FT-SVI301-VPN30
         - name: FT-REMOTE-VPN40-GUEST
           ethernet_interface_templates:
             - name: FT-ETH4-VPN40
-          # svi_interface_templates:
-          #   - name: FT-SVI401-VPN40
       vpn_512_template:
         name: FT-REMOTE-VPN512-MGMT
-        # ethernet_interface_templates:
-        #   - name: FT-OOB-REMOTE-VPN512

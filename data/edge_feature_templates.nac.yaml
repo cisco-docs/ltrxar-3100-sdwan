@@ -51,21 +51,6 @@ sdwan:
         vpn_name: OOB
         vpn_id: 512
 
-    # svi_interface_templates:
-    #   - name: FT-SVI301-VPN30
-    #     description: CEDGE VPN30 SVI INTERFACE
-    #     interface_description_variable: svi301_desc
-    #     interface_name_variable: svi301_vpn30_if_name
-    #     ipv4_address_variable: svi301_ipv4
-    #     shutdown: false
-
-    #   - name: FT-SVI401-VPN40
-    #     description: CEDGE VPN40 SVI INTERFACE
-    #     interface_description_variable: svi401_desc
-    #     interface_name_variable: svi401_vpn40_if_name
-    #     ipv4_address_variable: svi401_ipv4
-    #     shutdown: false
-
     ethernet_interface_templates:
       - name: FT-ETH3-VPN30
         description: CEDGE VPN30 LAN INTERFACE
@@ -143,14 +128,6 @@ sdwan:
           hello_interval: 1000
           hello_tolerance: 12
           vmanage_connection_preference_variable: vpn0_tloc02_tunnel_vmanage_connection_preference
-
-      # - name: FT-OOB-REMOTE-VPN512
-      #   description: CEDGE, VPN 512, L3 OOB interface
-      #   interface_description_variable: vpn512_oob_if_description
-      #   interface_name_variable: vpn512_oob_if_name
-      #   shutdown_variable: vpn512_oob_if_shutdown
-      #   ipv4_address_dhcp: true
-      #   dhcp_distance: 1
 
     omp_templates:
       - name: FT-REMOTE-EDGE-OMP-01
