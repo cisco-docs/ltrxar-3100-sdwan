@@ -2,20 +2,20 @@
 # SD-WAN Sites
 sdwan:
   sites:
-    - id: 100
+    - id: 2
       routers:
         - chassis_id: C8K-E5FA8EFC-7B65-C148-2D23-2C72D2745EFA
           model: C8000V
           device_template: DT-SAC-Demo-REMOTE-C8000V-01
           device_variables:
             # System template (FT-REMOTE-EDGE-SYSTEM-01)
-            site_id: 100
-            system_ip: 10.0.0.10
-            system_hostname: SD-SITE100-C8KV-01
+            site_id: 2
+            system_ip: 10.0.0.2
+            system_hostname: SD-SITE2-C8KV-01
             controller_groups: 1,2
             timezone: UTC
-            system_description: Site 100 C8KV01
-            system_location: Site100
+            system_description: Site 2 C8KV01
+            system_location: Site2
             system_latitude: 38.1
             system_longitude: -1.9
             ondemand_tunnel_enable: false
@@ -34,7 +34,7 @@ sdwan:
 
             # SNMP template (FT-REMOTE-EDGE-SNMPV3-01)
             snmp_contact: sac-admin@cisco.com
-            snmp_location: Location Site100
+            snmp_location: Location Site2
             snmp_shutdown: false
             snmp_trap_source_interface: Loopback10
 
@@ -50,7 +50,7 @@ sdwan:
             # TLOC1 - Public/INET interface (FT-TLOC1-PUBLIC-REMOTE-VPN0)
             vpn0_tloc01_if_name: GigabitEthernet1
             vpn0_tloc01_if_description: INET-1
-            vpn0_tloc01_if_ipv4_address: 172.16.1.20/24
+            vpn0_tloc01_if_ipv4_address: 172.16.1.2/24
             vpn0_tloc01_if_shutdown: false
             vpn0_tloc01_shaping_rate: 1000000
             vpn0_tloc01_tunnel_color: biz-internet
@@ -63,7 +63,7 @@ sdwan:
             # TLOC2 - Private/MPLS interface (FT-TLOC2-PRIVATE-REMOTE-VPN0)
             vpn0_tloc02_if_name: GigabitEthernet2
             vpn0_tloc02_if_description: MPLS-1
-            vpn0_tloc02_if_ipv4_address: 172.16.2.20/24
+            vpn0_tloc02_if_ipv4_address: 172.16.2.2/24
             vpn0_tloc02_if_shutdown: false
             vpn0_tloc02_shaping_rate: 1000000
             vpn0_tloc02_tunnel_color: mpls
@@ -94,13 +94,12 @@ sdwan:
             vpn40_default_route_distance: 1
 
             # VPN40 LAN ethernet interface (FT-ETH4-VPN40)
-            # Note: template uses vpn20_* variable names (typo in feature template definition)
             vpn40_eth4_if_name: GigabitEthernet4
-            vpn20_eth4_desc: VPN40 LAN
-            vpn20_eth4_if_shutdown: false
+            vpn40_eth4_desc: VPN40 LAN
+            vpn40_eth4_if_shutdown: false
 
             # VPN40 SVI interface (FT-SVI401-VPN40)
-            svi401_vpn_40_if_name: Vlan40
+            svi401_vpn40_if_name: Vlan40
             svi401_desc: VPN40 SVI
             svi401_ipv4: 10.40.100.1/24
 

@@ -62,7 +62,7 @@ sdwan:
       - name: FT-SVI401-VPN40
         description: CEDGE VPN40 SVI INTERFACE
         interface_description_variable: svi401_desc
-        interface_name_variable: svi401_vpn_40_if_name
+        interface_name_variable: svi401_vpn40_if_name
         ipv4_address_variable: svi401_ipv4
         shutdown: false
 
@@ -76,8 +76,8 @@ sdwan:
       - name: FT-ETH4-VPN40
         description: CEDGE VPN40 LAN INTERFACE
         interface_name_variable: vpn40_eth4_if_name
-        interface_description_variable: vpn20_eth4_desc
-        shutdown_variable: vpn20_eth4_if_shutdown
+        interface_description_variable: vpn40_eth4_desc
+        shutdown_variable: vpn40_eth4_if_shutdown
 
       - name: FT-TLOC1-PUBLIC-REMOTE-VPN0
         description: CEDGE TLOC1 with static IP Settings, NAT enabled
