@@ -109,5 +109,5 @@ sdwan:
             vpn512_oob_if_shutdown: false
 
             # CLI template Jinja variables (FT-REMOTE-EDGE-CLI-BGP-BFD-01)
-            vpn10_bgp_as_number_cli: 4000000100
-            vpn10_bgp_ipv4_neighbor1_address_cli: 10.30.100.10
+            vpn40_bgp_as_number_cli: 4000000100
+            vpn40_bgp_ipv4_neighbor1_address_cli: 10.30.100.10

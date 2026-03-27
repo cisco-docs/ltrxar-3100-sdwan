@@ -206,10 +206,10 @@ sdwan:
            interval min-tx 400 min-rx 400 multiplier 5
           interface GigabitEthernet3
             bfd template test
-          router bgp {{vpn10_bgp_as_number_cli}}
-          address-family ipv4 vrf 10
-           neighbor {{vpn10_bgp_ipv4_neighbor1_address_cli}} soft-reconfiguration inbound
-           neighbor {{vpn10_bgp_ipv4_neighbor1_address_cli}} fall-over bfd
+          router bgp {{vpn40_bgp_as_number_cli}}
+          address-family ipv4 vrf 40
+           neighbor {{vpn40_bgp_ipv4_neighbor1_address_cli}} soft-reconfiguration inbound
+           neighbor {{vpn40_bgp_ipv4_neighbor1_address_cli}} fall-over bfd
 
     global_settings_templates:
       - name: FT-REMOTE-EDGE-GLOBAL-01
