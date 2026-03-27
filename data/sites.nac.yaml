@@ -4,7 +4,7 @@ sdwan:
   sites:
     - id: 2
       routers:
-        - chassis_id: C8K-E5FA8EFC-7B65-C148-2D23-2C72D2745EFA
+        - chassis_id: C8K-D4CE7174-5261-7E6F-91EA-4926BCF4C2DD
           model: C8000V
           device_template: DT-SAC-Demo-REMOTE-C8000V-01
           device_variables:
