@@ -142,7 +142,7 @@ sdwan:
 
     aaa_templates:
       - name: FT-REMOTE-EDGE-AAA-01
-        description: Local auth
+        description: CEDGE Local auth
         authentication_and_authorization_order:
           - local
         users:
