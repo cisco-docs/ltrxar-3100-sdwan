@@ -21,7 +21,7 @@ sdwan:
             ondemand_tunnel_enable: false
             ondemand_tunnel_idle_timeout: 10
 
-            # Global settings template (FT-REMOTE-EDGE-GLOBAL-01)
+            # Global template (FT-REMOTE-EDGE-GLOBAL-01)
             global_cdp_enable: true
             global_lldp_enable: false
             global_ip_domain_lookup_enable: true
