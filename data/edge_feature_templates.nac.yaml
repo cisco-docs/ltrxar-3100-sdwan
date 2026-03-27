@@ -224,11 +224,11 @@ sdwan:
           - hostname_ip: 192.168.0.25
             logging_level: warn
             source_interface_variable: logging_server_source_interface
-            vpn_id: 10
+            vpn_id: 30
           - hostname_ip: 192.168.0.26
             logging_level: warn
             source_interface_variable: logging_server_source_interface
-            vpn_id: 10
+            vpn_id: 30
 
     ntp_templates:
       - name: FT-REMOTE-EDGE-NTP-01
@@ -237,11 +237,11 @@ sdwan:
           - hostname_ip: 216.239.35.4
             prefer: true
             source_interface_variable: ntp_server_source_interface
-            vpn_id: 0
+            vpn_id: 30
           - hostname_ip: time-pnp.cisco.com
             prefer: false
             source_interface_variable: ntp_server_source_interface
-            vpn_id: 0
+            vpn_id: 30
 
     security_templates:
       - name: FT-REMOTE-EDGE-SECURITY-01
@@ -270,7 +270,7 @@ sdwan:
             community_name: $CRYPT_CLUSTER$MVeouqBXy9Od6dAYMJ6eTQ==$z0Pl/8UAxXkt1lXOnayv8A==
             source_interface_variable: snmp_trap_source_interface
             user: user01
-            vpn_id: 10
+            vpn_id: 30
         users:
           - name: user01
             group: GROUP_NOAUTH_NOPRIV
