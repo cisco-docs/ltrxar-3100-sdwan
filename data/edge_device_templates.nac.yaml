@@ -2,7 +2,7 @@
 # Edge Device template data
 sdwan:
   edge_device_templates:
-    - name: DT-SAC-Demo-REMOTE-C8000V-01
+    - name: DT-USPS-SAC-REMOTE-C8000V-01
       description: "Remote Branch Site - cEdge01"
       device_model: C8000V
       aaa_template: FT-REMOTE-EDGE-AAA-01
@@ -25,14 +25,14 @@ sdwan:
         - name: FT-REMOTE-VPN30-CORP
           ethernet_interface_templates:
             - name: FT-ETH3-VPN30
-          svi_interface_templates:
-            - name: FT-SVI301-VPN30
+          # svi_interface_templates:
+          #   - name: FT-SVI301-VPN30
         - name: FT-REMOTE-VPN40-GUEST
           ethernet_interface_templates:
             - name: FT-ETH4-VPN40
-          svi_interface_templates:
-            - name: FT-SVI401-VPN40
+          # svi_interface_templates:
+          #   - name: FT-SVI401-VPN40
       vpn_512_template:
         name: FT-REMOTE-VPN512-MGMT
-        ethernet_interface_templates:
-          - name: FT-OOB-REMOTE-VPN512
+        # ethernet_interface_templates:
+        #   - name: FT-OOB-REMOTE-VPN512
