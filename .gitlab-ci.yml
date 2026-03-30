@@ -147,7 +147,7 @@ deploy:
       - terraform-debug.log
       - all_outputs.txt
     when: always
-    expire_in: 1 week
+    expire_in: 7 days
   dependencies:
     - plan
   needs:
@@ -218,6 +218,7 @@ failure:
       - fmt_output.txt
       - validate_output.txt
       - test_output.txt
+    expire_in: 7 days
   cache: []
 
 success:
@@ -234,6 +235,7 @@ success:
       - fmt_output.txt
       - validate_output.txt
       - test_output.txt
+    expire_in: 7 days
   cache: []
 
 destroy:
