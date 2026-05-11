@@ -8,86 +8,58 @@ class Rule:
     severity = "HIGH"
 
     # Flattened path to variable that (if configured) is required to be filled during config group deployment
-    required_variables_paths = [
+
+    # Note: Below list is the list of required variables in all supported versions of the SDWAN manager.
+    generic_required_variables_paths = [
         "sdwan.feature_profiles.other_profiles.thousandeyes.account_group_token_variable",
-        "sdwan.feature_profiles.other_profiles.thousandeyes.static_proxy_host_variable",
-        "sdwan.feature_profiles.other_profiles.thousandeyes.static_proxy_port_variable",
-        "sdwan.feature_profiles.other_profiles.thousandeyes.pac_proxy_url_variable",
-        "sdwan.feature_profiles.other_profiles.ucse.cimc_ipv4_address_variable",
         "sdwan.feature_profiles.other_profiles.ucse.cimc_default_gateway_variable",
+        "sdwan.feature_profiles.other_profiles.ucse.cimc_ipv4_address_variable",
         "sdwan.feature_profiles.other_profiles.ucse.interfaces.interface_name_variable",
         "sdwan.feature_profiles.service_profiles.bgp_features.as_number_variable",
-        "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_aggregate_addresses.network_address_variable",
-        "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_aggregate_addresses.subnet_mask_variable",
-        "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_neighbors.address_variable",
         "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_neighbors.address_families.maximum_prefixes_number_variable",
         "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_neighbors.address_families.maximum_prefixes_restart_interval_variable",
         "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_neighbors.address_families.maximum_prefixes_threshold_variable",
-        "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_neighbors.remote_as_variable",
-        "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_networks.network_address_variable",
-        "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_networks.subnet_mask_variable",
-        "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_redistributes.protocol_variable",
-        "sdwan.feature_profiles.service_profiles.bgp_features.ipv6_aggregate_addresses.prefix_variable",
-        "sdwan.feature_profiles.service_profiles.bgp_features.ipv6_neighbors.address_variable",
         "sdwan.feature_profiles.service_profiles.bgp_features.ipv6_neighbors.address_families.maximum_prefixes_number_variable",
         "sdwan.feature_profiles.service_profiles.bgp_features.ipv6_neighbors.address_families.maximum_prefixes_restart_interval_variable",
-        "sdwan.feature_profiles.service_profiles.bgp.ipv6_neighbors.address_families.maximum_prefixes_threshold_variable",
-        "sdwan.feature_profiles.service_profiles.bgp.ipv6_neighbors.remote_as_variable",
-        "sdwan.feature_profiles.service_profiles.bgp.ipv4_networks.prefix_address_variable",
-        "sdwan.feature_profiles.service_profiles.bgp.ipv6_redistributes.protocol_variable",
-        "sdwan.feature_profiles.service_profiles.dhcp_servers.pool_network_address_variable",
-        "sdwan.feature_profiles.service_profiles.dhcp_servers.pool_subnet_mask_variable",
-        "sdwan.feature_profiles.service_profiles.dhcp_servers.options.code_variable",
+        "sdwan.feature_profiles.service_profiles.bgp_features.ipv6_neighbors.address_families.maximum_prefixes_threshold_variable",
         "sdwan.feature_profiles.service_profiles.dhcp_servers.options.ascii_variable",
+        "sdwan.feature_profiles.service_profiles.dhcp_servers.options.code_variable",
         "sdwan.feature_profiles.service_profiles.dhcp_servers.options.hex_variable",
         "sdwan.feature_profiles.service_profiles.dhcp_servers.options.ip_addresses_variable",
-        "sdwan.feature_profiles.service_profiles.dhcp_servers.static_leases.ip_address_variable",
-        "sdwan.feature_profiles.service_profiles.dhcp_servers.static_leases.mac_address_variable",
+        "sdwan.feature_profiles.service_profiles.dhcp_servers.pool_network_address_variable",
+        "sdwan.feature_profiles.service_profiles.dhcp_servers.pool_subnet_mask_variable",
+        "sdwan.feature_profiles.service_profiles.eigrp_features.autonomous_system_id_variable",
+        "sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.actions.service_chain_name_variable",
         "sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.match_entries.destination_data_prefix_variable",
         "sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.match_entries.source_data_prefix_variable",
-        "sdwan.feature_profiles.service_profiles.ipv4_trackers.tracker_name_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.gre_routes.interfaces_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.gre_routes.network_address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.gre_routes.subnet_mask_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.host_mappings.hostname_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.host_mappings.ips_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ipsec_routes.interfaces_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ipsec_routes.network_address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ipsec_routes.subnet_mask_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ip_directed_broadcast_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv6_vrrp_groups.id_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.shutdown_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.gre_interfaces.interface_name_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.gre_interfaces.tunnel_destination_ipv4_address_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.gre_interfaces.tunnel_destination_ipv6_address_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.gre_interfaces.tunnel_source_interface_loopback_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.gre_interfaces.tunnel_source_interface_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.gre_interfaces.tunnel_source_ipv4_address_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.gre_interfaces.tunnel_source_ipv6_address_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.ipsec_interfaces.interface_name_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.ipsec_interfaces.ike_preshared_key_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_export_route_targets.route_target_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_import_route_targets.route_target_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_static_routes.network_address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_static_routes.next_hops.address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_static_routes.next_hops_with_tracker.address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_static_routes.subnet_mask_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_export_route_targets.route_target_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_import_route_targets.route_target_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_static_routes.next_hops.address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_static_routes.prefix_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat64_pools.name_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat64_pools.overload_variable",        
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat64_pools.range_end_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat64_pools.range_start_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat_pools.direction_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat_pools.id_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat_pools.overload_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat_pools.prefix_length_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat_pools.range_end_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat_pools.range_start_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat_port_forwards.nat_pool_id_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat_port_forwards.protocol_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat_port_forwards.source_ip_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat_port_forwards.source_port_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat_port_forwards.translate_ip_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.nat_port_forwards.translate_port_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_omp_advertise_routes.aggregates.aggregate_address_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_omp_advertise_routes.aggregates.subnet_mask_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_omp_advertise_routes.networks.network_address_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_omp_advertise_routes.networks.subnet_mask_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_omp_advertise_routes.protocol_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_export_route_targets.route_target_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_import_route_targets.route_target_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_omp_advertise_routes.aggregates.aggregate_prefix_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_omp_advertise_routes.networks.prefix_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_omp_advertise_routes.protocol_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.nat64_pools.name_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.nat64_pools.overload_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.nat64_pools.range_end_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.nat64_pools.range_start_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.route_leaks_from_global.protocol_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.route_leaks_from_global.redistributions.protocol_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.route_leaks_from_service.protocol_variable",
@@ -100,64 +72,47 @@ class Rule:
         "sdwan.feature_profiles.service_profiles.lan_vpns.services.ipv4_addresses_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.services.service_type_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.services.track_enable_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat_entries.direction_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat_entries.nat_pool_id_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat_entries.source_ip_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat_entries.translate_ip_variable",
+        "sdwan.feature_profiles.service_profiles.lan_vpns.svi_interfaces.interface_name_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.vpn_id_variable",
         "sdwan.feature_profiles.service_profiles.lan_vpns.vpn_name_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.arp_entries.ip_address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.arp_entries.mac_address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.interface_name_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv4_secondary_addresses.address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv4_secondary_addresses.subnet_mask_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv4_vrrp_groups.address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv4_vrrp_groups.id_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv4_vrrp_groups.secondary_addresses.address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv4_vrrp_groups.secondary_addresses.subnet_mask_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv6_dhcp_secondary_addresses.address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv6_secondary_addresses.address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv6_vrrp_groups.id_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv6_vrrp_groups.link_local_address_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.shutdown_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ip_mtu_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.arp_timeout_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.load_interval_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ip_directed_broadcast_variable",
-        "sdwan.feature_profiles.service_profiles.lan_vpns.vpn_name_variable", 
-        "sdwan.feature_profiles.service_profiles.ospf_features.areas.number",
-        "sdwan.feature_profiles.service_profiles.ospf_features.redistributes.protocol",
-        "sdwan.feature_profiles.system_profiles.aaa.authorization_config_commands_variable",
-        "sdwan.feature_profiles.system_profiles.aaa.authorization_console_variable",
-        "sdwan.feature_profiles.system_profiles.aaa.dot1x_authentication_variable",
-        "sdwan.feature_profiles.system_profiles.aaa.dot1x_accounting_variable",
+        "sdwan.feature_profiles.service_profiles.multicast_features.auto_rp_announces.interface_name_variable",
+        "sdwan.feature_profiles.service_profiles.multicast_features.auto_rp_announces.scope_variable",
+        "sdwan.feature_profiles.service_profiles.multicast_features.auto_rp_discoveries.interface_name_variable",
+        "sdwan.feature_profiles.service_profiles.multicast_features.auto_rp_discoveries.scope_variable",
+        "sdwan.feature_profiles.service_profiles.multicast_features.igmp_interfaces.interface_name_variable",
+        "sdwan.feature_profiles.service_profiles.multicast_features.igmp_interfaces.join_groups.group_address_variable",
+        "sdwan.feature_profiles.service_profiles.multicast_features.msdp_mesh_groups.peers.peer_ip_variable",
+        "sdwan.feature_profiles.service_profiles.multicast_features.pim_bsr_candidates.interface_name_variable",
+        "sdwan.feature_profiles.service_profiles.multicast_features.pim_bsr_rp_candidates.interface_name_variable",
+        "sdwan.feature_profiles.service_profiles.multicast_features.pim_interfaces.interface_name_variable",
+        "sdwan.feature_profiles.service_profiles.multicast_features.static_rp_addresses.access_list_variable",
+        "sdwan.feature_profiles.service_profiles.multicast_features.static_rp_addresses.ip_address_variable",
+        "sdwan.feature_profiles.service_profiles.ospfv3_ipv4_features.areas.interfaces.authentication_ipsec_key_variable",
+        "sdwan.feature_profiles.service_profiles.ospfv3_ipv4_features.areas.interfaces.authentication_ipsec_spi_variable",
+        "sdwan.feature_profiles.service_profiles.ospfv3_ipv4_features.areas.ranges.network_address_variable",
+        "sdwan.feature_profiles.service_profiles.ospfv3_ipv4_features.areas.ranges.subnet_mask_variable",
+        "sdwan.feature_profiles.service_profiles.ospfv3_ipv6_features.areas.interfaces.authentication_ipsec_key_variable",
+        "sdwan.feature_profiles.service_profiles.ospfv3_ipv6_features.areas.interfaces.authentication_ipsec_spi_variable",
+        "sdwan.feature_profiles.service_profiles.ospfv3_ipv6_features.areas.interfaces.name_variable",
+        "sdwan.feature_profiles.service_profiles.switchport_features.static_mac_addresses.mac_address_variable",
+        "sdwan.feature_profiles.service_profiles.switchport_features.static_mac_addresses.vlan_id_variable",
         "sdwan.feature_profiles.system_profiles.aaa.users.name_variable",
         "sdwan.feature_profiles.system_profiles.aaa.users.password_variable",
+        "sdwan.feature_profiles.system_profiles.aaa.users.public_key_chains.key_variable",
         "sdwan.feature_profiles.system_profiles.banner.login_variable",
         "sdwan.feature_profiles.system_profiles.banner.motd_variable",
         "sdwan.feature_profiles.system_profiles.basic.admin_tech_on_failure_variable",
-        "sdwan.feature_profiles.system_profiles.basic.console_baud_rate_variable",
         "sdwan.feature_profiles.system_profiles.basic.device_groups_variable",
         "sdwan.feature_profiles.system_profiles.basic.latitude_variable",
         "sdwan.feature_profiles.system_profiles.basic.location_variable",
         "sdwan.feature_profiles.system_profiles.basic.longitude_variable",
         "sdwan.feature_profiles.system_profiles.basic.max_omp_sessions_variable",
         "sdwan.feature_profiles.system_profiles.basic.on_demand_tunnel_variable",
-        "sdwan.feature_profiles.system_profiles.basic.on_demand_tunnel_idle_timeout_variable",
-        "sdwan.feature_profiles.system_profiles.basic.overlay_id_variable",
         "sdwan.feature_profiles.system_profiles.basic.port_hopping_variable",
-        "sdwan.feature_profiles.system_profiles.basic.port_offset_variable",
         "sdwan.feature_profiles.system_profiles.basic.system_description_variable",
         "sdwan.feature_profiles.system_profiles.basic.timezone_variable",
-        "sdwan.feature_profiles.system_profiles.basic.affinity_per_vrfs.affinity_group_number_variable",
-        "sdwan.feature_profiles.system_profiles.basic.affinity_per_vrfs.vrf_range_variable",
-        "sdwan.feature_profiles.system_profiles.bfd.default_dscp_variable",
-        "sdwan.feature_profiles.system_profiles.bfd.multiplier_variable",
-        "sdwan.feature_profiles.system_profiles.bfd.poll_interval_variable",
+        "sdwan.feature_profiles.system_profiles.basic.tracker_dia_stabilize_status_variable",
         "sdwan.feature_profiles.system_profiles.bfd.colors.color_variable",
-        "sdwan.feature_profiles.system_profiles.bfd.colors.default_dscp_variable",
-        "sdwan.feature_profiles.system_profiles.bfd.colors.hello_interval_variable",
-        "sdwan.feature_profiles.system_profiles.bfd.colors.multiplier_variable",
         "sdwan.feature_profiles.system_profiles.bfd.colors.path_mtu_discovery_variable",
         "sdwan.feature_profiles.system_profiles.global.arp_proxy_variable",
         "sdwan.feature_profiles.system_profiles.global.cdp_variable",
@@ -170,8 +125,8 @@ class Rule:
         "sdwan.feature_profiles.system_profiles.global.telnet_outbound_variable",
         "sdwan.feature_profiles.system_profiles.ipv4_device_access_policy.sequences.match_entries.destination_data_prefixes_variable",
         "sdwan.feature_profiles.system_profiles.ipv4_device_access_policy.sequences.match_entries.source_data_prefixes_variable",
-        "sdwan.feature_profiles.system_profiles.logging.disk_file_size_variable",
         "sdwan.feature_profiles.system_profiles.logging.disk_file_rotate_variable",
+        "sdwan.feature_profiles.system_profiles.logging.disk_file_size_variable",
         "sdwan.feature_profiles.system_profiles.logging.ipv4_servers.hostname_ip_variable",
         "sdwan.feature_profiles.system_profiles.logging.ipv4_servers.severity_variable",
         "sdwan.feature_profiles.system_profiles.logging.ipv4_servers.tls_enable_variable",
@@ -184,16 +139,16 @@ class Rule:
         "sdwan.feature_profiles.system_profiles.ntp.authentication_keys.id_variable",
         "sdwan.feature_profiles.system_profiles.ntp.authentication_keys.md5_value_variable",
         "sdwan.feature_profiles.system_profiles.ntp.servers.hostname_ip_variable",
-        "sdwan.feature_profiles.system_profiles.ntp.servers.prefer_variable",
         "sdwan.feature_profiles.system_profiles.ntp.servers.ntp_version_variable",
+        "sdwan.feature_profiles.system_profiles.ntp.servers.prefer_variable",
         "sdwan.feature_profiles.system_profiles.ntp.servers.vpn_id_variable",
         "sdwan.feature_profiles.system_profiles.omp.advertise_ipv4_bgp_variable",
         "sdwan.feature_profiles.system_profiles.omp.advertise_ipv4_connected_variable",
         "sdwan.feature_profiles.system_profiles.omp.advertise_ipv4_eigrp_variable",
         "sdwan.feature_profiles.system_profiles.omp.advertise_ipv4_isis_variable",
         "sdwan.feature_profiles.system_profiles.omp.advertise_ipv4_lisp_variable",
-        "sdwan.feature_profiles.system_profiles.omp.advertise_ipv4_ospf_variable",
         "sdwan.feature_profiles.system_profiles.omp.advertise_ipv4_ospf_v3_variable",
+        "sdwan.feature_profiles.system_profiles.omp.advertise_ipv4_ospf_variable",
         "sdwan.feature_profiles.system_profiles.omp.advertise_ipv4_static_variable",
         "sdwan.feature_profiles.system_profiles.omp.advertise_ipv6_bgp_variable",
         "sdwan.feature_profiles.system_profiles.omp.advertise_ipv6_connected_variable",
@@ -205,48 +160,40 @@ class Rule:
         "sdwan.feature_profiles.system_profiles.omp.advertisement_interval_variable",
         "sdwan.feature_profiles.system_profiles.omp.ecmp_limit_variable",
         "sdwan.feature_profiles.system_profiles.omp.eor_timer_variable",
-        "sdwan.feature_profiles.system_profiles.omp.graceful_restart_variable",
         "sdwan.feature_profiles.system_profiles.omp.graceful_restart_timer_variable",
+        "sdwan.feature_profiles.system_profiles.omp.graceful_restart_variable",
         "sdwan.feature_profiles.system_profiles.omp.holdtime_variable",
         "sdwan.feature_profiles.system_profiles.omp.omp_admin_distance_ipv4_variable",
         "sdwan.feature_profiles.system_profiles.omp.omp_admin_distance_ipv6_variable",
         "sdwan.feature_profiles.system_profiles.omp.overlay_as_variable",
         "sdwan.feature_profiles.system_profiles.omp.send_path_limit_variable",
         "sdwan.feature_profiles.system_profiles.omp.shutdown_variable",
+        "sdwan.feature_profiles.system_profiles.security.keys.key_string_variable",
         "sdwan.feature_profiles.system_profiles.security.keys.receiver_id_variable",
         "sdwan.feature_profiles.system_profiles.security.keys.send_id_variable",
-        "sdwan.feature_profiles.system_profiles.security.keys.key_string_variable",
+        "sdwan.feature_profiles.system_profiles.snmp.communities.name_variable",
         "sdwan.feature_profiles.system_profiles.snmp.communities.view_variable",
         "sdwan.feature_profiles.system_profiles.snmp.group.view_variable",
         "sdwan.feature_profiles.system_profiles.snmp.trap_target_servers.ip_variable",
         "sdwan.feature_profiles.system_profiles.snmp.trap_target_servers.port_variable",
-        "sdwan.feature_profiles.system_profiles.snmp.trap_target_servers.vpn_id",
+        "sdwan.feature_profiles.system_profiles.snmp.trap_target_servers.vpn_id_variable",
         "sdwan.feature_profiles.system_profiles.snmp.user.group_variable",
         "sdwan.feature_profiles.system_profiles.snmp.views.oids.id_variable",
         "sdwan.feature_profiles.transport_profiles.bgp_features.as_number_variable",
-        "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_aggregate_addresses.network_address_variable",
-        "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_aggregate_addresses.subnet_mask_variable",
-        "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_neighbors.address_variable",
         "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_neighbors.address_families.maximum_prefixes_number_variable",
         "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_neighbors.address_families.maximum_prefixes_restart_interval_variable",
         "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_neighbors.address_families.maximum_prefixes_threshold_variable",
-        "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_neighbors.remote_as_variable",
-        "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_networks.network_address_variable",
-        "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_networks.subnet_mask_variable",
-        "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_redistributes.protocol_variable",
-        "sdwan.feature_profiles.transport_profiles.bgp_features.ipv6_aggregate_addresses.prefix_variable",
-        "sdwan.feature_profiles.transport_profiles.bgp_features.ipv6_neighbors.address_variable",
         "sdwan.feature_profiles.transport_profiles.bgp_features.ipv6_neighbors.address_families.maximum_prefixes_number_variable",
         "sdwan.feature_profiles.transport_profiles.bgp_features.ipv6_neighbors.address_families.maximum_prefixes_restart_interval_variable",
         "sdwan.feature_profiles.transport_profiles.bgp_features.ipv6_neighbors.address_families.maximum_prefixes_threshold_variable",
-        "sdwan.feature_profiles.transport_profiles.bgp_features.ipv6_neighbors.remote_as_variable",
-        "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_networks.prefix_address_variable",
-        "sdwan.feature_profiles.transport_profiles.bgp_features.ipv6_redistributes.protocol_variable",
         "sdwan.feature_profiles.transport_profiles.bgp_features.mpls_interfaces.name_variable",
+        "sdwan.feature_profiles.transport_profiles.cellular_controllers.cellular_id_variable",
+        "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.actions.service_chain_name_variable",
         "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.match_entries.destination_data_prefix_variable",
         "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.match_entries.source_data_prefix_variable",
         "sdwan.feature_profiles.transport_profiles.ipv4_tracker_groups.tracker_name_variable",
         "sdwan.feature_profiles.transport_profiles.ipv4_trackers.tracker_name_variable",
+        "sdwan.feature_profiles.transport_profiles.ipv6_acls.sequences.actions.service_chain_name_variable",
         "sdwan.feature_profiles.transport_profiles.ipv6_tracker_groups.tracker_name_variable",
         "sdwan.feature_profiles.transport_profiles.ipv6_trackers.tracker_name_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.arp_entries.ip_address_variable",
@@ -256,32 +203,35 @@ class Rule:
         "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.ip_directed_broadcast_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.ip_mtu_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.ipv4_address_variable",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.ipv4_dhcp_distance_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.ipv4_secondary_addresses.address_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.ipv4_secondary_addresses.subnet_mask_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.ipv4_subnet_mask_variable",
-        "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.ipv4_dhcp_distance_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.ipv6_address_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.load_interval_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ethernet_interfaces.shutdown_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.host_mappings.hostname_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.host_mappings.ip_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ipv4_routes.network_address_variable",
-        "sdwan.feature_profiles.transport_profiles.management_vpn.ipv4_routes.subnet_mask_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ipv4_routes.next_hops.address_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ipv4_routes.next_hops.administrative_distance_variable",
-        "sdwan.feature_profiles.transport_profiles.management_vpn.ipv6_routes.prefix_variable",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.ipv4_routes.subnet_mask_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ipv6_routes.next_hops.address_variable",
         "sdwan.feature_profiles.transport_profiles.management_vpn.ipv6_routes.next_hops.administrative_distance_variable",
-        "sdwan.feature_profiles.transport_profiles.ospf_features.areas.number",
-        "sdwan.feature_profiles.transport_profiles.ospf_features.redistributes.protocol",
+        "sdwan.feature_profiles.transport_profiles.management_vpn.ipv6_routes.prefix_variable",
+        "sdwan.feature_profiles.transport_profiles.ospf_features.areas.number_variable",
+        "sdwan.feature_profiles.transport_profiles.ospf_features.redistributes.protocol_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.cellular_interfaces.interface_description_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.cellular_interfaces.interface_name_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.cellular_interfaces.ipv4_nat_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.cellular_interfaces.shutdown_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.enhance_ecmp_keying_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.arp_entries.ip_address_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.arp_entries.mac_address_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.interface_description_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.interface_name_variable",
-        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_dhcp_distance_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_address_variable",
-        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_nat_type_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_dhcp_distance_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_nat_pool_overload_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_nat_pool_prefix_length_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_nat_pool_range_end_variable",
@@ -295,20 +245,175 @@ class Rule:
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_secondary_addresses.subnet_mask_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_subnet_mask_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv6_address_variable",
-        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv6_secondary_addresses.address_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv6_nat66_static_entries.source_prefix_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv6_nat66_static_entries.source_vpn_id_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv6_nat66_static_entries.translate_prefix_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv6_secondary_addresses.address_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.shutdown_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.gre_interfaces.interface_name_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.gre_interfaces.tunnel_destination_ipv4_address_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.gre_interfaces.tunnel_destination_ipv6_address_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.gre_interfaces.tunnel_source_interface_loopback_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.gre_interfaces.tunnel_source_interface_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.gre_interfaces.tunnel_source_ipv4_address_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.gre_interfaces.tunnel_source_ipv6_address_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.host_mappings.hostname_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.host_mappings.ips_variable",
-        "sdwan.feature_profiles.transport_profiles.wan_vpn.ipv6_routes.prefix_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ipsec_interfaces.ike_preshared_key_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ipsec_interfaces.interface_name_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ipv6_routes.next_hops.address_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.ipv6_routes.next_hops.administrative_distance_variable",
+        "sdwan.feature_profiles.transport_profiles.wan_vpn.ipv6_routes.prefix_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.nat_64_v4_pools.name_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.nat_64_v4_pools.overload_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.nat_64_v4_pools.range_end_variable",
         "sdwan.feature_profiles.transport_profiles.wan_vpn.nat_64_v4_pools.range_start_variable",
+    ]
+
+    # Note: Below list is the list of required variables only in specific versions of the SDWAN manager.
+    version_specific_required_variables_paths = [
+        {
+            "version": "<20.18.0",
+            "paths": [
+                "sdwan.feature_profiles.other_profiles.thousandeyes.pac_proxy_url_variable",
+                "sdwan.feature_profiles.other_profiles.thousandeyes.static_proxy_host_variable",
+                "sdwan.feature_profiles.other_profiles.thousandeyes.static_proxy_port_variable",
+                "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_aggregate_addresses.network_address_variable",
+                "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_aggregate_addresses.subnet_mask_variable",
+                "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_neighbors.address_variable",
+                "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_neighbors.remote_as_variable",
+                "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_networks.network_address_variable",
+                "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_networks.subnet_mask_variable",
+                "sdwan.feature_profiles.service_profiles.bgp_features.ipv4_redistributes.protocol_variable",
+                "sdwan.feature_profiles.service_profiles.bgp_features.ipv6_aggregate_addresses.prefix_variable",
+                "sdwan.feature_profiles.service_profiles.bgp_features.ipv6_neighbors.address_variable",
+                "sdwan.feature_profiles.service_profiles.bgp_features.ipv6_neighbors.remote_as_variable",
+                "sdwan.feature_profiles.service_profiles.bgp_features.ipv6_networks.prefix_variable",
+                "sdwan.feature_profiles.service_profiles.bgp_features.ipv6_redistributes.protocol_variable",
+                "sdwan.feature_profiles.service_profiles.dhcp_servers.static_leases.ip_address_variable",
+                "sdwan.feature_profiles.service_profiles.dhcp_servers.static_leases.mac_address_variable",
+                "sdwan.feature_profiles.service_profiles.eigrp_features.interfaces.name_variable",
+                "sdwan.feature_profiles.service_profiles.eigrp_features.interfaces.summary_addresses.network_address_variable",
+                "sdwan.feature_profiles.service_profiles.eigrp_features.interfaces.summary_addresses.subnet_mask_variable",
+                "sdwan.feature_profiles.service_profiles.eigrp_features.networks.network_address_variable",
+                "sdwan.feature_profiles.service_profiles.eigrp_features.networks.subnet_mask_variable",
+                "sdwan.feature_profiles.service_profiles.eigrp_features.redistributes.protocol_variable",
+                "sdwan.feature_profiles.service_profiles.ipv4_trackers.tracker_name_variable",
+                "sdwan.feature_profiles.service_profiles.ipv6_acls.sequences.actions.service_chain_name_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.arp_entries.ip_address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.arp_entries.mac_address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.arp_timeout_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.interface_name_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ip_mtu_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv4_address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv4_secondary_addresses.address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv4_secondary_addresses.subnet_mask_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv4_vrrp_groups.address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv4_vrrp_groups.id_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv4_vrrp_groups.secondary_addresses.address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv4_vrrp_groups.secondary_addresses.subnet_mask_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv6_dhcp_secondary_addresses.address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv6_secondary_addresses.address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.ipv6_vrrp_groups.link_local_address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces.load_interval_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.gre_routes.interfaces_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.gre_routes.network_address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.gre_routes.subnet_mask_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.host_mappings.hostname_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.host_mappings.ips_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipsec_routes.interfaces_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipsec_routes.network_address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipsec_routes.subnet_mask_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_static_routes.network_address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_static_routes.next_hops.address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_static_routes.next_hops_with_tracker.address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_static_routes.static_route_interface.interface_name_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_static_routes.static_route_interface.next_hops.address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_static_routes.static_route_interface.next_hops.administrative_distance_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipv4_static_routes.subnet_mask_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_static_routes.next_hops.address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_static_routes.prefix_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_static_routes.static_route_interface.interface_name_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_static_routes.static_route_interface.next_hops.address_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.ipv6_static_routes.static_route_interface.next_hops.administrative_distance_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.nat_pools.direction_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.nat_pools.id_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.nat_pools.overload_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.nat_pools.prefix_length_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.nat_pools.range_end_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.nat_pools.range_start_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.nat_port_forwards.nat_pool_id_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.nat_port_forwards.protocol_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.nat_port_forwards.source_ip_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.nat_port_forwards.source_port_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.nat_port_forwards.translate_ip_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.nat_port_forwards.translate_port_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat_entries.direction_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat_entries.nat_pool_id_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat_entries.source_ip_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat_entries.translate_ip_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat_subnets.direction_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat_subnets.prefix_length_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat_subnets.source_ip_subnet_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.static_nat_subnets.translated_source_ip_subnet_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.svi_interfaces.arp_timeout_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.svi_interfaces.ip_directed_broadcast_variable",
+                "sdwan.feature_profiles.service_profiles.lan_vpns.svi_interfaces.shutdown_variable",
+                "sdwan.feature_profiles.service_profiles.multicast_features.local_replicator_variable",
+                "sdwan.feature_profiles.service_profiles.multicast_features.pim_interfaces.join_prune_interval_variable",
+                "sdwan.feature_profiles.service_profiles.multicast_features.pim_interfaces.query_interval_variable",
+                "sdwan.feature_profiles.service_profiles.multicast_features.spt_only_variable",
+                "sdwan.feature_profiles.service_profiles.ospf_features.areas.number_variable",
+                "sdwan.feature_profiles.service_profiles.ospf_features.redistributes.protocol_variable",
+                "sdwan.feature_profiles.service_profiles.ospfv3_ipv4_features.areas.interfaces.name_variable",
+                "sdwan.feature_profiles.service_profiles.ospfv3_ipv4_features.areas.number_variable",
+                "sdwan.feature_profiles.service_profiles.ospfv3_ipv4_features.areas.ranges.no_advertise_variable",
+                "sdwan.feature_profiles.service_profiles.ospfv3_ipv4_features.redistributes.protocol_variable",
+                "sdwan.feature_profiles.service_profiles.ospfv3_ipv6_features.areas.number_variable",
+                "sdwan.feature_profiles.service_profiles.ospfv3_ipv6_features.areas.ranges.no_advertise_variable",
+                "sdwan.feature_profiles.service_profiles.ospfv3_ipv6_features.areas.ranges.prefix_variable",
+                "sdwan.feature_profiles.service_profiles.ospfv3_ipv6_features.redistributes.protocol_variable",
+                "sdwan.feature_profiles.service_profiles.switchport_features.interfaces.name_variable",
+                "sdwan.feature_profiles.service_profiles.switchport_features.static_mac_addresses.interface_name_variable",
+                "sdwan.feature_profiles.system_profiles.aaa.authorization_config_commands_variable",
+                "sdwan.feature_profiles.system_profiles.aaa.authorization_console_variable",
+                "sdwan.feature_profiles.system_profiles.aaa.dot1x_accounting_variable",
+                "sdwan.feature_profiles.system_profiles.aaa.dot1x_authentication_variable",
+                "sdwan.feature_profiles.system_profiles.aaa.radius_groups.servers.key_variable",
+                "sdwan.feature_profiles.system_profiles.aaa.tacacs_groups.servers.key_variable",
+                "sdwan.feature_profiles.system_profiles.basic.affinity_per_vrfs.affinity_group_number_variable",
+                "sdwan.feature_profiles.system_profiles.basic.affinity_per_vrfs.vrf_range_variable",
+                "sdwan.feature_profiles.system_profiles.basic.console_baud_rate_variable",
+                "sdwan.feature_profiles.system_profiles.basic.on_demand_tunnel_idle_timeout_variable",
+                "sdwan.feature_profiles.system_profiles.basic.overlay_id_variable",
+                "sdwan.feature_profiles.system_profiles.basic.port_offset_variable",
+                "sdwan.feature_profiles.system_profiles.bfd.colors.default_dscp_variable",
+                "sdwan.feature_profiles.system_profiles.bfd.colors.hello_interval_variable",
+                "sdwan.feature_profiles.system_profiles.bfd.colors.multiplier_variable",
+                "sdwan.feature_profiles.system_profiles.bfd.default_dscp_variable",
+                "sdwan.feature_profiles.system_profiles.bfd.multiplier_variable",
+                "sdwan.feature_profiles.system_profiles.bfd.poll_interval_variable",
+                "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_aggregate_addresses.network_address_variable",
+                "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_aggregate_addresses.subnet_mask_variable",
+                "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_neighbors.address_variable",
+                "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_neighbors.remote_as_variable",
+                "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_networks.network_address_variable",
+                "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_networks.subnet_mask_variable",
+                "sdwan.feature_profiles.transport_profiles.bgp_features.ipv4_redistributes.protocol_variable",
+                "sdwan.feature_profiles.transport_profiles.bgp_features.ipv6_aggregate_addresses.prefix_variable",
+                "sdwan.feature_profiles.transport_profiles.bgp_features.ipv6_neighbors.address_variable",
+                "sdwan.feature_profiles.transport_profiles.bgp_features.ipv6_neighbors.remote_as_variable",
+                "sdwan.feature_profiles.transport_profiles.bgp_features.ipv6_networks.prefix_variable",
+                "sdwan.feature_profiles.transport_profiles.bgp_features.ipv6_redistributes.protocol_variable",
+                "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.ipv4_nat_type_variable",
+            ]
+        },
+        {
+            "version": ">=20.18.0",
+            "paths": [
+                "sdwan.feature_profiles.other_profiles.thousandeyes.vpn_id_variable",
+            ]
+        }
     ]
 
     # List of features where variables are required only if feature is associated
@@ -321,7 +426,11 @@ class Rule:
         },
         {
             "feature_path": "sdwan.feature_profiles.service_profiles.dhcp_servers",
-            "associate_jmes_paths": ["sdwan.feature_profiles.service_profiles[].lan_vpns[].ethernet_interfaces[].dhcp_server"],
+            "associate_jmes_paths": [
+                "sdwan.feature_profiles.service_profiles[].lan_vpns[].ethernet_interfaces[].dhcp_server",
+                "sdwan.feature_profiles.service_profiles[].lan_vpns[].ipsec_interfaces[].dhcp_server",
+                "sdwan.feature_profiles.service_profiles[].lan_vpns[].svi_interfaces[].dhcp_server",
+            ]
         },
         {
             "feature_path": "sdwan.feature_profiles.service_profiles.eigrp_features",
@@ -335,51 +444,84 @@ class Rule:
                 ],
         },
         {
+            "feature_path": "sdwan.feature_profiles.service_profiles.ipv4_trackers",
+            "associate_jmes_paths": ["sdwan.feature_profiles.service_profiles[].lan_vpns[].ethernet_interfaces[].ipv4_tracker"],
+        },
+        {
+            "feature_path": "sdwan.feature_profiles.service_profiles.ipv4_tracker_groups",
+            "associate_jmes_paths": ["sdwan.feature_profiles.service_profiles[].lan_vpns[].ethernet_interfaces[].ipv4_tracker_group"],
+        },
+        {
+            "feature_path": "sdwan.feature_profiles.service_profiles.multicast_features",
+            "associate_jmes_paths": ["sdwan.feature_profiles.service_profiles[].lan_vpns[].multicast"],
+        },
+        {
             "feature_path": "sdwan.feature_profiles.service_profiles.ospf_features",
             "associate_jmes_paths": ["sdwan.feature_profiles.service_profiles[].lan_vpns[].ospf"],
         },
         {
+            "feature_path": "sdwan.feature_profiles.service_profiles.ospfv3_ipv4_features",
+            "associate_jmes_paths": ["sdwan.feature_profiles.service_profiles[].lan_vpns[].ospfv3_ipv4"],
+        },
+        {
+            "feature_path": "sdwan.feature_profiles.service_profiles.ospfv3_ipv6_features",
+            "associate_jmes_paths": ["sdwan.feature_profiles.service_profiles[].lan_vpns[].ospfv3_ipv6"],
+        },
+        {
             "feature_path": "sdwan.feature_profiles.transport_profiles.ipv4_acls",
             "associate_jmes_paths": [
-                "sdwan.feature_profiles.transport_profiles[].wan_vpn[].ethernet_interfaces[].ipv4_egress_acl",
-                "sdwan.feature_profiles.transport_profiles[].wan_vpn[].ethernet_interfaces[].ipv4_ingress_acl",
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn.ethernet_interfaces[].ipv4_egress_acl",
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn.ethernet_interfaces[].ipv4_ingress_acl",
             ],
         },
         {
             "feature_path": "sdwan.feature_profiles.transport_profiles.bgp_features",
-            "associate_jmes_paths": ["sdwan.feature_profiles.transport_profiles[].wan_vpn[].bgp"],
+            "associate_jmes_paths": ["sdwan.feature_profiles.transport_profiles[].wan_vpn.bgp"],
         },
         {
             "feature_path": "sdwan.feature_profiles.transport_profiles.ospf_features",
-            "associate_jmes_paths": ["sdwan.feature_profiles.transport_profiles[].wan_vpn[].ospf"],
+            "associate_jmes_paths": ["sdwan.feature_profiles.transport_profiles[].wan_vpn.ospf"],
+        },
+        {
+            "feature_path": "sdwan.feature_profiles.transport_profiles.ospfv3_ipv4_features",
+            "associate_jmes_paths": ["sdwan.feature_profiles.transport_profiles[].wan_vpn.ospfv3_ipv4"],
+        },
+        {
+            "feature_path": "sdwan.feature_profiles.transport_profiles.ospfv3_ipv6_features",
+            "associate_jmes_paths": ["sdwan.feature_profiles.transport_profiles[].wan_vpn.ospfv3_ipv6"],
         },
         {
             "feature_path": "sdwan.feature_profiles.transport_profiles.ipv4_trackers",
-            "associate_jmes_paths": ["sdwan.feature_profiles.transport_profiles[].wan_vpn[].ethernet_interfaces[].ipv4_tracker[]"],
+            "associate_jmes_paths": [
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn.cellular_interfaces[].ipv4_tracker",
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn.ethernet_interfaces[].ipv4_tracker",
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn.gre_interfaces[].ipv4_tracker",
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn.ipsec_interfaces[].ipv4_tracker",
+            ],
+        },
+        {
+            "feature_path": "sdwan.feature_profiles.transport_profiles.ipv4_tracker_groups",
+            "associate_jmes_paths": [
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn.cellular_interfaces[].ipv4_tracker_group",
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn.ethernet_interfaces[].ipv4_tracker_group",
+            ],
         },
         {
             "feature_path": "sdwan.feature_profiles.transport_profiles.ipv6_trackers",
-            "associate_jmes_paths": ["sdwan.feature_profiles.transport_profiles[].wan_vpn[].ethernet_interfaces[].ipv6_tracker[]"],
+            "associate_jmes_paths": [
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn.cellular_interfaces[].ipv6_tracker",
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn.ethernet_interfaces[].ipv6_tracker",
+            ],
+        },
+        {
+            "feature_path": "sdwan.feature_profiles.transport_profiles.ipv6_tracker_groups",
+            "associate_jmes_paths": [
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn.cellular_interfaces[].ipv6_tracker_group",
+                "sdwan.feature_profiles.transport_profiles[].wan_vpn.ethernet_interfaces[].ipv6_tracker_group",
+            ],
         },
     ]
 
-    # In get_features_names function, we extract feature names by iterating over profile and finding all "name" keys
-    # However sometimes "name" key is used for other purposes, e.g. aaa.users.name and needs not to be saved as feature name
-    # This is a list of partial paths where name key is used for other purposes than feature name
-    skip_name_paths = [
-        "aaa.users",
-        "bgp_features.mpls_interfaces",
-        "ipv4_acls.sequences",
-        "ipv4_device_access_policy.sequences",
-        "ipv6_acls.sequences",
-        "ipv6_device_access_policy.sequences",
-        "logging.tls_profiles",
-        "ospf_features.areas.interfaces",
-        "route_policies.sequences",
-        "snmp.communities",
-        "snmp.views",
-    ]
-    
     # Here is the minimum required set of configuration group feature profile parcels for a deployment.
     # Schema: '<profile_key_in_configuration_group>:<profile_key_in_feature_profiles>':'<list_of_required_parcel_names>'
     # Sample-1: 'system_profile:system_profiles':['aaa', 'basic']'
@@ -397,37 +539,6 @@ class Rule:
             'wan_vpn'
         ]
     }
-
-    @classmethod
-    def get_features_names(cls, item, path, features, skip_key=True):
-        # Get all feature names from a feature profile
-        # This returns a dict with feature name as key and list of paths where this name is used as value
-        if isinstance(item, dict):
-            for key, value in item.items():
-                flat_path = re.sub(r'\[.*?\]', '', path)
-                if (
-                    key == "name"
-                    and skip_key is False
-                    and not any(skip_path in flat_path for skip_path in cls.skip_name_paths)
-                ):
-                    if value in features:
-                        features[value].append(path + ".name")
-                    else:
-                        features[value] = [path + ".name"]
-                cls.get_features_names(value, f"{path}.{key}", features, False)
-        elif isinstance(item, list):
-            for index, element in enumerate(item):
-                cls.get_features_names(
-                    element,
-                    (
-                        path + f"[{element['name']}]"
-                        if isinstance(element, dict) and "name" in element
-                        else path + f"[{index}]"
-                    ),
-                    features,
-                    False,
-                )
-        return features
 
     @classmethod
     def get_configuration_group_variables(cls, inventory, configuration_group):
@@ -632,7 +743,7 @@ class Rule:
                         if found_feature_names and feature_name in found_feature_names:
                             feature_found = True
                             break
-                    
+
                     if not feature_found:
                         variables_to_remove.append(var)
             for var in variables_to_remove:
@@ -640,8 +751,38 @@ class Rule:
 
         return required_variables
 
+    @staticmethod
+    def version_matches(manager_version, condition):
+        """Return True if manager_version satisfies the condition string.
+
+        condition can be: <X.Y  <=X.Y  >X.Y  >=X.Y  or X.Y (exact match).
+        """
+        m = re.match(r'^(<=|>=|<|>)?([\d]+(?:\.[\d]+)*)$', str(condition).strip())
+        if not m or not manager_version:
+            return False
+        operator = m.group(1) or "=="
+        def parse(v):
+            parts = tuple(int(x) for x in str(v).split("."))
+            return parts + (0,) * (3 - len(parts))
+        try:
+            mgr, cond = parse(manager_version), parse(m.group(2))
+        except ValueError:
+            return False
+        return (
+            mgr < cond  if operator == "<"  else
+            mgr <= cond if operator == "<=" else
+            mgr > cond  if operator == ">"  else
+            mgr >= cond if operator == ">=" else
+            mgr == cond
+        )
+
     @classmethod
     def match(cls, inventory):
+        required_variables_paths = list(cls.generic_required_variables_paths)
+        if inventory.get("sdwan", {}).get("manager_version"):
+            for version_specific_required_variables_path in cls.version_specific_required_variables_paths:
+                if cls.version_matches(inventory.get("sdwan", {}).get("manager_version"), version_specific_required_variables_path["version"]):
+                    required_variables_paths.extend(version_specific_required_variables_path["paths"])
         results = []
         profile_types = [
             "cli",
@@ -653,10 +794,6 @@ class Rule:
         ]
         # Create a dict where key is profile type and value is a list of profile names that exists for this profile type
         existing_profiles_names = {profile_type: [] for profile_type in profile_types}
-        # Create a dict where key is profile type and value is a dict with profile name as key and feature names with paths as value
-        existing_feature_names_per_profile = {
-            profile_type: {} for profile_type in profile_types
-        }
         # Create a dict that holds variables for each configuration group
         configuration_group_variables = {}
         for profile_type in profile_types:
@@ -672,13 +809,6 @@ class Rule:
                 ):
                     profile_name = profile.get("name")
                     existing_profiles_names[profile_type].append(profile_name)
-                    existing_feature_names_per_profile[profile_type][profile_name] = (
-                        cls.get_features_names(
-                            profile,
-                            f"sdwan.feature_profiles.{profile_type}_profiles[{profile_name}]",
-                            {},
-                        )
-                    )
         policy_object_profile = (
             inventory.get("sdwan", {})
             .get("feature_profiles", {})
@@ -687,18 +817,10 @@ class Rule:
         if policy_object_profile:
             profile_name = policy_object_profile.get("name", "policy_objects")
             existing_profiles_names["policy_object"] = [profile_name]
-            existing_feature_names_per_profile["policy_object"][profile_name] = (
-                cls.get_features_names(
-                    policy_object_profile,
-                    "sdwan.feature_profiles.policy_object_profile",
-                    {},
-                )
-            )
         if inventory.get("sdwan", {}).get("configuration_groups", {}):
             for configuration_group in inventory.get("sdwan", {}).get(
                 "configuration_groups", {}
             ):
-                features = {}
                 for profile_type in profile_types:
                     if configuration_group.get(f"{profile_type}_profile", None):
                         # Validate if profiles that are referenced exists
@@ -709,28 +831,7 @@ class Rule:
                             results.append(
                                 f"Configuration Group '{configuration_group.get('name')}' references a {profile_type} profile '{configuration_group.get(f'{profile_type}_profile')}' that does not exist under sdwan.feature_profiles.{profile_type}_profiles"
                             )
-                        else:
-                            # Validate if feature names are not overlaping accross profiles that are used in this configuration group
-                            # Create a dict with key as feature name and value as list of paths where this name is used
-                            # If name will have more than one path it means that this name is used for more than one feature
-                            profile_name = configuration_group.get(
-                                f"{profile_type}_profile"
-                            )
-                            for (
-                                feature_name,
-                                feature_paths,
-                            ) in existing_feature_names_per_profile[profile_type][
-                                profile_name
-                            ].items():
-                                if feature_name in features:
-                                    features[feature_name].extend(feature_paths)
-                                else:
-                                    features[feature_name] = feature_paths
-                            for feature_name, feature_paths in features.items():
-                                if len(feature_paths) > 1:
-                                    results.append(
-                                        f"Duplicate feature name '{feature_name}' in configuration group '{configuration_group.get('name')}' under paths: {', '.join(feature_paths)}"
-                                    )
+
                 configuration_group_variables[configuration_group.get("name")] = (
                     cls.get_configuration_group_variables(
                         inventory, configuration_group
@@ -758,11 +859,13 @@ class Rule:
                             + configuration_group_name
                             + "' does not exist"
                         )
-                        return results
+                        continue
                     # If this is dual devie configuration group, device needs to have correct tag assigned
                     if configuration_group.get("device_tags"):
                         configuration_group_tags = list(configuration_group.get("device_tags"))
-                        router_tags = router.get("tags", [])
+                        router_tags = list(router.get("tags", []))
+                        if router.get("topology_label"):
+                            router_tags.append(router["topology_label"])
                         if not any(
                             tag["name"] in router_tags for tag in configuration_group_tags
                         ):
@@ -772,7 +875,7 @@ class Rule:
                                 + configuration_group_name
                                 + "\" requires "
                                 + " or ".join(f'"{tag["name"]}"' for tag in configuration_group_tags)
-                                + " tag to be set on the router"
+                                + " tag (20.15) or topology_label (20.18+) to be set on the router"
                             )
                     # Verify missing vars in the router
                     cli_profile_variables = []
@@ -804,27 +907,17 @@ class Rule:
                             ),
                             router["chassis_id"],
                             configuration_group.get("device_tags", []),
-                            router.get("tags", []),
+                            [router["topology_label"]] if router.get("topology_label") else router.get("tags", []),
                         )
                         for variable in required_variables:
                             if (
-                                variable["flat_path"] in cls.required_variables_paths
+                                variable["flat_path"] in required_variables_paths
                                 and variable["variable_name"]
                                 not in router["device_variables"]
                             ):
                                 # missing_variables.append(variable['variable_name'] + f' ({variable["path"]})')
                                 missing_variables.append(variable["variable_name"])
                         # Verify CLI profile variables
-                        configuration_group = next(
-                            (
-                                cg
-                                for cg in inventory.get("sdwan", {}).get(
-                                    "configuration_groups", {}
-                                )
-                                if cg.get("name") == router["configuration_group"]
-                            ),
-                            None,
-                        )
                         if configuration_group.get("cli_profile"):
                             cli_profile = next(
                                 (
@@ -837,7 +930,7 @@ class Rule:
                                 ),
                                 None,
                             )
-                            if cli_profile.get("config", {}).get("cli_configuration"):
+                            if cli_profile and cli_profile.get("config", {}).get("cli_configuration"):
                                 vars = re.findall(
                                     r"{{.*?}}",
                                     cli_profile["config"]["cli_configuration"],
@@ -860,6 +953,7 @@ class Rule:
                                     "system_ip",
                                     "host_name",
                                     "site_id",
+                                    "region_id",
                                     "pseudo_commit_timer",
                                     "ipv6_strict_control",
                                 ]
@@ -883,13 +977,6 @@ class Rule:
                                 router["chassis_id"]
                                 + f" - duplicated device variable name '{cli_var}' is not allowed in CLI and non-CLI feature profiles"
                             )
-                        if cli_var in router.get("device_variables", {}):
-                            cli_var_value = router.get("device_variables", {}).get(cli_var)
-                            if not isinstance(cli_var_value, str):
-                                results.append(
-                                    router["chassis_id"]
-                                    + f" - CLI variable '{cli_var}' must be a string, got {type(cli_var_value).__name__}"
-                                )
 
                 # Validate that if configuration_group_deploy is true, minimum required profiles and parcels defined for deployment.
                 if 'configuration_group' in router and router.get('configuration_group_deploy', True):
@@ -904,10 +991,10 @@ class Rule:
                                 elif feature_profile_type and parcels:
                                     # Verify if minimal required profile features is created
                                     feature_profiles = inventory.get('sdwan', {}).get('feature_profiles', {}).get(feature_profile_type, [])
-                                    feature_profiles = feature_profiles if type(feature_profiles) is list else [feature_profiles]
+                                    feature_profiles = feature_profiles if isinstance(feature_profiles, list) else [feature_profiles]
                                     find_profile = next((p for p in feature_profiles if p.get('name') == config_group.get(cfg_grp_profile_type)), None)
                                     if find_profile:
-                                        missing_parcels = list(parcels - find_profile.keys())
+                                        missing_parcels = [p for p in parcels if p not in find_profile.keys()]
                                         if missing_parcels:
                                             results.append(f"sdwan.sites.{site['id']}.routers.{router['chassis_id']} - configuration_group '{config_group_name}' is missing required '{cfg_grp_profile_type}' features: " + ", ".join(missing_parcels) + " for deployment.")
                                     # Additional checks for transport profile

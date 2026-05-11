@@ -435,3 +435,137 @@ defaults:
       routers:
         configuration_group_deploy: true
         policy_group_deploy: true
+    feature_profiles:
+      application_priority_profiles:
+        settings:
+          ipv4_application_visibility: false
+          ipv6_application_visibility: false
+          ipv4_flow_visibility: false
+          ipv6_flow_visibility: false
+        traffic_policies:
+          sequences:
+            protocol: ipv4
+      cli_profiles:
+        config:
+          name: config
+      ngfw_security_profiles:
+        policies:
+          sequences:
+            sequence_type: ngfirewall
+            disable_sequence: false
+      other_profiles:
+        thousandeyes:
+          name: thousandeyes
+        ucse:
+          name: ucse
+      policy_object_profile:
+        name: policy_objects
+        security_intrusion_prevention_profiles:
+          alert_log_level: error
+          custom_signature_set: false
+        security_url_filtering_profiles:
+          block_page_content_body: Please contact your Network Administrator
+      service_profiles:
+        bgp_features:
+          ipv4_neighbors:
+            address_families:
+              maximum_prefixes_reach_policy: off
+          ipv6_neighbors:
+            address_families:
+              maximum_prefixes_reach_policy: off
+        ipv4_acls:
+          sequences:
+            name: acl
+        ipv6_acls:
+          sequences:
+            name: acl
+        lan_vpns:
+          ipsec_interfaces:
+            application_tunnel_type: none
+          ipv4_static_routes:
+            gateway: nexthop
+          ipv6_static_routes:
+            gateway: nexthop
+        route_policies:
+          sequences:
+            name: route
+            protocol: ipv4
+      system_profiles:
+        aaa:
+          name: aaa
+          auth_order:
+            - local
+        banner:
+          name: banner
+        basic:
+          name: basic
+        bfd:
+          name: bfd
+        ca_certificate:
+          name: ca_certificate
+        flexible_port_speed:
+          name: flexible_port_speed
+        global:
+          name: global
+        ipv4_device_access_policy:
+          name: ipv4_device_access_policy
+          sequences:
+            name: acl
+        ipv6_device_access_policy:
+          name: ipv6_device_access_policy
+          sequences:
+            name: acl
+        logging:
+          name: logging
+        mrf:
+          name: mrf
+        ntp:
+          name: ntp
+        omp:
+          name: omp
+        performance_monitoring:
+          name: performance_monitoring
+        security:
+          name: security
+        snmp:
+          name: snmp
+      transport_profiles:
+        bgp_features:
+          ipv4_neighbors:
+            address_families:
+              maximum_prefixes_reach_policy: off
+          ipv6_neighbors:
+            address_families:
+              maximum_prefixes_reach_policy: off
+        gps_features:
+          gps_enable: true
+        ipv4_acls:
+          sequences:
+            name: acl
+        ipv6_acls:
+          sequences:
+            name: acl
+        management_vpn:
+          name: management_vpn
+          ipv4_static_routes:
+            gateway: nexthop
+          ipv6_static_routes:
+            gateway: nexthop
+        route_policies:
+          sequences:
+            name: route
+            protocol: ipv4
+        wan_vpn:
+          name: wan_vpn
+          cellular_interfaces:
+            tunnel_interface:
+              ipsec_encapsulation: true
+          ethernet_interfaces:
+            tunnel_interface:
+              ipsec_encapsulation: true
+          ipsec_interfaces:
+            application_tunnel_type: none
+          ipv4_static_routes:
+            gateway: nexthop
+          ipv6_static_routes:
+            gateway: nexthop

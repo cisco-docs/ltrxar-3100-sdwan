@@ -3,7 +3,7 @@ Documentation   Verify Service Feature Profile Configuration IPv4 Tracker and IP
 Name            Service Profiles IPv4 Tracker and IPv4 Tracker Group
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles     service_profiles    ipv4_trackers    ipv4_tracker_groups
+Default Tags    sdwan    config    feature_profiles    service_profiles    ipv4_trackers    ipv4_tracker_groups
 Resource        ../../../sdwan_common.resource
 
 
@@ -19,42 +19,42 @@ Resource        ../../../sdwan_common.resource
 
 *** Test Cases ***
 Get Service Profiles
-    ${r}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/service
+    ${r}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/service
     Set Suite Variable    ${r}
 
 {% for profile in sdwan.feature_profiles.service_profiles | default([]) %}
 {% if profile.ipv4_trackers is defined %}
 
 Verify Feature Profiles Service Profiles {{ profile.name }} IPv4 Tracker Feature
-    ${profile}=    Get Value From Json    ${r.json()}    $[?(@.profileName=='{{ profile.name }}')]
-    Run Keyword If    ${profile} == []    Fail    Feature Profile '{{profile.name}}' should be present on the Manager
+    ${profile}=    Json Search    ${r.json()}    [?profileName=='{{ profile.name }}'] | [0]
+    Run Keyword If    $profile is None    Fail    Feature Profile '{{ profile.name }}' should be present on the Manager
     Set Suite Variable    ${profile}
-    ${profile_id}=    Get Value From Json    ${profile}    $..profileId
+    ${profile_id}=    Json Search String    ${profile}    profileId
     Set Suite Variable    ${profile_id}
-    ${service_ipv4_tracker_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/service/${profile_id[0]}/tracker
+    ${service_ipv4_tracker_res}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/service/${profile_id}/tracker
     Set Suite Variable    ${service_ipv4_tracker_res}
-    ${service_ipv4_tracker}=    Get Value From Json    ${service_ipv4_tracker_res.json()}    $..payload
-    Run Keyword If    ${service_ipv4_tracker} == []    Fail    IPv4 tracker feature(s) expected to be configured within the service profile '{{profile.name}}' on the Manager
+    ${service_ipv4_tracker}=    Json Search List    ${service_ipv4_tracker_res.json()}    data[].payload
+    Run Keyword If    ${service_ipv4_tracker} == []    Fail    IPv4 tracker feature(s) expected to be configured within the service profile '{{ profile.name }}' on the Manager
     Set Suite Variable    ${service_ipv4_tracker}
 
 {% for tracker in profile.ipv4_trackers | default([]) %}
     Log     === Tracker: {{ tracker.name }} ===
-    
-    # for each tracker find the corresponding one in the json and check parameters:
-    ${service_trackers_{{ tracker.name }}_raw}=    Get Value From Json    ${service_ipv4_tracker}    $[?(@.name=='{{ tracker.name }}')]
-    ${service_trackers_{{ tracker.name }}}=    Set Variable If    ${service_trackers_{{ tracker.name }}_raw} == []    not_defined    ${service_trackers_{{ tracker.name }}_raw[0]}
 
-    Should Be Equal Value Json String     ${service_trackers_{{ tracker.name }}}   $.name    {{ tracker.name }}    msg=name
-    Should Be Equal Value Json Special_String     ${service_trackers_{{ tracker.name }}}     $..description    {{ tracker.description | default('not_defined') | normalize_special_string }}    msg=description
-    
-    Should Be Equal Value Json Yaml    ${service_trackers_{{ tracker.name }}}    $..endpointIp    {{ tracker.endpoint_ip | default('not_defined') }}    {{ tracker.endpoint_ip_variable | default('not_defined') }}    msg=endpoint_ip    var_msg=endpoint_ip_variable
-    Should Be Equal Value Json Yaml    ${service_trackers_{{ tracker.name }}}    $..endpointTcpUdp.port    {{ tracker.endpoint_port | default('not_defined') }}    {{ tracker.endpoint_port_variable | default('not_defined') }}    msg=endpoint_port    var_msg=endpoint_port_variable
-    Should Be Equal Value Json Yaml    ${service_trackers_{{ tracker.name }}}    $..endpointTcpUdp.protocol    {{ tracker.endpoint_protocol | default('not_defined') }}    {{ tracker.endpoint_protocol_variable | default('not_defined') }}    msg=endpoint_protocol    var_msg=endpoint_protocol_variable
-    Should Be Equal Value Json Yaml    ${service_trackers_{{ tracker.name }}}    $..endpointApiUrl    {{ tracker.endpoint_url | default('not_defined') }}    {{ tracker.endpoint_url_variable | default('not_defined') }}    msg=endpoint_url    var_msg=endpoint_url_variable  
-    Should Be Equal Value Json Yaml    ${service_trackers_{{ tracker.name }}}    $..interval    {{ tracker.interval | default('not_defined') }}    {{ tracker.interval_variable | default('not_defined') }}    msg=interval    var_msg=interval_variable
-    Should Be Equal Value Json Yaml    ${service_trackers_{{ tracker.name }}}    $..multiplier    {{ tracker.multiplier | default('not_defined') }}    {{ tracker.multiplier_variable | default('not_defined') }}    msg=multiplier    var_msg=multiplier_variable
-    Should Be Equal Value Json Yaml    ${service_trackers_{{ tracker.name }}}    $..threshold    {{ tracker.threshold | default('not_defined') }}    {{ tracker.threshold_variable | default('not_defined') }}    msg=threshold    var_msg=threshold_variable
-    Should Be Equal Value Json Yaml    ${service_trackers_{{ tracker.name }}}    $..trackerName    {{ tracker.tracker_name | default('not_defined') }}    {{ tracker.tracker_name_variable | default('not_defined') }}    msg=tracker_name    var_msg=tracker_name_variable
+    # for each tracker find the corresponding one in the json and check parameters:
+    ${tracker_feature}=    Json Search    ${service_ipv4_tracker}    [?name=='{{ tracker.name }}'] | [0]
+    Run Keyword If    $tracker_feature is None    Fail    IPv4 tracker feature '{{ tracker.name }}' expected in service profile '{{ profile.name }}'
+
+    Should Be Equal Value Json String     ${tracker_feature}   name    {{ tracker.name }}    msg=name
+    Should Be Equal Value Json Special_String     ${tracker_feature}     description    {{ tracker.description | default('not_defined') | normalize_special_string }}    msg=description
+
+    Should Be Equal Value Json Yaml    ${tracker_feature}    data.endpointIp    {{ tracker.endpoint_ip | default('not_defined') }}    {{ tracker.endpoint_ip_variable | default('not_defined') }}    msg=endpoint_ip
+    Should Be Equal Value Json Yaml    ${tracker_feature}    data.endpointTcpUdp.port    {{ tracker.endpoint_port | default('not_defined') }}    {{ tracker.endpoint_port_variable | default('not_defined') }}    msg=endpoint_port
+    Should Be Equal Value Json Yaml    ${tracker_feature}    data.endpointTcpUdp.protocol    {{ tracker.endpoint_protocol | default('not_defined') }}    {{ tracker.endpoint_protocol_variable | default('not_defined') }}    msg=endpoint_protocol
+    Should Be Equal Value Json Yaml    ${tracker_feature}    data.endpointApiUrl    {{ tracker.endpoint_url | default('not_defined') }}    {{ tracker.endpoint_url_variable | default('not_defined') }}    msg=endpoint_url
+    Should Be Equal Value Json Yaml    ${tracker_feature}    data.interval    {{ tracker.interval | default('not_defined') }}    {{ tracker.interval_variable | default('not_defined') }}    msg=interval
+    Should Be Equal Value Json Yaml    ${tracker_feature}    data.multiplier    {{ tracker.multiplier | default('not_defined') }}    {{ tracker.multiplier_variable | default('not_defined') }}    msg=multiplier
+    Should Be Equal Value Json Yaml    ${tracker_feature}    data.threshold    {{ tracker.threshold | default('not_defined') }}    {{ tracker.threshold_variable | default('not_defined') }}    msg=threshold
+    Should Be Equal Value Json Yaml    ${tracker_feature}    data.trackerName    {{ tracker.tracker_name | default('not_defined') }}    {{ tracker.tracker_name_variable | default('not_defined') }}    msg=tracker_name
 
 {% endfor %}
 
@@ -64,44 +64,42 @@ Verify Feature Profiles Service Profiles {{ profile.name }} IPv4 Tracker Feature
 {% if profile.ipv4_tracker_groups is defined %}
 
 Verify Feature Profiles Service Profiles {{ profile.name }} IPv4 Tracker Group Feature
-    Run Keyword If    ${profile} == []    Fail    Feature Profile '{{profile.name}}' should be present on the Manager
-    ${service_tracker_grp_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/service/${profile_id[0]}/trackergroup
-    ${service_tracker_grp}=    Get Value From Json    ${service_tracker_grp_res.json()}    $..payload
-    Run Keyword If    ${service_tracker_grp} == []    Fail    IPv4 tracker group feature(s) expected to be configured within the service profile '{{profile.name}}' on the Manager
-    
+    Run Keyword If    $profile is None    Fail    Feature Profile '{{ profile.name }}' should be present on the Manager
+    ${service_tracker_grp_res}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/service/${profile_id}/trackergroup
+    ${service_tracker_grp}=    Json Search List    ${service_tracker_grp_res.json()}    data[].payload
+    Run Keyword If    ${service_tracker_grp} == []    Fail    IPv4 tracker group feature(s) expected to be configured within the service profile '{{ profile.name }}' on the Manager
+
     Set Suite Variable    ${service_tracker_grp}
 
 {% for tracker_grp in profile.ipv4_tracker_groups | default([]) %}
     Log     === Tracker Group: {{ tracker_grp.name }} ===
 
     # for each tracker_grp find the corresponding one in the json and check parameters:
-    ${json_tracker_grp_raw}=    Get Value From Json    ${service_tracker_grp}    $[?(@.name=='{{ tracker_grp.name }}')]
-    ${json_tracker_grp}=    Set Variable If    ${json_tracker_grp_raw} == []    not_defined    ${json_tracker_grp_raw[0]}
+    ${tracker_grp_feature}=    Json Search    ${service_tracker_grp}    [?name=='{{ tracker_grp.name }}'] | [0]
+    Run Keyword If    $tracker_grp_feature is None    Fail    IPv4 tracker group feature '{{ tracker_grp.name }}' expected in service profile '{{ profile.name }}'
 
-    Should Be Equal Value Json String     ${json_tracker_grp}   $.name    {{ tracker_grp.name }}    msg=tracker_grp name
-    Should Be Equal Value Json Special_String     ${json_tracker_grp}     $..description    {{ tracker_grp.description | default('not_defined') | normalize_special_string }}    msg=tracker_grp description
+    Should Be Equal Value Json String     ${tracker_grp_feature}   name    {{ tracker_grp.name }}    msg=tracker_grp name
+    Should Be Equal Value Json Special_String     ${tracker_grp_feature}     description    {{ tracker_grp.description | default('not_defined') | normalize_special_string }}    msg=tracker_grp description
 
-    Should Be Equal Value Json Yaml    ${json_tracker_grp}    $..combineBoolean    {{ tracker_grp.tracker_boolean | default('not_defined') }}    not_defined   msg=tracker_boolean   var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${tracker_grp_feature}    data.combineBoolean    {{ tracker_grp.tracker_boolean | default('not_defined') }}    not_defined   msg=tracker_boolean
 
     # Configuration has tracker names, tracker_group in JSON returns UUIDs
     # Find UUID from tracker name in tracker group configuration inside trackers API call
     # Compare with refId coming from tracker group API call
-    Should Be Equal Value Json List Length    ${json_tracker_grp}    $.data.trackerRefs    {{ tracker_grp.get('trackers', []) | length }}    msg=trackers_count
+    Should Be Equal Value Json List Length    ${tracker_grp_feature}    data.trackerRefs    {{ tracker_grp.get('trackers', []) | length }}    msg=trackers_count
 
-    ${service_tracker_data}=    Get Value From Json    ${service_ipv4_tracker_res.json()}    $..data
-    ${service_tracker_data}     Set Variable     ${service_tracker_data}[0]
+    ${service_tracker_data}=    Json Search List    ${service_ipv4_tracker_res.json()}    data
 {% for tracker_name in tracker_grp.trackers | default([]) %}
     Log     === Tracker: {{ tracker_name }} ===
 
     # Find correct tracker details from tracker JSON based on name inside tracker group configuration
-    ${tracker_json}=    Get Value From Json    ${service_tracker_data}    $[?(@.payload.name=='{{ tracker_name }}')]
-    Run Keyword If    ${tracker_json} == []    Fail    Tracker '{{ tracker_name }}' not found in the service profile '{{profile.name}}' on the Manager
+    ${tracker_json}=    Json Search    ${service_tracker_data}    [?payload.name=='{{ tracker_name }}'] | [0]
+    Run Keyword If    $tracker_json is None    Fail    Tracker '{{ tracker_name }}' not found in the service profile '{{ profile.name }}' on the Manager
 
-    ${tracker_uuid}=    Get Value From Json    ${tracker_json}[0]    $.parcelId
-    ${tracker_uuid}    Set Variable    ${tracker_uuid}[0]
-    
+    ${tracker_uuid}=    Json Search String    ${tracker_json}    parcelId
+
     # Extract refIDs from the trackerGroup JSON
-    ${refid_values}=    Evaluate    [p["trackerRef"]["refId"]["value"] for p in ${json_tracker_grp["data"]["trackerRefs"]}]
+    ${refid_values}=    Evaluate    [p["trackerRef"]["refId"]["value"] for p in ${tracker_grp_feature["data"]["trackerRefs"]}]
     Should Contain    ${refid_values}    ${tracker_uuid}
 
 {% endfor %}
@@ -109,7 +107,6 @@ Verify Feature Profiles Service Profiles {{ profile.name }} IPv4 Tracker Group F
 {% endfor %}
 
 {% endif %}
-
 
 {% endfor %}
 

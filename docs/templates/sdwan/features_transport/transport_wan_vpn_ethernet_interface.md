@@ -14,10 +14,11 @@ sdwan:
     transport_profiles:
       - name: transport1
         wan_vpn:
-          name: management_vpn
+          name: wan_vpn
           ethernet_interfaces:
             - name: inet_tloc
               interface_name: GigabitEthernet1
+              ipv4_address_type: static
               ipv4_address_variable: vpn0_inet_ip
               ipv4_subnet_mask_variable: vpn0_inet_mask
               shutdown: false
@@ -34,10 +35,31 @@ sdwan:
     transport_profiles:
       - name: transport1
         wan_vpn:
-          name: management_vpn
+          name: wan_vpn
           ethernet_interfaces:
             - name: inet_tloc
               interface_name: GigabitEthernet1
-              ipv4_configuration_type: dynamic
+              ipv4_address_type: dynamic
+              shutdown: false
+```
+
+Example-3: The example below demonstrates how to configure a ethernet interface feature under wan_vpn feature within a transport profile with variable ipv4 and ipv6 address settings (note this is supported starting 20.18.1).
+
+```yaml
+sdwan:
+  feature_profiles:
+    transport_profiles:
+      - name: transport1
+        wan_vpn:
+          name: wan_vpn
+          ethernet_interfaces:
+            - name: inet_tloc
+              interface_name: GigabitEthernet1
+              ipv4_address_type_variable: vpn0_inet_address_type
+              ipv4_address_variable: vpn0_inet_ip
+              ipv4_subnet_mask_variable: vpn0_inet_mask
+              ipv4_dhcp_distance_variable: vpn0_inet_dhcp_distance
+              ipv6_address_type_variable: vpn0_inet_v6_address_type
+              ipv6_address_variable: vpn0_inet_v6_ip
               shutdown: false
 ```

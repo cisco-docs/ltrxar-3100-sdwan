@@ -24,7 +24,7 @@ sdwan:
                 interface_name: GigabitEthernet0/0/1
                 interface_description: "Branch LAN Interface with VRRP HA"
                 shutdown: false
-                ipv4_configuration_type: static
+                ipv4_address_type: static
                 ipv4_address: 192.168.20.2
                 ipv4_subnet_mask: 255.255.255.0                
                 ipv4_vrrp_groups:
@@ -34,9 +34,9 @@ sdwan:
                     timer: 1000
                     tracking_objects:
                       - tracker_object: tracker_obj1
-                        action: decrement
+                        action: Decrement
                         decrement_value: 50
-                ipv6_configuration_type: static
+                ipv6_address_type: static
                 ipv6_address: 2001:db8:20::2/64
                 ipv6_vrrp_groups:
                   - id: 1
@@ -62,7 +62,7 @@ sdwan:
               - name: lan_int_dynamic
                 interface_name: GigabitEthernet0/0/2
                 interface_description: "DHCP Client Interface"
-                ipv4_configuration_type: dynamic
+                ipv4_address_type: dynamic
                 ipv4_dhcp_distance: 1
-                ipv6_configuration_type: dynamic
+                ipv6_address_type: dynamic
 ```

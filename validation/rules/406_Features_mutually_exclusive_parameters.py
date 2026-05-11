@@ -23,6 +23,10 @@ class Rule:
             "parameter_names" : ["hex", "ascii", "ip_addresses"],
         },
         {
+            "path": "sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.actions",
+            "parameter_names": ["ipv4_next_hop", "service_chain_name"],
+        },
+        {
             "path": "sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.match_entries",
             "parameter_names": ["destination_data_prefix_list", "destination_data_prefix"],
         },
@@ -39,6 +43,10 @@ class Rule:
             "parameter_names" : ["endpoint_port", "endpoint_url"],
         },
         {
+            "path": "sdwan.feature_profiles.service_profiles.ipv6_acls.sequences.actions",
+            "parameter_names": ["ipv6_next_hop", "service_chain_name"],
+        },
+        {
             "path": "sdwan.feature_profiles.service_profiles.ipv6_acls.sequences.match_entries",
             "parameter_names": ["destination_data_prefix_list", "destination_data_prefix"],
         },
@@ -53,6 +61,10 @@ class Rule:
         {
             "path": "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces",
             "parameter_names" : ["ipv6_tracker", "ipv6_tracker_group"],
+        },
+        {
+            "path": "sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces",
+            "parameter_names" : ["port_channel_interface", "port_channel_member_interface"],
         },
         {
             "path": "sdwan.feature_profiles.system_profiles.ipv4_device_access_policy.sequences.match_entries",
@@ -87,6 +99,10 @@ class Rule:
             "parameter_names": ["communities", "users"],
         },
         {
+            "path": "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.actions",
+            "parameter_names": ["ipv4_next_hop", "service_chain_name"],
+        },
+        {
             "path": "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.match_entries",
             "parameter_names": ["destination_data_prefix_list", "destination_data_prefix" ],
         },
@@ -97,6 +113,10 @@ class Rule:
         {
             "path": "sdwan.feature_profiles.transport_profiles.ipv4_trackers",
             "parameter_names" : ["endpoint_ip", "endpoint_api_url", "endpoint_dns_name"],
+        },
+        {
+            "path": "sdwan.feature_profiles.transport_profiles.ipv6_acls.sequences.actions",
+            "parameter_names": ["ipv6_next_hop", "service_chain_name"],
         },
         {
             "path": "sdwan.feature_profiles.transport_profiles.ipv6_acls.sequences.match_entries",
@@ -111,12 +131,164 @@ class Rule:
             "parameter_names" : ["endpoint_ip", "endpoint_api_url", "endpoint_dns_name"],
         },
         {
+            "path": "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces.tunnel_interface",
+            "parameter_names" : ["mrf_enable_core_region", "mrf_enable_secondary_region"],
+        },
+        {
+            "path": "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces",
+            "parameter_names" : ["port_channel_interface", "port_channel_member_interface"],
+        },
+        {
             "path": "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces",
             "parameter_names" : ["ipv4_tracker", "ipv4_tracker_group"],
         },
         {
             "path": "sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces",
             "parameter_names" : ["ipv6_tracker", "ipv6_tracker_group"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["source_ipv4_prefix", "source_ipv6_prefix"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["source_ipv4_prefix", "source_data_ipv4_prefix_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["source_ipv4_prefix", "source_data_ipv6_prefix_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["source_ipv6_prefix", "source_data_ipv4_prefix_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["source_ipv6_prefix", "source_data_ipv6_prefix_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["source_data_ipv6_prefix_list", "source_data_ipv4_prefix_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["source_data_ipv6_prefix_list", "dns_application_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["destination_ipv4_prefix", "destination_ipv6_prefix"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["destination_ipv4_prefix", "destination_data_ipv4_prefix_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["destination_ipv4_prefix", "destination_data_ipv6_prefix_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["destination_ipv6_prefix", "destination_data_ipv4_prefix_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["destination_ipv6_prefix", "destination_data_ipv6_prefix_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["destination_data_ipv6_prefix_list", "destination_data_ipv4_prefix_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["destination_data_ipv6_prefix_list", "dns_application_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.match_criterias",
+            "parameter_names": ["traffic_class", "application_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.actions.sla_class",
+            "parameter_names": ["preferred_colors", "preferred_color_group_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.actions.sla_class",
+            "parameter_names": ["fallback_to_best_path", "strict"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.actions",
+            "parameter_names": ["preferred_color_group_list", "local_tloc_list"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.actions",
+            "parameter_names": ["service", "service_chain"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.actions.service",
+            "parameter_names": ["tloc_list", "tloc_ip"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.actions",
+            "parameter_names": ["service_chain", "next_hop_ipv4"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.actions",
+            "parameter_names": ["service_chain", "next_hop_ipv6"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.actions",
+            "parameter_names": ["nat_pool", "nat_vpn"],
+        },
+        {
+            "path": "sdwan.feature_profiles.application_priority_profiles.traffic_policies.sequences.actions.sig_sse",
+            "parameter_names": ["internet_gateway", "service_edge"],
+        },
+        {
+            "path": "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries",
+            "parameter_names": ["destination_data_ipv4_prefixes", "destination_data_ipv4_prefix_lists"],
+        },
+        {
+            "path": "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries",
+            "parameter_names": ["destination_fqdns", "destination_fqdn_lists"],
+        },
+        {
+            "path": "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries",
+            "parameter_names": ["destination_geo_locations", "destination_geo_location_lists"],
+        },
+        {
+            "path": "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries",
+            "parameter_names": ["destination_ports", "destination_port_lists"],
+        },
+        {
+            "path": "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries",
+            "parameter_names": ["source_data_ipv4_prefixes", "source_data_ipv4_prefix_lists"],
+        },
+        {
+            "path": "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries",
+            "parameter_names": ["source_geo_locations", "source_geo_location_lists"],
+        },
+        {
+            "path": "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries",
+            "parameter_names": ["source_ports", "source_port_lists"],
+        },
+        {
+            "path": "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries",
+            "parameter_names": ["protocols", "protocol_names"],
+        },
+        {
+            "path": "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries",
+            "parameter_names": ["protocols", "protocol_name_lists"],
+        },
+        {
+            "path": "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries",
+            "parameter_names": ["protocol_names", "protocol_name_lists"],
+        },
+        {
+            "path": "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries",
+            "parameter_names": ["source_identity_users", "source_identity_lists"],
+        },
+        {
+            "path": "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries",
+            "parameter_names": ["source_identity_usergroups", "source_identity_lists"],
         },
     ]
 

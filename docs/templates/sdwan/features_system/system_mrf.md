@@ -15,7 +15,5 @@ sdwan:
         mrf:
           name: mrf
           description: basic mrf
-          region_id: 1
-          secondary_region_id_variable: mrf_secondary_region_id
           role: edge-router
 ```

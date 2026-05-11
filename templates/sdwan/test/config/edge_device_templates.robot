@@ -1,105 +1,95 @@
 *** Settings ***
-Documentation   Verify Device Templates
-Suite Setup     Login SDWAN Manager
-Default Tags    sdwan   config   edge_device_templates
-Resource        ../sdwan_common.resource
+Documentation    Verify Device Templates
+Suite Setup      Login SDWAN Manager
+Default Tags     sdwan    config    edge_device_templates
+Resource         ../sdwan_common.resource
 
 {% if sdwan.edge_device_templates is defined%}
 
 *** Test Cases ***
 Get Edge Device template
-    ${r}=    GET On Session    sdwan_manager    /dataservice/template/device
+    ${r}=    GET On Session With Retry    sdwan_manager    /dataservice/template/device
     Set Suite Variable    ${r}
 
 {% for edt in sdwan.edge_device_templates | default([]) %}
 
 Verify Edge Device Templates {{ edt.name }}
-    ${template_id}=    Get Value From Json    ${r.json()}    $..data[?(@.templateName=="{{ edt.name }}")].templateId
-    ${r_id}=   GET On Session   sdwan_manager   /dataservice/template/device/object/${template_id[0]}
-    Should Be Equal Value Json String    ${r_id.json()}    $..templateName    {{ edt.name }}    msg=name
-    Should Be Equal Value Json Special_String    ${r_id.json()}    $..templateDescription    {{ edt.description | normalize_special_string }}    msg=description
+    ${template_id}=    Json Search String    ${r.json()}    data[?templateName=='{{ edt.name }}'] | [0].templateId
+    Run Keyword If    $template_id == ''    Fail    Edge Device Template '{{ edt.name }}' not found
+    ${r_id}=   GET On Session With Retry   sdwan_manager   /dataservice/template/device/object/${template_id}
+    Should Be Equal Value Json String    ${r_id.json()}    templateName    {{ edt.name }}    msg=name
+    Should Be Equal Value Json Special_String    ${r_id.json()}    templateDescription    {{ edt.description | normalize_special_string }}    msg=description
 
 {% set device_model = "vedge-" ~ edt.device_model %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..deviceType    {{ device_model }}    msg=device model
+    Should Be Equal Value Json String    ${r_id.json()}    deviceType    {{ device_model }}    msg=device model
 
-    ${templates_id}=   GET On Session   sdwan_manager   /dataservice/template/feature
+    ${templates_id}=   GET On Session With Retry   sdwan_manager   /dataservice/template/feature
     Set Suite Variable    ${templates_id}
 
-    ${system_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_system")].templateId
-    Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${system_temp_id[0]}")].templateName    {{ edt.system_template }}    msg=system template
+    ${system_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cisco_system'] | [0].templateId
+    Should Be Equal Value Json String    ${templates_id.json()}    data[?templateId=='${system_temp_id}'] | [0].templateName    {{ edt.system_template }}    msg=system template
 
-    ${logging_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_system")].subTemplates[?(@.templateType=="cisco_logging")].templateId
-    Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${logging_temp_id[0]}")].templateName    {{ edt.logging_template }}    msg=logging template
+    ${logging_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cisco_system'] | [0].subTemplates[?templateType=='cisco_logging'] | [0].templateId
+    Should Be Equal Value Json String    ${templates_id.json()}    data[?templateId=='${logging_temp_id}'] | [0].templateName    {{ edt.logging_template }}    msg=logging template
 
-    ${ntp_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_system")].subTemplates[?(@.templateType=="cisco_ntp")].templateId
-    IF    ${ntp_temp_id} == []
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${ntp_temp_id}")].templateName    {{ edt.ntp_template | default("not_defined") }}    msg=ntp template
+    ${ntp_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cisco_system'] | [0].subTemplates[?templateType=='cisco_ntp'] | [0].templateId
+    ${ntp_template_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${ntp_temp_id}'] | [0].templateName
+    ${ntp_template_name}=    Set Variable If    '${ntp_template_name}' == ''    not_defined    ${ntp_template_name}
+    Should Be Equal As Strings    {{ edt.ntp_template | default("not_defined") }}    ${ntp_template_name}    msg=ntp template
+
+    ${aaa_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cedge_aaa'] | [0].templateId
+    ${aaa_template_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${aaa_temp_id}'] | [0].templateName
+    ${aaa_template_name}=    Set Variable If    '${aaa_template_name}' == ''    not_defined    ${aaa_template_name}
+    Should Be Equal As Strings    {{ edt.aaa_template | default("not_defined") }}    ${aaa_template_name}    msg=aaa template
+
+    ${bfd_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cisco_bfd'] | [0].templateId
+    Should Be Equal Value Json String    ${templates_id.json()}    data[?templateId=='${bfd_temp_id}'] | [0].templateName    {{ edt.bfd_template }}    msg=bfd template
+
+    ${omp_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cisco_omp'] | [0].templateId
+    Should Be Equal Value Json String    ${templates_id.json()}    data[?templateId=='${omp_temp_id}'] | [0].templateName    {{ edt.omp_template }}    msg=omp template
+
+    ${security_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cisco_security'] | [0].templateId
+    Should Be Equal Value Json String    ${templates_id.json()}    data[?templateId=='${security_temp_id}'] | [0].templateName    {{ edt.security_template }}    msg=security template
+
+    ${global_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cedge_global'] | [0].templateId
+    Should Be Equal Value Json String    ${templates_id.json()}    data[?templateId=='${global_temp_id}'] | [0].templateName    {{ edt.global_settings_template }}    msg=global settings template
+
+    ${banner_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cisco_banner'] | [0].templateId
+    ${banner_template_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${banner_temp_id}'] | [0].templateName
+    ${banner_template_name}=    Set Variable If    '${banner_template_name}' == ''    not_defined    ${banner_template_name}
+    Should Be Equal As Strings    {{ edt.banner_template | default("not_defined") }}    ${banner_template_name}    msg=banner template
+
+    ${snmp_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cisco_snmp'] | [0].templateId
+    ${snmp_template_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${snmp_temp_id}'] | [0].templateName
+    ${snmp_template_name}=    Set Variable If    '${snmp_template_name}' == ''    not_defined    ${snmp_template_name}
+    Should Be Equal As Strings    {{ edt.snmp_template | default("not_defined") }}    ${snmp_template_name}    msg=snmp template
+
+    ${cli_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cli-template'] | [0].templateId
+    ${cli_template_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${cli_temp_id}'] | [0].templateName
+    ${cli_template_name}=    Set Variable If    '${cli_template_name}' == ''    not_defined    ${cli_template_name}
+    Should Be Equal As Strings    {{ edt.cli_template | default("not_defined") }}    ${cli_template_name}    msg=cli template
+
+    ${lp_policy_id}=    Json Search String    ${r_id.json()}    policyId
+    IF    $lp_policy_id == ''
+        Should Be Equal As Strings    {{ edt.localized_policy | default("not_defined") }}    not_defined    msg=localized policy
     ELSE
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${ntp_temp_id[0]}")].templateName    {{ edt.ntp_template | default("not_defined") }}    msg=ntp template
+        ${localized_pilicies}=   GET On Session With Retry   sdwan_manager   /dataservice/template/policy/vedge/definition/${lp_policy_id}
+        Should Be Equal Value Json String    ${localized_pilicies.json()}    policyName    {{ edt.localized_policy | default("not_defined") }}    msg=localized policy
     END
 
-    ${aaa_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cedge_aaa")].templateId
-    IF    ${aaa_temp_id} == []
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${aaa_temp_id}")].templateName    {{ edt.aaa_template | default("not_defined") }}    msg=aaa template
+    ${sp_policy_id}=    Json Search String    ${r_id.json()}    securityPolicyId
+    ${sp_policy_id}=    Set Variable If    '${sp_policy_id}' == ''    not_defined    ${sp_policy_id}
+    IF    $sp_policy_id == 'not_defined'
+        Should Be Equal As Strings    {{ edt.security_policy.name | default("not_defined") }}    ${sp_policy_id}    msg=security policy
     ELSE
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${aaa_temp_id[0]}")].templateName    {{ edt.aaa_template | default("not_defined") }}    msg=aaa template
+        ${security_policies}=   GET On Session With Retry   sdwan_manager   /dataservice/template/policy/security/definition/${sp_policy_id}
+        Should Be Equal Value Json String    ${security_policies.json()}    policyName    {{ edt.security_policy.name | default("not_defined") }}    msg=security policy
     END
 
-    ${bfd_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_bfd")].templateId
-    Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${bfd_temp_id[0]}")].templateName    {{ edt.bfd_template }}    msg=bfd template
-
-    ${omp_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_omp")].templateId
-    Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${omp_temp_id[0]}")].templateName    {{ edt.omp_template }}    msg=omp template
-
-    ${security_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_security")].templateId
-    Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${security_temp_id[0]}")].templateName    {{ edt.security_template }}    msg=security template
-
-    ${global_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cedge_global")].templateId
-    Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${global_temp_id[0]}")].templateName    {{ edt.global_settings_template }}    msg=global settings template
-
-    ${banner_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_banner")].templateId
-    IF    ${banner_temp_id} == []
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${banner_temp_id}")].templateName    {{ edt.banner_template | default("not_defined") }}    msg=banner template
-    ELSE
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${banner_temp_id[0]}")].templateName    {{ edt.banner_template | default("not_defined") }}    msg=banner template
-    END
-
-    ${snmp_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_snmp")].templateId
-    IF    ${snmp_temp_id} == []
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${snmp_temp_id}")].templateName    {{ edt.snmp_template | default("not_defined") }}    msg=snmp template
-    ELSE
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${snmp_temp_id[0]}")].templateName    {{ edt.snmp_template | default("not_defined") }}    msg=snmp template
-    END
-
-    ${cli_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cli-template")].templateId
-    IF    ${cli_temp_id} == []
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${cli_temp_id}")].templateName    {{ edt.cli_template | default("not_defined") }}    msg=cli template
-    ELSE
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${cli_temp_id[0]}")].templateName    {{ edt.cli_template | default("not_defined") }}    msg=cli template
-    END
-
-    ${lp_policy_id}=    Get Value From Json    ${r_id.json()}    $..policyId
-    IF    ${lp_policy_id} == ['']
-        Should Be Equal Value Json String    ${r_id.json()}    $..policyId    {{ edt.localized_policy | default("") }}    msg=localized policy
-    ELSE
-        ${localized_pilicies}=   GET On Session   sdwan_manager   /dataservice/template/policy/vedge/definition/${lp_policy_id[0]}
-        Should Be Equal Value Json String    ${localized_pilicies.json()}    $..policyName    {{ edt.localized_policy | default("") }}    msg=localized policy
-    END
-
-    ${sp_policy_id}=    Get Value From Json    ${r_id.json()}    $..securityPolicyId
-    IF    ${sp_policy_id} == []
-        Should Be Equal Value Json String    ${r_id.json()}    $..securityPolicyId    {{ edt.security_policy.name | default("not_defined") }}    msg=security policy
-    ELSE
-        ${security_policies}=   GET On Session   sdwan_manager   /dataservice/template/policy/security/definition/${sp_policy_id[0]}
-        Should Be Equal Value Json String    ${security_policies.json()}    $..policyName    {{ edt.security_policy.name | default("not_defined") }}    msg=security policy
-    END
-
-    ${utd_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="virtual-application-utd")].templateId
-    IF    ${utd_id} == []
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${utd_id}")].templateName    {{ edt.security_policy.container_profile | default("not_defined") }}    msg=container profile
-    ELSE
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${utd_id[0]}")].templateName    {{ edt.security_policy.container_profile | default("not_defined") }}    msg=container profile
-    END
+    ${utd_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='virtual-application-utd'] | [0].templateId
+    ${utd_template_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${utd_id}'] | [0].templateName
+    ${utd_template_name}=    Set Variable If    '${utd_template_name}' == ''    not_defined    ${utd_template_name}
+    Should Be Equal As Strings    {{ edt.security_policy.container_profile | default("not_defined") }}    ${utd_template_name}    msg=container profile
 
 {% set exp_switchport_templates = [] %}
 {% for item in edt.switchport_templates | default([]) %}
@@ -108,19 +98,19 @@ Verify Edge Device Templates {{ edt.name }}
 
 {% if edt.switchport_templates is defined %}
     ${exp_switchport_templates} =   Create List   {{ exp_switchport_templates | join('   ') }}
-    ${switchport_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="switchport")].templateId
-    ${rec_switchport_templates}=    Get Value From Json    ${templates_id.json()}    $..data[?(@.templateId=="${switchport_temp_id[0]}")].templateName
+    ${switchport_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='switchport'] | [0].templateId
+    ${rec_switchport_templates}=    Json Search List    ${templates_id.json()}    data[?templateId=='${switchport_temp_id}'].templateName
     Lists Should Be Equal    ${rec_switchport_templates}    ${exp_switchport_templates}    msg=switchport templates
 {% else %}
-    Should Be Equal Value Json String    ${r_id.json()}    $..generalTemplates[?(@.templateType=="switchport")].templateId    {{ edt.switchport_templates | default("not_defined") }}    msg=switchport templates
+    ${switchport_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='switchport'] | [0].templateId
+    ${switchport_temp_id}=    Set Variable If    '${switchport_temp_id}' == ''    not_defined    ${switchport_temp_id}
+    Should Be Equal As Strings    {{ edt.switchport_templates | default("not_defined") }}    ${switchport_temp_id}    msg=switchport templates
 {% endif %}
 
-    ${thousandeyes_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_thousandeyes")].templateId
-    IF    ${thousandeyes_temp_id} == []
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${thousandeyes_temp_id}")].templateName    {{ edt.thousandeyes_template | default("not_defined") }}    msg=thousandeyes template
-    ELSE
-        Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${thousandeyes_temp_id[0]}")].templateName    {{ edt.thousandeyes_template | default("not_defined") }}    msg=thousandeyes template
-    END
+    ${thousandeyes_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cisco_thousandeyes'] | [0].templateId
+    ${thousandeyes_template_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${thousandeyes_temp_id}'] | [0].templateName
+    ${thousandeyes_template_name}=    Set Variable If    '${thousandeyes_template_name}' == ''    not_defined    ${thousandeyes_template_name}
+    Should Be Equal As Strings    {{ edt.thousandeyes_template | default("not_defined") }}    ${thousandeyes_template_name}    msg=thousandeyes template
 
 {% set vpn0_templates_list = [] %}
 {% set vpn512_templates_list = [] %}
@@ -144,40 +134,30 @@ Verify Edge Device Templates {{ edt.name }}
     Set Suite Variable    ${list}
 
     ${rec_vpn_names}=    Create List
-    ${vpn_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_vpn")].templateId
+    ${vpn_temp_id}=    Json Search List    ${r_id.json()}    generalTemplates[?templateType=='cisco_vpn'].templateId
     FOR    ${id}    IN    @{vpn_temp_id}
-        ${rec_vpn_template_name}=    Get Value From Json    ${templates_id.json()}    $..data[?(@.templateId=="${id}")].templateName
-        Append To List    ${rec_vpn_names}    ${rec_vpn_template_name[0]}
+        ${rec_vpn_template_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${id}'] | [0].templateName
+        Append To List    ${rec_vpn_names}    ${rec_vpn_template_name}
     END
     Lists Should Be Equal    ${rec_vpn_names}    ${list}    ignore_order=True    msg=vpn templates
 
     FOR    ${vpn_name}    IN    @{rec_vpn_names}
         IF    '${vpn_name}' == '{{ edt.vpn_0_template.name }}'
-            ${sig_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_vpn")]..subTemplates[?(@.templateType=="cisco_secure_internet_gateway")].templateId
-            IF    ${sig_temp_id} == []
-                Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${sig_temp_id}")].templateName    {{ edt.vpn_0_template.secure_internet_gateway_template | default("not_defined") }}    msg=secure internet gateway template
-            ELSE
-                Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${sig_temp_id[0]}")].templateName    {{ edt.vpn_0_template.secure_internet_gateway_template | default("not_defined") }}    msg=secure internet gateway template
-            END
-{% if edt.vpn_0_template.sig_credentials_template is defined %}
-{% if edt.vpn_0_template.sig_credentials_template == "umbrella" %}
-{% set sig_credentials_template_name = "Cisco-Umbrella-Global-Credentials" %}
-{% elif edt.vpn_0_template.sig_credentials_template == "zscaler" %}
-{% set sig_credentials_template_name = "Cisco-Zscaler-Global-Credentials" %}
-{% endif %}
-            ${sig_credentials_template_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_sig_credentials")].templateId
-            IF    ${sig_credentials_template_id} == []
-                Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${sig_credentials_template_id}")].templateName    {{ sig_credentials_template_name | default("not_defined") }}    msg=sig credentials template
-            ELSE
-                Should Be Equal Value Json String    ${templates_id.json()}    $..data[?(@.templateId=="${sig_credentials_template_id[0]}")].templateName    {{ sig_credentials_template_name | default("not_defined") }}    msg=sig credentials template
-            END
-{% endif %}
+            ${sig_temp_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cisco_vpn'] | [0].subTemplates[?templateType=='cisco_secure_internet_gateway'] | [0].templateId
+            ${sig_template_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${sig_temp_id}'] | [0].templateName
+            ${sig_template_name}=    Set Variable If    '${sig_template_name}' == ''    not_defined    ${sig_template_name}
+            Should Be Equal As Strings    {{ edt.vpn_0_template.secure_internet_gateway_template | default("not_defined") }}    ${sig_template_name}    msg=secure internet gateway template
+
+            ${sig_credentials_template_id}=    Json Search String    ${r_id.json()}    generalTemplates[?templateType=='cisco_sig_credentials'] | [0].templateId
+            ${sig_credentials_template_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${sig_credentials_template_id}'] | [0].templateName
+            ${sig_credentials_template_name}=    Set Variable If    '${sig_credentials_template_name}' == ''    not_defined    ${sig_credentials_template_name}
+            Should Be Equal As Strings    {{ edt.vpn_0_template.sig_credentials_template | default("not_defined") }}    ${sig_credentials_template_name}    msg=sig credentials template
         END
     END
 
 {% set rec_vpn0_bgp_template = [] %}
 {% if edt.vpn_0_template.bgp_template is defined %}
-{% set _ = rec_vpn0_bgp_template.append(edt.vpn_0_template.bgp_template) | default([]) %}
+{% set _ = rec_vpn0_bgp_template.append(edt.vpn_0_template.bgp_template) %}
 {% endif %}
 {% set rec_vpn_service_bgp_template = [] %}
 {% for item in edt.vpn_service_templates | default([]) %}
@@ -194,10 +174,10 @@ Verify Edge Device Templates {{ edt.name }}
     Set Suite Variable    ${bgp_temp_list}
 
     ${rec_bgp_temp_list}=    Create List
-    ${bgp_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_vpn")]..subTemplates[?(@.templateType=="cisco_bgp")].templateId
+    ${bgp_temp_id}=    Json Search List    ${r_id.json()}    generalTemplates[?templateType=='cisco_vpn'][].subTemplates[?templateType=='cisco_bgp'][].templateId
     FOR    ${id}    IN    @{bgp_temp_id}
-        ${rec_bgp_temp_name}=    Get Value From Json    ${templates_id.json()}    $..data[?(@.templateId=="${id}")].templateName
-        Append To List    ${rec_bgp_temp_list}    ${rec_bgp_temp_name[0]}
+        ${rec_bgp_temp_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${id}'] | [0].templateName
+        Append To List    ${rec_bgp_temp_list}    ${rec_bgp_temp_name}
     END
     Lists Should Be Equal    ${rec_bgp_temp_list}    ${bgp_temp_list}    ignore_order=True    msg=bgp templates
 
@@ -218,10 +198,10 @@ Verify Edge Device Templates {{ edt.name }}
     Set Suite Variable    ${multicast_temp_list}
 
     ${rec_multicast_temp_list}=    Create List
-    ${multicast_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_vpn")]..subTemplates[?(@.templateType=="cedge_multicast")].templateId
+    ${multicast_temp_id}=    Json Search List    ${r_id.json()}    generalTemplates[?templateType=='cisco_vpn'][].subTemplates[?templateType=='cedge_multicast'][].templateId
     FOR    ${id}    IN    @{multicast_temp_id}
-        ${rec_multicast_temp_name}=    Get Value From Json    ${templates_id.json()}    $..data[?(@.templateId=="${id}")].templateName
-        Append To List    ${rec_multicast_temp_list}    ${rec_multicast_temp_name[0]}
+        ${rec_multicast_temp_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${id}'] | [0].templateName
+        Append To List    ${rec_multicast_temp_list}    ${rec_multicast_temp_name}
     END
     Log    From API:${rec_multicast_temp_list}
     Log    From YAML:${multicast_temp_list}
@@ -243,10 +223,10 @@ Verify Edge Device Templates {{ edt.name }}
     Set Suite Variable    ${pim_temp_list}
 
     ${rec_pim_temp_list}=    Create List
-    ${pim_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_vpn")]..subTemplates[?(@.templateType=="cedge_pim")].templateId
+    ${pim_temp_id}=    Json Search List    ${r_id.json()}    generalTemplates[?templateType=='cisco_vpn'][].subTemplates[?templateType=='cedge_pim'][].templateId
     FOR    ${id}    IN    @{pim_temp_id}
-        ${rec_pim_temp_name}=    Get Value From Json    ${templates_id.json()}    $..data[?(@.templateId=="${id}")].templateName
-        Append To List    ${rec_pim_temp_list}    ${rec_pim_temp_name[0]}
+        ${rec_pim_temp_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${id}'] | [0].templateName
+        Append To List    ${rec_pim_temp_list}    ${rec_pim_temp_name}
     END
     Log    From API:${rec_pim_temp_list}
     Log    From YAML:${pim_temp_list}
@@ -254,7 +234,7 @@ Verify Edge Device Templates {{ edt.name }}
 
 {% set rec_vpn0_ospf_template = [] %}
 {% if edt.vpn_0_template.ospf_template is defined %}
-{% set _ = rec_vpn0_ospf_template.append(edt.vpn_0_template.ospf_template) | default([]) %}
+{% set _ = rec_vpn0_ospf_template.append(edt.vpn_0_template.ospf_template) %}
 {% endif %}
 {% set rec_vpn_service_ospf_template = [] %}
 {% for item in edt.vpn_service_templates | default([]) %}
@@ -271,10 +251,10 @@ Verify Edge Device Templates {{ edt.name }}
     Set Suite Variable    ${ospf_temp_list}
 
     ${rec_ospf_temp_list}=    Create List
-    ${ospf_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_vpn")]..subTemplates[?(@.templateType=="cisco_ospf")].templateId
+    ${ospf_temp_id}=    Json Search List    ${r_id.json()}    generalTemplates[?templateType=='cisco_vpn'][].subTemplates[?templateType=='cisco_ospf'][].templateId
     FOR    ${id}    IN    @{ospf_temp_id}
-        ${rec_ospf_temp_name}=    Get Value From Json    ${templates_id.json()}    $..data[?(@.templateId=="${id}")].templateName
-        Append To List    ${rec_ospf_temp_list}    ${rec_ospf_temp_name[0]}
+        ${rec_ospf_temp_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${id}'] | [0].templateName
+        Append To List    ${rec_ospf_temp_list}    ${rec_ospf_temp_name}
     END
     Lists Should Be Equal    ${rec_ospf_temp_list}    ${ospf_temp_list}    ignore_order=True    msg=ospf templates
 
@@ -303,10 +283,10 @@ Verify Edge Device Templates {{ edt.name }}
 
     ${exp_eit_names}=    Combine Lists    ${vpn_sei_temp_list}    ${vpn_list}
     ${rec_eit_names}=    Create List
-    ${eit_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_vpn")]..subTemplates[?(@.templateType=="cisco_vpn_interface")].templateId
+    ${eit_temp_id}=    Json Search List    ${r_id.json()}    generalTemplates[?templateType=='cisco_vpn'][].subTemplates[?templateType=='cisco_vpn_interface'][].templateId
     FOR    ${id}    IN    @{eit_temp_id}
-        ${rec_eit_template_name}=    Get Value From Json    ${templates_id.json()}    $..data[?(@.templateId=="${id}")].templateName
-        Append To List    ${rec_eit_names}    ${rec_eit_template_name[0]}
+        ${rec_eit_template_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${id}'] | [0].templateName
+        Append To List    ${rec_eit_names}    ${rec_eit_template_name}
     END
     Lists Should Be Equal    ${rec_eit_names}    ${exp_eit_names}    ignore_order=True    msg=ethernet interface templates
 
@@ -325,10 +305,10 @@ Verify Edge Device Templates {{ edt.name }}
 {% set exp_ipsec_interface_templates = rec_vpn_service_ipsec_interface_templates + rec_vpn0_ipsec_interface_templates %}
     ${list}=   Create List   {{ exp_ipsec_interface_templates | join('   ') }}
     ${rec_ipsec_temp_names}=    Create List
-    ${ipsec_int_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_vpn")]..subTemplates[?(@.templateType=="cisco_vpn_interface_ipsec")].templateId
+    ${ipsec_int_temp_id}=    Json Search List    ${r_id.json()}    generalTemplates[?templateType=='cisco_vpn'][].subTemplates[?templateType=='cisco_vpn_interface_ipsec'][].templateId
     FOR    ${id}    IN    @{ipsec_int_temp_id}
-        ${rec_ipsec_int_template_name}=    Get Value From Json    ${templates_id.json()}    $..data[?(@.templateId=="${id}")].templateName
-        Append To List    ${rec_ipsec_temp_names}    ${rec_ipsec_int_template_name[0]}
+        ${rec_ipsec_int_template_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${id}'] | [0].templateName
+        Append To List    ${rec_ipsec_temp_names}    ${rec_ipsec_int_template_name}
     END
     Lists Should Be Equal    ${rec_ipsec_temp_names}    ${list}    ignore_order=True    msg=ipsec interface templates
 
@@ -357,10 +337,10 @@ Verify Edge Device Templates {{ edt.name }}
 
     ${exp_svi_int_temp_names}=    Combine Lists    ${vpn_svi_intf_temp_list}    ${vpn0_512_svi_templates}
     ${rec_svi_int_temp_names}=    Create List
-    ${svi_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_vpn")]..subTemplates[?(@.templateType=="vpn-interface-svi")].templateId
+    ${svi_temp_id}=    Json Search List    ${r_id.json()}    generalTemplates[?templateType=='cisco_vpn'][].subTemplates[?templateType=='vpn-interface-svi'][].templateId
     FOR    ${id}    IN    @{svi_temp_id}
-        ${rec_svi_intf_template_name}=    Get Value From Json    ${templates_id.json()}    $..data[?(@.templateId=="${id}")].templateName
-        Append To List    ${rec_svi_int_temp_names}    ${rec_svi_intf_template_name[0]}
+        ${rec_svi_intf_template_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${id}'] | [0].templateName
+        Append To List    ${rec_svi_int_temp_names}    ${rec_svi_intf_template_name}
     END
     Lists Should Be Equal    ${rec_svi_int_temp_names}    ${exp_svi_int_temp_names}    ignore_order=True    msg=svi interface templates
 
@@ -403,10 +383,10 @@ Verify Edge Device Templates {{ edt.name }}
     Set Suite Variable    ${dhcp_servers_list}
 
     ${rec_dhcp_servers_list}=    Create List
-    ${dhcp_servers_temp_id}=    Get Value From Json    ${r_id.json()}    $..generalTemplates[?(@.templateType=="cisco_vpn")]..subTemplates[?(@.templateType=="cisco_dhcp_server")].templateId
+    ${dhcp_servers_temp_id}=    Json Search List    ${r_id.json()}    generalTemplates[?templateType=='cisco_vpn'][].subTemplates[?templateType=='cisco_dhcp_server'][].templateId
     FOR    ${id}    IN    @{dhcp_servers_temp_id}
-        ${rec_dhcp_server_name}=    Get Value From Json    ${templates_id.json()}    $..data[?(@.templateId=="${id}")].templateName
-        Append To List    ${rec_dhcp_servers_list}    ${rec_dhcp_server_name[0]}
+        ${rec_dhcp_server_name}=    Json Search String    ${templates_id.json()}    data[?templateId=='${id}'] | [0].templateName
+        Append To List    ${rec_dhcp_servers_list}    ${rec_dhcp_server_name}
     END
     Lists Should Be Equal    ${rec_dhcp_servers_list}    ${dhcp_servers_list}    ignore_order=True    msg=dhcp server template
 

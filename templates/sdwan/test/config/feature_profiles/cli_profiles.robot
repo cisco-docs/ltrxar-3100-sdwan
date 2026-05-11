@@ -9,33 +9,33 @@ Resource        ../../sdwan_common.resource
 
 *** Test Cases ***
 Get CLI Profiles
-    ${r}=    Get On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/cli
+    ${r}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/cli
     Set Suite Variable    ${r}
 
 {% for profile in sdwan.feature_profiles.cli_profiles | default([]) %}
 
 Verify Feature Profiles CLI Profiles {{ profile.name }}
-    ${profile}=    Get Value From Json    ${r.json()}    $[?(@.profileName=='{{ profile.name }}')]
-    Run Keyword If    ${profile} == []    Fail    Feature Profile '{{profile.name}}' should be present on the Manager
-    ${profile_id}=    Get Value From Json    ${profile}    $..profileId
+    ${profile}=    Json Search    ${r.json()}    [?profileName=='{{ profile.name }}'] | [0]
+    Run Keyword If    $profile is None    Fail    Feature Profile '{{ profile.name }}' should be present on the Manager
+    ${profile_id}=    Json Search String    ${profile}    profileId
 
-    Should Be Equal Value Json String    ${profile}    $..profileName    {{ profile.name }}    msg=name
-    Should Be Equal Value Json Special_String   ${profile}    $..description    {{ profile.description | default('not_defined') | normalize_special_string }}    msg=description
+    Should Be Equal Value Json String    ${profile}    profileName    {{ profile.name }}    msg=name
+    Should Be Equal Value Json Special_String   ${profile}    description    {{ profile.description | default('not_defined') | normalize_special_string }}    msg=description
 
-    ${cli_config_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/cli/${profile_id}[0]/config
-    ${cli_config}=    Get Value From Json    ${cli_config_res.json()}    $..payload
+    ${cli_config_res}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/cli/${profile_id}/config
+    ${cli_config}=    Json Search List    ${cli_config_res.json()}    data[].payload
     Set Suite Variable    ${cli_config}
 
 {% if profile.config is defined %}
 
 Verify Feature Profiles CLI Profiles {{ profile.name }} Config Feature {{ profile.config.name | default(defaults.sdwan.feature_profiles.cli_profiles.config.name) }}
-    Run Keyword If    ${cli_config} == []    Fail    Feature '{{ profile.config.name | default(defaults.sdwan.feature_profiles.cli_profiles.config.name) }}' expected to be configured within the cli profile '{{profile.name}}' on the Manager
-    Should Be Equal Value Json String    ${cli_config[0]}    $.name    {{ profile.config.name | default(defaults.sdwan.feature_profiles.cli_profiles.config.name) }}    msg=name
+    Run Keyword If    ${cli_config} == []    Fail    Feature '{{ profile.config.name | default(defaults.sdwan.feature_profiles.cli_profiles.config.name) }}' expected to be configured within the cli profile '{{ profile.name }}' on the Manager
+    Should Be Equal Value Json String    ${cli_config[0]}    name    {{ profile.config.name | default(defaults.sdwan.feature_profiles.cli_profiles.config.name) }}    msg=name
 
-    Should Be Equal Value Json Special_String     ${cli_config[0]}    $..description    {{ profile.config.description | default('not_defined') | normalize_special_string }}    msg=description
+    Should Be Equal Value Json Special_String     ${cli_config[0]}    description    {{ profile.config.description | default('not_defined') | normalize_special_string }}    msg=description
 
-    ${config}=    Get Value From Json    ${cli_config[0]}    $..config
-    ${config_split}=    Split string    ${config[0]}    separator=\n
+    ${config}=    Json Search String    ${cli_config[0]}    data.config
+    ${config_split}=    Split string    ${config}    separator=\n
     ${res_config_list}=    Evaluate    [s.strip() for s in ${config_split} if s.strip()]
 
     ${exp_config_list}=    Create list
@@ -48,7 +48,7 @@ Verify Feature Profiles CLI Profiles {{ profile.name }} Config Feature {{ profil
 
 {% elif 'strict_config_check' not in robot_exclude_tags | default() %}
 
-    Run Keyword If    ${cli_config}    Fail    Feature Profile {{profile.name}} has the config feature ${cli_config[0]['name']} that is not present in the data model
+    Run Keyword If    ${cli_config}    Fail    Feature Profile {{ profile.name }} has the config feature ${cli_config[0]['name']} that is not present in the data model
 
 {% endif %}
 

@@ -10,6 +10,14 @@ class Rule:
     # Flattened path to variable that (if configured) is required to be filled during config group deployment
     required_variables_paths = [
         "sdwan.feature_profiles.application_priority_profiles.qos_policies.target_interfaces_variable",
+        "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries.destination_data_ipv4_prefixes_variable",
+        "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries.destination_fqdns_variable",
+        "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries.destination_ports_variable",
+        "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries.source_data_ipv4_prefixes_variable",
+        "sdwan.feature_profiles.ngfw_security_profiles.policies.sequences.match_entries.source_ports_variable",
+        "sdwan.feature_profiles.ngfw_security_profiles.settings.app_hosting.download_url_database_on_device_variable",
+        "sdwan.feature_profiles.ngfw_security_profiles.settings.app_hosting.nat_variable",
+        "sdwan.feature_profiles.ngfw_security_profiles.settings.app_hosting.resource_profile_variable",
     ]
 
     # In get_features_names function, we extract feature names by iterating over profile and finding all "name" keys
@@ -113,6 +121,7 @@ class Rule:
         results = []
         profile_types = [
             "application_priority",
+            "ngfw_security",
         ]
         # Create a dict where key is profile type and value is a list of profile names that exists for this profile type
         existing_profiles_names = {profile_type: [] for profile_type in profile_types}

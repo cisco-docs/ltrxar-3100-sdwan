@@ -22,17 +22,24 @@ Example-2: The example below demonstrates how to define a dual device configurat
 
 Note that for dual device configuration group device_tags -> features section, only names for the following feature types are supported:
 
-- lan/vpn
-- lan/vpn/interface/ethernet
-- lan/vpn/interface/ipsec
-- lan/vpn/interface/svi
-- routing/bgp
-- routing/ospf
-- wan/vpn/interface/cellular
-- wan/vpn/interface/ethernet
-- wan/vpn/interface/gre
-- wan/vpn/interface/ipsec
-- wan/vpn/interface/serial
+- sdwan.feature_profiles.service_profiles[].bgp_features[]
+- sdwan.feature_profiles.service_profiles[].lan_vpns[]
+- sdwan.feature_profiles.service_profiles[].lan_vpns[].ethernet_interfaces[]
+- sdwan.feature_profiles.service_profiles[].lan_vpns[].ipsec_interfaces[]
+- sdwan.feature_profiles.service_profiles[].lan_vpns[].svi_interfaces[]
+- sdwan.feature_profiles.service_profiles[].ospf_features[]
+- sdwan.feature_profiles.service_profiles[].route_policies[]
+- sdwan.feature_profiles.transport_profiles[].bgp_features[]
+- sdwan.feature_profiles.transport_profiles[].ospf_features[]
+- sdwan.feature_profiles.transport_profiles[].route_policies[]
+- sdwan.feature_profiles.transport_profiles[].wan_vpn.cellular_interfaces[]
+- sdwan.feature_profiles.transport_profiles[].wan_vpn.dsl_pppoa_interfaces[]
+- sdwan.feature_profiles.transport_profiles[].wan_vpn.dsl_pppoe_interfaces[]
+- sdwan.feature_profiles.transport_profiles[].wan_vpn.dsl_ipoe_interfaces[]
+- sdwan.feature_profiles.transport_profiles[].wan_vpn.ethernet_interfaces[]
+- sdwan.feature_profiles.transport_profiles[].wan_vpn.gre_interfaces[]
+- sdwan.feature_profiles.transport_profiles[].wan_vpn.ipsec_interfaces[]
+- sdwan.feature_profiles.transport_profiles[].wan_vpn.serial_interfaces[]
 
 ```yaml
 sdwan:

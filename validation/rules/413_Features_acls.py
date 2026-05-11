@@ -21,11 +21,17 @@ class Rule:
                         if sequence.get("base_action") == "drop":
                             # Some actions should not be allowed when base_action is drop
                             invalid_actions = []
-                            for action in ["dscp", "ipv4_next_hop", "mirror", "policer"]:
+                            for action in ["dscp", "ipv4_next_hop", "mirror", "policer", "service_chain_fallback", "service_chain_fallback_variable" , "service_chain_name", "service_chain_name_variable", "service_chain_vpn", "service_chain_vpn_variable"]:
                                 if action in sequence.get("actions", {}).keys():
                                     invalid_actions.append(action)
                             if invalid_actions:
                                 results.append(f"sdwan.feature_profiles.{feature_profile_type}['{feature_profile['name']}'].ipv4_acls['{acl['name']}'].sequences['{sequence['id']}'] has base_action 'drop' but also has actions: {', '.join(invalid_actions)}")
+                        if any(sc_name in sequence.get("actions", {}) for sc_name in ["service_chain_name", "service_chain_name_variable"]) and not any(sequence.get("actions", {}).get(sc_params) for sc_params in ["service_chain_vpn", "service_chain_vpn_variable"]):
+                            results.append(f"sdwan.feature_profiles.{feature_profile_type}['{feature_profile['name']}'].ipv4_acls['{acl['name']}'].sequences['{sequence['id']}'] has service chain name or variable defined but is missing service_chain_vpn or service_chain_vpn_variable action")
+                        if any(sc_vpn in sequence.get("actions", {}) for sc_vpn in ["service_chain_vpn", "service_chain_vpn_variable"] ) and not any(sequence.get("actions", {}).get(sc_name) for sc_name in ["service_chain_name", "service_chain_name_variable"]):
+                            results.append(f"sdwan.feature_profiles.{feature_profile_type}['{feature_profile['name']}'].ipv4_acls['{acl['name']}'].sequences['{sequence['id']}'] has service chain vpn or vpn variable defined but is missing service_chain_name or service_chain_name_variable action")
+                        if any(sequence.get("actions", {}).get(sc_fbr) for sc_fbr in ["service_chain_fallback", "service_chain_fallback_variable"]) and not any(sequence.get("actions", {}).get(sc_name) for sc_name in ["service_chain_name", "service_chain_name_variable"]) and not any(sequence.get("actions", {}).get(sc_vpn) for sc_vpn in ["service_chain_vpn", "service_chain_vpn_variable"]):
+                            results.append(f"sdwan.feature_profiles.{feature_profile_type}['{feature_profile['name']}'].ipv4_acls['{acl['name']}'].sequences['{sequence['id']}'] has service chain fallback defined but is missing both service_chain_name/service_chain_name_variable and service_chain_vpn/service_chain_vpn_variable actions")
                 # For IPv6 ACLS
                 for acl in feature_profile.get("ipv6_acls", []):
                     for sequence in acl.get("sequences"):
@@ -35,4 +41,10 @@ class Rule:
                             for action in sequence.get("actions", {}).keys():
                                 if action not in valid_actions_v6:
                                     results.append(f"sdwan.feature_profiles.{feature_profile_type}['{feature_profile['name']}'].ipv6_acls['{acl['name']}'].sequences['{sequence['id']}'] has base_action 'drop' but also has invalid action: {action}")
+                        if any(sc_name in sequence.get("actions", {}) for sc_name in ["service_chain_name", "service_chain_name_variable"]) and not any(sequence.get("actions", {}).get(sc_params) for sc_params in ["service_chain_vpn", "service_chain_vpn_variable"]):
+                            results.append(f"sdwan.feature_profiles.{feature_profile_type}['{feature_profile['name']}'].ipv6_acls['{acl['name']}'].sequences['{sequence['id']}'] has service chain name or variable defined but is missing service_chain_vpn or service_chain_vpn_variable action")
+                        if any(sc_vpn in sequence.get("actions", {}) for sc_vpn in ["service_chain_vpn", "service_chain_vpn_variable"] ) and not any(sequence.get("actions", {}).get(sc_name) for sc_name in ["service_chain_name", "service_chain_name_variable"]):
+                            results.append(f"sdwan.feature_profiles.{feature_profile_type}['{feature_profile['name']}'].ipv6_acls['{acl['name']}'].sequences['{sequence['id']}'] has service chain vpn or vpn variable defined but is missing service_chain_name or service_chain_name_variable action")
+                        if any(sequence.get("actions", {}).get(sc_fbr) for sc_fbr in ["service_chain_fallback", "service_chain_fallback_variable"]) and not any(sequence.get("actions", {}).get(sc_name) for sc_name in ["service_chain_name", "service_chain_name_variable"]) and not any(sequence.get("actions", {}).get(sc_vpn) for sc_vpn in ["service_chain_vpn", "service_chain_vpn_variable"]):
+                            results.append(f"sdwan.feature_profiles.{feature_profile_type}['{feature_profile['name']}'].ipv6_acls['{acl['name']}'].sequences['{sequence['id']}'] has service chain fallback defined but is missing both service_chain_name/service_chain_name_variable and service_chain_vpn/service_chain_vpn_variable actions")
         return results

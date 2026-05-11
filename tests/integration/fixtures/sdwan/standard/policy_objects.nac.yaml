@@ -317,6 +317,11 @@ sdwan:
         site_id_ranges:
           - from: 55
             to: 56
+      - name: SL-ONLY-SITE-IDS
+        site_ids:
+          - 100
+          - 101
+          - 102
     sla_classes:
       - name: SLA-DEFAULT
         jitter_ms: 500
@@ -447,6 +452,15 @@ sdwan:
         vpn_id_ranges:
           - from: 107
             to: 108
+      - name: VPN-LIST-ONLY-IDS
+        vpn_ids:
+          - 200
+          - 201
+          - 202
+      - name: VPN-LIST-ONLY-RANGES
+        vpn_id_ranges:
+          - from: 300
+            to: 310
     fqdn_lists:
       - name: ZBFW_SFL_1_uni1
         fqdns:

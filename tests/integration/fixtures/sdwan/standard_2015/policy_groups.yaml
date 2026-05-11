@@ -1,0 +1,10 @@
+sdwan:
+  policy_groups:
+    - name: pg1
+      description: policy group
+      application_priority: app_priority1
+      ngfw_security: ngfw_profile_1
+    - name: pg2
+      description: policy group
+      application_priority: app_priority2
+      ngfw_security: ngfw_profile_2

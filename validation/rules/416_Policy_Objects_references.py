@@ -36,6 +36,12 @@ class Rule:
             ]
         },
         {
+            "type": "forwarding_classes",
+            "paths": [
+                "sdwan.feature_profiles.policy_object_profile.app_probe_classes.forwarding_class",
+            ]
+        },
+        {
             "type": "ipv4_data_prefix_lists",
             "paths": [
                 "sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.match_entries.destination_data_prefix_list",
@@ -91,6 +97,42 @@ class Rule:
                 "sdwan.feature_profiles.service_profiles.ipv6_acls.sequences.actions.policer",
                 "sdwan.feature_profiles.transport_profiles.ipv4_acls.sequences.actions.policer",
                 "sdwan.feature_profiles.transport_profiles.ipv6_acls.sequences.actions.policer",
+            ]
+        },
+        {
+            "type": "security_advanced_malware_protection_profiles",
+            "paths": [
+                "sdwan.feature_profiles.policy_object_profile.security_advanced_inspection_profiles.advanced_malware_protection",
+            ]
+        },
+        {
+            "type": "security_intrusion_prevention_profiles",
+            "paths": [
+                "sdwan.feature_profiles.policy_object_profile.security_advanced_inspection_profiles.intrusion_prevention",
+            ]
+        },
+        {
+            "type": "security_ips_signature_lists",
+            "paths": [
+                "sdwan.feature_profiles.policy_object_profile.security_intrusion_prevention_profiles.signature_allow_list",
+            ]
+        },
+        {
+            "type": "security_url_allow_lists",
+            "paths": [
+                "sdwan.feature_profiles.policy_object_profile.security_url_filtering_profiles.url_allow_list",
+            ]
+        },
+        {
+            "type": "security_url_block_lists",
+            "paths": [
+                "sdwan.feature_profiles.policy_object_profile.security_url_filtering_profiles.url_block_list",
+            ]
+        },
+        {
+            "type": "security_url_filtering_profiles",
+            "paths": [
+                "sdwan.feature_profiles.policy_object_profile.security_advanced_inspection_profiles.url_filtering",
             ]
         },
         {

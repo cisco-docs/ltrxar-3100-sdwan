@@ -77,6 +77,18 @@ sdwan:
                 type: tloc
                 actions:
                   omp_tag: 89
+          - name: CCT_DEFINITION_TEST3
+            description: CCT_DEFINITION_TEST3
+            default_action_type: accept
+            sequences:
+              - base_action: accept
+                id: 1
+                name: route
+                ip_type: ipv4
+                type: route
+                match_criterias:
+                  region_id: 1
+                  role: border-router
         hub_and_spoke_topology:
           - name: HST_DEFINITION_TEST1
             description: HST_DEFINITION_TEST1
@@ -123,6 +135,8 @@ sdwan:
                   - site_list: WASHINGTON-HST-TEST
                     hubs:
                       - site_list: KENTUCKY-HST-TEST
+                        ipv6_prefix_lists:
+                          - PLV6-PRIVATE-RANGES
         mesh_topology:
           - name: MT_DEFINITION_TEST1
             description: MT_DEFINITION_TEST1
@@ -209,6 +223,50 @@ sdwan:
                 actions:
                   counter_name: counter2
                   log: true
+              - id: 3
+                name: App Route Coverage
+                ip_type: ipv4
+                type: app_route
+                match_criterias:
+                  application_list: APP-LIST-TD-TEST3
+                  dscp: 46
+                  source_ports:
+                    - 80
+                    - 443
+                  source_port_ranges:
+                    - from: 8000
+                      to: 9000
+                  destination_ports:
+                    - 80
+                    - 443
+                  destination_port_ranges:
+                    - from: 8000
+                      to: 9000
+                actions:
+                  counter_name: coverage_counter
+                  backup_sla_preferred_colors:
+                    - custom1
+                    - custom2
+                  sla_class_list:
+                    sla_class_list: DEFAULT-ACTION-SLA
+                    preferred_colors:
+                      - mpls
+                      - biz-internet
+                    when_sla_not_met: strict_drop
+              - id: 4
+                name: App Route Port Ranges Only
+                ip_type: ipv4
+                type: app_route
+                match_criterias:
+                  dscp: 48
+                  source_port_ranges:
+                    - from: 5000
+                      to: 6000
+                  destination_port_ranges:
+                    - from: 7000
+                      to: 8000
+                actions:
+                  counter_name: port_ranges_counter
         traffic_data:
           - name: TD_DEFINITION_TEST1
             description: TD_DEFINITION_TEST1
@@ -434,6 +492,156 @@ sdwan:
                     type: FW
                     vpn: 62
                     tloc_list: TLOC-LIST-TD-TEST1
+              - base_action: accept
+                id: 8
+                name: source_ports_only
+                ip_type: ipv4
+                type: qos
+                match_criterias:
+                  dscp: 32
+                  source_ports:
+                    - 8080
+                    - 8443
+                  destination_ports:
+                    - 443
+                actions:
+                  dscp: 34
+              - base_action: accept
+                id: 9
+                name: source_port_ranges_only
+                ip_type: ipv4
+                type: qos
+                match_criterias:
+                  dscp: 36
+                  source_port_ranges:
+                    - from: 10000
+                      to: 11000
+                  destination_port_ranges:
+                    - from: 20000
+                      to: 21000
+                actions:
+                  dscp: 38
+              - base_action: accept
+                id: 12
+                name: sig_enabled_true
+                ip_type: ipv4
+                type: custom
+                match_criterias:
+                  dscp: 48
+                actions:
+                  sig:
+                    enabled: true
+              - base_action: accept
+                id: 13
+                name: appqoe_tcp_true
+                ip_type: ipv4
+                type: custom
+                match_criterias:
+                  dscp: 52
+                actions:
+                  appqoe_optimization:
+                    tcp: true
+              - base_action: accept
+                id: 14
+                name: appqoe_dre_true
+                ip_type: ipv4
+                type: custom
+                match_criterias:
+                  dscp: 54
+                actions:
+                  appqoe_optimization:
+                    dre: true
+              - base_action: accept
+                id: 15
+                name: appqoe_both_true
+                ip_type: ipv4
+                type: custom
+                match_criterias:
+                  dscp: 54
+                actions:
+                  appqoe_optimization:
+                    tcp: true
+                    dre: true
+              - base_action: accept
+                id: 16
+                name: service_local_restrict
+                ip_type: ipv4
+                type: service_chaining
+                match_criterias:
+                  dscp: 56
+                actions:
+                  service:
+                    type: FW
+                    vpn: 64
+                    local: true
+                    restrict: true
+              - base_action: accept
+                id: 17
+                name: loss_correction_packet_dup
+                ip_type: ipv4
+                type: qos
+                match_criterias:
+                  dscp: 58
+                actions:
+                  loss_correction:
+                    type: packetDuplication
+              - base_action: accept
+                id: 18
+                name: loss_correction_fec_adaptive
+                ip_type: ipv4
+                type: qos
+                match_criterias:
+                  dscp: 60
+                actions:
+                  loss_correction:
+                    type: fecAdaptive
+                    loss_threshold_percentage: 5
+              - base_action: accept
+                id: 19
+                name: local_tloc_restrict_false
+                ip_type: ipv4
+                type: traffic_engineering
+                match_criterias:
+                  dscp: 62
+                actions:
+                  local_tloc_list:
+                    colors:
+                      - mpls
+                      - biz-internet
+                    encaps:
+                      - ipsec
+              - base_action: accept
+                id: 20
+                name: next_hop_not_available_false
+                ip_type: ipv4
+                type: traffic_engineering
+                match_criterias:
+                  dscp: 63
+                actions:
+                  next_hop:
+                    ip_address: 10.20.30.40
+                    when_next_hop_is_not_available: route_table_entry
+              - base_action: accept
+                id: 21
+                name: custom_cflowd_true
+                ip_type: ipv4
+                type: custom
+                match_criterias:
+                  dscp: 40
+                actions:
+                  cflowd: true
+                  dscp: 42
+              - base_action: accept
+                id: 22
+                name: sig_en_true_fbr
+                ip_type: ipv4
+                type: custom
+                match_criterias:
+                  dscp: 48
+                actions:
+                  sig:
+                    enabled: true
+                    fallback_to_routing: true
         cflowd:
           - name: CFLOW_DEFINITION_TEST2
             description: CFLOW_DEFINITION_TEST2
@@ -491,6 +699,8 @@ sdwan:
           - policy_definition: CFLOW_DEFINITION_TEST2
             site_lists:
               - MY-CFLOW-TEST
+              - GOA-TD-TEST
+              - CHENNAI-TD-TEST
         application_aware_routing:
           - policy_definition: Test_application_aware_routing_number2
             site_region_vpn:

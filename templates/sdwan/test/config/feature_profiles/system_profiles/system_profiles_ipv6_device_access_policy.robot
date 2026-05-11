@@ -3,7 +3,7 @@ Documentation   Verify System Feature Profile Configuration IPv6 Device Access P
 Name            System Profiles IPv6 Device Access Policy
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles     system_profiles   ipv6_device_access_policy
+Default Tags    sdwan    config    feature_profiles    system_profiles    ipv6_device_access_policy
 Resource        ../../../sdwan_common.resource
 
 
@@ -19,17 +19,17 @@ Resource        ../../../sdwan_common.resource
 
 *** Test Cases ***
 Get System Profiles
-    ${r}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system
+    ${r}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system
     Set Suite Variable    ${r}
 
 
 Get Policy Object Profile
-    ${r_po}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object
-    ${profile_po}=    Get Value From Json    ${r_po.json()}    $[?(@.profileName=='{{ sdwan.feature_profiles.policy_object_profile.name | default(defaults.sdwan.feature_profiles.policy_object_profile.name) }}')]
-    Run Keyword If    ${profile_po} == []    Fail    Feature Profile '{{ sdwan.feature_profiles.policy_object_profile.name | default(defaults.sdwan.feature_profiles.policy_object_profile.name) }}' should be present on the Manager
-    ${profile_po_id}=    Get Value From Json    ${profile_po}    $..profileId
+    ${r_po}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object
+    ${profile_po}=    Json Search    ${r_po.json()}    [?profileName=='{{ sdwan.feature_profiles.policy_object_profile.name | default(defaults.sdwan.feature_profiles.policy_object_profile.name) }}'] | [0]
+    Run Keyword If    $profile_po is None    Fail    Feature Profile '{{ sdwan.feature_profiles.policy_object_profile.name | default(defaults.sdwan.feature_profiles.policy_object_profile.name) }}' should be present on the Manager
+    ${profile_po_id}=    Json Search String    ${profile_po}    profileId
 
-    ${ipv6_data_prefix_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object/${profile_po_id[0]}/data-ipv6-prefix
+    ${ipv6_data_prefix_res}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object/${profile_po_id}/data-ipv6-prefix
     Set Suite Variable    ${ipv6_data_prefix_res}
 
 
@@ -37,65 +37,46 @@ Get Policy Object Profile
 {% if profile.ipv6_device_access_policy is defined %}
 
 Verify Feature Profiles System Profiles {{ profile.name }} IPv6 Device Access Policy Feature {{ profile.ipv6_device_access_policy.name | default(defaults.sdwan.feature_profiles.system_profiles.ipv6_device_access_policy.name) }}
-    ${profile}=    Get Value From Json    ${r.json()}    $[?(@.profileName=='{{ profile.name }}')]
-    Run Keyword If    ${profile} == []    Fail    Feature Profile '{{profile.name}}' should be present on the Manager
-    ${profile_id}=    Get Value From Json    ${profile}    $..profileId
-    ${system_ipv6_device_access_policy_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system/${profile_id[0]}/ipv6-device-access-policy
-    ${system_ipv6_device_access_policy}=    Get Value From Json    ${system_ipv6_device_access_policy_res.json()}    $..payload
-    Run Keyword If    ${system_ipv6_device_access_policy} == []    Fail    Feature '{{profile.ipv6_device_access_policy.name}}' expected to be configured within the system profile '{{profile.name}}' on the Manager
+    ${profile}=    Json Search    ${r.json()}    [?profileName=='{{ profile.name }}'] | [0]
+    Run Keyword If    $profile is None    Fail    Feature Profile '{{ profile.name }}' should be present on the Manager
+    ${profile_id}=    Json Search String    ${profile}    profileId
+    ${system_ipv6_device_access_policy_res}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/system/${profile_id}/ipv6-device-access-policy
+    ${system_ipv6_device_access_policy}=    Json Search    ${system_ipv6_device_access_policy_res.json()}    data[0].payload
+    Run Keyword If    $system_ipv6_device_access_policy is None    Fail    Feature '{{profile.ipv6_device_access_policy.name}}' expected to be configured within the system profile '{{ profile.name }}' on the Manager
     Set Suite Variable    ${system_ipv6_device_access_policy}
 
-    Should Be Equal Value Json String    ${system_ipv6_device_access_policy[0]}    $..name    {{ profile.ipv6_device_access_policy.name | default(defaults.sdwan.feature_profiles.system_profiles.ipv6_device_access_policy.name) }}    msg=name
-    Should Be Equal Value Json Special_String     ${system_ipv6_device_access_policy[0]}     $.description    {{ profile.ipv6_device_access_policy.description | default('not_defined') | normalize_special_string }}    msg=description
+    Should Be Equal Value Json String    ${system_ipv6_device_access_policy}    name    {{ profile.ipv6_device_access_policy.name | default(defaults.sdwan.feature_profiles.system_profiles.ipv6_device_access_policy.name) }}    msg=name
+    Should Be Equal Value Json Special_String    ${system_ipv6_device_access_policy}    description    {{ profile.ipv6_device_access_policy.description | default('not_defined') | normalize_special_string }}    msg=description
+    Should Be Equal Value Json String    ${system_ipv6_device_access_policy}    data.defaultAction.value    {{ profile.ipv6_device_access_policy.default_action | default('not_defined') }}    msg=default action
 
-    Should Be Equal Value Json Yaml    ${system_ipv6_device_access_policy[0]}    $.data.defaultAction    {{ profile.ipv6_device_access_policy.default_action | default('not_defined') }}    not_defined    msg=default action    var_msg=not_defined
-
-    Should Be Equal Value Json List Length    ${system_ipv6_device_access_policy[0]}    $.data.sequences    {{ profile.ipv6_device_access_policy.get('sequences', []) | length }}    msg=sequences length
+    Should Be Equal Value Json List Length    ${system_ipv6_device_access_policy}    data.sequences    {{ profile.ipv6_device_access_policy.get('sequences', []) | length }}    msg=sequences length
 {% if profile.ipv6_device_access_policy.get('sequences', []) | length > 0 %}
     Log     === Sequences List ===
 {% for sequence in profile.ipv6_device_access_policy.sequences | default([]) %}
     Log    === Sequence {{ sequence.id }} ===
-    ${sequence_raw}=    Get Value From Json    ${system_ipv6_device_access_policy[0]}    $.data.sequences[?(@.sequenceId.value=={{ sequence.id }})]
-    Run Keyword If    ${sequence_raw} == []    Fail    IPv6 Device Access Policy sequence ID {{ sequence.id }} expected to be configured on the Manager
-    ${sequence}=    Set Variable If    ${sequence_raw} == []    not_defined    ${sequence_raw[0]}
+    ${sequence}=    Json Search    ${system_ipv6_device_access_policy}    data.sequences[?sequenceId.value==`{{ sequence.id }}`] | [0]
+    Run Keyword If    $sequence is None    Fail    IPv6 Device Access Policy sequence ID {{ sequence.id }} expected to be configured on the Manager
 
-    Should Be Equal Value Json Yaml    ${sequence}    $.baseAction    {{ sequence.base_action | default('not_defined') }}    not_defined    msg=base action    var_msg=not_defined
-    Should Be Equal Value Json Yaml    ${sequence}    $.sequenceId    {{ sequence.id | default('not_defined') }}    not_defined    msg=id    var_msg=not_defined
-    Should Be Equal Value Json Yaml    ${sequence}    $.sequenceName    {{ sequence.name | default('not_defined') }}    not_defined    msg=name    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    baseAction    {{ sequence.base_action | default('not_defined') }}    not_defined    msg=base action
+    Should Be Equal Value Json Yaml    ${sequence}    sequenceId    {{ sequence.id | default('not_defined') }}    not_defined    msg=id
+    Should Be Equal Value Json Yaml    ${sequence}    sequenceName    {{ sequence.name | default('not_defined') }}    not_defined    msg=name
 
     ${destination_data_prefixes_list}=    Create List    {{ sequence.match_entries.get('destination_data_prefixes', []) | join('   ') }}
     ${destination_data_prefixes_list}=    Set Variable If    ${destination_data_prefixes_list} == []    not_defined    ${destination_data_prefixes_list}
-    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries.destinationDataPrefix.destinationIpPrefixList    ${destination_data_prefixes_list}    not_defined    msg=destination data prefixes    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    matchEntries.destinationDataPrefix.destinationIpPrefixList    ${destination_data_prefixes_list}    not_defined    msg=destination data prefixes
 
-    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries.destinationPort    {{ sequence.match_entries.destination_port | default('not_defined') }}    not_defined    msg=destination port    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    matchEntries.destinationPort    {{ sequence.match_entries.destination_port | default('not_defined') }}    not_defined    msg=destination port
 
     ${source_data_prefixes_list}=    Create List    {{ sequence.match_entries.get('source_data_prefixes', []) | join('   ') }}
     ${source_data_prefixes_list}=    Set Variable If    ${source_data_prefixes_list} == []    not_defined    ${source_data_prefixes_list}
-    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries.sourceDataPrefix.sourceIpPrefixList    ${source_data_prefixes_list}    not_defined    msg=source data prefixes    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    matchEntries.sourceDataPrefix.sourceIpPrefixList    ${source_data_prefixes_list}    not_defined    msg=source data prefixes
 
     ${source_ports_list}=    Create List    {{ sequence.match_entries.get('source_ports', []) | join('   ') }}
     ${source_ports_list}=    Set Variable If    ${source_ports_list} == []    not_defined    ${source_ports_list}
-    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries.sourcePorts    ${source_ports_list}    not_defined    msg=source ports    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    matchEntries.sourcePorts    ${source_ports_list}    not_defined    msg=source ports
 
-    # Extract refID of the destination data prefix list
-    ${refid_destination_data_prefix_list_raw}=    Get Value From Json    ${sequence}    $.matchEntries.destinationDataPrefix.destinationDataPrefixList.refId.value
-    ${refid_destination_data_prefix_list}=    Set Variable If    ${refid_destination_data_prefix_list_raw} == []    not_defined    ${refid_destination_data_prefix_list_raw[0]}
-
-    # Extract the data prefix list from the policy object profile using the refID
-    ${profile_ipv6_data_prefix}=    Get Value From Json    ${ipv6_data_prefix_res.json()}    $..data[?(@.parcelId=='${refid_destination_data_prefix_list}')]
-    
-    # should be equal to the name of the data prefix list
-    Should Be Equal Value Json String    ${profile_ipv6_data_prefix}    $..name    {{ sequence.match_entries.destination_data_prefix_list | default('not_defined') }}    msg=destination data prefix list
-
-    # Extract refID of the source data prefix list
-    ${refid_source_data_prefix_list_raw}=    Get Value From Json    ${sequence}    $.matchEntries.sourceDataPrefix.sourceDataPrefixList.refId.value
-    ${refid_source_data_prefix_list}=    Set Variable If    ${refid_source_data_prefix_list_raw} == []    not_defined    ${refid_source_data_prefix_list_raw[0]}
-
-    # Extract the data prefix list from the policy object profile using the refID
-    ${profile_ipv6_data_prefix}=    Get Value From Json    ${ipv6_data_prefix_res.json()}    $..data[?(@.parcelId=='${refid_source_data_prefix_list}')]
-    
-    # should be equal to the name of the data prefix list
-    Should Be Equal Value Json String    ${profile_ipv6_data_prefix}    $..name    {{ sequence.match_entries.source_data_prefix_list | default('not_defined') }}    msg=source data prefix list
+    Should Be Equal Referenced Object Name    ${sequence}    matchEntries.destinationDataPrefix.destinationDataPrefixList.refId.value    ${ipv6_data_prefix_res.json()}    {{ sequence.match_entries.destination_data_prefix_list | default('not_defined') }}    destination data prefix list
+    Should Be Equal Referenced Object Name    ${sequence}    matchEntries.sourceDataPrefix.sourceDataPrefixList.refId.value    ${ipv6_data_prefix_res.json()}    {{ sequence.match_entries.source_data_prefix_list | default('not_defined') }}    source data prefix list
 
 {% endfor %}
 {% endif %}

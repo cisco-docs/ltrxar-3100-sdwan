@@ -93,6 +93,36 @@ sdwan:
                 retransmit_count: 3
                 secret_key: 0802455d0a165445415f59
                 timeout: 5
+        accounting_rules:
+          - method: commands
+            privilege_level: 15
+            start_stop: true
+            groups:
+              - RADIUS-GROUP1
+              - local
+          - method: network
+            privilege_level: 1
+            start_stop: false
+            groups:
+              - RADIUS-GROUP2
+        authorization_rules:
+          - method: commands
+            privilege_level: 15
+            authenticated: true
+            groups:
+              - RADIUS-GROUP1
+              - local
+          - method: commands
+            privilege_level: 1
+            authenticated: false
+            groups:
+              - RADIUS-GROUP2
+        radius_dynamic_author:
+          clients:
+            - ip: 10.1.1.10
+              vpn_id: 10
+            - ip: 10.1.1.11
+              vpn_id: 10
         users:
           - name: admin
             optional: false
@@ -160,6 +190,34 @@ sdwan:
           - color: custom1
           - color: private2
     bgp_templates:
+      - name: FT-BGP-IPV6-MPLS
+        description: BGP with IPv6 networks, route_targets, MPLS interfaces
+        as_number: 65100
+        shutdown: false
+        ipv6_address_family:
+          networks:
+            - prefix: "2001:db8:100::/48"
+              optional: false
+            - prefix: "2001:db8:200::/48"
+              optional: true
+          route_targets:
+            - vpn_id: 100
+              optional: false
+              imports:
+                - asn_ip: "65100:100"
+                - asn_ip: "65100:101"
+              exports:
+                - asn_ip: "65100:200"
+            - vpn_id: 200
+              optional: true
+              imports:
+                - asn_ip: "65100:110"
+              exports:
+                - asn_ip: "65100:210"
+                - asn_ip: "65100:211"
+        mpls_interfaces:
+          - interface_name: GigabitEthernet0/0/1
+          - interface_name: GigabitEthernet0/0/2
       - name: FT-CEDGE-BGP-VPN1-ACTIVE
         description: VPN 1 BGP
         ipv4_address_family:
@@ -256,6 +314,39 @@ sdwan:
         lease_time: 3600
         default_gateway_variable: vpn2_dhcp_default_gateway
         dns_servers_variable: vpn2_dhcp_dns_servers
+      - name: FT-CEDGE-DHCPSERVER-VPN2-V02
+        description: DHCP Server with static leases and options
+        address_pool: 192.168.100.0/24
+        lease_time: 7200
+        default_gateway: 192.168.100.1
+        dns_servers:
+          - 8.8.8.8
+          - 8.8.4.4
+        exclude_addresses:
+          - 192.168.100.1
+          - 192.168.100.2
+          - 192.168.100.3
+        exclude_addresses_ranges:
+          - from: 192.168.100.240
+            to: 192.168.100.254
+        options:
+          - option_code: 150
+            ascii: tftp.example.com
+          - option_code: 66
+            ip_addresses:
+              - 10.1.1.100
+              - 10.1.1.101
+          - option_code: 43
+            hex: "0A0B0C0D"
+        static_leases:
+          - ip_address: 192.168.100.50
+            mac_address: "00:11:22:33:44:55"
+            hostname: printer1
+            optional: false
+          - ip_address: 192.168.100.51
+            mac_address: "00:11:22:33:44:56"
+            hostname: printer2
+            optional: true
     ethernet_interface_templates:
       - name: FT-CEDGE-WAN-TLOC1
         description: CEDGE TLOC1 with dynamic IP Settings, NAT enabled
@@ -692,6 +783,20 @@ sdwan:
             logging_level: warn
             source_interface_variable: logging_server_source_interface
             vpn_id: 511
+      - name: FT-LOGGING-TLS
+        description: Test case for Logging - TLS profiles
+        tls_profiles:
+          - name: tls-profile-1
+            authentication_type: server
+            ciphersuites:
+              - aes-128-cbc-sha
+              - aes-256-cbc-sha
+            version: TLSv1.2
+          - name: tls-profile-2
+            authentication_type: mutual
+            ciphersuites:
+              - aes-256-cbc-sha
+            version: TLSv1.2
     multicast_templates:
       - name: FT-CEDGE-MULTICAST-01
         description: Base Multicast template
@@ -748,6 +853,18 @@ sdwan:
         send_path_limit: 16
         graceful_restart_timer: 86400
     ospf_templates:
+      - name: FT-OSPF-STUB-NSSA
+        description: Feature template - OSPF stub and NSSA areas
+        router_id: 10.0.0.1
+        areas:
+          - area_number: 1
+            area_type: stub
+            no_summary: true
+            optional: false
+          - area_number: 2
+            area_type: nssa
+            no_summary: true
+            optional: true
       - name: FT-CEDGE-OSPF-01
         description: OSPF base template
         router_id: 1.2.3.4
@@ -898,6 +1015,30 @@ sdwan:
             accept_lifetime_end_time_epoch: 1999999999
             include_tcp_options: false
             accept_ao_mismatch: true
+    sig_credentials_templates:
+      - name: Cisco-Zscaler-Global-Credentials
+        zscaler_organization: ciscozscalerorganization
+        zscaler_partner_base_uri: https://ciscozscalerpartnerbaseuri
+        zscaler_username: ciscozscalerusername
+        zscaler_password_variable: zscaler_password_var
+        zscaler_partner_api_key_variable: zscaler_partner_api_key_var
+      - name: Cisco-Umbrella-Global-Credentials
+        umbrella_api_key_variable: umbrella_api_key_var
+        umbrella_api_secret_variable: umbrella_api_secret_var
+        umbrella_organization_id: 1000001
+    thousandeyes_templates:
+      - name: FT-CEDGE-THOUSANDEYES-01
+        description: ThousandEyes Agent Configuration
+        device_types:
+          - C8300-1N1S-4T2X
+        hostname: te-agent-01
+        name_server: 8.8.8.8
+        proxy_host: proxy.example.com
+        proxy_port: 8080
+        proxy_type: pac
+        proxy_pac_url: http://proxy.example.com/proxy.pac
+        account_group_token: tetoken
+        vpn_id: 10
     snmp_templates:
       - name: FT-CEDGE-SNMPV3-01
         description: SNMPv3 template
@@ -943,7 +1084,54 @@ sdwan:
             oids:
               - id: "1.3"
                 exclude: false
+      - name: FT-CEDGE-SNMPV2-01
+        description: SNMPv2 template
+        contact: person1
+        communities:
+          - authorization_read_only: true
+            name: $CRYPT_CLUSTER$5Nl+Z+gahxmUHj3wcgIuaQ==$9XJQaFhfOsStj42vmN1dag==
+            view: VIEW_ALL
+        location: test location
+        shutdown: false
+        trap_target_servers:
+          - ip: 172.16.1.1
+            udp_port: 514
+            community_name_variable: community_name
+            source_interface: Loopback0
+            user: user01
+            vpn_id: 511
+        views:
+          - name: VIEW_ALL
+            oids:
+              - id: "1.3"
+                exclude: false
     system_templates:
+      - name: FT-SYSTEM-TRACKERS
+        description: System FT - Object trackers
+        hostname_variable: system_hostname
+        system_ip_variable: system_ip
+        object_trackers:
+          - id: 100
+            group_criteria: or
+            group_trackers:
+              - 1
+              - 2
+            interface: GigabitEthernet0/0/0
+            ip: 10.1.1.1
+            mask: 255.255.255.255
+            vpn_id: 1
+            optional: false
+          - id: 200
+            group_criteria: and
+            group_trackers:
+              - 3
+              - 4
+              - 5
+            interface: GigabitEthernet0/0/1
+            ip: 10.2.2.2
+            mask: 255.255.255.0
+            vpn_id: 2
+            optional: true
       - name: FT-CEDGE-SYSTEM-01
         description: Base Cisco System template
         timezone_variable: timezone
@@ -962,6 +1150,11 @@ sdwan:
             endpoint_api_url: http://test.com
             type: interface
         enhanced_app_aware_routing: conservative
+        geo_fencing: true
+        geo_fencing_sms: true
+        geo_fencing_sms_phone_numbers:
+          - number: "+1234567890"
+          - number: "+0987654321"
       - name: FT-CEDGE-SYSTEM-02
         description: Tracker example configs
         console_baud_rate: 9600
@@ -1062,6 +1255,38 @@ sdwan:
             track_prefix_list: abcd
             track_omp: false
     vpn_templates:
+      - name: FT-VPN-NAT-IPV6
+        description: FT - IPv6 routes, static NAT rules
+        vpn_id: 100
+        ipv6_static_routes:
+          - prefix: "2001:db8::/32"
+            optional: false
+          - prefix: "2001:db9::/32"
+            optional: true
+        static_nat_rules:
+          - direction: inside
+            source_ip: 10.1.1.1
+            translate_ip: 203.0.113.1
+            nat_pool_id: 1
+            tracker_id: 100
+            optional: false
+          - direction: outside
+            source_ip: 10.2.2.2
+            translate_ip: 203.0.113.2
+            nat_pool_id: 2
+            tracker_id: 200
+            optional: true
+        static_nat_subnet_rules:
+          - direction: inside
+            source_ip_subnet: 10.10.0.0
+            translate_ip_subnet: 172.16.0.0
+            prefix_length: 24
+            optional: false
+          - direction: outside
+            source_ip_subnet: 10.20.0.0
+            translate_ip_subnet: 172.17.0.0
+            prefix_length: 16
+            optional: true
       - name: FT-CEDGE-VPN0-01
         description: CEDGE VPN0 with dynamic IP settings
         enhance_ecmp_keying_variable: vpn0_layer4_ecmp_enable
@@ -1171,7 +1396,98 @@ sdwan:
         vpn_id: 10
         omp_advertise_ipv4_routes:
           - protocol: bgp
+            networks:
+              - prefix: 10.70.0.0/16
+                aggregate_only: true
+                optional: false
+              - prefix: 10.71.0.0/16
+                aggregate_only: false
+                optional: true
+        omp_advertise_ipv6_routes:
+          - protocol: connected
+            route_policy: RM-BGP-IPV6
+            networks:
+              - prefix: "2001:db8:70::/48"
+                aggregate_only: true
+                optional: false
+              - prefix: "2001:db8:71::/48"
+                aggregate_only: false
+                optional: true
+        port_forwarding_rules:
+          - nat_pool_id: 1
+            protocol: tcp
+            source_ip: 192.168.1.100
+            source_port: 8080
+            translate_ip: 10.10.10.100
+            translate_port: 80
+          - nat_pool_id: 2
+            protocol: udp
+            source_ip: 192.168.1.101
+            source_port: 5000
+            translate_ip: 10.10.10.101
+            translate_port: 53
+        ipv4_dns_hosts:
+          - hostname: server1.example.com
+            ips:
+              - 10.1.1.100
+              - 10.1.1.101
+            optional: false
+          - hostname: server2.example.com
+            ips:
+              - 10.2.2.100
+            optional: true
+        ipv6_dns_hosts:
+          - hostname: ipv6server1.example.com
+            ips:
+              - "2001:db8::100"
+              - "2001:db8::101"
+            optional: false
+          - hostname: ipv6server2.example.com
+            ips:
+              - "2001:db8::200"
+            optional: true
+        nat_pools:
+          - id: 1
+            direction: inside
+            overload: true
+            prefix_length: 24
+            range_start: 192.168.100.1
+            range_end: 192.168.100.254
+            tracker_id: 100
+          - id: 2
+            direction: outside
+            overload: false
+            prefix_length: 28
+            range_start: 10.10.10.1
+            range_end: 10.10.10.14
+            tracker_id: 200
+        nat64_pools:
+          - name: NAT64-POOL-1
+            overload: true
+            range_start: 203.0.113.1
+            range_end: 203.0.113.254
+          - name: NAT64-POOL-2
+            overload: false
+            range_start: 198.51.100.1
+            range_end: 198.51.100.128
     secure_internet_gateway_templates:
+      - name: FT-SIG-OTHER
+        description: Feature Template SIG provider other with tunnel destination
+        sig_provider: other
+        interfaces:
+          - name: ipsec1
+            tunnel_source_interface: GigabitEthernet0/0/0
+            tunnel_destination: 203.0.113.10
+            tunnel_type: ipsec
+          - name: ipsec2
+            tunnel_source_interface: GigabitEthernet0/0/1
+            tunnel_destination: 203.0.113.20
+            tunnel_type: ipsec
+        high_availability_interface_pairs:
+          - active_interface: ipsec1
+            active_interface_weight: 1
+            backup_interface: ipsec2
+            backup_interface_weight: 2
       - name: FT-CEDGE-SIG-UMBRELLA01
         description: Umbrella SIG 1x HA Tunnel
         sig_provider: umbrella

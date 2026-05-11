@@ -56,18 +56,26 @@ class Rule:
                     if tracker_feature_name not in object_tracker_feature_names:
                         results.append(f'Service Object Tracker Feature {tracker_feature_name} is not defined, but is referenced in sdwan.feature_profiles.service_profiles[{feature_profile["name"]}].object_tracker_groups[{object_tracker_group["name"]}].trackers[{index}]')
 
-        # Validate transport ipv4 trackers referenced in transport ipv4 tracker group are defined
         for feature_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get("transport_profiles", []):
+            # Validate transport ipv4 trackers referenced in transport ipv4 tracker group are defined
             ipv4_tracker_feature_names = [tracker["name"] for tracker in feature_profile.get("ipv4_trackers", [])]
             for ipv4_tracker_group in feature_profile.get("ipv4_tracker_groups", []):
                 for index, tracker_feature_name in enumerate(ipv4_tracker_group.get("trackers", [])):
                     if tracker_feature_name not in ipv4_tracker_feature_names:
                         results.append(f'IPv4 Transport Tracker Feature {tracker_feature_name} is not defined, but is referenced in sdwan.feature_profiles.transport_profiles[{feature_profile["name"]}].ipv4_tracker_groups[{ipv4_tracker_group["name"]}].trackers[{index}]')
-        # Validate transport ipv6 trackers referenced in transport ipv6 tracker group are defined
+            # Verify transport IPv4 trackers have respective parameter value as per endpoint_tracker_type
+            for tracker in feature_profile.get("ipv4_trackers", []):
+                if ( tracker.get("endpoint_tracker_type", "http") == "http" ) and ( "interval" in tracker and ( not ( 20 <= tracker.get("interval") <= 600 ) ) ):
+                    results.append(f'Parameter interval value should be between 20 and 600 when endpoint_tracker_type is http in sdwan.feature_profiles.transport_profiles[{feature_profile["name"]}].ipv4_trackers[{tracker["name"]}]')
         for feature_profile in inventory.get("sdwan", {}).get("feature_profiles", {}).get("transport_profiles", []):
+            # Validate transport ipv6 trackers referenced in transport ipv6 tracker group are defined
             ipv6_tracker_feature_names = [tracker["name"] for tracker in feature_profile.get("ipv6_trackers", [])]
             for ipv6_tracker_group in feature_profile.get("ipv6_tracker_groups", []):
                 for index, tracker_feature_name in enumerate(ipv6_tracker_group.get("trackers", [])):
                     if tracker_feature_name not in ipv6_tracker_feature_names:
                         results.append(f'IPv6 Transport Tracker Feature {tracker_feature_name} is not defined, but is referenced in sdwan.feature_profiles.transport_profiles[{feature_profile["name"]}].ipv6_tracker_groups[{ipv6_tracker_group["name"]}].trackers[{index}]')
+            # Verify transport IPv6 trackers have respective parameter value as per endpoint_tracker_type
+            for ipv6_tracker in feature_profile.get("ipv6_trackers", []):
+                if ( ipv6_tracker.get("endpoint_tracker_type", "http") == "http" ) and ( "interval" in ipv6_tracker and ( not ( 20 <= ipv6_tracker.get("interval") <= 600 ) ) ):
+                    results.append(f'Parameter interval value should be between 20 and 600 when endpoint_tracker_type is http in sdwan.feature_profiles.transport_profiles[{feature_profile["name"]}].ipv6_trackers[{ipv6_tracker["name"]}]')
         return results

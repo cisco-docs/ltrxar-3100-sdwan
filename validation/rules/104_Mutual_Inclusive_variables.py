@@ -74,7 +74,7 @@ class Rule:
                 data = jmespath.search(each_inclusion_item.get('object_jmes_path'), inventory)
                 if data is not None:
                     # Loop through the data
-                    if type(data) is dict:
+                    if isinstance(data, dict):
                         data = [data]
                     for each_data in data:
                         # Extract the Parent data further only if parent_jmes_path is defined. Else use the data as is

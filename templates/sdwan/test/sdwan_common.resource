@@ -1,7 +1,7 @@
 *** Settings ***
 Library   pabot.PabotLib
 Library   RequestsLibrary
-Library   JSONLibrary
+Library   JMESPathLibrary
 Library   Collections
 Library   OperatingSystem
 Library   String
@@ -26,8 +26,8 @@ Get SDWAN Manager Token
 
 Get SDWAN Manager Version
    ${response}=   Wait Until Keyword Succeeds   6x   10s   GET On Session   sdwan_manager   /dataservice/system/device/controllers   params=model=vmanage
-   ${r_version}=   Get Value From Json   ${response.json()}   $.data[0].version
-   Set Parallel Value For Key   manager_version   ${r_version[0]}
+   ${r_version}=   Json Search String   ${response.json()}   data[0].version
+   Set Parallel Value For Key   manager_version   ${r_version}
 
 Login SDWAN Manager
    Run Only Once   Get SDWAN Manager Token
@@ -48,27 +48,29 @@ Logout SDWAN Manager
        ${response}=   Wait Until Keyword Succeeds   6x   10s   GET On Session   sdwan_manager   /logout   headers=${m_headers}
    END
 
+GET On Session With Retry
+   [Arguments]   ${session}   ${url}   ${params}=${None}   ${headers}=${None}
+   [Documentation]   Wrapper for GET On Session with automatic retry (for example on 429 errors observed)
+   ${result}=   Wait Until Keyword Succeeds   5x   2s   GET On Session   ${session}   ${url}   params=${params}   headers=${headers}
+   RETURN   ${result}
+
 Should Be Equal Value Json String
-   [Arguments]   ${json}    ${json_path}   ${value}=${EMPTY}  ${msg}=${EMPTY}
-   ${r_value}=   Get Value From Json   ${json}   ${json_path}
-   ${r_value}=   Set Variable If    ${r_value} == []    not_defined    ${r_value[0]}
-   Should Be Equal As Strings    ${r_value}    ${value}    values=False    msg=${msg} expected: '${value}' and got: '${r_value}'  
+   [Arguments]   ${json}   ${jmes_path}   ${expected_value}=${EMPTY}   ${msg}=${EMPTY}   ${ignore_case}=${False}
+   ${actual_value}=   Json Search String   ${json}   ${jmes_path}
+   # Convert empty string to "not_defined" only when expected value is "not_defined"
+   ${actual_value}=   Set Variable If   $actual_value == '' and $expected_value == 'not_defined'   not_defined   ${actual_value}
+   Should Be Equal As Strings   ${expected_value}   ${actual_value}   values=False   ignore_case=${ignore_case}   msg=${msg} expected: '${expected_value}' and got: '${actual_value}'  
 
 Should Be Equal Value Json List
-   [Arguments]   ${json}   ${json_path}   ${value}=${None}   ${msg}=${EMPTY}
-   ${r_value}=   Get Value From Json   ${json}   ${json_path}
-   Lists Should Be Equal   ${r_value}   ${value}   ignore_order=True    values=False    msg=${msg} expected: '${value}' and got: '${r_value}'    
+   [Arguments]   ${json}   ${jmes_path}   ${expected_value}=${None}   ${msg}=${EMPTY}
+   ${actual_value}=   Json Search List   ${json}   ${jmes_path}
+   Lists Should Be Equal   ${expected_value}   ${actual_value}   ignore_order=True   values=False   msg=${msg} expected: '${expected_value}' and got: '${actual_value}'    
 
 Should Be Equal Value Json List Length
-   [Arguments]   ${json}   ${json_path}   ${value}=${None}   ${msg}=${EMPTY}
-   ${r_value}=   Get Value From Json   ${json}   ${json_path}
-   ${status}=    Run Keyword And Return Status  Get Length   ${r_value[0]}
-   IF  ${status} == ${True}
-       ${r_length}=    Get Length     ${r_value[0]}
-   ELSE
-       ${r_length}=    Get Length     ${r_value}
-   END
-   Should Be Equal As Integers    ${r_length}    ${value}  values=False  msg=${msg} expected '${value}' items and got: '${r_length}' 
+   [Arguments]   ${json}   ${jmes_path}   ${expected_length}=${None}   ${msg}=${EMPTY}
+   ${actual_value}=   Json Search List   ${json}   ${jmes_path}
+   ${actual_length}=   Get Length   ${actual_value}
+   Should Be Equal As Integers   ${expected_length}   ${actual_length}   values=False   msg=${msg} expected '${expected_length}' items and got: '${actual_length}' 
 
 Convert String To List If Needed
    [Arguments]    ${value}
@@ -81,24 +83,35 @@ Convert String To List If Needed
 
 Extract Json List Value
    [Arguments]    ${json}    ${json_path}
-   # Extract value from JSON
-   ${json_value}=    Get Value From Json    ${json}    ${json_path}.vipValue
-   IF    isinstance($json_value[0], list)
-      ${json_list}=    Set Variable If    ${json_value} == []    not_defined    ${json_value[0]}
+   # Extract value from JSON using JMESPath
+   ${json_value}=    Json Search List    ${json}    ${json_path}.vipValue
+   ${length}=    Get Length    ${json_value}
+   IF    ${length} == 0
+      ${json_list}=    Set Variable    not_defined
+   ELSE IF    ${length} > 1
+      # Multiple values: ['val1', 'val2', 'val3'] -> return as is
+      ${json_list}=    Set Variable    ${json_value}
    ELSE
-      # Extract JSON comma-separated string and parse to list
-      ${json_string}=    Get Value From Json    ${json}    ${json_path}.vipValue
-      ${json_list}=    Split String    ${json_string[0]}    separator=,
-      ${json_list}=    Set Variable If    ${json_list} == []    not_defined    ${json_list}
+      # Length is exactly 1 - check the single element
+      IF    isinstance($json_value[0], list)
+         # Single value that is itself a list (nested): extract it
+         ${json_list}=    Set Variable    ${json_value[0]}
+      ELSE IF    isinstance($json_value[0], str) and ',' in $json_value[0]
+         # Single value that is a comma-separated string: split it
+         ${json_list}=    Split String    ${json_value[0]}    separator=,
+      ELSE
+         # Single value that is already proper (string, int, etc): return as-is
+         ${json_list}=    Set Variable    ${json_value}
+      END
    END
    RETURN    ${json_list}
 
 Extract Json String Value
    [Arguments]    ${json}    ${json_path}
-   # Extract value from JSON
-   ${json_value}=    Get Value From Json    ${json}    ${json_path}.vipValue
+   # Extract value from JSON using JMESPath
+   ${json_value}=    Json Search List    ${json}    ${json_path}.vipValue
    # If its list with one element and data model is using string, extract this element from json list to string
-   IF    isinstance($json_value, list) and len($json_value) == 1 and isinstance($json_value[0], list)
+   IF    len($json_value) == 1 and isinstance($json_value[0], list)
       ${json_value}=    Set Variable    ${json_value[0][0]}
    ELSE
       ${json_value}=    Set Variable If    ${json_value} == []    not_defined    ${json_value[0]}
@@ -107,8 +120,8 @@ Extract Json String Value
 
 Should Be Equal Value Json Yaml UX1
    [Arguments]    ${json}    ${json_path}    ${value}    ${var_value}    ${msg}
-   ${vip_type}=    Get Value From Json    ${json}    ${json_path}.vipType
-   IF    $vip_type == ['constant']
+   ${vip_type}=    Json Search String    ${json}    ${json_path}.vipType
+   IF    $vip_type == 'constant'
       # Verify global value
       ${value}=    Convert String To List If Needed    ${value}
       IF    isinstance($value, list)
@@ -123,9 +136,9 @@ Should Be Equal Value Json Yaml UX1
          END
          # Extract value from JSON
          ${json_value}=    Extract Json String Value    ${json}    ${json_path}
-         Should Be Equal As Strings    ${json_value}    ${value}    values=False    msg=${msg} expected: '${value}' and got: '${json_value}'  
+         Should Be Equal As Strings    ${json_value}    ${value}    values=False    msg=${msg} expected: '${value}' and got: '${json_value}'
       END
-   ELSE IF    $vip_type == ['variableName']
+   ELSE IF    $vip_type == 'variableName'
       # Verify variable value
       Should Be Equal Value Json String    ${json}    ${json_path}.vipVariableName    ${var_value}    msg=${msg}_variable
    ELSE
@@ -134,35 +147,49 @@ Should Be Equal Value Json Yaml UX1
    END
 
 Should Be Equal Value Json Yaml
-    [Arguments]    ${json}    ${json_path}    ${value}    ${var_value}    ${msg}    ${var_msg}
-    ${opt_type}=    Get Value From Json    ${json}    ${json_path}.optionType
-    IF    ${opt_type} == ['global']
-        ${type_check}=    Evaluate    type($value).__name__
-        IF    '${type_check}' == 'list'
-            ${dt_list}=    Get Value From Json    ${json}    ${json_path}.value
-            ${r_dt_list}=    Evaluate    [str(element) for element in ${dt_list}[0]]
-            Lists Should Be Equal    ${r_dt_list}    ${value}    ignore_order=True    values=False    msg=${msg} expected: '${value}' and got: '${r_dt_list}'
-        ELSE
-            Should Be Equal Value Json String    ${json}    ${json_path}.value    ${value}    msg=${msg}
-        END 
-    ELSE IF    ${opt_type} == ['variable']
-        ${r_value}=    Get Value From Json    ${json}    ${json_path}.value
-        ${r_value}=    Evaluate    '${r_value[0]}'.replace("{", "").replace("}", "")
-        Should Be Equal As Strings    ${var_value}    ${r_value}    values=False    msg=${var_msg} expected: '${var_value}' and got: '${r_value}'
-    ELSE
-        Should Be Equal As Strings    not_defined    ${value}    values=False    msg=${msg} expected: '${value}' and got: 'not_defined'    
-        Should Be Equal As Strings    not_defined    ${var_value}    values=False    msg=${var_msg} expected: '${var_value}' and got: 'not_defined'
-    END
+   [Arguments]    ${json}    ${json_path}    ${value}    ${var_value}    ${msg}
+   ${opt_type}=    Json Search String    ${json}    ${json_path}.optionType
+   IF    $opt_type == 'global'
+      # Convert string representation of list to actual list if needed
+      ${value}=    Convert String To List If Needed    ${value}
+      ${type_check}=    Evaluate    type($value).__name__
+      IF    '${type_check}' == 'list'
+         ${actual_list}=    Json Search List    ${json}    ${json_path}.value
+         ${actual_list}=    Evaluate    [str(x) for x in $actual_list]
+         ${expected_list}=    Evaluate    [str(x) for x in $value]
+         Lists Should Be Equal    ${expected_list}    ${actual_list}    ignore_order=True    msg=${msg} expected: '${value}' and got: '${actual_list}'
+      ELSE
+         ${actual}=    Json Search String    ${json}    ${json_path}.value
+         # Convert empty string to "not_defined" only when expected value is "not_defined"
+         ${actual}=    Set Variable If    $actual == '' and $value == 'not_defined'    not_defined    ${actual}
+         Should Be Equal As Strings    ${value}    ${actual}    msg=${msg} expected: '${value}' and got: '${actual}'
+      END
+   ELSE IF    $opt_type == 'variable'
+      ${actual}=    Json Search String    ${json}    ${json_path}.value
+      # In JSON API payload the variables are in format {% raw %}"{{var_name}}"{% endraw %}. We need to extract "var_name"
+      ${cleaned}=    Evaluate    '${actual}'.strip('{}')
+      # Convert empty string to "not_defined" only when expected value is "not_defined"
+      ${cleaned}=    Set Variable If    '${cleaned}' == '' and '${var_value}' == 'not_defined'    not_defined    ${cleaned}
+      Should Be Equal As Strings    ${var_value}    ${cleaned}    msg=${msg}_variable expected: '${var_value}' and got: '${cleaned}'
+   ELSE
+      Should Be Equal As Strings    not_defined    ${value}    msg=${msg} expected: '${value}' and got: 'not_defined'
+      Should Be Equal As Strings    not_defined    ${var_value}    msg=${msg}_variable expected: '${var_value}' and got: 'not_defined'
+   END
 
 # This keyword is same as "Should Be Equal Value Json String" but it normalizes the special characters and spaces for robot evaluation
 Should Be Equal Value Json Special_String
-   [Arguments]   ${json}    ${json_path}   ${value}=${EMPTY}  ${msg}=${EMPTY}
-   ${r_value}=   Get Value From Json   ${json}   ${json_path}
-   TRY
-      ${r_value}=   Set Variable If    ${r_value} == [] or ${r_value} == ['']    not_defined    ${r_value}[0]
-   EXCEPT
-      ${r_value}=   Set Variable    not_defined
-   END
-   ${r_value}=   normalize escapes spaces    text=${r_value}
-   ${value}=   normalize escapes spaces    text=${value}
-   Should Be Equal As Strings    ${r_value}    ${value}    msg=${msg} expected: '${value}' and got: '${r_value}'
+   [Arguments]   ${json}   ${jmes_path}   ${expected_value}=${EMPTY}   ${msg}=${EMPTY}
+   ${actual_value}=   Json Search String   ${json}   ${jmes_path}
+   ${actual_value}=   Set Variable If   $actual_value == '' and $expected_value == 'not_defined'   not_defined   ${actual_value}
+   ${actual_value}=   normalize escapes spaces    text=${actual_value}
+   ${expected_value}=   normalize escapes spaces    text=${expected_value}
+   Should Be Equal As Strings   ${expected_value}   ${actual_value}   msg=${msg} expected: '${expected_value}' and got: '${actual_value}'
+
+# This keyword verifies that a UX 2.0 referenced object (by refId) has the expected name
+Should Be Equal Referenced Object Name
+   [Arguments]    ${json}    ${refid_path}    ${reference_list_json}    ${expected_value}    ${msg}
+   ${refid}=    Json Search String    ${json}    ${refid_path}
+   ${actual_name}=    Json Search String    ${reference_list_json}    data[?parcelId=='${refid}'] | [0].payload.name
+   # Convert empty string to "not_defined" only when expected value is "not_defined"
+   ${actual_name}=    Set Variable If    $actual_name == '' and $expected_value == 'not_defined'    not_defined    ${actual_name}
+   Should Be Equal As Strings    ${expected_value}    ${actual_name}    msg=${msg} expected: '${expected_value}' and got: '${actual_name}'

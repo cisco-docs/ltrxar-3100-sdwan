@@ -3,7 +3,7 @@ Documentation   Verify Service Feature Profile Configuration IPv4 ACL
 Name            Service Profiles IPv4 ACL
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles     service_profiles   ipv4_acls
+Default Tags    sdwan    config    feature_profiles    service_profiles    ipv4_acls
 Resource        ../../../sdwan_common.resource
 
 
@@ -18,75 +18,71 @@ Resource        ../../../sdwan_common.resource
 
 *** Test Cases ***
 Get Service Profiles
-    ${r}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/service
+    ${r}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/service
     Set Suite Variable    ${r}
 
 Get Policy Object Profile
-    ${r_po}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object
-    ${profile_po}=    Get Value From Json    ${r_po.json()}    $[?(@.profileName=='{{ sdwan.feature_profiles.policy_object_profile.name | default(defaults.sdwan.feature_profiles.policy_object_profile.name) }}')]
-    Run Keyword If    ${profile_po} == []    Fail    Feature Profile '{{ sdwan.feature_profiles.policy_object_profile.name | default(defaults.sdwan.feature_profiles.policy_object_profile.name) }}' should be present on the Manager
-    ${profile_po_id}=    Get Value From Json    ${profile_po}    $..profileId
+    ${r_po}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object
+    ${profile_po}=    Json Search    ${r_po.json()}    [?profileName=='{{ sdwan.feature_profiles.policy_object_profile.name | default(defaults.sdwan.feature_profiles.policy_object_profile.name) }}'] | [0]
+    Run Keyword If    $profile_po is None    Fail    Feature Profile '{{ sdwan.feature_profiles.policy_object_profile.name | default(defaults.sdwan.feature_profiles.policy_object_profile.name) }}' should be present on the Manager
+    ${profile_po_id}=    Json Search String    ${profile_po}    profileId
 
-    ${ipv4_data_prefix_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object/${profile_po_id[0]}/data-prefix
+    ${ipv4_data_prefix_res}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object/${profile_po_id}/data-prefix
     Set Suite Variable    ${ipv4_data_prefix_res}
 
-    ${mirror_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object/${profile_po_id[0]}/mirror
+    ${mirror_res}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object/${profile_po_id}/mirror
     Set Suite Variable    ${mirror_res}
 
-    ${policer_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object/${profile_po_id[0]}/policer
+    ${policer_res}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object/${profile_po_id}/policer
     Set Suite Variable    ${policer_res}
 
 {% for profile in sdwan.get('feature_profiles', {}).get('service_profiles', []) %}
 {% if profile.ipv4_acls is defined %}
 
 Verify Feature Profiles Service Profiles {{ profile.name }} IPv4 ACL Feature
-    ${profile}=    Get Value From Json    ${r.json()}    $[?(@.profileName=='{{ profile.name }}')]
-    Run Keyword If    ${profile} == []    Fail    Feature Profile '{{profile.name}}' should be present on the Manager
+    ${profile}=    Json Search    ${r.json()}    [?profileName=='{{ profile.name }}'] | [0]
+    Run Keyword If    $profile is None    Fail    Feature Profile '{{ profile.name }}' should be present on the Manager
     Set Suite Variable    ${profile}
-    ${profile_id}=    Get Value From Json    ${profile}    $..profileId
+    ${profile_id}=    Json Search String    ${profile}    profileId
     Set Suite Variable    ${profile_id}
-    ${service_ipv4_acl_res}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/service/${profile_id[0]}/ipv4-acl
+    ${service_ipv4_acl_res}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/service/${profile_id}/ipv4-acl
     Set Suite Variable    ${service_ipv4_acl_res}
-    ${service_acl}=    Get Value From Json    ${service_ipv4_acl_res.json()}    $..payload
-    Run Keyword If    ${service_acl} == []    Fail    IPv4 ACL feature(s) expected to be configured within the service profile '{{profile.name}}' on the Manager
+    ${service_acl}=    Json Search List    ${service_ipv4_acl_res.json()}    data[].payload
+    Run Keyword If    $service_acl == []    Fail    IPv4 ACL feature(s) expected to be configured within the service profile '{{ profile.name }}' on the Manager
     Set Suite Variable    ${service_acl}
 
 {% for acl in profile.ipv4_acls | default([]) %}
     Log    === IPv4 ACL: {{ acl.name }} ===
-    
+
     # for each acl find the corresponding one in the json and check parameters:
-    ${service_ipv4_acls_{{ acl.name }}_raw}=    Get Value From Json    ${service_acl}    $[?(@.name=='{{ acl.name }}')]
-    ${service_ipv4_acls_{{ acl.name }}}=    Set Variable If    ${service_ipv4_acls_{{ acl.name }}_raw} == []    not_defined    ${service_ipv4_acls_{{ acl.name }}_raw[0]}
+    ${acl_feature}=    Json Search    ${service_acl}    [?name=='{{ acl.name }}'] | [0]
+    Run Keyword If    $acl_feature is None    Fail    IPv4 ACL feature '{{ acl.name }}' expected in service profile '{{ profile.name }}'
 
-    Should Be Equal Value Json String    ${service_ipv4_acls_{{ acl.name }}}    $..name    {{ acl.name }}    msg=name
-    Should Be Equal Value Json Special_String    ${service_ipv4_acls_{{ acl.name }}}    $..description    {{ acl.description | default('not_defined') | normalize_special_string }}    msg=description
+    Should Be Equal Value Json String    ${acl_feature}    name    {{ acl.name }}    msg=name
+    Should Be Equal Value Json Special_String    ${acl_feature}    description    {{ acl.description | default('not_defined') | normalize_special_string }}    msg=description
 
-    Should Be Equal Value Json Yaml    ${service_ipv4_acls_{{ acl.name }}}    $..data.defaultAction    {{ acl.default_action }}    not_defined    msg=acl.default_action    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${acl_feature}    data.defaultAction    {{ acl.default_action }}    not_defined    msg=acl.default_action
 
-    Should Be Equal Value Json List Length    ${service_ipv4_acls_{{ acl.name }}}    $..sequences    {{ acl.get('sequences', []) | length }}    msg=sequences length
+    Should Be Equal Value Json List Length    ${acl_feature}    data.sequences    {{ acl.get('sequences', []) | length }}    msg=sequences length
 {% if acl.get('sequences', []) | length > 0 %}
     Log    === Sequences List ===
 {% for sequence in acl.sequences | default([]) %}
     Log    === Sequence {{ sequence.id }} ===
-    ${sequence_raw}=    Get Value From Json    ${service_ipv4_acls_{{ acl.name }}}    $.data.sequences[?(@.sequenceId.value=={{ sequence.id }})]
-    Run Keyword If    ${sequence_raw} == []    Fail    IPv4 ACL sequence ID {{ sequence.id }} expected to be configured on the Manager
-    ${sequence}=    Set Variable If    ${sequence_raw} == []    not_defined    ${sequence_raw[0]}
+    ${sequence}=    Json Search    ${acl_feature}    data.sequences[?sequenceId.value==`{{ sequence.id }}`] | [0]
+    Run Keyword If    $sequence is None    Fail    IPv4 ACL sequence ID {{ sequence.id }} expected to be configured on the Manager
 
-    Should Be Equal Value Json Yaml    ${sequence}    $.sequenceId    {{ sequence.id }}    not_defined    msg=acl.sequence.id    var_msg=not_defined
-    Should Be Equal Value Json Yaml    ${sequence}    $.sequenceName    {{ sequence.name | default(defaults.sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.name ) }}    not_defined    msg=acl.sequence.name    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    sequenceId    {{ sequence.id }}    not_defined    msg=acl.sequence.id
+    Should Be Equal Value Json Yaml    ${sequence}    sequenceName    {{ sequence.name | default(defaults.sdwan.feature_profiles.service_profiles.ipv4_acls.sequences.name ) }}    not_defined    msg=acl.sequence.name
 {% if 'actions' not in sequence %}
-    Should Be Equal Value Json Yaml    ${sequence}    $.baseAction    {{ sequence.base_action | default('not_defined') }}    not_defined    msg=acl.sequence.base_action    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    baseAction    {{ sequence.base_action | default('not_defined') }}    not_defined    msg=acl.sequence.base_action
 {% endif %}
 
-    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries[0].destinationDataPrefix.destinationIpPrefix    {{ sequence.match_entries.destination_data_prefix | default('not_defined') }}    {{ sequence.match_entries.destination_data_prefix_variable | default('not_defined') }}    msg=acl.sequence.match_entries.destination_data_prefix    var_msg=acl.sequence.match_entries.destination_data_prefix_variable
+    Should Be Equal Value Json Yaml    ${sequence}    matchEntries[0].destinationDataPrefix.destinationIpPrefix    {{ sequence.match_entries.destination_data_prefix | default('not_defined') }}    {{ sequence.match_entries.destination_data_prefix_variable | default('not_defined') }}    msg=acl.sequence.match_entries.destination_data_prefix
 
-    ${configured_destination_data_prefix_refid_raw}=    Get Value From Json    ${sequence}    $.matchEntries[0].destinationDataPrefix.destinationDataPrefixList.refId.value
-    ${configured_destination_data_prefix_refid}=    Set Variable If    ${configured_destination_data_prefix_refid_raw} == []    not_defined    ${configured_destination_data_prefix_refid_raw[0]}
-    ${configured_destination_data_prefix_name}=    Get Value From Json    ${ipv4_data_prefix_res.json()}    $..data[?(@.parcelId=='${configured_destination_data_prefix_refid}')]
-    Should Be Equal Value Json String    ${configured_destination_data_prefix_name}    $..name    {{ sequence.match_entries.destination_data_prefix_list | default('not_defined') }}    msg=acl.sequence.match_entries.destination_data_prefix_list
+    Should Be Equal Referenced Object Name    ${sequence}    matchEntries[0].destinationDataPrefix.destinationDataPrefixList.refId.value    ${ipv4_data_prefix_res.json()}    {{ sequence.match_entries.destination_data_prefix_list | default('not_defined') }}    acl.sequence.match_entries.destination_data_prefix_list
 
-    ${configured_destination_ports_raw}=    Get Value From Json    ${sequence}    $.matchEntries[0].destinationPorts[*].destinationPort.value
-    ${configured_destination_ports}=    Evaluate    [str(item) for item in $configured_destination_ports_raw]
+    ${configured_destination_ports}=    Json Search List    ${sequence}    matchEntries[0].destinationPorts[*].destinationPort.value
+    ${configured_destination_ports}=    Evaluate    [str(item) for item in $configured_destination_ports]
     ${expected_destination_ports}=    Create List
 {% for destination_port in sequence.get('match_entries', {}).get('destination_ports', []) | default([]) %}
     Append To List    ${expected_destination_ports}    {{ destination_port | string }}
@@ -94,43 +90,38 @@ Verify Feature Profiles Service Profiles {{ profile.name }} IPv4 ACL Feature
     Lists Should Be Equal    ${expected_destination_ports}    ${configured_destination_ports}   ignore_order=True    values=False    msg=acl.sequence.match_entries.destination_ports expected: '${expected_destination_ports}' and got: '${configured_destination_ports}'
 
     ${expected_dscps}=    Set Variable If    {{ sequence.get('match_entries', {}).get('dscps', []) | length == 0 }}    not_defined    {{ sequence.get('match_entries', {}).get('dscps', []) }}
-    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries[0].dscp    ${expected_dscps}    not_defined    msg=acl.sequence.match_entries.dscps    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    matchEntries[0].dscp    ${expected_dscps}    not_defined    msg=acl.sequence.match_entries.dscps
 
-    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries[0].icmpMsg    {{ sequence.match_entries.icmp_messages | default('not_defined') }}    not_defined    msg=acl.sequence.match_entries.icmp_messages    var_msg=not_defined
-    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries[0].packetLength    {{ sequence.match_entries.packet_length | default('not_defined') }}    not_defined    msg=acl.sequence.match_entries.packet_length    var_msg=not_defined
-    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries[0].protocol    {{ sequence.match_entries.protocols | default('not_defined') }}    not_defined    msg=acl.sequence.match_entries.protocols    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    matchEntries[0].icmpMsg    {{ sequence.match_entries.icmp_messages | default('not_defined') }}    not_defined    msg=acl.sequence.match_entries.icmp_messages
+    Should Be Equal Value Json Yaml    ${sequence}    matchEntries[0].packetLength    {{ sequence.match_entries.packet_length | default('not_defined') }}    not_defined    msg=acl.sequence.match_entries.packet_length
+    Should Be Equal Value Json Yaml    ${sequence}    matchEntries[0].protocol    {{ sequence.match_entries.protocols | default('not_defined') }}    not_defined    msg=acl.sequence.match_entries.protocols
 
-    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries[0].sourceDataPrefix.sourceIpPrefix    {{ sequence.match_entries.source_data_prefix | default('not_defined') }}    {{ sequence.match_entries.source_data_prefix_variable | default('not_defined') }}    msg=acl.sequence.match_entries.source_data_prefix    var_msg=acl.sequence.match_entries.source_data_prefix_variable
+    Should Be Equal Value Json Yaml    ${sequence}    matchEntries[0].sourceDataPrefix.sourceIpPrefix    {{ sequence.match_entries.source_data_prefix | default('not_defined') }}    {{ sequence.match_entries.source_data_prefix_variable | default('not_defined') }}    msg=acl.sequence.match_entries.source_data_prefix
 
-    ${configured_source_data_prefix_refid_raw}=    Get Value From Json    ${sequence}    $.matchEntries[0].sourceDataPrefix.sourceDataPrefixList.refId.value
-    ${configured_source_data_prefix_refid}=    Set Variable If    ${configured_source_data_prefix_refid_raw} == []    not_defined    ${configured_source_data_prefix_refid_raw[0]}
-    ${configured_source_data_prefix_name}=    Get Value From Json    ${ipv4_data_prefix_res.json()}    $..data[?(@.parcelId=='${configured_source_data_prefix_refid}')]
-    Should Be Equal Value Json String    ${configured_source_data_prefix_name}    $..name    {{ sequence.match_entries.source_data_prefix_list | default('not_defined') }}    msg=acl.sequence.match_entries.source_data_prefix_list
+    Should Be Equal Referenced Object Name    ${sequence}    matchEntries[0].sourceDataPrefix.sourceDataPrefixList.refId.value    ${ipv4_data_prefix_res.json()}    {{ sequence.match_entries.source_data_prefix_list | default('not_defined') }}    acl.sequence.match_entries.source_data_prefix_list
 
-    ${configured_source_ports_raw}=    Get Value From Json    ${sequence}    $.matchEntries[0].sourcePorts[*].sourcePort.value
-    ${configured_source_ports}=    Evaluate    [str(item) for item in $configured_source_ports_raw]
+    ${configured_source_ports}=    Json Search List    ${sequence}    matchEntries[0].sourcePorts[*].sourcePort.value
+    ${configured_source_ports}=    Evaluate    [str(item) for item in $configured_source_ports]
     ${expected_source_ports}=    Create List
 {% for source_port in sequence.get('match_entries', {}).get('source_ports', []) | default([]) %}
     Append To List    ${expected_source_ports}    {{ source_port | string }}
 {% endfor %}
     Lists Should Be Equal    ${expected_source_ports}    ${configured_source_ports}   ignore_order=True    values=False    msg=acl.sequence.match_entries.source_ports expected: '${expected_source_ports}' and got: '${configured_source_ports}'
 
-    Should Be Equal Value Json Yaml    ${sequence}    $.matchEntries[0].tcp    {{ sequence.match_entries.tcp_state | default('not_defined') }}    not_defined    msg=acl.sequence.match_entries.tcp_state    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    matchEntries[0].tcp    {{ sequence.match_entries.tcp_state | default('not_defined') }}    not_defined    msg=acl.sequence.match_entries.tcp_state
 
-    Should Be Equal Value Json Yaml    ${sequence}    $.actions[0]..counterName    {{ sequence.actions.counter_name | default('not_defined') }}    not_defined    msg=acl.sequence.actions.counter_name    var_msg=not_defined
-    Should Be Equal Value Json Yaml    ${sequence}    $.actions[0].accept.setDscp    {{ sequence.actions.dscp | default('not_defined') }}    not_defined    msg=acl.sequence.actions.dscp    var_msg=not_defined
-    Should Be Equal Value Json Yaml    ${sequence}    $.actions[0].accept.setNextHop    {{ sequence.actions.ipv4_next_hop | default('not_defined') }}    not_defined    msg=acl.sequence.actions.ipv4_next_hop    var_msg=not_defined
-    Should Be Equal Value Json Yaml    ${sequence}    $.actions[0]..log    {{ sequence.actions.log | default('not_defined') }}    not_defined    msg=acl.sequence.actions.log    var_msg=not_defined
+    Should Be Equal Value Json Yaml    ${sequence}    (actions[0].accept.counterName || actions[0].drop.counterName)    {{ sequence.actions.counter_name | default('not_defined') }}    not_defined    msg=acl.sequence.actions.counter_name
+    Should Be Equal Value Json Yaml    ${sequence}    actions[0].accept.setDscp    {{ sequence.actions.dscp | default('not_defined') }}    not_defined    msg=acl.sequence.actions.dscp
+    Should Be Equal Value Json Yaml    ${sequence}    actions[0].accept.setNextHop    {{ sequence.actions.ipv4_next_hop | default('not_defined') }}    not_defined    msg=acl.sequence.actions.ipv4_next_hop
+    Should Be Equal Value Json Yaml    ${sequence}    (actions[0].accept.log || actions[0].drop.log)    {{ sequence.actions.log | default('not_defined') }}    not_defined    msg=acl.sequence.actions.log
 
-    ${configured_mirror_refid_raw}=    Get Value From Json    ${sequence}    $.actions[0].accept.mirror.refId.value
-    ${configured_mirror_refid}=    Set Variable If    ${configured_mirror_refid_raw} == []    not_defined    ${configured_mirror_refid_raw[0]}
-    ${configured_mirror_name}=    Get Value From Json    ${mirror_res.json()}    $..data[?(@.parcelId=='${configured_mirror_refid}')]
-    Should Be Equal Value Json String    ${configured_mirror_name}    $..name    {{ sequence.actions.mirror | default('not_defined') }}    msg=acl.sequence.actions.mirror
+    Should Be Equal Referenced Object Name    ${sequence}    actions[0].accept.mirror.refId.value    ${mirror_res.json()}    {{ sequence.actions.mirror | default('not_defined') }}    acl.sequence.actions.mirror
 
-    ${configured_policer_refid_raw}=    Get Value From Json    ${sequence}    $.actions[0].accept.policer.refId.value
-    ${configured_policer_refid}=    Set Variable If    ${configured_policer_refid_raw} == []    not_defined    ${configured_policer_refid_raw[0]}
-    ${configured_policer_name}=    Get Value From Json    ${policer_res.json()}    $..data[?(@.parcelId=='${configured_policer_refid}')]
-    Should Be Equal Value Json String    ${configured_policer_name}    $..name    {{ sequence.actions.policer | default('not_defined') }}    msg=acl.sequence.actions.policer
+    Should Be Equal Referenced Object Name    ${sequence}    actions[0].accept.policer.refId.value    ${policer_res.json()}    {{ sequence.actions.policer | default('not_defined') }}    acl.sequence.actions.policer
+
+    Should Be Equal Value Json Yaml    ${sequence}    actions[0].accept.setServiceChain.fallback    {{ sequence.actions.service_chain_fallback | default('not_defined') }}    {{ sequence.actions.service_chain_fallback_variable | default('not_defined') }}    msg=acl.sequence.actions.service_chain_fallback
+    Should Be Equal Value Json Yaml    ${sequence}    actions[0].accept.setServiceChain.serviceChainNumber    {{ sequence.actions.service_chain_name | default('not_defined') }}    {{ sequence.actions.service_chain_name_variable | default('not_defined') }}    msg=acl.sequence.actions.service_chain_name
+    Should Be Equal Value Json Yaml    ${sequence}    actions[0].accept.setServiceChain.vpn    {{ sequence.actions.service_chain_vpn | default('not_defined') }}    {{ sequence.actions.service_chain_vpn_variable | default('not_defined') }}    msg=acl.sequence.actions.service_chain_vpn
 
 {% endfor %}
 

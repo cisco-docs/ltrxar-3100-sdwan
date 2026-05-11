@@ -38,6 +38,15 @@ class Rule:
                     results.append(f"geo_fencing_sms_enable parameter is configured, but geo_fencing_enable is not true in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].basic[{basic_feature.get('name', 'basic')}]")
                 if ("geo_fencing_sms_enable" not in basic_feature or basic_feature["geo_fencing_sms_enable"] is False) and "geo_fencing_sms_mobile_numbers" in basic_feature:
                     results.append(f"geo_fencing_sms_mobile_numbers parameter is configured, but geo_fencing_sms_enable is not true in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].basic[{basic_feature.get('name', 'basic')}]")
+                if ("on_demand_tunnel_idle_timeout" in basic_feature and basic_feature.get("on_demand_tunnel", False) is not True):
+                    results.append(f"on_demand_tunnel_idle_timeout parameter is configured, but on_demand_tunnel is not enabled in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].basic[{basic_feature.get('name', 'basic')}]")
+                for affinity_per_vrf in basic_feature.get("affinity_per_vrfs",[]):
+                    vrf_range = affinity_per_vrf.get("vrf_range", "")
+                    if "-" in vrf_range:
+                        from_vrf = vrf_range.split("-")[0]
+                        to_vrf = vrf_range.split("-")[1]
+                        if int(from_vrf) >= int(to_vrf):
+                            results.append(f"Invalid vrf_range: {vrf_range} , {from_vrf} should not be greater or equal to {to_vrf} in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].basic.affinity_per_vrfs")
             ipv4_device_access_policy_feature = feature_profile.get("ipv4_device_access_policy", {})
             if ipv4_device_access_policy_feature:
                 for index, sequence in enumerate(ipv4_device_access_policy_feature.get("sequences", [])):
@@ -75,14 +84,14 @@ class Rule:
             if snmp_feature:
                 view_names = [view["name"] for view in snmp_feature.get("views", [])]
                 for index, community in enumerate(snmp_feature.get("communities", [])):
-                    if community["view"] not in view_names:
+                    if "view" in community and community["view"] not in view_names:
                         results.append(f"View {community['view']} is not defined, but is referenced in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].snmp.communities[{index}]")
                 group_names = [group["name"] for group in snmp_feature.get("groups", [])]
                 for index, group in enumerate(snmp_feature.get("groups", [])):
-                    if group["view"] not in view_names:
+                    if "view" in group and group["view"] not in view_names:
                         results.append(f"View {group['view']} is not defined, but is referenced in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].snmp.groups[{group['name']}]")
                 for index, user in enumerate(snmp_feature.get("users", [])):
-                    if user["group"] not in group_names:
+                    if "group" in user and user["group"] not in group_names:
                         results.append(f"Group {user['group']} is not defined, but is referenced in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].snmp.users[{user['name']}]")
                 user_names = [user["name"] for user in snmp_feature.get("users", [])]
                 user_labels = [community["user_label"] for community in snmp_feature.get("communities", [])]
@@ -90,10 +99,10 @@ class Rule:
                     if "user" in trap_server.keys() and "user_label" in trap_server.keys():
                         results.append(f"Both user and user_label are defined in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].snmp.trap_target_servers[{index}]")
                     elif "user" in trap_server.keys():
-                        if trap_server["user"] not in user_names:
+                        if "user" in trap_server and trap_server["user"] not in user_names:
                             results.append(f"User {trap_server['user']} is not defined, but is referenced in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].snmp.trap_target_servers[{index}]")
                     elif "user_label" in trap_server.keys():
-                        if trap_server["user_label"] not in user_labels:
+                        if "user_label" in trap_server and trap_server["user_label"] not in user_labels:
                             results.append(f"User label {trap_server['user_label']} is not defined, but is referenced in the sdwan.feature_profiles.system_profiles[{feature_profile['name']}].snmp.trap_target_servers[{index}]")
 
         return results

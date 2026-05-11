@@ -41,8 +41,8 @@ sdwan:
                   - address: 2001:0:0:1::1
                     administrative_distance: 1
             ipv6_omp_advertise_routes:
-              - protocol: connected
-              - protocol: static
+              - protocol: Connected
+              - protocol: Static
             ipv6_primary_dns_address: 2001:0:0:1::1
             ipv6_secondary_dns_address: 2001:0:0:2::2
             host_mappings:

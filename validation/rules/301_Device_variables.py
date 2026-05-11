@@ -88,6 +88,8 @@ class Rule:
                                 break
                 elif key == "localized_policy":
                     for lp in inventory.get('sdwan', {}).get('localized_policies', {}).get('feature_policies', {}):
+                        if lp["name"] != obj:
+                            continue
                         for key, obj in lp.get('definitions', {}).items():
                             if key in definitions_in_localized_policy:
                                 if isinstance(obj, str):
@@ -97,6 +99,7 @@ class Rule:
                                     for obj_entry in obj:
                                         if not obj_entry in results:
                                             results.append(obj_entry)
+                        break
         return(results)
 
     @classmethod

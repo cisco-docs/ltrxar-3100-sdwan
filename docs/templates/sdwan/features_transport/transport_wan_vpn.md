@@ -32,5 +32,5 @@ sdwan:
                 - address_variable: vpn0_ipv4_default_route_nexthop1_ip
                 - address_variable: vpn0_ipv4_default_route_nexthop2_ip
           services:
-            - te
+            - TE
 ```

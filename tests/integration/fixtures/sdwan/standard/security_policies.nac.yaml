@@ -283,6 +283,45 @@ sdwan:
                 protocol_names:
                   - aol
                   - cifs
+        - name: ZONE-BASED-FIREWALL-COVERAGE
+          description: ZBFW for coverage testing
+          default_action_type: drop
+          rules:
+            - id: 1
+              name: Rule source ports only
+              base_action: pass
+              match_criterias:
+                source_ports:
+                  - 80
+                  - 443
+            - id: 2
+              name: Rule source port ranges only
+              base_action: inspect
+              match_criterias:
+                source_port_ranges:
+                  - from: 1024
+                    to: 2048
+            - id: 3
+              name: Rule destination port ranges only
+              base_action: pass
+              match_criterias:
+                destination_port_ranges:
+                  - from: 8000
+                    to: 9000
+              actions:
+                log: true
+            - id: 4
+              name: Rule destination ports only
+              base_action: inspect
+              match_criterias:
+                destination_ports:
+                  - 22
+                  - 23
+          zone_pairs:
+            - source_zone: Test_zone_1_uni1
+              destination_zone: self_zone
+            - source_zone: Test_zone_5_uni1
+              destination_zone: Test_zone_6_uni1
       intrusion_prevention:
         - name: IPS-POLICY-01
           description: IPS-POLICY-01
@@ -359,3 +398,15 @@ sdwan:
             tcp_syn_flood_limit: 1239
             # HSL NOT SUPPORTED YET IN UNIFIED MODE FOR NAC
             audit_trail: true
+      - name: SECURITY-POLICY-COVERAGE
+        description: Security Policy for coverage testing
+        use_case: custom
+        mode: security
+        firewall_policies:
+          - ZONE-BASED-FIREWALL-COVERAGE
+        additional_settings:
+          firewall:
+            audit_trail: false
+            match_stats_per_filter: false
+            direct_internet_applications: false
+            tcp_syn_flood_limit: 500

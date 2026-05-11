@@ -18,6 +18,7 @@ sdwan:
           ethernet_interfaces:
             - name: management_interface
               interface_name: GigabitEthernet8
+              ipv4_address_type: static
               ipv4_address_variable: mgmt_intf_ip
               ipv4_subnet_mask_variable: mgmt_intf_mask
               shutdown: false
@@ -35,7 +36,7 @@ sdwan:
           ethernet_interfaces:
             - name: management_interface
               interface_name: GigabitEthernet8
-              ipv4_configuration_type: dynamic
-              ipv6_configuration_type: dynamic
+              ipv4_address_type: dynamic
+              ipv6_address_type: dynamic
               shutdown: false
 ```

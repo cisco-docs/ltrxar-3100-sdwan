@@ -10,7 +10,7 @@ Resource        ../../sdwan_common.resource
 
 *** Test Cases ***
 Verify Centralized Policy {{ activated_policy_name }} Activated
-    ${r}=   GET On Session   sdwan_manager   /dataservice/template/policy/vsmart/
-    Should Be Equal Value Json String   ${r.json()}   $..data[?(@..policyName=="{{ activated_policy_name }}")].isPolicyActivated   True   msg=Activated policy status
+    ${r}=   GET On Session With Retry   sdwan_manager   /dataservice/template/policy/vsmart/
+    Should Be Equal Value Json String   ${r.json()}   data[?policyName=='{{ activated_policy_name }}'] | [0].isPolicyActivated   True   msg=Activated policy status
 
 {% endif %}

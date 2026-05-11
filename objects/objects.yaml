@@ -356,6 +356,13 @@ objects:
       sdwan.feature_profiles.cli_profiles.name,
       sdwan.feature_profiles.cli_profiles.description,
       ]
+  - name: NGFW Security Profile
+    template: ngfw_security
+    folder: feature_profiles
+    paths: [
+      sdwan.feature_profiles.ngfw_security_profiles.name,
+      sdwan.feature_profiles.ngfw_security_profiles.description,
+      ]
   - name: Other Profile
     template: other
     folder: feature_profiles
@@ -395,10 +402,25 @@ objects:
     template: application_priority_qos_policy
     folder: policies_application_priority
     paths: [sdwan.feature_profiles.application_priority_profiles.qos_policies]
+  - name: Application Priority Settings
+    template: application_priority_settings
+    folder: policies_application_priority
+    paths: [sdwan.feature_profiles.application_priority_profiles.settings]
+  - name: Application Priority Traffic Policy
+    template: application_priority_traffic_policy
+    folder: policies_application_priority
+    paths: [sdwan.feature_profiles.application_priority_profiles.traffic_policies]
   - name: CLI Config Feature
     template: cli_config
     folder: features_cli
     paths: [sdwan.feature_profiles.cli_profiles.config]
+  - name: NGFW Security Policy
+    template: ngfw_security_policy
+    folder: policies_ngfw_security
+    paths: [
+      sdwan.feature_profiles.ngfw_security_profiles.policies,
+      sdwan.feature_profiles.ngfw_security_profiles.settings,
+      ]
   - name: Other ThousandEyes Feature
     template: other_thousandeyes
     folder: features_other
@@ -443,6 +465,22 @@ objects:
     template: service_lan_vpn_ethernet_interface
     folder: features_service
     paths: [sdwan.feature_profiles.service_profiles.lan_vpns.ethernet_interfaces]
+  - name: Service LAN VPN GRE Interface Feature
+    template: service_lan_vpn_gre_interface
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.lan_vpns.gre_interfaces]
+  - name: Service LAN VPN IPsec Interface Feature
+    template: service_lan_vpn_ipsec_interface
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.lan_vpns.ipsec_interfaces]
+  - name: Service LAN VPN SVI Interface Feature
+    template: service_lan_vpn_svi_interface
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.lan_vpns.svi_interfaces]
+  - name: Service Multicast Feature
+    template: service_multicast
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.multicast_features]
   - name: Service Object Tracker Group Feature
     template: service_object_tracker_group
     folder: features_service
@@ -455,10 +493,22 @@ objects:
     template: service_ospf
     folder: features_service
     paths: [sdwan.feature_profiles.service_profiles.ospf_features]
+  - name: Service OSPFv3 IPv4 Feature
+    template: service_ospfv3_ipv4
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.ospfv3_ipv4_features]
+  - name: Service OSPFv3 IPv6 Feature
+    template: service_ospfv3_ipv6
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.ospfv3_ipv6_features]
   - name: Service Route Policy Feature
     template: service_route_policy
     folder: features_service
     paths: [sdwan.feature_profiles.service_profiles.route_policies]
+  - name: Service Switchport Feature
+    template: service_switchport
+    folder: features_service
+    paths: [sdwan.feature_profiles.service_profiles.switchport_features]
   - name: System AAA Feature
     template: system_aaa
     folder: features_system
@@ -475,6 +525,10 @@ objects:
     template: system_bfd
     folder: features_system
     paths: [sdwan.feature_profiles.system_profiles.bfd]
+  - name: System CA Certificate Feature
+    template: system_ca_certificate
+    folder: features_system
+    paths: [sdwan.feature_profiles.system_profiles.ca_certificate]
   - name: System Flexible Port Speed Feature
     template: system_flexible_port_speed
     folder: features_system
@@ -523,6 +577,10 @@ objects:
     template: transport_bgp
     folder: features_transport
     paths: [sdwan.feature_profiles.transport_profiles.bgp_features]
+  - name: Transport Cellular Controller Feature
+    template: transport_cellular_controller
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.cellular_controllers]
   - name: Transport Cellular Profile Feature
     template: transport_cellular_profile
     folder: features_transport
@@ -575,10 +633,22 @@ objects:
     template: transport_wan_vpn
     folder: features_transport
     paths: [sdwan.feature_profiles.transport_profiles.wan_vpn]
+  - name: Transport WAN VPN Cellular Interface Feature
+    template: transport_wan_vpn_cellular_interface
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.wan_vpn.cellular_interfaces]
   - name: Transport WAN VPN Ethernet Interface Feature
     template: transport_wan_vpn_ethernet_interface
     folder: features_transport
     paths: [sdwan.feature_profiles.transport_profiles.wan_vpn.ethernet_interfaces]
+  - name: Transport WAN VPN GRE Interface Feature
+    template: transport_wan_vpn_gre_interface
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.wan_vpn.gre_interfaces]
+  - name: Transport WAN VPN IPsec Interface Feature
+    template: transport_wan_vpn_ipsec_interface
+    folder: features_transport
+    paths: [sdwan.feature_profiles.transport_profiles.wan_vpn.ipsec_interfaces]
   - name: App Probe Class
     template: app_probe_class
     folder: policy_objects
@@ -635,6 +705,66 @@ objects:
     template: preferred_color_group
     folder: policy_objects
     paths: [sdwan.feature_profiles.policy_object_profile.preferred_color_groups]
+  - name: Security Advanced Inspection Profile
+    template: security_advanced_inspection_profile
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_advanced_inspection_profiles]
+  - name: Security Advanced Malware Protection Profile
+    template: security_advanced_malware_protection_profile
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_advanced_malware_protection_profiles]
+  - name: Security Data IPv4 Prefix List
+    template: security_data_ipv4_prefix_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_data_ipv4_prefix_lists]
+  - name: Security FQDN List
+    template: security_fqdn_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_fqdn_lists]
+  - name: Security Geo Location List
+    template: security_geo_location_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_geo_location_lists]
+  - name: Security Intrusion Prevention Profile
+    template: security_intrusion_prevention_profile
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_intrusion_prevention_profiles]
+  - name: Security IPS Signature List
+    template: security_ips_signature_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_ips_signature_lists]
+  - name: Security Local Application List
+    template: security_local_application_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_local_application_lists]
+  - name: Security Local Domain List
+    template: security_local_domain_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_local_domain_lists]
+  - name: Security Port List
+    template: security_port_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_port_lists]
+  - name: Security Protocol List
+    template: security_protocol_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_protocol_lists]
+  - name: Security URL Allow List
+    template: security_url_allow_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_url_allow_lists]
+  - name: Security URL Block List
+    template: security_url_block_list
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_url_block_lists]
+  - name: Security URL Filtering Profile
+    template: security_url_filtering_profile
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_url_filtering_profiles]
+  - name: Security Zone
+    template: security_zone
+    folder: policy_objects
+    paths: [sdwan.feature_profiles.policy_object_profile.security_zones]
   - name: SLA Class
     template: sla_class
     folder: policy_objects

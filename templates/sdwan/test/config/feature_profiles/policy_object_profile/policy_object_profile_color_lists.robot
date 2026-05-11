@@ -3,7 +3,7 @@ Documentation   Verify Policy Object Feature Profile Configuration Color List
 Name            Policy Object Profile Color List
 Suite Setup     Login SDWAN Manager
 Suite Teardown  Run On Last Process    Logout SDWAN Manager
-Default Tags    sdwan    config    feature_profiles     policy_object_profile   color_lists
+Default Tags    sdwan    config    feature_profiles    policy_object_profile    color_lists
 Resource        ../../../sdwan_common.resource
 
 
@@ -11,17 +11,17 @@ Resource        ../../../sdwan_common.resource
 
 *** Test Cases ***
 Get Policy Object Profile
-    ${r}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object
+    ${r}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object
     Set Suite Variable    ${r}
 
 
 Get Color Lists
-    ${profile}=    Get Value From Json    ${r.json()}    $[?(@.profileName=='{{ sdwan.feature_profiles.policy_object_profile.name }}')]
-    Run Keyword If    ${profile} == []    Fail    Feature Profile '{{ sdwan.feature_profiles.policy_object_profile.name }}' should be present on the Manager
-    ${profile_id}=    Get Value From Json    ${profile}    $..profileId
+    ${profile}=    Json Search    ${r.json()}    [?profileName=='{{ sdwan.feature_profiles.policy_object_profile.name }}'] | [0]
+    Run Keyword If    $profile is None    Fail    Feature Profile '{{ sdwan.feature_profiles.policy_object_profile.name }}' should be present on the Manager
+    ${profile_id}=    Json Search String    ${profile}    profileId
     Set Suite Variable    ${profile_id}
 
-    ${color_list_raw}=    GET On Session    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object/${profile_id[0]}/color
+    ${color_list_raw}=    GET On Session With Retry    sdwan_manager    /dataservice/v1/feature-profile/sdwan/policy-object/${profile_id}/color
     Set Suite Variable    ${color_list_raw}
 
 
@@ -29,13 +29,13 @@ Get Color Lists
 
 Verify Feature Profiles Policy Object Profile {{ sdwan.feature_profiles.policy_object_profile.name }} Color List Feature {{ color_list.name }}
 
-    ${color_lists}=    Get Value From Json    ${color_list_raw.json()}    $..data[?(@..name=='{{ color_list.name }}')]..payload
-    Run Keyword If    ${color_lists} == []    Fail    Feature '{{ color_list.name }}' expected to be configured within the policy object profile '{{ sdwan.feature_profiles.policy_object_profile.name }}' on the Manager
+    ${color_list}=    Json Search    ${color_list_raw.json()}    data[?payload.name=='{{ color_list.name }}'] | [0].payload
+    Run Keyword If    $color_list is None    Fail    Feature '{{ color_list.name }}' expected to be configured within the policy object profile '{{ sdwan.feature_profiles.policy_object_profile.name }}' on the Manager
 
-    Should Be Equal Value Json String    ${color_lists[0]}    $..name    {{ color_list.name }}    msg=name
-    
+    Should Be Equal Value Json String    ${color_list}    name    {{ color_list.name }}    msg=name
+
     ${colors_list}=    Create List    {{ color_list.get('colors', []) | join('   ') }}
-    Should Be Equal Value Json List   ${color_lists[0]}   $..color.value   ${colors_list}   msg=colors
+    Should Be Equal Value Json List    ${color_list}    data.entries[].color.value    ${colors_list}    msg=colors
 
 {% endfor %}
 

@@ -81,6 +81,123 @@ sdwan:
                 counter_name: INTERNET
                 log: true
                 class: CLASS-DEFAULT
+        - name: ACL-PORT-COMBINATIONS
+          description: ACL with port combinations for coverage
+          default_action: drop
+          sequences:
+            - id: 10
+              name: Both source ports and ranges
+              base_action: accept
+              match_criterias:
+                source_ports:
+                  - 80
+                  - 443
+                source_port_ranges:
+                  - from: 1024
+                    to: 2048
+                  - from: 4000
+                    to: 5000
+                destination_ports:
+                  - 8080
+                  - 8443
+                destination_port_ranges:
+                  - from: 3000
+                    to: 4000
+              actions:
+                counter_name: SEQ10-PORT-COMBO
+            - id: 20
+              name: Source ports only
+              base_action: accept
+              match_criterias:
+                source_ports:
+                  - 22
+                  - 23
+              actions:
+                counter_name: SEQ20-SRC-PORTS
+            - id: 30
+              name: Destination ports only
+              base_action: accept
+              match_criterias:
+                destination_ports:
+                  - 53
+                  - 123
+              actions:
+                counter_name: SEQ40-DST-PORTS
+      ipv6_access_control_lists:
+        - name: ACLv6-COVERAGE-TEST
+          description: IPv6 ACL for coverage testing
+          default_action: drop
+          sequences:
+            - id: 10
+              name: IPv6 ACL Sequence 1
+              base_action: accept
+              match_criterias:
+                source_ip_prefix: 2001:db8::/32
+                destination_ip_prefix: 2001:db8:1::/48
+                source_data_prefix_list: DPL-PRIVATE
+                destination_data_prefix_list: DPL-PRIVATE
+                source_ports:
+                  - 80
+                  - 443
+                source_port_ranges:
+                  - from: 1024
+                    to: 2048
+                destination_ports:
+                  - 8080
+                  - 8443
+                destination_port_ranges:
+                  - from: 3000
+                    to: 4000
+                next_header: 6
+                packet_length: 64
+                priority: high
+                tcp: syn
+                traffic_class: 10
+                class: CLASS-REALTIME
+              actions:
+                class: CLASS-REALTIME
+                counter_name: SEQ10-IPv6-COUNTER
+                log: true
+                mirror_list: MIR1
+                next_hop: 2001:db8::1
+                policer: POLICER-TEST
+                traffic_class: 20
+            - id: 20
+              name: IPv6 ACL Sequence 2
+              base_action: drop
+              match_criterias:
+                source_ports:
+                  - 22
+                destination_port_ranges:
+                  - from: 5000
+                    to: 6000
+              actions:
+                counter_name: SEQ20-IPv6-DROP
+      ipv6_device_access_policies:
+        - name: ACLv6-DEVICE-ACCESS-01
+          description: IPv6 Device Access Policy for coverage
+          default_action: drop
+          sequences:
+            - id: 10
+              name: Device Access Seq 1
+              base_action: accept
+              match_criterias:
+                source_ip_prefix: 2001:db8:100::/48
+                destination_ip_prefix: 2001:db8:200::/48
+                source_data_prefix_list: DPL-PRIVATE
+                destination_data_prefix_list: DPL-PRIVATE
+                destination_port: 22
+                source_ports:
+                  - 1024
+                  - 2048
+              counter_name: SEQ10-DEVICE-ACCESS
+            - id: 20
+              name: Device Access Seq 2
+              base_action: accept
+              match_criterias:
+                source_ip_prefix: 2001:db8:300::/48
+                destination_port: 22
+              counter_name: SEQ20-DEVICE-ACCESS
       ipv4_device_access_policies:
         - name: ACL-DEVICEACCESSPOLICY-01
           description: SSH and SNMP access control
@@ -104,7 +221,7 @@ sdwan:
               match_criterias:
                 source_ip_prefix: 192.168.0.0/16
                 destination_port: 22
-              counter_name: SEQ15-SSH
+              counter_name: SEQ20-SSH
             - id: 25
               base_action: accept
               match_criterias:
@@ -200,6 +317,22 @@ sdwan:
               dscp: 0
               priority: low
       route_policies:
+        - name: RM-BGP-IPV6
+          description: Import routes into BGP IPv6
+          default_action: accept
+          sequences:
+            - id: 1
+              ip_type: ipv6
+              base_action: accept
+              match_criterias:
+                origin: igp
+        - name: RM-REIMPORT-EXPORT
+          description: Import Export BGP routes for re-import testing
+          default_action: accept
+          sequences:
+            - id: 1
+              ip_type: ipv4
+              base_action: accept
         - name: ROUTE-MAP-SET-OMPTAG
           description: Set OMP tag based on community list
           default_action: accept
@@ -260,6 +393,32 @@ sdwan:
               base_action: accept
               actions:
                 omp_tag: 2222
+        - name: RM-AS-PATH-MANIPULATION
+          description: Route map with AS path manipulation for coverage
+          default_action: reject
+          sequences:
+            - id: 10
+              ip_type: ipv4
+              base_action: accept
+              match_criterias:
+                as_path_list: '100'
+              actions:
+                exclude_as_paths:
+                  - 65001
+                  - 65002
+                  - 65003
+                prepend_as_paths:
+                  - 65100
+                  - 65100
+                  - 65100
+                metric: 50
+            - id: 20
+              ip_type: ipv4
+              base_action: accept
+              actions:
+                prepend_as_paths:
+                  - 65200
+                  - 65200
     feature_policies:
       - name: LOCAL-POLICY-TEMPLATE-01
         description: Localized Policy v01
@@ -282,6 +441,9 @@ sdwan:
             - RM-SITE-BGP-OUT-STANDBY
             - RM-SITE-BGP-TO-OMP-ACTIVE
             - RM-SITE-BGP-TO-OMP-STANDBY
+            - RM-BGP-IPV6
+            - RM-AS-PATH-MANIPULATION
+            - RM-REIMPORT-EXPORT
           ipv4_access_control_lists:
             - ACL-NETCONF830-DROP
             - ACL-TLOCEXT-DSCP

@@ -8,7 +8,7 @@ class Rule:
         results = []
         object_names = []
         for objects in inventory.get('sdwan', {}).get('feature_profiles', {}).get("policy_object_profile", {}).values():
-            if type(objects) is list:
+            if isinstance(objects, list):
                 for object in objects:
                     object_names.append(object['name'])
         non_unique_names = [name for name in set(object_names) if object_names.count(name) > 1]

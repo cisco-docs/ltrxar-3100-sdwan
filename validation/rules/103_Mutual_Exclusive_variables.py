@@ -338,8 +338,8 @@ class Rule:
                     # Extract the data from the Data Model using the object_jmes_path
                     if data is not None:
                         # Loop through the data
-                        if type(data) is dict:
-                            data = [data] 
+                        if isinstance(data, dict):
+                            data = [data]
                         for each_data in data:
                             # Process data for the exclusive parameter use-case with filter
                                 if each_exclusion_item.get('variables_jmes_path') == "":
@@ -355,7 +355,7 @@ class Rule:
                 # Extract the data from the Data Model using the object_jmes_path
                     if data is not None:
                         # Loop through the data
-                        if type(data) is dict:
+                        if isinstance(data, dict):
                             data = [data]
                         for each_data in data:
                             # Extract the primary data further only if variable1_jmes_path is defined. Else use the data as is
