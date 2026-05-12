@@ -9,6 +9,7 @@ sdwan:
         omp_advertise_ipv4_routes:
           - protocol: connected
           - protocol: static
+          - protocol: bgp
         ipv4_static_routes:
           - prefix_variable: vpn30_default_route_prefix
             optional: false
@@ -23,6 +24,7 @@ sdwan:
         omp_advertise_ipv4_routes:
           - protocol: connected
           - protocol: static
+          - protocol: bgp
         ipv4_static_routes:
           - prefix_variable: vpn40_default_route_prefix
             optional: false
@@ -52,20 +54,6 @@ sdwan:
         vpn_id: 512
 
     ethernet_interface_templates:
-      - name: FT-ETH3-VPN30
-        description: CEDGE VPN30 LAN INTERFACE
-        interface_name_variable: vpn30_eth3_if_name
-        interface_description_variable: vpn30_eth3_desc
-        ipv4_address_variable: vpn30_eth3_ipv4
-        shutdown_variable: vpn30_eth3_if_shutdown
-
-      - name: FT-ETH4-VPN40
-        description: CEDGE VPN40 LAN INTERFACE
-        interface_name_variable: vpn40_eth4_if_name
-        interface_description_variable: vpn40_eth4_desc
-        ipv4_address_variable: vpn40_eth4_ipv4
-        shutdown_variable: vpn40_eth4_if_shutdown
-
       - name: FT-TLOC1-PUBLIC-REMOTE-VPN0
         description: CEDGE TLOC1 with static IP Settings, NAT enabled
         interface_description_variable: vpn0_tloc01_if_description
@@ -173,8 +161,8 @@ sdwan:
           - color: mpls
 
     cli_templates:
-      - name: FT-REMOTE-EDGE-CLI-BGP-BFD-01
-        description: "Edge CLI Template to disable DAUTH logs"
+      - name: FT-REMOTE-EDGE-CLI-BASE-01
+        description: "Edge CLI base; system + console only. BGP is now a proper bgp_template in multi-domain/sdwan/."
         cli_config: |
           system
             transport-gateway enable
@@ -185,12 +173,6 @@ sdwan:
            interval min-tx 400 min-rx 400 multiplier 5
           interface GigabitEthernet3
             bfd template test
-          router bgp {{vpn40_bgp_as_number_cli}}
-           address-family ipv4 vrf 40
-            neighbor {{vpn40_bgp_ipv4_neighbor1_address_cli}} remote-as {{vpn40_bgp_ipv4_neighbor1_remote_as_cli}}
-            neighbor {{vpn40_bgp_ipv4_neighbor1_address_cli}} soft-reconfiguration inbound
-            neighbor {{vpn40_bgp_ipv4_neighbor1_address_cli}} activate
-            neighbor {{vpn40_bgp_ipv4_neighbor1_address_cli}} fall-over bfd
 
     global_settings_templates:
       - name: FT-REMOTE-EDGE-GLOBAL-01
