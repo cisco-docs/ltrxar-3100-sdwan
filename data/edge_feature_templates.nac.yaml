@@ -85,6 +85,7 @@ sdwan:
           hello_interval: 1000
           hello_tolerance: 12
           vmanage_connection_preference_variable: vpn0_tloc01_tunnel_vmanage_connection_preference
+          propagate_sgt: true
 
       - name: FT-TLOC2-PRIVATE-REMOTE-VPN0
         description: CEDGE TLOC2 with static IP Settings
@@ -116,6 +117,7 @@ sdwan:
           hello_interval: 1000
           hello_tolerance: 12
           vmanage_connection_preference_variable: vpn0_tloc02_tunnel_vmanage_connection_preference
+          propagate_sgt: true
 
     omp_templates:
       - name: FT-REMOTE-EDGE-OMP-01
