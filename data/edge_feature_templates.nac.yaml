@@ -138,14 +138,14 @@ sdwan:
         users:
           - name: admin
             optional: false
-            password: $6$Al6owF//yUhkjq5D$Q3VsfDUNBkB5M0XXXYjNxpBR6MVXeOnN9LcHudt538AjvN9DRNaLP71SYbzwzqh5KRk.gIJPYHFPCO2ozxQFC.
+            password: $6$cfnMdfqC1k.h/ExF$SR9Gxdu.fvTdxWX4TTwblgZEoowe62ssto9NVw5qOHpZXbVhZvcRCJhOKRLMKatWcF9T4Nzer85Xfja3gh4QF/
             privilege_level: 15
-            secret: $9$xTpl9PHA7QMxlt$v7NY.c7mo0Nxtlh/owLLOFQH/H1KNp0WA1UwTRMRp/k
+            secret: $9$KBAJf3.Y/vGaLk$Vta72ZKRZZnQbvqtyKhvgSYnMrdtSavbT8bpZbpQ1Ew
           - name: failsafe
             optional: false
-            password: $6$.5ElETCi9kMuSY/8$C2ikiVQmGMiAXkvArECedHIwo3tPtmL/76jzhCfnQHHVZ/fgNiYQRtT1TbdQ/axflP2xuh/a2ef70ZVlcD2ch/
+            password: $6$cfnMdfqC1k.h/ExF$SR9Gxdu.fvTdxWX4TTwblgZEoowe62ssto9NVw5qOHpZXbVhZvcRCJhOKRLMKatWcF9T4Nzer85Xfja3gh4QF/
             privilege_level: 15
-            secret: $9$k4TwNjUuLAB8R4$g7gbI9hC55dzHuLitRdoPqs7tr/wpF8N9lcd/yKeaBI
+            secret: $9$KBAJf3.Y/vGaLk$Vta72ZKRZZnQbvqtyKhvgSYnMrdtSavbT8bpZbpQ1Ew
 
     banner_templates:
       - name: FT-REMOTE-EDGE-BANNER-01
