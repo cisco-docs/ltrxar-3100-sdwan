@@ -42,7 +42,7 @@ sdwan:
             system_hostname: C-EDGE-01
             controller_groups: 1,2
             timezone: UTC
-            system_description: Site 1 C-EDGE-01 (Fabric B-facing, peer to SDA-FIAB)
+            system_description: Site 1 C-EDGE-01 SDA-FIAB
             system_location: Site1
             system_latitude: 36.1699
             system_longitude: -115.1398
@@ -127,7 +127,7 @@ sdwan:
             system_hostname: C-EDGE-02
             controller_groups: 1,2
             timezone: UTC
-            system_description: Site 2 C-EDGE-02 (Fabric A-facing, peer to SDA-BORDER)
+            system_description: Site 2 C-EDGE-02 SDA-BORDER
             system_location: Site2
             system_latitude: 36.1699
             system_longitude: -115.1398
