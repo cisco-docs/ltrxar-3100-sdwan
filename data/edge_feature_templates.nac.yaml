@@ -180,7 +180,7 @@ sdwan:
       - name: FT-REMOTE-EDGE-GLOBAL-01
         description: Base cEdge Global Settings
         cdp_variable: global_cdp_enable
-        domain_lookup_variable: global_ip_domain_lookup_enable
+        # domain_lookup_variable: global_ip_domain_lookup_enable
         lldp_variable: global_lldp_enable
     logging_templates:
       - name: FT-REMOTE-EDGE-LOGGING-01
