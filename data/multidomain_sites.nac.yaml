@@ -54,13 +54,14 @@ sdwan:
     #         # global_lldp_enable: false
     #         # # global_ip_domain_lookup_enable: true
 
-    #         # Source-interface anchors for logging/NTP/SNMP (use TLOC1)
-    #         logging_server_source_interface: GigabitEthernet1
-    #         ntp_server_source_interface: GigabitEthernet1
+    #         # Source-interface anchors for logging/NTP/SNMP — must live in VPN 30
+    #         # (templates pin vpn_id=30; IOS-XE rejects vrf mismatch at commit time)
+    #         logging_server_source_interface: GigabitEthernet3.3050
+    #         ntp_server_source_interface: GigabitEthernet3.3050
     #         snmp_contact: lab-admin@cisco.com
     #         snmp_location: Location Site1
     #         snmp_shutdown: false
-    #         snmp_trap_source_interface: GigabitEthernet1
+    #         snmp_trap_source_interface: GigabitEthernet3.3050
 
     #         # VPN0 overlay + TLOCs (biz-internet + mpls)
     #         vpn0_dns_primary: 172.16.1.254
@@ -139,13 +140,14 @@ sdwan:
             global_lldp_enable: false
             # global_ip_domain_lookup_enable: true
 
-            # Source-interface anchors
-            logging_server_source_interface: GigabitEthernet1
-            ntp_server_source_interface: GigabitEthernet1
+            # Source-interface anchors for logging/NTP/SNMP — must live in VPN 30
+            # (templates pin vpn_id=30; IOS-XE rejects vrf mismatch at commit time)
+            logging_server_source_interface: GigabitEthernet3.3010
+            ntp_server_source_interface: GigabitEthernet3.3010
             snmp_contact: lab-admin@cisco.com
             snmp_location: Location Site2
             snmp_shutdown: false
-            snmp_trap_source_interface: GigabitEthernet1
+            snmp_trap_source_interface: GigabitEthernet3.3010
 
             # VPN0 overlay + TLOCs
             vpn0_dns_primary: 172.16.1.254
