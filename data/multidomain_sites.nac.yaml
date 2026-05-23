@@ -49,10 +49,10 @@ sdwan:
             ondemand_tunnel_enable: false
             ondemand_tunnel_idle_timeout: 10
 
-            # # Global
-            # global_cdp_enable: true
-            # global_lldp_enable: false
-            # # global_ip_domain_lookup_enable: true
+            # Global
+            global_cdp_enable: true
+            global_lldp_enable: false
+            # global_ip_domain_lookup_enable: true
 
             # Source-interface anchors for logging/NTP/SNMP — must live in VPN 30
             # (templates pin vpn_id=30; IOS-XE rejects vrf mismatch at commit time)
