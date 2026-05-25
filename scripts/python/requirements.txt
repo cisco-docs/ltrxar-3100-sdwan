@@ -1,4 +1,0 @@
-catalystwan==0.35.4
-passlib==1.7.4
-scrypt==0.8.24
-urllib3==2.2.3
