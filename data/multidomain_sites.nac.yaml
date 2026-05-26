@@ -12,14 +12,14 @@
 #   One dot1q sub-interface on Gi3:
 #     Gi3.3050  VPN30  10.100.50.2/30  EBGP peer 10.100.50.1 AS 65002
 #
-# C-EDGE-02 (Site 2): faces SDA Fabric A (SDA-BORDER Gi1/0/24).
+# C-EDGE-02 (Site 2): faces SDA Fabric A (BORDER Gi1/0/24).
 #   One dot1q sub-interface on Gi3:
 #     Gi3.3010  VPN30  10.100.30.2/30  EBGP peer 10.100.30.1 AS 65001
 #
 # Both fabric L3 handoffs map into the same SDWAN VPN 30 — Campus VN at
 # Fabric A and IoT VN at Fabric B share VPN 30 so they're L3-reachable to
-# each other across the overlay. Segmentation between Cameras, Employees,
-# and Servers is provided by SGT only (see multidomain/design.md §3).
+# each other across the overlay. Segmentation between Cameras, IT_Admin,
+# and Servers is provided by SGT only.
 #
 # CTS inline tagging on the LAN handoff (sgt_propagation + sgt_trusted) is
 # applied via FT-ETH3-SUBIF-VPN30-HANDOFF in edge_feature_templates.nac.yaml.

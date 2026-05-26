@@ -164,7 +164,7 @@ sdwan:
 
     cli_templates:
       - name: FT-REMOTE-EDGE-CLI-BASE-01
-        description: "Edge CLI base; system + console only. BGP is now a proper bgp_template in multi-domain/sdwan/."
+        description: "Edge CLI base; system + console only."
         cli_config: |
           login on-failure log
           platform console serial
